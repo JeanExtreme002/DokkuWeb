@@ -1,6 +1,8 @@
-# WebTemplate
+# Dokku Dashboard (Front)
+This project is part of the final thesis for the undergraduate course, focused on developing a web application that acts as a dashboard interface for the Dokku CLI. The goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive and interactive visual interface.
 
-This is a template for building frontend servers using [React.js](https://react.dev/).
+**Author:** Jean Loui Bernard Silva de Jesus
+**Advisor:** Rodrigo Rocha Gomes e Souza
 
 ## Getting Started (quick run)
 

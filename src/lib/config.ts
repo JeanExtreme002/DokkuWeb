@@ -1,9 +1,6 @@
 export const config = {
-  pagination: {
-    maxResultsPerPage: 20,
-  },
   website: {
-    title: 'Title',
-    subtitle: 'Subtitle',
+    title: 'Dokku Dashboard',
+    subtitle: 'Hospedagem de aplicações na rede IC',
   },
 };

@@ -24,34 +24,35 @@
   width: 100%;
 }
 
-.spyglassImage {
+.envImage {
   width: 450px;
   height: 450px;
 }
 
 .goBackHomeButton {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 @media (max-width: 950px) {
-  .spyglassImage {
+  .envImage {
     width: 300px;
     height: 300px;
   }
 
   .goBackHomeButton {
+    font-size: 9px;
     width: 30vw;
   }
 }
 
 @media (max-width: 500px) {
-  .spyglassImage {
-    width: 200px;
-    height: 200px;
+  .envImage {
+    width: 180px;
+    height: 180px;
   }
 
   .goBackHomeButton {
-    font-size: 10px;
+    font-size: 8px;
     width: 35vw;
   }
 }

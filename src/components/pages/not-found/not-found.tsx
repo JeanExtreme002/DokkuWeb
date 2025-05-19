@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { Image, NavBar } from '@/components';
 
-import spyglassImg from './assets/spyglass.svg';
+import envImg from './assets/env.svg';
 import styles from './not-found.module.css';
 
 export function NotFoundPage() {
@@ -24,16 +24,16 @@ export function NotFoundPage() {
           justify='center'
           direction='column'
           gap='9'
-          style={{ marginLeft: '15vw', marginRight: '15vw' }}
+          style={{ marginLeft: '15vw', marginRight: '15vw', maxWidth: '1400px' }}
         >
           <div className={styles.container}>
             <div className={styles.leftComponent}>
               <Text weight='medium' size='8'>
-                Page not found
+                Página não encontrada
               </Text>
 
               <Text as='div' weight='medium' size='3' color='gray' style={{ marginTop: '3vh' }}>
-                The content you were looking for is unavailable or has been removed.
+                O conteúdo que você buscou está indisponível ou foi removido.
               </Text>
 
               <Button
@@ -42,12 +42,12 @@ export function NotFoundPage() {
                 onClick={goBackHome as any}
                 style={{ cursor: 'pointer', marginTop: '5vh' }}
               >
-                GO TO HOMEPAGE
+                IR PARA A PÁGINA INICIAL
               </Button>
             </div>
 
             <div className={styles.rightComponent}>
-              <Image alt={'glass'} src={spyglassImg} className={styles.spyglassImage} />
+              <Image alt={'404 Image'} src={envImg} className={styles.envImage} />
             </div>
           </div>
         </Flex>

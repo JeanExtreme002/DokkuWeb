@@ -1,60 +1,145 @@
-import { HamburgerMenuIcon } from '@radix-ui/react-icons';
-import { Button, DropdownMenu, Flex, Link, Separator, TabNav } from '@radix-ui/themes';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { useRouter } from 'next/router';
+import * as React from 'react';
+
+import { Search, SideBar, WebsiteLogo } from '@/components';
+import { config } from '@/lib';
 
 import styles from './navbar.module.css';
-import { WebsiteLogo } from './website-logo';
 
-export function NavBar() {
-  const getLoginButton = () => {
-    return (
-      <Button className={styles.loginButton} variant='surface'>
-        SIGN IN
-      </Button>
-    );
+interface ProfileMenuProps {
+  anchorEl?: HTMLElement;
+  menuId: string;
+  isMenuOpen: boolean;
+  handleMenuClose: (args: any) => void;
+}
+
+const ProfileMenu = (props: ProfileMenuProps) => {
+  const { anchorEl, menuId, isMenuOpen, handleMenuClose } = props;
+  const router = useRouter();
+
+  const handleRedirect = (path: string) => {
+    handleMenuClose(null);
+
+    if (router.asPath.replace(/^\/+|\/+$/g, '') !== path.replace(/^\/+|\/+$/g, '')) {
+      router.push(path);
+    }
   };
 
   return (
-    <>
-      <Flex className={styles.root}>
-        <div className={styles.mobileContainer}>
-          <div className={styles.logo}>
-            <WebsiteLogo />
-          </div>
-          {getLoginButton()}
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <Button variant='outline' color='sky'>
-                <HamburgerMenuIcon />
-              </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content className={styles.dropDownMenu} sideOffset={5}>
-              <DropdownMenu.Item>
-                <Link href='#home'>HOME</Link>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item>
-                <Link href='/'>CONTACT</Link>
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        </div>
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={() => handleRedirect('/settings')}>Configurações</MenuItem>
+      <MenuItem onClick={() => handleRedirect('/logout')}>Sair</MenuItem>
+    </Menu>
+  );
+};
 
-        <div className={styles.desktopContainer}>
-          <TabNav.Root className={styles.container}>
-            <div className={styles.logo}>
-              <WebsiteLogo />
-            </div>
+export function NavBarLogo({ color, disableLink }: { color?: string; disableLink?: boolean }) {
+  const href = '/';
 
-            <TabNav.Link className={styles.tabNavLink} href='#home'>
-              HOME
-            </TabNav.Link>
-            <TabNav.Link className={styles.tabNavLink} href='/'>
-              CONTACT
-            </TabNav.Link>
-            <TabNav.Link href='/'>{getLoginButton()}</TabNav.Link>
-          </TabNav.Root>
-        </div>
-        <Separator size='4' orientation={'horizontal'} />
-      </Flex>
-    </>
+  const getlogoImage = () => {
+    if (disableLink) {
+      return <WebsiteLogo className={styles.logoImg} />;
+    }
+    return (
+      <Link underline='none' href={href}>
+        <WebsiteLogo className={styles.logoImg} />
+      </Link>
+    );
+  };
+
+  const getLogoText = () => {
+    if (disableLink) {
+      return <span style={{ color: color || 'white' }}>{config.website.title}</span>;
+    }
+    return (
+      <Link underline='none' href={href} style={{ color: color || 'white' }}>
+        {config.website.title}
+      </Link>
+    );
+  };
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Box>{getlogoImage()}</Box>
+      <Typography variant='h6' noWrap component='div' sx={{ display: { xs: 'none', sm: 'block' } }}>
+        {getLogoText()}
+      </Typography>
+    </div>
+  );
+}
+
+export function NavBar() {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
+
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const profileMenuId = 'profile-menu';
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position='static' color='secondary'>
+        <Toolbar>
+          <IconButton
+            size='large'
+            edge='start'
+            color='inherit'
+            aria-label='open drawer'
+            sx={{ mr: 2 }}
+            onClick={() => setIsSideBarOpen(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <NavBarLogo />
+          <Search />
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: 'flex' } }}>
+            <IconButton
+              size='large'
+              edge='end'
+              aria-controls={profileMenuId}
+              aria-haspopup='true'
+              onClick={handleProfileMenuOpen}
+              color='inherit'
+            >
+              <AccountCircle />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <SideBar isOpen={isSideBarOpen} setIsOpen={setIsSideBarOpen} />
+
+      <ProfileMenu
+        menuId={profileMenuId}
+        isMenuOpen={isMenuOpen}
+        handleMenuClose={handleMenuClose}
+      />
+    </Box>
   );
 }

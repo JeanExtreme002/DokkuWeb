@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 
-import { BusinessLogo } from './business-logo';
+import { WebsiteLogo } from './website-logo';
 
-describe('<BusinessLogo />', () => {
+describe('<WebsiteLogo />', () => {
   it('should render an image', () => {
-    render(<BusinessLogo />);
+    render(<WebsiteLogo />);
 
     expect(screen.getByRole('img')).toBeInTheDocument();
   });

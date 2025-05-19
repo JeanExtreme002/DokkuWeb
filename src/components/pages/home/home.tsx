@@ -7,9 +7,7 @@ import styles from './home.module.css';
 export function HomePage() {
   return (
     <>
-      <section id='home'>
-        <NavBar />
-      </section>
+      <NavBar />
 
       <main className={styles.root}>
         <Flex direction='row' gap='9'></Flex>
