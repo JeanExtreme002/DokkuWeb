@@ -51,7 +51,15 @@ const ProfileMenu = (props: ProfileMenuProps) => {
   );
 };
 
-export function NavBarLogo({ color, disableLink }: { color?: string; disableLink?: boolean }) {
+export function NavBarLogo({
+  color,
+  disableLink,
+  breakLogo,
+}: {
+  color?: string;
+  disableLink?: boolean;
+  breakLogo?: boolean;
+}) {
   const href = '/';
 
   const getlogoImage = () => {
@@ -76,7 +84,14 @@ export function NavBarLogo({ color, disableLink }: { color?: string; disableLink
     );
   };
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: breakLogo ? 'column' : 'row',
+        alignItems: 'center',
+        gap: '10px',
+      }}
+    >
       <Box>{getlogoImage()}</Box>
       <Typography variant='h6' noWrap component='div' sx={{ display: { xs: 'none', sm: 'block' } }}>
         {getLogoText()}
