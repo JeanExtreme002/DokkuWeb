@@ -65,6 +65,7 @@ export function LoginPage() {
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <GoogleIcon color='action' />
                 <Typography variant='body1'>Google</Typography>
+                {/** */}
               </CardContent>
             </CardActionArea>
           </Card>
