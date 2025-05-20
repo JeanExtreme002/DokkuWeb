@@ -1,7 +1,7 @@
 import { Button, Flex, Text } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 
-import { Image, NavBar } from '@/components';
+import { Image } from '@/components';
 
 import envImg from './assets/env.svg';
 import styles from './not-found.module.css';
@@ -16,8 +16,6 @@ export function NotFoundPage() {
 
   return (
     <>
-      <NavBar />
-
       <main className={styles.root}>
         <Flex
           align='center'

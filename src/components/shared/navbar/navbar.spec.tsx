@@ -11,7 +11,17 @@ describe('<NavBar />', () => {
   it('should render navbar successfully', () => {
     render(
       <Theme>
-        <NavBar />
+        <NavBar
+          session={
+            {
+              user: {
+                name: 'Test User',
+                email: '',
+                image: 'https://example.com/image.jpg',
+              },
+            } as any
+          }
+        />
       </Theme>
     );
   });

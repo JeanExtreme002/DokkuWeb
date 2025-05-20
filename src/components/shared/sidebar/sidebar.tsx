@@ -6,7 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 
-import { NavBarLogo } from '@/components';
+import { WebsiteLogo } from '@/components';
 
 interface SideBarProps {
   isOpen: boolean;
@@ -38,9 +38,9 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
       >
         <ListItem key={'logo'} disablePadding>
           <div
-            style={{ background: secondaryColor, display: 'flex', width: '100%', padding: '10px' }}
+            style={{ background: secondaryColor, display: 'flex', width: '100%', padding: '20px' }}
           >
-            <NavBarLogo disableLink={true} />
+            <WebsiteLogo disableLink={true} titleDisplay={{ xs: 'block' }} />
           </div>
         </ListItem>
         <List>

@@ -3,24 +3,26 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
+import { Session } from 'next-auth';
 import * as React from 'react';
 
 import { Search, SideBar, WebsiteLogo } from '@/components';
-import { config } from '@/lib';
-
-import styles from './navbar.module.css';
+import { logout } from '@/lib';
 
 interface ProfileMenuProps {
   anchorEl?: HTMLElement;
   menuId: string;
   isMenuOpen: boolean;
   handleMenuClose: (args: any) => void;
+}
+
+interface NavBarProps {
+  session: Session;
 }
 
 const ProfileMenu = (props: ProfileMenuProps) => {
@@ -46,61 +48,12 @@ const ProfileMenu = (props: ProfileMenuProps) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={() => handleRedirect('/settings')}>Configurações</MenuItem>
-      <MenuItem onClick={() => handleRedirect('/logout')}>Sair</MenuItem>
+      <MenuItem onClick={() => logout()}>Sair</MenuItem>
     </Menu>
   );
 };
 
-export function NavBarLogo({
-  color,
-  disableLink,
-  breakLogo,
-}: {
-  color?: string;
-  disableLink?: boolean;
-  breakLogo?: boolean;
-}) {
-  const href = '/';
-
-  const getlogoImage = () => {
-    if (disableLink) {
-      return <WebsiteLogo className={styles.logoImg} />;
-    }
-    return (
-      <Link underline='none' href={href}>
-        <WebsiteLogo className={styles.logoImg} />
-      </Link>
-    );
-  };
-
-  const getLogoText = () => {
-    if (disableLink) {
-      return <span style={{ color: color || 'white' }}>{config.website.title}</span>;
-    }
-    return (
-      <Link underline='none' href={href} style={{ color: color || 'white' }}>
-        {config.website.title}
-      </Link>
-    );
-  };
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: breakLogo ? 'column' : 'row',
-        alignItems: 'center',
-        gap: '10px',
-      }}
-    >
-      <Box>{getlogoImage()}</Box>
-      <Typography variant='h6' noWrap component='div' sx={{ display: { xs: 'none', sm: 'block' } }}>
-        {getLogoText()}
-      </Typography>
-    </div>
-  );
-}
-
-export function NavBar() {
+export function NavBar(props: NavBarProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
 
@@ -130,10 +83,13 @@ export function NavBar() {
           >
             <MenuIcon />
           </IconButton>
-          <NavBarLogo />
+          <WebsiteLogo titleDisplay={{ xs: 'none', sm: 'block' }} />
           <Search />
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'flex' } }}>
+          <Box sx={{ display: { xs: 'flex' } }} alignItems={'center'}>
+            <Typography marginInline={1} fontWeight={'light'}>
+              Olá, {props.session.user?.name?.split(' ')[0]}!
+            </Typography>
             <IconButton
               size='large'
               edge='end'

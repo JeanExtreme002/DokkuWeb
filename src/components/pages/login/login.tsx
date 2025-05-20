@@ -1,9 +1,9 @@
-import { Google as GoogleIcon } from '@mui/icons-material';
-import { Box, Card, CardActionArea, CardContent, Divider, Link, Typography } from '@mui/material';
+import { Box, Divider, Link, Typography } from '@mui/material';
 import React from 'react';
+import GoogleButton from 'react-google-button';
 
-import { NavBarLogo } from '@/components/shared';
-import { config } from '@/lib';
+import { WebsiteLogo } from '@/components';
+import { config, login } from '@/lib';
 
 export function LoginPage() {
   return (
@@ -31,6 +31,9 @@ export function LoginPage() {
         justifyContent='space-between'
         px={4}
         py={6}
+        sx={{
+          boxShadow: '-8px 0 20px rgba(0, 0, 0, 0.2)',
+        }}
       >
         {/* Centered title */}
         <Box
@@ -40,7 +43,7 @@ export function LoginPage() {
           alignItems='center'
           height='20%'
         >
-          <NavBarLogo color={'black'} disableLink={true} breakLogo={true} />
+          <WebsiteLogo size='medium' color={'black'} disableLink={true} breakLogo={true} />
           <p>{config.website.subtitle}</p>
         </Box>
 
@@ -54,21 +57,16 @@ export function LoginPage() {
           width='100%'
         >
           <Typography variant='h6' gutterBottom>
-            Entrar com
+            Entrar com:
           </Typography>
 
           <Divider sx={{ width: '100%', maxWidth: '500px', my: 2 }} />
 
-          <Card variant='outlined' sx={{ width: '100%', maxWidth: '400px' }}>
-            <CardActionArea onClick={() => alert('Login com Google')}>
-              {/* TODO: Implement it */}
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <GoogleIcon color='action' />
-                <Typography variant='body1'>Google</Typography>
-                {/** */}
-              </CardContent>
-            </CardActionArea>
-          </Card>
+          <GoogleButton
+            style={{ width: '100%', maxWidth: '400px' }}
+            label='Email institucional @ufba.br'
+            onClick={() => login()}
+          />
 
           <Link href='https://suporteic.ufba.br/' underline='hover' sx={{ mt: 10 }}>
             Precisa de ajuda? Acesse o SuporteIC.
