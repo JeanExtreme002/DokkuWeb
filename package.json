@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && npm run format:check",
-    "lint:fix": "next lint --fix && npm run format:fix",
+    "lint:fix": "npm run format:fix && next lint --fix",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
     "test": "jest",
