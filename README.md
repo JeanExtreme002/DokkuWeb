@@ -1,8 +1,7 @@
-# Dokku Dashboard (Front)
-This project is part of the final thesis for the undergraduate course, focused on developing a web application that acts as a dashboard interface for the Dokku CLI. The goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive and interactive visual interface.
+# Dokku Dashboard
+This project is a web application that acts as a dashboard interface for the Dokku CLI. The goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive and interactive visual interface.
 
-**Author:** Jean Loui Bernard Silva de Jesus
-**Advisor:** Rodrigo Rocha Gomes e Souza
+Dokku Dashboard is a frontend server only, that uses the [Dokku-API](https://github.com/JeanExtreme002/Dokku-API) as backend.
 
 ## Getting Started (quick run)
 
