@@ -1,10 +1,21 @@
 import { Box, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import { Image } from '@/components';
 
 import styles from './server-error.module.css';
 
 export function ServerErrorPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
     <>
       <Box
