@@ -32,19 +32,21 @@ export async function getServerSideProps(context: any) {
   const backendUrl = process.env.BACKEND_URL;
 
   const params = new URLSearchParams({
-    email: userEmail || '',
     new_access_token: accessToken || '',
     create_if_not_exists: 'true',
   });
 
   try {
-    const response = await fetch(`${backendUrl}/api/admin/users/accessToken?${params.toString()}`, {
-      method: 'PUT',
-      headers: {
-        accept: 'application/json',
-        'MASTER-KEY': process.env.BACKEND_MASTER_KEY || '',
-      },
-    });
+    const response = await fetch(
+      `${backendUrl}/api/admin/users/${userEmail}/access-token?${params.toString()}`,
+      {
+        method: 'PUT',
+        headers: {
+          accept: 'application/json',
+          'MASTER-KEY': process.env.BACKEND_MASTER_KEY || '',
+        },
+      }
+    );
 
     if (response.status !== 200) {
       throw Error(`Failed to register user access token: ${response.statusText}`);
