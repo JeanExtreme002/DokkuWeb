@@ -5,6 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "dokku-build": "next build && next start",
     "lint": "next lint && npm run format:check",
     "lint:fix": "npm run format:fix && next lint --fix",
     "format:check": "prettier . --check",
