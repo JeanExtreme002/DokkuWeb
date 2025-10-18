@@ -1,1 +1,1 @@
-web: pnpm build && pnpm start
+web: bash start.sh
