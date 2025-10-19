@@ -1,7 +1,7 @@
-# Dokku Dashboard
+# DokkuWeb
 This project is a web application that acts as a dashboard interface for the Dokku CLI. The goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive and interactive visual interface.
 
-Dokku Dashboard is a frontend server only, that uses the [Dokku-API](https://github.com/JeanExtreme002/Dokku-API) as backend.
+DokkuWeb is a frontend server only, that uses the [Dokku-API](https://github.com/JeanExtreme002/Dokku-API) as backend.
 
 ## Getting Started (quick run)
 

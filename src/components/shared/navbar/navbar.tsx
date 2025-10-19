@@ -83,11 +83,20 @@ export function NavBar(props: NavBarProps) {
           >
             <MenuIcon />
           </IconButton>
-          <WebsiteLogo titleDisplay={{ xs: 'none', sm: 'block' }} />
+          <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+            <WebsiteLogo
+              imageDisplay={{ xs: 'none', md: 'flex' }}
+              titleDisplay={{ xs: 'none', sm: 'block' }}
+            />
+          </Box>
           <Search />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'flex' } }} alignItems={'center'}>
-            <Typography marginInline={1} fontWeight={'light'}>
+            <Typography
+              sx={{ display: { xs: 'none', sm: 'flex' } }}
+              marginInline={1}
+              fontWeight={'light'}
+            >
               Olá, {props.session.user?.name?.split(' ')[0]}!
             </Typography>
             <IconButton

@@ -1,6 +1,6 @@
 export const config = {
   website: {
-    title: 'Dokku Dashboard',
+    title: 'DokkuWeb',
     subtitle: 'Hospedagem de aplicações na rede IC',
   },
 };

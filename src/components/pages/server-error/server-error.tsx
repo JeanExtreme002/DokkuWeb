@@ -26,7 +26,7 @@ export function ServerErrorPage() {
         flexDirection={'column'}
         justifyContent={'center'}
       >
-        <Image alt={'Error 500 Image'} src='/logo-error-500.png' className={styles.logo} />
+        <Image alt={'Error Image'} src='/logo-error.png' className={styles.logo} />
         <Typography margin={5} variant={'h5'}>
           [500] Internal Server Error
         </Typography>

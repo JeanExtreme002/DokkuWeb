@@ -9,6 +9,7 @@ interface WebsiteLogoProps {
   size?: 'small' | 'medium' | 'large';
   color?: string;
   disableLink?: boolean;
+  imageDisplay?: any;
   titleDisplay?: any;
   breakLogo?: boolean;
 }
@@ -18,6 +19,7 @@ export function WebsiteLogo({
   color,
   disableLink,
   breakLogo,
+  imageDisplay,
   titleDisplay,
 }: WebsiteLogoProps) {
   const href = '/';
@@ -60,7 +62,7 @@ export function WebsiteLogo({
         gap: '10px',
       }}
     >
-      <Box>{getlogoImage()}</Box>
+      <Box sx={imageDisplay ? { display: imageDisplay } : undefined}>{getlogoImage()}</Box>
       <Typography
         marginLeft={'5px'}
         variant='h6'
