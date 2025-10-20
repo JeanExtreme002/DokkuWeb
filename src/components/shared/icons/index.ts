@@ -1,1 +1,1 @@
-export { AppIcon, DotIcon, NetworkIcon, ServiceIcon } from './icons';
+export { AppIcon, DashboardIcon, DotIcon, NetworkIcon, ServiceIcon } from './icons';

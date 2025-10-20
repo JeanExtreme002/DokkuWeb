@@ -57,6 +57,7 @@ export function SettingsPage(props: SettingsPageProps) {
     services_quota: 0,
   });
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [showToken, setShowToken] = useState(false);
 
   useEffect(() => {
     const fetchQuota = async () => {
@@ -141,6 +142,17 @@ export function SettingsPage(props: SettingsPageProps) {
     }
   };
 
+  const copyToken = async () => {
+    if (session?.accessToken) {
+      try {
+        await navigator.clipboard.writeText(session.accessToken);
+        // Aqui você pode adicionar uma notificação de sucesso se tiver um sistema de toast
+      } catch (error) {
+        console.error('Erro ao copiar token:', error);
+      }
+    }
+  };
+
   const { session } = props;
   const userImage = session?.user?.image;
   const userName = session?.user?.name || 'Usuário';
@@ -190,7 +202,7 @@ export function SettingsPage(props: SettingsPageProps) {
                   radius='full'
                 />
 
-                <Flex direction='column' gap='1'>
+                <Flex direction='column' gap='1' style={{ flex: 1 }}>
                   <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                     {userName}
                   </Text>
@@ -203,6 +215,92 @@ export function SettingsPage(props: SettingsPageProps) {
                   >
                     {userEmail}
                   </Text>
+                </Flex>
+              </Flex>
+
+              <Separator size='4' style={{ margin: '8px 0' }} />
+
+              {/* Access Token Section */}
+              <Flex direction='column' gap='2'>
+                <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                  Token de Acesso
+                </Text>
+                <Flex gap='2' align='center'>
+                  <TextField.Root
+                    value={session?.accessToken || ''}
+                    readOnly
+                    style={{
+                      flex: 1,
+                      fontFamily: 'monospace',
+                      fontSize: '12px',
+                      filter: showToken ? 'none' : 'blur(4px)',
+                      transition: 'filter 0.2s ease',
+                    }}
+                    placeholder='Token não disponível'
+                  />
+                  <Button
+                    size='2'
+                    variant='soft'
+                    onClick={() => setShowToken(!showToken)}
+                    style={{
+                      minWidth: '34px',
+                      width: '34px',
+                      height: '34px',
+                      padding: '0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    title={showToken ? 'Ocultar token' : 'Mostrar token'}
+                  >
+                    <svg
+                      width='16'
+                      height='16'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      {showToken ? (
+                        // Cadeado aberto (destrancado)
+                        <path
+                          d='M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8M6 10H18M6 10V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V10'
+                          stroke='currentColor'
+                          strokeWidth='2'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      ) : (
+                        // Cadeado fechado (trancado)
+                        <>
+                          <rect
+                            x='3'
+                            y='11'
+                            width='18'
+                            height='11'
+                            rx='2'
+                            ry='2'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            fill='none'
+                          />
+                          <path
+                            d='M7 11V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V11'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            fill='none'
+                          />
+                        </>
+                      )}
+                    </svg>
+                  </Button>
+                  <Button
+                    size='2'
+                    onClick={copyToken}
+                    disabled={!session?.accessToken}
+                    style={{ minWidth: '70px' }}
+                  >
+                    Copiar
+                  </Button>
                 </Flex>
               </Flex>
             </Flex>

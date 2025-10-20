@@ -1,12 +1,14 @@
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 
-import { WebsiteLogo } from '@/components';
+import { AppIcon, DashboardIcon, NetworkIcon, ServiceIcon, WebsiteLogo } from '@/components';
 
 interface SideBarProps {
   isOpen: boolean;
@@ -22,10 +24,10 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   const secondaryColor = theme.palette.secondary.main;
 
   const drawerItems = [
-    { label: 'APLICATIVOS', href: '/apps' },
-    { label: 'SERVIÇOS', href: '/services' },
-    { label: 'REDES', href: '/networks' },
-    { label: 'ARMAZENAMENTO', href: '/storages' },
+    { label: 'VISÃO GERAL', href: '/', icon: <DashboardIcon /> },
+    { label: 'APLICATIVOS', href: '/apps', icon: <AppIcon /> },
+    { label: 'SERVIÇOS', href: '/services', icon: <ServiceIcon /> },
+    { label: 'REDES', href: '/networks', icon: <NetworkIcon /> },
   ];
 
   return (
@@ -44,12 +46,16 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
           </div>
         </ListItem>
         <List>
-          {drawerItems.map((item) => (
-            <ListItem key={item.label}>
-              <ListItemButton component='a' href={item.href}>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
+          {drawerItems.map((item, index) => (
+            <div key={item.label}>
+              <ListItem>
+                <ListItemButton component='a' href={item.href}>
+                  <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+              {index < drawerItems.length - 1 && <Divider sx={{ mx: 2 }} />}
+            </div>
           ))}
         </List>
       </Box>
