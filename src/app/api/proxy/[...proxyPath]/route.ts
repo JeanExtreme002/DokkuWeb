@@ -55,13 +55,33 @@ async function proxyHandler(request: NextRequest) {
     body: bodyToSend,
     redirect: 'error',
     cache: 'no-store',
+    signal: AbortSignal.timeout(10 * 60 * 1000),
   });
 
   const buf = await res.arrayBuffer();
+  const text = new TextDecoder('utf-8').decode(buf);
+
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    return new Response(text, {
+      status: res.status,
+      headers: { 'content-type': 'text/plain; charset=utf-8' },
+    });
+  }
+
   const headers = new Headers(res.headers);
 
-  if (!headers.get('content-type')) headers.set('content-type', 'application/json');
-  return new Response(buf, { status: res.status, headers });
+  headers.delete('content-encoding');
+  headers.delete('content-length');
+
+  headers.set('content-type', 'application/json');
+
+  return new Response(JSON.stringify(json, null, 2), {
+    status: res.status,
+    headers,
+  });
 }
 
 export const POST = proxyHandler;
