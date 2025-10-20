@@ -16,7 +16,6 @@ export function HomePage(props: HomePageProps) {
     axios
       .post('api/proxy/api/quota')
       .then((response) => {
-        console.log('Quota data:', response.data);
         if (response.status !== 200) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

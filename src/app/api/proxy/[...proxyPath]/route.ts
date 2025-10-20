@@ -3,19 +3,15 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from '../../../../pages/api/auth/[...nextauth]';
 
-const API_URL = process.env.BACKEND_URL;
+const API_URL = process.env.BACKEND_URL!;
 const API_KEY = process.env.BACKEND_API_KEY || '';
 const MASTER_KEY = process.env.BACKEND_MASTER_KEY || '';
 
 async function proxyHandler(request: NextRequest) {
   const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return new Response(null, { status: 401 });
-  }
+  if (!session) return new Response(null, { status: 401 });
 
   const method = request.method.toUpperCase();
-
   if (!['POST', 'PUT', 'DELETE'].includes(method)) {
     return new Response(null, {
       status: 405,
@@ -23,48 +19,49 @@ async function proxyHandler(request: NextRequest) {
     });
   }
 
-  const { searchParams, pathname } = new URL(request.url);
-
-  const proxy = pathname.split('/api/proxy/')[1] || '';
-  const params = new URLSearchParams({
-    api_key: API_KEY,
-  });
-
-  searchParams.forEach((value, key) => {
-    if (key !== 'proxy') params.append(key, value);
-  });
-
-  const url = `${API_URL}/${proxy}?${params.toString()}`;
-
-  let body: any = {
-    access_token: session.accessToken,
-  };
-
-  try {
-    const originBody = await request.json();
-    body = {
-      ...originBody,
-      ...body,
-    };
-  } catch {
-    // If the request body is not JSON, we can ignore it
+  const nextUrl = request.nextUrl;
+  const fullPath = nextUrl.pathname.split('/api/proxy/')[1] ?? '';
+  if (!fullPath) {
+    return new Response('Proxy path vazio', { status: 400 });
   }
 
-  const apiRes = await fetch(url, {
+  const outQs = new URLSearchParams(nextUrl.searchParams);
+  outQs.set('api_key', API_KEY);
+
+  const upstreamBase = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+  const upstreamPath = fullPath.startsWith('/') ? fullPath : `/${fullPath}`;
+  const upstreamUrl = `${upstreamBase}${upstreamPath}?${outQs.toString()}`;
+
+  const rawBody = method === 'GET' || method === 'HEAD' ? undefined : await request.arrayBuffer();
+
+  const baseHeaders: Record<string, string> = {
+    accept: 'application/json',
+    'MASTER-KEY': MASTER_KEY,
+    'content-type': 'application/json',
+  };
+
+  let bodyToSend = JSON.stringify({ access_token: session.accessToken });
+
+  if (rawBody) {
+    try {
+      const original = JSON.parse(Buffer.from(rawBody).toString('utf-8'));
+      bodyToSend = JSON.stringify({ ...original, access_token: session.accessToken });
+    } catch {}
+  }
+
+  const res = await fetch(upstreamUrl, {
     method,
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      'MASTER-KEY': MASTER_KEY,
-    },
-    body: JSON.stringify(body),
+    headers: baseHeaders,
+    body: bodyToSend,
+    redirect: 'error',
+    cache: 'no-store',
   });
 
-  const buffer = await apiRes.arrayBuffer();
-  return new Response(Buffer.from(buffer), {
-    status: apiRes.status,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const buf = await res.arrayBuffer();
+  const headers = new Headers(res.headers);
+
+  if (!headers.get('content-type')) headers.set('content-type', 'application/json');
+  return new Response(buf, { status: res.status, headers });
 }
 
 export const POST = proxyHandler;

@@ -3,4 +3,8 @@ export const config = {
     title: 'DokkuWeb',
     subtitle: 'Hospedagem de aplicações na rede IC',
   },
+  support: {
+    name: process.env.SUPPORT_NAME || 'SuporteIC',
+    url: process.env.SUPPORT_URL || 'https://suporteic.ufba.br/',
+  },
 };

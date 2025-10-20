@@ -68,8 +68,8 @@ export function LoginPage() {
             onClick={() => login()}
           />
 
-          <Link href='https://suporteic.ufba.br/' underline='hover' sx={{ mt: 10 }}>
-            Precisa de ajuda? Acesse o SuporteIC.
+          <Link href={config.support.url} underline='hover' sx={{ mt: 10 }}>
+            Precisa de ajuda? Acesse o {config.support.name}.
           </Link>
         </Box>
 

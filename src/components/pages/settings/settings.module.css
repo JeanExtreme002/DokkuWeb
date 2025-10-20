@@ -1,0 +1,5 @@
+.root {
+  padding: 2rem;
+  min-height: calc(100vh - 80px);
+  background-color: var(--gray-1);
+}

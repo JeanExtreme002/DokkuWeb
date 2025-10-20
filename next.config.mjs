@@ -5,6 +5,10 @@ const nextConfig = {
     unoptimized: true, // disables incompatible Image Optimization API
   },
   trailingSlash: true, // Optional: recommended for gh-pages compatibility
+  env: {
+    SUPPORT_NAME: process.env.SUPPORT_NAME,
+    SUPPORT_URL: process.env.SUPPORT_URL,
+  },
 };
 
 export default nextConfig;
