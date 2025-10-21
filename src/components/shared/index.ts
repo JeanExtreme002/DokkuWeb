@@ -5,4 +5,5 @@ export * from './loading-spinner';
 export * from './navbar';
 export * from './search';
 export * from './sidebar';
+export * from './theme-toggle';
 export * from './website-logo';

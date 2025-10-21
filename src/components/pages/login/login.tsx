@@ -19,6 +19,9 @@ export function LoginPage() {
         flexDirection: { xs: 'column', md: 'row' },
         alignItems: { xs: 'center', md: 'stretch' },
         justifyContent: { xs: 'center', md: 'flex-start' },
+        // Forçar cores do light mode
+        backgroundColor: '#ffffff',
+        color: '#111827',
       }}
     >
       {/* Left side with background image - apenas para desktop */}
@@ -37,8 +40,8 @@ export function LoginPage() {
 
       {/* Right side with sidebar */}
       <Box
-        width={{ xs: '75%', sm: '65%', md: '400px' }}
-        maxWidth={{ xs: '350px', md: 'none' }}
+        width={{ xs: '75%', sm: '80%', md: '480px' }}
+        maxWidth={{ xs: '420px', md: 'none' }}
         bgcolor='background.paper'
         display='flex'
         flexDirection='column'

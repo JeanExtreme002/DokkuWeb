@@ -5,6 +5,236 @@
   font-style: normal;
 }
 
+:root {
+  /* Light theme variables */
+  --background-color: #ffffff;
+  --surface-color: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --border-color: #e5e7eb;
+  --hover-color: #f3f4f6;
+}
+
+[data-theme='dark'] {
+  /* Dark theme variables */
+  --background-color: #0f0f0f;
+  --surface-color: #1a1a1a;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border-color: #374151;
+  --hover-color: #374151;
+}
+
+/* Material UI components styling for dark mode - only specific components */
+[data-theme='dark'] .MuiDrawer-paper {
+  background-color: #1a1a1a !important;
+  border-right: 1px solid #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiListItemText-primary {
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiListItemButton-root:hover {
+  background-color: #374151 !important;
+}
+
+[data-theme='dark'] .MuiSvgIcon-root {
+  color: #d1d5db !important;
+}
+
+/* Sidebar icons specifically for dark mode - more specific selectors */
+[data-theme='dark'] .MuiDrawer-paper .MuiSvgIcon-root {
+  color: #f9fafb !important;
+  fill: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiListItemIcon-root .MuiSvgIcon-root {
+  color: #f9fafb !important;
+  fill: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiListItemButton-root .MuiSvgIcon-root {
+  color: #f9fafb !important;
+  fill: #f9fafb !important;
+}
+
+/* Force all SVG icons inside drawer to be white in dark mode */
+[data-theme='dark'] .MuiDrawer-root svg {
+  color: #f9fafb !important;
+  fill: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiDrawer-root .MuiListItem-root svg {
+  color: #f9fafb !important;
+  fill: #f9fafb !important;
+}
+
+/* Navbar specific styles for dark mode only */
+[data-theme='dark'] .MuiAppBar-root {
+  background-color: #1a1a1a !important;
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiToolbar-root .MuiSvgIcon-root {
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiToolbar-root .MuiTypography-root {
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiInputBase-root {
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiInputBase-input::placeholder {
+  color: #d1d5db !important;
+  opacity: 1 !important;
+}
+
+/* Search box styling for dark mode */
+[data-theme='dark'] .MuiInputBase-root .MuiSvgIcon-root {
+  color: #f9fafb !important;
+}
+
+/* Menu specific styles for dark mode */
+[data-theme='dark'] .MuiMenu-paper {
+  background-color: #1a1a1a !important;
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiMenuItem-root {
+  color: #f9fafb !important;
+}
+
+[data-theme='dark'] .MuiMenuItem-root:hover {
+  background-color: #374151 !important;
+}
+
+/* Light mode overrides for consistency */
+[data-theme='light'] .MuiDrawer-paper {
+  background-color: #ffffff !important;
+  border-right: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+}
+
+[data-theme='light'] .MuiListItemText-primary {
+  color: #111827 !important;
+}
+
+[data-theme='light'] .MuiListItemButton-root:hover {
+  background-color: #f3f4f6 !important;
+}
+
+[data-theme='light'] .MuiSvgIcon-root {
+  color: #4b5563 !important;
+}
+
+/* Sidebar icons specifically for light mode - more specific selectors */
+[data-theme='light'] .MuiDrawer-paper .MuiSvgIcon-root {
+  color: #4b5563 !important;
+  fill: #4b5563 !important;
+}
+
+[data-theme='light'] .MuiListItemIcon-root .MuiSvgIcon-root {
+  color: #4b5563 !important;
+  fill: #4b5563 !important;
+}
+
+[data-theme='light'] .MuiListItemButton-root .MuiSvgIcon-root {
+  color: #4b5563 !important;
+  fill: #4b5563 !important;
+}
+
+/* Force all SVG icons inside drawer to be dark in light mode */
+[data-theme='light'] .MuiDrawer-root svg {
+  color: #4b5563 !important;
+  fill: #4b5563 !important;
+}
+
+[data-theme='light'] .MuiDrawer-root .MuiListItem-root svg {
+  color: #4b5563 !important;
+  fill: #4b5563 !important;
+}
+
+/* Force login page to always be in light mode - but preserve Google Button */
+.login-page-force-light {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.login-page-force-light .MuiBox-root {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.login-page-force-light .MuiTypography-root {
+  color: #111827 !important;
+}
+
+.login-page-force-light .MuiLink-root {
+  color: #1976d2 !important;
+}
+
+.login-page-force-light .MuiDivider-root {
+  border-color: #e5e7eb !important;
+}
+
+/* Preserve Google Button original styling */
+.login-page-force-light .iqUDPZUdF3DSGpFoL7SD {
+  background-color: #4285f4 !important;
+  color: #ffffff !important;
+}
+
+/* Generic preservation for Google Button classes */
+.login-page-force-light [class*='GoogleButton'] {
+  background-color: #4285f4 !important;
+  color: #ffffff !important;
+}
+
+.login-page-force-light button[aria-label*='Google'] {
+  background-color: #4285f4 !important;
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .MuiToolbar-root .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .MuiToolbar-root .MuiTypography-root {
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .MuiInputBase-root {
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .MuiInputBase-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+  opacity: 1 !important;
+}
+
+/* Search box styling for light mode */
+[data-theme='light'] .MuiInputBase-root .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+/* Menu styling for light mode */
+[data-theme='light'] .MuiMenu-paper {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+[data-theme='light'] .MuiMenuItem-root {
+  color: #111827 !important;
+}
+
+[data-theme='light'] .MuiMenuItem-root:hover {
+  background-color: #f3f4f6 !important;
+}
+
 html,
 body {
   margin: 0;
@@ -12,4 +242,16 @@ body {
   overflow-x: hidden;
   padding: 0;
   overscroll-behavior-y: none;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Ensure consistent box-sizing across the app - more specific to avoid conflicts */
+.theme-box-sizing *,
+.theme-box-sizing *::before,
+.theme-box-sizing *::after {
+  box-sizing: border-box;
 }

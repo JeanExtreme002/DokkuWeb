@@ -1,16 +1,17 @@
 import '@radix-ui/themes/styles.css';
 import './global.css';
 
-import { Theme } from '@radix-ui/themes';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
+
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
-      <Theme accentColor='jade'>
+      <ThemeProvider>
         <Component {...pageProps} />
-      </Theme>
+      </ThemeProvider>
     </SessionProvider>
   );
 }

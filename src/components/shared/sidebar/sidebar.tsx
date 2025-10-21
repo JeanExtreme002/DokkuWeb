@@ -8,7 +8,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 
-import { AppIcon, DashboardIcon, NetworkIcon, ServiceIcon, WebsiteLogo } from '@/components';
+import {
+  AppIcon,
+  DashboardIcon,
+  NetworkIcon,
+  ServiceIcon,
+  ThemeToggle,
+  WebsiteLogo,
+} from '@/components';
 
 interface SideBarProps {
   isOpen: boolean;
@@ -33,31 +40,47 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   return (
     <Drawer anchor='left' open={isOpen} onClose={toggleDrawer(false)}>
       <Box
-        sx={{ width: 350 }}
+        sx={{
+          width: 350,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
         role='presentation'
-        onClick={toggleDrawer(false)}
-        onKeyDown={toggleDrawer(false)}
       >
-        <ListItem key={'logo'} disablePadding>
+        {/* Header com logo */}
+        <ListItem
+          key={'logo'}
+          disablePadding
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
           <div
             style={{ background: secondaryColor, display: 'flex', width: '100%', padding: '20px' }}
           >
             <WebsiteLogo disableLink={true} titleDisplay={{ xs: 'block' }} />
           </div>
         </ListItem>
-        <List>
-          {drawerItems.map((item, index) => (
-            <div key={item.label}>
-              <ListItem>
-                <ListItemButton component='a' href={item.href}>
-                  <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              </ListItem>
-              {index < drawerItems.length - 1 && <Divider sx={{ mx: 2 }} />}
-            </div>
-          ))}
-        </List>
+
+        {/* Menu de navegação */}
+        <Box sx={{ flex: 1 }} onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+          <List>
+            {drawerItems.map((item, index) => (
+              <div key={item.label}>
+                <ListItem>
+                  <ListItemButton component='a' href={item.href}>
+                    <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                </ListItem>
+                {index < drawerItems.length - 1 && <Divider sx={{ mx: 2 }} />}
+              </div>
+            ))}
+          </List>
+        </Box>
+
+        {/* Switch de tema na parte inferior */}
+        <ThemeToggle />
       </Box>
     </Drawer>
   );
