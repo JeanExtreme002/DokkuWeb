@@ -1,0 +1,181 @@
+.root {
+  margin: 0;
+  flex-grow: 1;
+  align-items: center;
+  width: 100%;
+  padding: 32px 24px;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, var(--gray-1) 0%, var(--gray-2) 100%);
+  box-sizing: border-box;
+}
+
+.serviceCard {
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.serviceCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  border-color: var(--blue-7) !important;
+}
+
+.serviceCardContent {
+  padding: 20px;
+  align-items: flex-start;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.serviceInfo {
+  flex: 1;
+  gap: 8px;
+}
+
+.serviceActions {
+  min-width: 180px;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.createButton {
+  min-width: 140px;
+}
+
+.serviceImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: white;
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-4);
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .serviceCardContent {
+    gap: 24px;
+  }
+
+  .serviceInfo {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    padding: 16px;
+  }
+
+  .mainContainer {
+    padding: 0 8px;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .createButton {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .serviceCardContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .serviceInfo {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .serviceActions {
+    width: 100%;
+    min-width: unset;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dateText {
+    text-align: left !important;
+    white-space: normal !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 12px;
+  }
+
+  .mainContainer {
+    padding: 0 4px;
+  }
+
+  .serviceCardContent {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .serviceActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .serviceActions button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .dateText {
+    font-size: 11px !important;
+  }
+
+  .serviceCard {
+    cursor: default !important;
+  }
+
+  .serviceCard:hover {
+    transform: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--gray-6) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .root {
+    padding: 8px;
+  }
+
+  .mainContainer {
+    padding: 0 2px;
+  }
+
+  .serviceCardContent {
+    padding: 10px;
+    gap: 10px;
+  }
+}

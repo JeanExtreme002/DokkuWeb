@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
+import { LoadingSpinner } from '@/components/shared/loading-spinner';
 
 import styles from './apps.module.css';
 
@@ -219,7 +220,7 @@ export function AppsPage(props: AppsPageProps) {
                   marginBottom: '4px',
                 }}
               >
-                Aplicativos
+                Meus Aplicativos
               </Heading>
               <Text size='3' color='gray'>
                 Gerencie seus aplicativos Dokku implantados
@@ -250,24 +251,22 @@ export function AppsPage(props: AppsPageProps) {
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(34, 197, 94, 0.3)';
               }}
             >
-              + Nova aplicação
+              + Nova Aplicação
             </Button>
           </Flex>
 
           {/* Estado de carregamento */}
           {loading && (
-            <Card
-              style={{
-                border: '1px solid var(--gray-6)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                padding: '40px',
-                textAlign: 'center',
-              }}
-            >
-              <Text size='3' color='gray'>
-                Carregando aplicativos...
-              </Text>
-            </Card>
+            <LoadingSpinner
+              title='Carregando Aplicativos'
+              messages={[
+                'Conectando ao Dokku...',
+                'Buscando aplicativos...',
+                'Verificando status dos containers...',
+                'Organizando informações...',
+                'Quase pronto...',
+              ]}
+            />
           )}
 
           {/* Estado de erro */}

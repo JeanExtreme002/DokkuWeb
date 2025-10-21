@@ -1,0 +1,267 @@
+/* Container principal do spinner */
+.spinnerContainer {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+/* Spinner principal com múltiplos anéis */
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+
+.spinnerRing {
+  position: absolute;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
+}
+
+.spinnerRing:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  border-top-color: var(--blue-9);
+  border-right-color: var(--blue-9);
+  animation-duration: 1.5s;
+}
+
+.spinnerRing:nth-child(2) {
+  width: 60px;
+  height: 60px;
+  top: 10px;
+  left: 10px;
+  border-top-color: var(--purple-9);
+  border-right-color: var(--purple-9);
+  animation-duration: 2s;
+  animation-direction: reverse;
+}
+
+.spinnerRing:nth-child(3) {
+  width: 40px;
+  height: 40px;
+  top: 20px;
+  left: 20px;
+  border-top-color: var(--green-9);
+  border-right-color: var(--green-9);
+  animation-duration: 2.5s;
+}
+
+/* Pontos orbitais */
+.orbitalDots {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  animation: orbit 4s linear infinite;
+}
+
+.dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-9) 0%, var(--purple-9) 100%);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}
+
+.dot:nth-child(1) {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  animation-delay: 1s;
+}
+
+.dot:nth-child(3) {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 2s;
+}
+
+.dot:nth-child(4) {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  animation-delay: 3s;
+}
+
+/* Container da mensagem */
+.messageContainer {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingMessage {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Barra de progresso */
+.progressContainer {
+  width: 200px;
+  margin: 0 auto;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: var(--gray-4);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--blue-9), var(--purple-9), var(--green-9));
+  border-radius: 2px;
+  animation: progressWave 2s ease-in-out infinite;
+  transform: translateX(-100%);
+}
+
+/* Pulsos de fundo */
+.backgroundPulses {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.pulse {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border: 2px solid var(--blue-6);
+  border-radius: 50%;
+  opacity: 0;
+  animation: pulse 3s ease-out infinite;
+}
+
+.pulse:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.pulse:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.pulse:nth-child(3) {
+  animation-delay: 2s;
+}
+
+/* Animações */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progressWave {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .spinnerContainer {
+    width: 100px;
+    height: 100px;
+  }
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+  }
+
+  .spinnerRing:nth-child(1) {
+    width: 60px;
+    height: 60px;
+  }
+
+  .spinnerRing:nth-child(2) {
+    width: 45px;
+    height: 45px;
+    top: 7.5px;
+    left: 7.5px;
+  }
+
+  .spinnerRing:nth-child(3) {
+    width: 30px;
+    height: 30px;
+    top: 15px;
+    left: 15px;
+  }
+
+  .orbitalDots {
+    width: 100px;
+    height: 100px;
+  }
+
+  .progressContainer {
+    width: 150px;
+  }
+
+  .pulse {
+    width: 150px;
+    height: 150px;
+  }
+}
