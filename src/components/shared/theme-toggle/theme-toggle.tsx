@@ -5,10 +5,39 @@ import { Box, FormControlLabel, Switch } from '@mui/material';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export function ThemeToggle() {
-  const { mode, toggleTheme } = useTheme();
+  const { mode, toggleTheme, isLoading } = useTheme();
 
   const getTextColor = () => (mode === 'light' ? '#4b5563' : '#d1d5db');
   const getBorderColor = () => (mode === 'light' ? '#e5e7eb' : '#374151');
+
+  // Não renderizar o toggle durante o loading
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px',
+          borderTop: `1px solid ${getBorderColor()}`,
+          marginTop: 'auto',
+          backgroundColor: mode === 'light' ? '#ffffff' : '#1a1a1a',
+          height: '72px', // Manter a altura consistente
+        }}
+      >
+        <div
+          style={{
+            width: '20px',
+            height: '20px',
+            border: '2px solid #e5e7eb',
+            borderTop: '2px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+      </Box>
+    );
+  }
 
   return (
     <Box

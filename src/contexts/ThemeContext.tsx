@@ -6,6 +6,7 @@ type ThemeMode = 'light' | 'dark';
 interface ThemeContextType {
   mode: ThemeMode;
   toggleTheme: () => void;
+  isLoading: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -22,8 +23,27 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
+// Função para detectar o tema inicial antes da hidratação
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window === 'undefined') {
+    return 'light'; // SSR default
+  }
+
+  try {
+    const savedTheme = localStorage.getItem('theme') as ThemeMode;
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      return savedTheme;
+    }
+  } catch {
+    // Em caso de erro (como em abas anônimas), usar light mode
+  }
+
+  return 'light';
+};
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [mode, setMode] = useState<ThemeMode>('light');
+  const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Carregar tema do localStorage ao inicializar
   useEffect(() => {
@@ -35,28 +55,27 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         const savedTheme = localStorage.getItem('theme') as ThemeMode;
         if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
           setMode(savedTheme);
-          return;
+        } else {
+          // Se não há tema salvo, usar light mode
+          setMode('light');
         }
-      }
-
-      // Se não há tema salvo OU localStorage não está disponível, usar preferência do sistema
-      // Mas default para light mode se preferência do sistema não estiver disponível
-      try {
-        const prefersDark =
-          window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setMode(prefersDark ? 'dark' : 'light');
-      } catch {
-        // Se matchMedia não estiver disponível, usar light mode como padrão
+      } else {
+        // Se localStorage não está disponível, sempre usar light mode
         setMode('light');
       }
     } catch {
       // Em caso de erro (como em abas anônimas), sempre usar light mode
       setMode('light');
     }
+
+    // Marcar como carregado após definir o tema
+    setIsLoading(false);
   }, []);
 
   // Salvar tema no localStorage quando mudado
   useEffect(() => {
+    if (isLoading) return; // Não aplicar mudanças durante o loading inicial
+
     try {
       // Só tentar salvar se localStorage estiver disponível
       if (typeof Storage !== 'undefined' && window.localStorage) {
@@ -85,15 +104,52 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       root.style.setProperty('--mui-palette-text-secondary', '#4b5563');
       root.style.setProperty('--mui-palette-divider', '#e5e7eb');
     }
-  }, [mode]);
+  }, [mode, isLoading]);
 
   const toggleTheme = () => {
     setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
   };
 
+  // Não renderizar nada até que o tema seja carregado
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          background: 'var(--background-color, #ffffff)',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Loading spinner simples */}
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            border: '3px solid #e5e7eb',
+            borderTop: '3px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   // Não usamos Material UI ThemeProvider para evitar interferências
   return (
-    <ThemeContext.Provider value={{ mode, toggleTheme }}>
+    <ThemeContext.Provider value={{ mode, toggleTheme, isLoading }}>
       <RadixTheme
         appearance={mode}
         accentColor='jade'

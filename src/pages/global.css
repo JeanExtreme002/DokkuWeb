@@ -245,8 +245,21 @@ body {
   background-color: var(--background-color);
   color: var(--text-primary);
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Prevenir flash inicial - aplicar tema padrão imediatamente */
+html {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+/* Sobrescrever com dark mode se aplicável */
+[data-theme='dark'] html,
+[data-theme='dark'] body {
+  background-color: #0f0f0f;
+  color: #f9fafb;
 }
 
 /* Ensure consistent box-sizing across the app - more specific to avoid conflicts */

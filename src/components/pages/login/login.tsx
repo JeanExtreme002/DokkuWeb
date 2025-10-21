@@ -1,4 +1,4 @@
-import { Box, Divider, Link, Typography } from '@mui/material';
+import { Box, Divider, Link, Typography, useMediaQuery } from '@mui/material';
 import React from 'react';
 import GoogleButton from 'react-google-button';
 
@@ -6,6 +6,8 @@ import { WebsiteLogo } from '@/components';
 import { config, login } from '@/lib';
 
 export function LoginPage() {
+  const isSmallScreen = useMediaQuery('(max-width:430px)');
+
   return (
     <Box
       display='flex'
@@ -105,7 +107,7 @@ export function LoginPage() {
 
           <GoogleButton
             style={{ width: '100%', maxWidth: '400px' }}
-            label='Entre com seu email @ufba.br'
+            label={isSmallScreen ? 'Entrar com @ufba.br' : 'Entre com seu email @ufba.br'}
             onClick={() => login()}
           />
 
