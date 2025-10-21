@@ -36,7 +36,7 @@ export function LoadingSpinner({
         border: '1px solid var(--gray-6)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
         padding: '48px',
-        paddingBlock: '130px',
+        paddingBlock: '100px',
         textAlign: 'center',
         background: 'linear-gradient(135deg, var(--gray-1) 0%, var(--gray-2) 100%)',
       }}

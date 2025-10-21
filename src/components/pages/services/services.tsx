@@ -1,4 +1,4 @@
-import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
+import { Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import axios from 'axios';
 import Image from 'next/image';
 import { Session } from 'next-auth';
@@ -195,6 +195,9 @@ export function ServicesPage(props: ServicesPageProps) {
               + Novo Serviço
             </Button>
           </Flex>
+
+          {/* Separador */}
+          <Separator size='4' style={{ margin: '10px 0' }} />
 
           {/* Estado de carregamento */}
           {loading && (

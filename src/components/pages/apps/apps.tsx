@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
+import { Avatar, Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import axios from 'axios';
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
@@ -254,6 +254,9 @@ export function AppsPage(props: AppsPageProps) {
               + Nova Aplicação
             </Button>
           </Flex>
+
+          {/* Separador */}
+          <Separator size='4' style={{ margin: '10px 0' }} />
 
           {/* Estado de carregamento */}
           {loading && (
