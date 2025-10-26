@@ -1,11 +1,11 @@
 import { Avatar, Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
-import axios from 'axios';
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { api } from '@/lib';
 
 import styles from './apps.module.css';
 
@@ -76,7 +76,7 @@ export function AppsPage(props: AppsPageProps) {
     const fetchApps = async () => {
       try {
         setLoading(true);
-        const response = await axios.post('/api/proxy/api/apps/list');
+        const response = await api.post('/api/apps/list');
 
         if (response.status === 200 && response.data.success) {
           setApps(response.data.result);

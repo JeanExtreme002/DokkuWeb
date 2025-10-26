@@ -11,12 +11,11 @@ import {
   Text,
   TextField,
 } from '@radix-ui/themes';
-import axios from 'axios';
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { AppIcon, DotIcon, NavBar, NetworkIcon, ServiceIcon } from '@/components';
-import { config } from '@/lib';
+import { api, config } from '@/lib';
 
 import styles from './settings.module.css';
 
@@ -63,7 +62,7 @@ export function SettingsPage(props: SettingsPageProps) {
     const fetchQuota = async () => {
       try {
         setLoading(true);
-        const response = await axios.post('/api/proxy/api/quota');
+        const response = await api.post('/api/quota');
 
         if (response.status === 200) {
           setQuota(response.data);
@@ -83,8 +82,8 @@ export function SettingsPage(props: SettingsPageProps) {
         setAdminLoading(true);
         const userEmail = props.session?.user?.email;
         if (userEmail) {
-          const response = await axios.post<AdminCheckResponse>(
-            `/api/proxy/api/admin/users/${userEmail}/admin`
+          const response = await api.post<AdminCheckResponse>(
+            `/api/admin/users/${userEmail}/admin`
           );
           setIsAdmin(response.data.result);
         }
@@ -106,9 +105,7 @@ export function SettingsPage(props: SettingsPageProps) {
     try {
       setUserQuotaLoading(true);
       setUserQuotaError(null);
-      const response = await axios.post<QuotaInfo>(
-        `/api/proxy/api/admin/users/${searchEmail}/quota`
-      );
+      const response = await api.post<QuotaInfo>(`/api/admin/users/${searchEmail}/quota`);
       setUserQuota({ ...response.data, email: searchEmail });
       setEditQuota(response.data);
     } catch (error) {
@@ -125,13 +122,11 @@ export function SettingsPage(props: SettingsPageProps) {
 
     try {
       setUpdateLoading(true);
-      const params = new URLSearchParams({
-        apps_quota: editQuota.apps_quota.toString(),
-        networks_quota: editQuota.networks_quota.toString(),
-        services_quota: editQuota.services_quota.toString(),
+      await api.put(`/api/admin/users/${userQuota.email}/quota`, {
+        apps_quota: editQuota.apps_quota,
+        networks_quota: editQuota.networks_quota,
+        services_quota: editQuota.services_quota,
       });
-
-      await axios.put(`/api/proxy/api/admin/users/${userQuota.email}/quota?${params.toString()}`);
       setUserQuota({ ...editQuota, email: userQuota.email });
       setEditMode(false);
     } catch (error) {

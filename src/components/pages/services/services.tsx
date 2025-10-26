@@ -1,5 +1,4 @@
 import { Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
-import axios from 'axios';
 import Image from 'next/image';
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
@@ -7,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { api } from '@/lib';
 
 import styles from './services.module.css';
 
@@ -74,7 +74,7 @@ export function ServicesPage(props: ServicesPageProps) {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.post('/api/proxy/api/databases/list');
+        const response = await api.post('/api/databases/list');
 
         if (response.status === 200 && response.data.success) {
           setServices(response.data.result);

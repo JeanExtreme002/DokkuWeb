@@ -1,9 +1,9 @@
 import { Flex } from '@radix-ui/themes';
-import axios from 'axios';
 import { Session } from 'next-auth';
 import { useEffect } from 'react';
 
 import { NavBar } from '@/components';
+import { api } from '@/lib';
 
 import styles from './home.module.css';
 
@@ -13,8 +13,8 @@ interface HomePageProps {
 
 export function HomePage(props: HomePageProps) {
   useEffect(() => {
-    axios
-      .post('api/proxy/api/quota')
+    api
+      .post('/api/quota')
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(`HTTP error! status: ${response.status}`);
