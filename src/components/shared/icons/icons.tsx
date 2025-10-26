@@ -96,3 +96,62 @@ export const DashboardIcon = () => (
     />
   </svg>
 );
+
+export const TrashIcon = () => (
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='M6.5 1h3a1 1 0 0 1 1 1v1H13a.5.5 0 0 1 0 1h-.5v9a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2V4H3a.5.5 0 0 1 0-1h2.5V2a1 1 0 0 1 1-1ZM4.5 4v9a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V4h-7ZM7 2v1h2V2H7Z'
+      fill='currentColor'
+    />
+    <path
+      d='M6.5 6.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V7a.5.5 0 0 1 .5-.5ZM9.5 6.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V7a.5.5 0 0 1 .5-.5Z'
+      fill='currentColor'
+    />
+  </svg>
+);
+
+export const LinkIcon = () => (
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 9.5H4a2 2 0 1 1 0-4h2.354c.085-.31.213-.611.376-.886A3.01 3.01 0 0 0 6.354 5.5Z'
+      fill='currentColor'
+    />
+    <path
+      d='M9.646 10.5H12a3 3 0 0 0 0-6H9a3 3 0 0 0-2.83 4H7c.086 0 .17-.01.25-.031A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4H9.646a2.99 2.99 0 0 0-.376.886A3.01 3.01 0 0 0 9.646 10.5Z'
+      fill='currentColor'
+    />
+  </svg>
+);
+
+export const ChevronDownIcon = () => (
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='m4.5 6.5 3.12 3.12a.5.5 0 0 0 .76 0L11.5 6.5'
+      stroke='currentColor'
+      strokeWidth='1.5'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+export const EyeIcon = () => (
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5Z'
+      stroke='currentColor'
+      strokeWidth='1.5'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+    <circle
+      cx='8'
+      cy='8'
+      r='2'
+      stroke='currentColor'
+      strokeWidth='1.5'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);

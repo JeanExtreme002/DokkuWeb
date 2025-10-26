@@ -1,1 +1,11 @@
-export { AppIcon, DashboardIcon, DotIcon, NetworkIcon, ServiceIcon } from './icons';
+export {
+  AppIcon,
+  ChevronDownIcon,
+  DashboardIcon,
+  DotIcon,
+  EyeIcon,
+  LinkIcon,
+  NetworkIcon,
+  ServiceIcon,
+  TrashIcon,
+} from './icons';

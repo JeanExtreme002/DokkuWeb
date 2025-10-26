@@ -250,7 +250,7 @@ export function ServicesPage(props: ServicesPageProps) {
                   </Text>
                 </Card>
               ) : (
-                <Flex direction='column' gap='4'>
+                <div className={styles.servicesGrid}>
                   {allServices.map((service) => {
                     const statusInfo = getStatusInfo(service.status);
                     const displayName = formatServiceName(service.serviceName);
@@ -288,53 +288,49 @@ export function ServicesPage(props: ServicesPageProps) {
                               }
                         }
                       >
-                        <Flex
-                          className={styles.serviceCardContent}
-                          style={{ alignItems: 'flex-start' }}
-                        >
-                          {/* Imagem do banco de dados */}
-                          <Image
-                            src={getServiceImage(service.plugin_name)}
-                            alt={`${serviceType} logo`}
-                            width={48}
-                            height={48}
-                            className={styles.serviceImage}
-                            onError={(e) => {
-                              // Fallback para um ícone genérico de banco de dados se a imagem falhar
-                              e.currentTarget.src = DATABASE_IMAGES.generic;
-                            }}
-                          />
+                        <Flex className={styles.serviceCardContent}>
+                          {/* Header com imagem e info principal */}
+                          <Flex className={styles.serviceHeader}>
+                            <Image
+                              src={getServiceImage(service.plugin_name)}
+                              alt={`${serviceType} logo`}
+                              width={48}
+                              height={48}
+                              className={styles.serviceImage}
+                              onError={(e) => {
+                                // Fallback para um ícone genérico de banco de dados se a imagem falhar
+                                e.currentTarget.src = DATABASE_IMAGES.generic;
+                              }}
+                            />
 
-                          {/* Informações principais */}
-                          <Flex direction='column' className={styles.serviceInfo}>
-                            <Flex align='center' gap='2'>
+                            {/* Informações principais */}
+                            <Flex direction='column' className={styles.serviceInfo}>
                               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
                                 {displayName}
                               </Heading>
                               <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                                • {serviceType}
+                                {serviceType} v{formatVersion(service.version)}
                               </Text>
-                              <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                                v{formatVersion(service.version)}
-                              </Text>
-                            </Flex>
 
-                            {/* Status com círculo colorido */}
-                            <Flex align='center' gap='2'>
-                              <Box
-                                style={{
-                                  width: '8px',
-                                  height: '8px',
-                                  borderRadius: '50%',
-                                  backgroundColor: statusInfo.color,
-                                }}
-                              />
-                              <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                                {statusInfo.text}
-                              </Text>
+                              {/* Status com círculo colorido */}
+                              <Flex align='center' gap='2' style={{ marginTop: '4px' }}>
+                                <Box
+                                  style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    backgroundColor: statusInfo.color,
+                                  }}
+                                />
+                                <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
+                                  {statusInfo.text}
+                                </Text>
+                              </Flex>
                             </Flex>
+                          </Flex>
 
-                            {/* Informações técnicas */}
+                          {/* Informações técnicas */}
+                          <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
                             <Flex align='center' gap='2'>
                               <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
                                 IP:
@@ -345,33 +341,27 @@ export function ServicesPage(props: ServicesPageProps) {
                               >
                                 {service.internal_ip}
                               </Text>
-                              {service.exposed_ports !== '-' && (
-                                <>
-                                  <Text
-                                    size='2'
-                                    style={{ color: 'var(--gray-9)', fontWeight: '500' }}
-                                  >
-                                    •
-                                  </Text>
-                                  <Text
-                                    size='2'
-                                    style={{ color: 'var(--gray-9)', fontWeight: '500' }}
-                                  >
-                                    Portas:
-                                  </Text>
-                                  <Text
-                                    size='2'
-                                    style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
-                                  >
-                                    {service.exposed_ports}
-                                  </Text>
-                                </>
-                              )}
                             </Flex>
+                            {service.exposed_ports !== '-' && (
+                              <Flex align='center' gap='2'>
+                                <Text
+                                  size='2'
+                                  style={{ color: 'var(--gray-9)', fontWeight: '500' }}
+                                >
+                                  Portas:
+                                </Text>
+                                <Text
+                                  size='2'
+                                  style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
+                                >
+                                  {service.exposed_ports}
+                                </Text>
+                              </Flex>
+                            )}
                           </Flex>
 
                           {/* Botão de ação */}
-                          <Flex direction='column' className={styles.serviceActions}>
+                          <Flex className={styles.serviceActions}>
                             <Button
                               size='3'
                               onClick={() => (window.location.href = `/services/${displayName}`)}
@@ -386,7 +376,7 @@ export function ServicesPage(props: ServicesPageProps) {
                                 borderRadius: '8px',
                                 boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
                                 transition: 'all 0.2s ease',
-                                minWidth: '120px',
+                                width: '100%',
                               }}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-1px)';
@@ -406,7 +396,7 @@ export function ServicesPage(props: ServicesPageProps) {
                       </Card>
                     );
                   })}
-                </Flex>
+                </div>
               )}
             </>
           )}

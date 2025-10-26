@@ -3,7 +3,16 @@ import { getSession } from 'next-auth/react';
 
 import { ServicesPage } from '@/components';
 
-export default ServicesPage;
+import Header from './header';
+
+export default function Services(props: any) {
+  return (
+    <>
+      <Header />
+      <ServicesPage session={props?.session} />
+    </>
+  );
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);

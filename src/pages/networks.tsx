@@ -1,21 +1,22 @@
 import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
 
-import { AppsPage } from '@/components';
+import { NetworksPage } from '@/components/pages/networks';
 
+import { authOptions } from './api/auth/[...nextauth]';
 import Header from './header';
 
-export default function Apps(props: any) {
+export default function Networks({ session }: any) {
   return (
     <>
       <Header />
-      <AppsPage session={props?.session} />
+      <NetworksPage session={session} />
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
     return {

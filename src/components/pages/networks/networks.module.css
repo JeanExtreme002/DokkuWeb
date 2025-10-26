@@ -1,0 +1,606 @@
+.root {
+  margin: 0;
+  flex-grow: 1;
+  align-items: center;
+  width: 100%;
+  padding: 32px 24px;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, var(--gray-1) 0%, var(--gray-2) 100%);
+  box-sizing: border-box;
+}
+
+.networksAccordion {
+  width: 100%;
+  background: transparent;
+}
+
+.networkItem {
+  background: var(--color-panel);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--gray-4);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.networkItem:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--gray-5);
+}
+
+.networkItem:last-child {
+  margin-bottom: 0;
+}
+
+.networkTrigger {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  text-align: left;
+  position: relative;
+}
+
+.networkTrigger:hover {
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.networkTrigger[data-state='open'] {
+  background: rgba(59, 130, 246, 0.06);
+  border-bottom: 1px solid var(--gray-4);
+}
+
+.networkTrigger:focus {
+  outline: none;
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.networkContent {
+  padding: 0 24px 24px;
+  background: var(--gray-1);
+  overflow: hidden;
+}
+
+.networkContent[data-state='open'] {
+  animation: slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.networkContent[data-state='closed'] {
+  animation: slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.chevronIcon {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  color: var(--gray-9);
+  flex-shrink: 0;
+}
+
+.networkTrigger[data-state='open'] .chevronIcon {
+  transform: rotate(180deg);
+  color: var(--blue-10);
+}
+
+.networkIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  flex-shrink: 0;
+}
+
+.networkIcon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.networkInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deleteNetworkSection {
+  padding: 16px 0;
+  border-top: 1px solid var(--gray-5);
+  margin-top: 16px;
+}
+
+.deleteNetworkButton {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, var(--red-9) 0%, var(--red-10) 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  font-weight: 500;
+  font-size: 14px;
+  width: 100%;
+}
+
+.deleteNetworkButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, var(--red-10) 0%, var(--red-11) 100%);
+}
+
+.linkAppSection {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gray-5);
+  margin-bottom: 16px;
+}
+
+.linkAppForm {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.linkAppInput {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--gray-12);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.linkAppInput::placeholder {
+  color: var(--gray-9);
+}
+
+.linkAppInput:focus {
+  outline: none;
+  border-color: var(--blue-8);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.linkButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%);
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.linkButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, var(--green-10) 0%, var(--green-11) 100%);
+}
+
+.linkButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.linkedAppsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.linkedAppItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--gray-5);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.linkedAppIcon {
+  color: var(--blue-9);
+  flex-shrink: 0;
+}
+
+.linkedAppItem:hover {
+  background: var(--gray-2);
+  border-color: var(--gray-6);
+}
+
+.viewButton {
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%);
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+  flex-shrink: 0;
+}
+
+.viewButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, var(--green-10) 0%, var(--green-11) 100%);
+}
+
+.unlinkButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--red-9) 0%, var(--red-10) 100%);
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.unlinkButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, var(--red-10) 0%, var(--red-11) 100%);
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.createButton {
+  min-width: 140px;
+}
+
+.emptyState {
+  padding: 64px 48px;
+  text-align: center;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  border: 2px dashed var(--gray-5);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.emptyState::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.emptyState:hover {
+  border-color: var(--blue-6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.emptyStateIcon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 24px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--blue-2) 0%, var(--blue-3) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
+}
+
+.emptyState:hover .emptyStateIcon {
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+}
+
+.emptyStateIcon svg {
+  width: 40px;
+  height: 40px;
+  color: var(--blue-9);
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .networkTrigger {
+    padding: 16px 20px;
+  }
+
+  .networkContent {
+    padding: 0 20px 20px;
+  }
+
+  .linkAppForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    padding: 16px;
+  }
+
+  .mainContainer {
+    padding: 0 8px;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .createButton {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .networkTrigger {
+    padding: 14px 18px;
+    gap: 12px;
+  }
+
+  .networkContent {
+    padding: 0 18px 18px;
+  }
+
+  .networkIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .networkIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .deleteNetworkButton {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .linkAppForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .emptyState {
+    padding: 48px 24px;
+  }
+
+  .emptyStateIcon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+  }
+
+  .emptyStateIcon svg {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 12px;
+  }
+
+  .mainContainer {
+    padding: 0 4px;
+  }
+
+  .networkTrigger {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .networkContent {
+    padding: 0 16px 16px;
+  }
+
+  .networkIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .networkIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .deleteNetworkButton {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .linkAppForm {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .linkButton {
+    padding: 12px 16px;
+  }
+
+  .linkedAppItem {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .networkName {
+    font-size: 16px !important;
+    margin-bottom: 0px !important;
+  }
+
+  .networkAppsCount {
+    font-size: 12px !important;
+  }
+
+  .viewButton {
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+  }
+
+  .unlinkButton {
+    padding: 6px;
+    width: 28px;
+    height: 28px;
+    justify-content: center;
+  }
+
+  .unlinkButton span {
+    display: none;
+  }
+
+  .emptyState {
+    padding: 40px 20px;
+  }
+
+  .emptyStateIcon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+  }
+
+  .emptyStateIcon svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 360px) {
+  .root {
+    padding: 8px;
+  }
+
+  .mainContainer {
+    padding: 0 2px;
+  }
+
+  .networkTrigger {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .networkContent {
+    padding: 0 14px 14px;
+  }
+
+  .networkIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .networkIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .deleteNetworkButton {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .linkAppInput {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .linkButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .networkName {
+    font-size: 14px !important;
+    margin-bottom: -2px !important;
+  }
+
+  .networkAppsCount {
+    font-size: 11px !important;
+  }
+
+  .viewButton {
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+  }
+
+  .unlinkButton {
+    padding: 6px;
+    width: 28px;
+    height: 28px;
+    justify-content: center;
+  }
+
+  .unlinkButton span {
+    display: none;
+  }
+}
