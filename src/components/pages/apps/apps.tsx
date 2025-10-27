@@ -229,7 +229,7 @@ export function AppsPage(props: AppsPageProps) {
 
             <Button
               size='3'
-              onClick={() => (window.location.href = './create')}
+              onClick={() => (window.location.href = '/apps/create')}
               className={styles.createButton}
               style={{
                 background: 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',

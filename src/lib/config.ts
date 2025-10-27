@@ -7,4 +7,7 @@ export const config = {
     name: process.env.SUPPORT_NAME || 'SuporteIC',
     url: process.env.SUPPORT_URL || 'https://suporteic.ufba.br/',
   },
+  server: {
+    domain: process.env.SERVER_DOMAIN || 'domain.com',
+  },
 };

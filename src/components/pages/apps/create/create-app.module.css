@@ -1,0 +1,77 @@
+.root {
+  min-height: 100vh;
+  background: var(--color-background);
+  padding: 0;
+}
+
+.mainContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Garantir que a animação continue funcionando */
+.spinner {
+  animation: spin 1s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Classes for responsive elements */
+.envInputsContainer {
+  max-width: 500px;
+}
+
+.buttonsContainer {
+  margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mainContainer {
+    padding: 24px 16px;
+  }
+
+  .root {
+    padding: 0;
+  }
+
+  /* Stack environment variable inputs vertically */
+  .envInputsContainer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    max-width: 100% !important;
+  }
+
+  .envInputsContainer > * {
+    width: 100% !important;
+  }
+
+  /* Stack buttons vertically */
+  .buttonsContainer {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .buttonsContainer button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Reduce error message text size on small screens */
+  .errorMessage {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}

@@ -8,6 +8,7 @@ const nextConfig = {
   env: {
     SUPPORT_NAME: process.env.SUPPORT_NAME,
     SUPPORT_URL: process.env.SUPPORT_URL,
+    SERVER_DOMAIN: process.env.SERVER_DOMAIN,
   },
 };
 

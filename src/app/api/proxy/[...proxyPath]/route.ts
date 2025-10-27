@@ -200,7 +200,10 @@ async function proxyHandler(request: NextRequest) {
 
   // No cache, make the request
   const upstreamBase = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
-  const upstreamPath = fullPath.startsWith('/') ? fullPath : `/${fullPath}`;
+
+  let upstreamPath = fullPath.startsWith('/') ? fullPath : `/${fullPath}`;
+  upstreamPath = upstreamPath.endsWith('/') ? upstreamPath : `${upstreamPath}/`;
+
   const upstreamUrl = `${upstreamBase}${upstreamPath}?${outQs.toString()}`;
 
   const baseHeaders: Record<string, string> = {
