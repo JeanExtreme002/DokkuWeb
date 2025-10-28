@@ -7,6 +7,8 @@ const API_URL = process.env.BACKEND_URL!;
 const API_KEY = process.env.BACKEND_API_KEY || '';
 const MASTER_KEY = process.env.BACKEND_MASTER_KEY || '';
 
+const AUTO_CLEANUP_CACHE_INTERVAL = 30 * 60 * 1000;
+
 // Configuration list for which method+endpoint combinations should be cached
 const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
   { method: 'POST', endpoint: '/api/apps/list' },
@@ -21,7 +23,7 @@ interface CacheEntry {
 
 class ServerCache {
   private cache = new Map<string, CacheEntry>();
-  private defaultTTL = 30 * 1000; // 30 seconds
+  private defaultTTL = 10 * 60 * 1000; // 10 minutes
 
   private generateKey(
     method: string,
@@ -128,13 +130,10 @@ class ServerCache {
 // Singleton cache instance
 const serverCache = new ServerCache();
 
-// Auto cleanup every 5 minutes
-setInterval(
-  () => {
-    serverCache.cleanup();
-  },
-  5 * 60 * 1000
-);
+// Auto cleanup
+setInterval(() => {
+  serverCache.cleanup();
+}, AUTO_CLEANUP_CACHE_INTERVAL);
 
 function formatTimestamp(timestamp: number): string {
   const date = new Date(timestamp);
@@ -180,8 +179,15 @@ async function proxyHandler(request: NextRequest) {
     } catch {}
   }
 
-  // Check cache first
-  const cachedResult = serverCache.get(method, `/${fullPath}`, outQs, bodyToSend);
+  // Check if cache should be bypassed
+  const cacheHeader = request.headers.get('x-cache');
+  const shouldBypassCache = cacheHeader === 'false';
+
+  // Check cache first (only if not bypassing)
+  let cachedResult = null;
+  if (!shouldBypassCache) {
+    cachedResult = serverCache.get(method, `/${fullPath}`, outQs, bodyToSend);
+  }
 
   if (cachedResult) {
     const headers = new Headers();

@@ -61,6 +61,7 @@ export function AppsPage(props: AppsPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -80,6 +81,13 @@ export function AppsPage(props: AppsPageProps) {
 
         if (response.status === 200 && response.data.success) {
           setApps(response.data.result);
+
+          // Verifica se a resposta veio do cache
+          const cacheStatus = response.headers['x-cache'];
+          if (cacheStatus === 'HIT') {
+            // Se veio do cache, faz uma requisição em background para obter dados atualizados
+            fetchFreshApps();
+          }
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -88,6 +96,30 @@ export function AppsPage(props: AppsPageProps) {
         setError('Erro ao carregar aplicativos');
       } finally {
         setLoading(false);
+      }
+    };
+
+    const fetchFreshApps = async () => {
+      try {
+        setIsUpdatingFromServer(true);
+        const response = await api.post(
+          '/api/apps/list',
+          {},
+          {
+            headers: {
+              'x-cache': 'false',
+            },
+          }
+        );
+
+        if (response.status === 200 && response.data.success) {
+          setApps(response.data.result);
+        }
+      } catch (error) {
+        // Ignora erros na atualização em background
+        console.warn('Failed to fetch fresh apps data:', error);
+      } finally {
+        setIsUpdatingFromServer(false);
       }
     };
 
@@ -257,6 +289,25 @@ export function AppsPage(props: AppsPageProps) {
 
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
+
+          {/* Indicador de atualização do servidor */}
+          {isUpdatingFromServer && (
+            <Flex align='center' gap='3'>
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid var(--gray-6)',
+                  borderTop: '2px solid var(--gray-9)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
+                Sincronizando informações com o servidor...
+              </Text>
+            </Flex>
+          )}
 
           {/* Estado de carregamento */}
           {loading && (

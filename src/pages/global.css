@@ -268,3 +268,13 @@ html {
 .theme-box-sizing *::after {
   box-sizing: border-box;
 }
+
+/* Spinner animation for loading indicators */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

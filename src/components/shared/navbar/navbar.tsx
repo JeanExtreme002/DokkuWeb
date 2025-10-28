@@ -85,7 +85,7 @@ export function NavBar(props: NavBarProps) {
           </IconButton>
           <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <WebsiteLogo
-              imageDisplay={{ xs: 'none', md: 'flex' }}
+              imageDisplay={{ xs: 'none', sm: 'flex' }}
               titleDisplay={{ xs: 'none', sm: 'block' }}
             />
           </Box>
@@ -93,7 +93,7 @@ export function NavBar(props: NavBarProps) {
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'flex' } }} alignItems={'center'}>
             <Typography
-              sx={{ display: { xs: 'none', sm: 'flex' } }}
+              sx={{ display: { xs: 'none', md: 'flex' } }}
               marginInline={1}
               fontWeight={'light'}
             >
