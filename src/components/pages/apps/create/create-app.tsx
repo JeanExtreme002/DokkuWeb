@@ -15,7 +15,7 @@ import { Session } from 'next-auth';
 import React, { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components/shared';
-import { api, config } from '@/lib';
+import { api } from '@/lib';
 
 import styles from './create-app.module.css';
 
@@ -143,24 +143,18 @@ export function CreateAppPage(props: CreateAppPageProps) {
 
     try {
       // 1. Cria o aplicativo
-      const createAppResponse = await api.post(`/api/apps/${appName.trim()}`);
+      const createAppResponse = await api.post(
+        `/api/apps/${appName.trim()}`,
+        {},
+        { params: { unique_app: 'true' } }
+      );
 
       if (createAppResponse.status !== 200 && createAppResponse.status !== 201) {
         throw new Error(`Failed to create app: ${createAppResponse.status}`);
       }
 
-      // 2. Cria as requisições paralelas para domain, config e network
+      // 2. Cria as requisições paralelas para config e network
       const promises: Promise<any>[] = [];
-
-      // Adiciona requisição de domain
-      promises.push(
-        api
-          .post(`/api/domains/${appName.trim()}/${appName.trim()}.${config.server.domain}/`)
-          .catch((error) => {
-            console.error('Error creating domain:', error);
-            // Não falha o processo se domain der erro
-          })
-      );
 
       // Adiciona requisição de vinculação à rede (se uma foi selecionada)
       if (selectedNetwork && selectedNetwork !== 'none') {
@@ -198,6 +192,8 @@ export function CreateAppPage(props: CreateAppPageProps) {
           setError('Você já utilizou toda sua cota disponível de aplicativos!');
         } else if (error.response?.data?.detail === 'App already exists') {
           setError(`O aplicativo "${appName.trim()}" já existe.`);
+        } else if (error.response?.data?.detail == 'App name already in use') {
+          setError(`O nome de aplicativo "${appName.trim()}" já está em uso.`);
         } else {
           setError('Acesso negado. Verifique suas permissões.');
         }
