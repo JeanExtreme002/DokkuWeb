@@ -122,11 +122,17 @@ export function SettingsPage(props: SettingsPageProps) {
 
     try {
       setUpdateLoading(true);
-      await api.put(`/api/admin/users/${userQuota.email}/quota`, {
-        apps_quota: editQuota.apps_quota,
-        networks_quota: editQuota.networks_quota,
-        services_quota: editQuota.services_quota,
-      });
+      await api.put(
+        `/api/admin/users/${userQuota.email}/quota`,
+        {},
+        {
+          params: {
+            apps_quota: editQuota.apps_quota,
+            networks_quota: editQuota.networks_quota,
+            services_quota: editQuota.services_quota,
+          },
+        }
+      );
       setUserQuota({ ...editQuota, email: userQuota.email });
       setEditMode(false);
     } catch (error) {
