@@ -152,10 +152,10 @@ async function proxyHandler(request: NextRequest) {
   if (!session) return new Response(null, { status: 401 });
 
   const method = request.method.toUpperCase();
-  if (!['POST', 'PUT', 'DELETE'].includes(method)) {
+  if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method)) {
     return new Response(null, {
       status: 405,
-      headers: { Allow: 'POST, PUT, DELETE' },
+      headers: { Allow: 'GET, POST, PUT, DELETE' },
     });
   }
 
@@ -222,7 +222,7 @@ async function proxyHandler(request: NextRequest) {
     const res = await fetch(upstreamUrl, {
       method,
       headers: baseHeaders,
-      body: bodyToSend,
+      body: method !== 'GET' ? bodyToSend : undefined,
       redirect: 'error',
       cache: 'no-store',
       signal: AbortSignal.timeout(10 * 60 * 1000),
@@ -284,7 +284,7 @@ async function updateCacheInBackground(
     const res = await fetch(upstreamUrl, {
       method,
       headers: baseHeaders,
-      body: bodyToSend,
+      body: method !== 'GET' ? bodyToSend : undefined,
       redirect: 'error',
       cache: 'no-store',
       signal: AbortSignal.timeout(10 * 60 * 1000),
@@ -307,6 +307,7 @@ async function updateCacheInBackground(
   }
 }
 
+export const GET = proxyHandler;
 export const POST = proxyHandler;
 export const PUT = proxyHandler;
 export const DELETE = proxyHandler;
