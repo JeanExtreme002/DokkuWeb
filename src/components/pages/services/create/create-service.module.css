@@ -1,0 +1,107 @@
+.root {
+  min-height: 100vh;
+  background: var(--color-background);
+  padding: 0;
+}
+
+.mainContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Garantir que a animação continue funcionando */
+.spinner {
+  animation: spin 1s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Database selection grid */
+.databaseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 70px;
+  width: 100%;
+}
+
+.databaseCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+  position: relative;
+  user-select: none;
+  width: 100%;
+}
+
+.databaseCard:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Buttons container */
+.buttonsContainer {
+  margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .mainContainer {
+    padding: 24px 16px;
+  }
+
+  .root {
+    padding: 0;
+  }
+
+  /* Hide grid on mobile, use select instead */
+  .databaseGrid {
+    display: none;
+  }
+
+  /* Stack buttons vertically */
+  .buttonsContainer {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .buttonsContainer button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Reduce error message text size on small screens */
+  .errorMessage {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Tablet and desktop grid */
+@media (min-width: 481px) {
+  .databaseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    width: 100%;
+  }
+}
+
+/* Large screens - allow more columns */
+@media (min-width: 1024px) {
+  .databaseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    width: 100%;
+  }
+}
