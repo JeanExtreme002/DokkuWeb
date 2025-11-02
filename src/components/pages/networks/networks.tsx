@@ -331,51 +331,17 @@ export function NetworksPage(props: NetworksPageProps) {
           {!loading && !error && (
             <>
               {networksList.length === 0 ? (
-                <Card className={styles.emptyState}>
-                  <Box className={styles.emptyStateIcon}>
-                    <NetworkIcon />
-                  </Box>
-                  <Heading
-                    size='4'
-                    weight='medium'
-                    style={{ color: 'var(--gray-11)', marginBottom: '8px' }}
-                  >
-                    Nenhuma rede criada
-                  </Heading>
-                  <Text size='3' color='gray' style={{ marginBottom: '24px' }}>
-                    Crie sua primeira rede Docker para conectar seus aplicativos
+                <Card
+                  style={{
+                    border: '1px solid var(--gray-6)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                    padding: '40px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Text size='3' color='gray'>
+                    Nenhuma rede criada ainda.
                   </Text>
-                  <Button
-                    size='3'
-                    onClick={() => (window.location.href = './networks/create')}
-                    style={{
-                      background: 'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
-                      border: 'none',
-                      color: 'white',
-                      cursor: 'pointer',
-                      fontWeight: '600',
-                      padding: '16px 32px',
-                      borderRadius: '12px',
-                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      fontSize: '14px',
-                      letterSpacing: '0.025em',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.35)';
-                      e.currentTarget.style.background =
-                        'linear-gradient(135deg, var(--blue-10) 0%, var(--blue-11) 100%)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.25)';
-                      e.currentTarget.style.background =
-                        'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)';
-                    }}
-                  >
-                    Criar primeira rede
-                  </Button>
                 </Card>
               ) : (
                 <Accordion.Root

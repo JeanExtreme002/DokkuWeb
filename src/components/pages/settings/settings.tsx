@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Card,
+  Dialog,
   Flex,
   Heading,
   Separator,
@@ -12,6 +13,7 @@ import {
   TextField,
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { AppIcon, DotIcon, NavBar, NetworkIcon, ServiceIcon } from '@/components';
@@ -38,6 +40,7 @@ interface UserQuotaInfo extends QuotaInfo {
 }
 
 export function SettingsPage(props: SettingsPageProps) {
+  const { data: sessionData, update: updateSession } = useSession();
   const [quota, setQuota] = useState<QuotaInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +60,10 @@ export function SettingsPage(props: SettingsPageProps) {
   });
   const [updateLoading, setUpdateLoading] = useState(false);
   const [showToken, setShowToken] = useState(false);
+
+  // Takeover states
+  const [showTakeoverModal, setShowTakeoverModal] = useState(false);
+  const [takeoverLoading, setTakeoverLoading] = useState(false);
 
   useEffect(() => {
     const fetchQuota = async () => {
@@ -144,9 +151,10 @@ export function SettingsPage(props: SettingsPageProps) {
   };
 
   const copyToken = async () => {
-    if (session?.accessToken) {
+    const currentSession = sessionData || props.session;
+    if (currentSession?.accessToken) {
       try {
-        await navigator.clipboard.writeText(session.accessToken);
+        await navigator.clipboard.writeText(currentSession.accessToken);
         // Aqui você pode adicionar uma notificação de sucesso se tiver um sistema de toast
       } catch (error) {
         console.error('Erro ao copiar token:', error);
@@ -154,9 +162,40 @@ export function SettingsPage(props: SettingsPageProps) {
     }
   };
 
-  const { session } = props;
-  const userImage = session?.user?.image;
+  const performTakeover = async () => {
+    if (!userQuota?.email) return;
+
+    try {
+      setTakeoverLoading(true);
+      const response = await api.post<{ access_token: string }>(
+        `/api/admin/users/${userQuota.email}/take-over/`
+      );
+
+      // Atualizar a sessão globalmente usando NextAuth
+      await updateSession({
+        accessToken: response.data.access_token,
+        user: {
+          name: `Takeover User ${userQuota.email}`,
+          email: userQuota.email,
+        },
+      });
+
+      setShowTakeoverModal(false);
+      // A sessão foi atualizada, recarregar para garantir que todas as partes da aplicação reflitam a mudança
+      window.location.reload();
+    } catch (error) {
+      console.error('Error performing takeover:', error);
+      setUserQuotaError('Erro ao realizar takeover do usuário');
+    } finally {
+      setTakeoverLoading(false);
+    }
+  };
+
+  const session = sessionData || props.session;
   const userName = session?.user?.name || 'Usuário';
+  const userImage = !userName.toLowerCase().startsWith('takeover')
+    ? props.session?.user?.image
+    : undefined;
   const userEmail = session?.user?.email || '';
 
   return (
@@ -751,6 +790,58 @@ export function SettingsPage(props: SettingsPageProps) {
                             </Badge>
                           )}
                         </Flex>
+                        <Button
+                          size='2'
+                          color='red'
+                          onClick={() => setShowTakeoverModal(true)}
+                          style={{
+                            backgroundColor: 'var(--red-9)',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <svg
+                            width='14'
+                            height='14'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                          >
+                            {/* Ícone de switch/alternância entre usuários */}
+                            <circle
+                              cx='9'
+                              cy='7'
+                              r='4'
+                              stroke='currentColor'
+                              strokeWidth='2'
+                              fill='none'
+                            />
+                            <path
+                              d='M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2'
+                              stroke='currentColor'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                            <path
+                              d='M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85'
+                              stroke='currentColor'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                            <path
+                              d='M17 8h4m0 0l-2-2m2 2l-2 2'
+                              stroke='currentColor'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          </svg>
+                          Takeover
+                        </Button>
                       </Flex>
                     </Flex>
                   </Box>
@@ -760,6 +851,44 @@ export function SettingsPage(props: SettingsPageProps) {
           )}
         </Flex>
       </main>
+
+      {/* Modal de confirmação de takeover */}
+      <Dialog.Root open={showTakeoverModal} onOpenChange={setShowTakeoverModal}>
+        <Dialog.Content
+          maxWidth='450px'
+          style={{
+            padding: '24px',
+          }}
+        >
+          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Takeover</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja assumir o controle da conta <strong>{userQuota?.email}</strong>?
+            Esta ação irá substituir sua sessão atual pela sessão da conta selecionada.
+            <br />
+            <br />
+            Quaisquer ações terão <strong>impacto real</strong> na conta desse usuário.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray'>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              color='red'
+              onClick={performTakeover}
+              disabled={takeoverLoading}
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+              }}
+            >
+              {takeoverLoading ? 'Processando...' : 'Confirmar Takeover'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
     </>
   );
 }

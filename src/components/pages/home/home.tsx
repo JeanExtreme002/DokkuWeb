@@ -78,17 +78,17 @@ interface QuotaInfo {
 
 interface DashboardStats {
   apps: {
-    total: number;
-    running: number;
-    stopped: number;
+    total: number | undefined;
+    running: number | undefined;
+    stopped: number | undefined;
   };
   networks: {
-    total: number;
+    total: number | undefined;
   };
   services: {
-    total: number;
-    running: number;
-    stopped: number;
+    total: number | undefined;
+    running: number | undefined;
+    stopped: number | undefined;
   };
   quota: QuotaInfo | null;
 }
@@ -102,12 +102,11 @@ interface SystemInfo {
 export function HomePage(props: HomePageProps) {
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
-    apps: { total: 0, running: 0, stopped: 0 },
-    networks: { total: 0 },
-    services: { total: 0, running: 0, stopped: 0 },
+    apps: { total: undefined, running: undefined, stopped: undefined },
+    networks: { total: undefined },
+    services: { total: undefined, running: undefined, stopped: undefined },
     quota: null,
   });
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [detailedResources, setDetailedResources] = useState<DetailedResourcesData>({
     apps: [],
@@ -283,8 +282,6 @@ export function HomePage(props: HomePageProps) {
 
         setStats((prev) => {
           const updatedStats = { ...prev, ...newStats };
-          // Update recent activity with the new stats
-          setTimeout(() => generateRecentActivity(updatedStats), 100);
           return updatedStats;
         });
       }
@@ -301,96 +298,6 @@ export function HomePage(props: HomePageProps) {
     }
   };
 
-  const generateRecentActivity = (stats: DashboardStats) => {
-    const activities = [];
-
-    // System status - only if we have system info
-    if (systemInfo) {
-      activities.push({
-        id: 1,
-        type: 'system',
-        icon: systemInfo.dokkuStatus ? CheckCircledIcon : ExclamationTriangleIcon,
-        resource: 'Sistema Dokku',
-        description: `Status: ${systemInfo.dokkuStatus ? 'Operacional' : 'Indisponível'}`,
-        detail: `${systemInfo.dokkuVersion} • API versão ${systemInfo.version}`,
-        time: systemInfo.dokkuStatus ? 'Online' : 'Offline',
-        status: systemInfo.dokkuStatus ? 'success' : 'warning',
-        color: systemInfo.dokkuStatus ? 'green' : 'orange',
-      });
-    }
-
-    if (stats.apps.total > 0) {
-      const appNames = detailedResources.apps.map((app) => app.name).slice(0, 3);
-      const moreApps = Math.max(0, stats.apps.total - 3);
-
-      activities.push({
-        id: 2,
-        type: 'app',
-        icon: RocketIcon,
-        resource: 'Aplicativos',
-        description: `${stats.apps.total} aplicativo${stats.apps.total !== 1 ? 's' : ''} criado${stats.apps.total !== 1 ? 's' : ''}`,
-        detail:
-          appNames.length > 0
-            ? `${appNames.join(', ')}${moreApps > 0 ? ` e mais ${moreApps}` : ''}`
-            : stats.quota
-              ? `Usando ${stats.apps.total}/${stats.quota.apps_quota} da cota`
-              : 'Carregando detalhes...',
-        items: detailedResources.apps,
-        time: 'Ativo',
-        status: 'info',
-        color: 'blue',
-      });
-    }
-
-    if (stats.services.total > 0) {
-      const serviceNames = detailedResources.services.map((service) => service.name).slice(0, 3);
-      const moreServices = Math.max(0, stats.services.total - 3);
-
-      activities.push({
-        id: 3,
-        type: 'service',
-        icon: CubeIcon,
-        resource: 'Serviços',
-        description: `${stats.services.total} serviço${stats.services.total !== 1 ? 's' : ''} ativo${stats.services.total !== 1 ? 's' : ''}`,
-        detail:
-          serviceNames.length > 0
-            ? `${serviceNames.join(', ')}${moreServices > 0 ? ` e mais ${moreServices}` : ''}`
-            : stats.quota
-              ? `Usando ${stats.services.total}/${stats.quota.services_quota} da cota`
-              : 'Carregando detalhes...',
-        items: detailedResources.services,
-        time: 'Operacional',
-        status: 'info',
-        color: 'purple',
-      });
-    }
-
-    if (stats.networks.total > 0) {
-      const networkNames = detailedResources.networks.map((network) => network.name).slice(0, 3);
-      const moreNetworks = Math.max(0, stats.networks.total - 3);
-
-      activities.push({
-        id: 4,
-        type: 'network',
-        icon: GlobeIcon,
-        resource: 'Redes',
-        description: `${stats.networks.total} rede${stats.networks.total !== 1 ? 's' : ''} configurada${stats.networks.total !== 1 ? 's' : ''}`,
-        detail:
-          networkNames.length > 0
-            ? `${networkNames.join(', ')}${moreNetworks > 0 ? ` e mais ${moreNetworks}` : ''}`
-            : stats.quota
-              ? `Usando ${stats.networks.total}/${stats.quota.networks_quota} da cota`
-              : 'Carregando detalhes...',
-        items: detailedResources.networks,
-        time: 'Conectado',
-        status: 'info',
-        color: 'green',
-      });
-    }
-
-    setRecentActivity(activities);
-  };
-
   const getResourceUsagePercentage = (used: number, quota: number) => {
     return quota > 0 ? Math.min((used / quota) * 100, 100) : 0;
   };
@@ -402,7 +309,9 @@ export function HomePage(props: HomePageProps) {
   };
 
   const userName = props.session?.user?.name || 'Usuário';
-  const userImage = props.session?.user?.image;
+  const userImage = !userName.toLowerCase().startsWith('takeover')
+    ? props.session?.user?.image
+    : undefined;
 
   // Component for skeleton loading state
   const SkeletonStatItem = () => (
@@ -766,11 +675,7 @@ export function HomePage(props: HomePageProps) {
           </Box>
 
           {/* System Status & Activity */}
-          {(recentActivity.length > 0 ||
-            loadingState.apps ||
-            loadingState.networks ||
-            loadingState.services ||
-            loadingState.system) && (
+          {(loadingState.system || systemInfo) && (
             <>
               <Separator size='4' style={{ margin: '20px 0', opacity: 0.2 }} />
               <Box>
@@ -907,9 +812,11 @@ export function HomePage(props: HomePageProps) {
                             className={styles.resourcesGrid}
                           >
                             {/* Apps Card */}
-                            {loadingState.apps ? (
+                            {loadingState.apps ||
+                            stats.apps.total === undefined ||
+                            detailedResources.apps.length < stats.apps.total ? (
                               <SkeletonResourceCard type='apps' />
-                            ) : detailedResources.apps.length > 0 ? (
+                            ) : (
                               <Box
                                 className={styles.resourceCard}
                                 onClick={() => router.push('/apps')}
@@ -992,37 +899,75 @@ export function HomePage(props: HomePageProps) {
                                 </Flex>
 
                                 <Box className={styles.resourceList}>
-                                  {detailedResources.apps.slice(0, 3).map((app, idx) => (
+                                  {detailedResources.apps.length > 0 ? (
+                                    <>
+                                      {detailedResources.apps.slice(0, 3).map((app, idx) => (
+                                        <Flex
+                                          key={idx}
+                                          align='center'
+                                          gap='2'
+                                          className={styles.resourceListItem}
+                                        >
+                                          <div
+                                            className={styles.statusIndicator}
+                                            data-status={app.running ? 'active' : 'inactive'}
+                                          />
+                                          <Text size='2' className={styles.resourceName}>
+                                            {app.name}
+                                          </Text>
+                                        </Flex>
+                                      ))}
+                                      {detailedResources.apps.length > 3 && (
+                                        <Text size='1' className={styles.moreItems}>
+                                          +{detailedResources.apps.length - 3} mais
+                                        </Text>
+                                      )}
+                                    </>
+                                  ) : (
                                     <Flex
-                                      key={idx}
+                                      direction='column'
                                       align='center'
+                                      justify='center'
                                       gap='2'
-                                      className={styles.resourceListItem}
+                                      py='4'
+                                      style={{ opacity: 0.6 }}
                                     >
-                                      <div
-                                        className={styles.statusIndicator}
-                                        data-status={app.running ? 'active' : 'inactive'}
-                                      />
-                                      <Text size='2' className={styles.resourceName}>
-                                        {app.name}
+                                      <Box
+                                        style={{
+                                          width: '48px',
+                                          height: '48px',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          borderRadius: '50%',
+                                          backgroundColor: 'var(--gray-3)',
+                                        }}
+                                      >
+                                        <CrossCircledIcon
+                                          width='24'
+                                          height='24'
+                                          style={{ color: 'var(--gray-8)' }}
+                                        />
+                                      </Box>
+                                      <Text
+                                        size='2'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-10)', textAlign: 'center' }}
+                                      >
+                                        Nenhum aplicativo criado ainda
                                       </Text>
                                     </Flex>
-                                  ))}
-                                  {detailedResources.apps.length > 3 && (
-                                    <Text size='1' className={styles.moreItems}>
-                                      +{detailedResources.apps.length - 3} mais
-                                    </Text>
                                   )}
                                 </Box>
                               </Box>
-                            ) : (
-                              <SkeletonResourceCard type='apps' />
                             )}
 
                             {/* Services Card */}
-                            {loadingState.services ? (
+                            {loadingState.services ||
+                            stats.services.total === undefined ||
+                            detailedResources.services.length < stats.services.total ? (
                               <SkeletonResourceCard type='services' />
-                            ) : detailedResources.services.length > 0 ? (
+                            ) : (
                               <Box
                                 className={styles.resourceCard}
                                 onClick={() => router.push('/services')}
@@ -1105,47 +1050,87 @@ export function HomePage(props: HomePageProps) {
                                 </Flex>
 
                                 <Box className={styles.resourceList}>
-                                  {detailedResources.services.slice(0, 3).map((service, idx) => (
+                                  {detailedResources.services.length > 0 ? (
+                                    <>
+                                      {detailedResources.services
+                                        .slice(0, 3)
+                                        .map((service, idx) => (
+                                          <Flex
+                                            key={idx}
+                                            align='center'
+                                            gap='2'
+                                            className={styles.resourceListItem}
+                                          >
+                                            <div
+                                              className={styles.statusIndicator}
+                                              data-status={
+                                                service.status === 'running' ? 'active' : 'inactive'
+                                              }
+                                            />
+                                            <Text size='2' className={styles.resourceName}>
+                                              {service.name}
+                                            </Text>
+                                            <Badge
+                                              color='purple'
+                                              variant='soft'
+                                              size='1'
+                                              className={styles.serviceTypeBadge}
+                                            >
+                                              {service.type}
+                                            </Badge>
+                                          </Flex>
+                                        ))}
+                                      {detailedResources.services.length > 3 && (
+                                        <Text size='1' className={styles.moreItems}>
+                                          +{detailedResources.services.length - 3} mais
+                                        </Text>
+                                      )}
+                                    </>
+                                  ) : (
                                     <Flex
-                                      key={idx}
+                                      direction='column'
                                       align='center'
+                                      justify='center'
                                       gap='2'
-                                      className={styles.resourceListItem}
+                                      py='4'
+                                      style={{ opacity: 0.6 }}
                                     >
-                                      <div
-                                        className={styles.statusIndicator}
-                                        data-status={
-                                          service.status === 'running' ? 'active' : 'inactive'
-                                        }
-                                      />
-                                      <Text size='2' className={styles.resourceName}>
-                                        {service.name}
-                                      </Text>
-                                      <Badge
-                                        color='purple'
-                                        variant='soft'
-                                        size='1'
-                                        className={styles.serviceTypeBadge}
+                                      <Box
+                                        style={{
+                                          width: '48px',
+                                          height: '48px',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          borderRadius: '50%',
+                                          backgroundColor: 'var(--gray-3)',
+                                        }}
                                       >
-                                        {service.type}
-                                      </Badge>
+                                        <CrossCircledIcon
+                                          width='24'
+                                          height='24'
+                                          style={{ color: 'var(--gray-8)' }}
+                                        />
+                                      </Box>
+                                      <Text
+                                        size='2'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-10)', textAlign: 'center' }}
+                                      >
+                                        Nenhum serviço criado ainda
+                                      </Text>
                                     </Flex>
-                                  ))}
-                                  {detailedResources.services.length > 3 && (
-                                    <Text size='1' className={styles.moreItems}>
-                                      +{detailedResources.services.length - 3} mais
-                                    </Text>
                                   )}
                                 </Box>
                               </Box>
-                            ) : (
-                              <SkeletonResourceCard type='services' />
                             )}
 
                             {/* Networks Card */}
-                            {loadingState.networks ? (
+                            {loadingState.networks ||
+                            stats.networks.total === undefined ||
+                            detailedResources.networks.length < stats.networks.total ? (
                               <SkeletonResourceCard type='networks' />
-                            ) : detailedResources.networks.length > 0 ? (
+                            ) : (
                               <Box
                                 className={styles.resourceCard}
                                 onClick={() => router.push('/networks')}
@@ -1209,31 +1194,69 @@ export function HomePage(props: HomePageProps) {
                                 </Box>
 
                                 <Box className={styles.resourceList}>
-                                  {detailedResources.networks.slice(0, 3).map((network, idx) => (
+                                  {detailedResources.networks.length > 0 ? (
+                                    <>
+                                      {detailedResources.networks
+                                        .slice(0, 3)
+                                        .map((network, idx) => (
+                                          <Flex
+                                            key={idx}
+                                            align='center'
+                                            gap='2'
+                                            className={styles.resourceListItem}
+                                          >
+                                            <div
+                                              className={styles.statusIndicator}
+                                              data-status='active'
+                                            />
+                                            <Text size='2' className={styles.resourceName}>
+                                              {network.name}
+                                            </Text>
+                                          </Flex>
+                                        ))}
+                                      {detailedResources.networks.length > 3 && (
+                                        <Text size='1' className={styles.moreItems}>
+                                          +{detailedResources.networks.length - 3} mais
+                                        </Text>
+                                      )}
+                                    </>
+                                  ) : (
                                     <Flex
-                                      key={idx}
+                                      direction='column'
                                       align='center'
+                                      justify='center'
                                       gap='2'
-                                      className={styles.resourceListItem}
+                                      py='4'
+                                      style={{ opacity: 0.6 }}
                                     >
-                                      <div
-                                        className={styles.statusIndicator}
-                                        data-status='active'
-                                      />
-                                      <Text size='2' className={styles.resourceName}>
-                                        {network.name}
+                                      <Box
+                                        style={{
+                                          width: '48px',
+                                          height: '48px',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          borderRadius: '50%',
+                                          backgroundColor: 'var(--gray-3)',
+                                        }}
+                                      >
+                                        <CrossCircledIcon
+                                          width='24'
+                                          height='24'
+                                          style={{ color: 'var(--gray-8)' }}
+                                        />
+                                      </Box>
+                                      <Text
+                                        size='2'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-10)', textAlign: 'center' }}
+                                      >
+                                        Nenhuma rede criada ainda
                                       </Text>
                                     </Flex>
-                                  ))}
-                                  {detailedResources.networks.length > 3 && (
-                                    <Text size='1' className={styles.moreItems}>
-                                      +{detailedResources.networks.length - 3} mais
-                                    </Text>
                                   )}
                                 </Box>
                               </Box>
-                            ) : (
-                              <SkeletonResourceCard type='networks' />
                             )}
                           </Grid>
                         </Accordion.Content>

@@ -13,14 +13,34 @@ export const authOptions: NextAuthOptions = {
     async signIn({ profile }) {
       return profile?.email?.endsWith('@ufba.br') ?? false;
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, trigger, session }) {
       if (account) {
         token.accessToken = account.access_token;
       }
+
+      if (trigger === 'update' && session?.accessToken) {
+        token.accessToken = session.accessToken;
+      }
+
+      if (trigger === 'update' && session?.user) {
+        token.name = session.user.name;
+        token.email = session.user.email;
+      }
+
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
+
+      if (session.user) {
+        if (token.name) {
+          session.user.name = token.name as string;
+        }
+        if (token.email) {
+          session.user.email = token.email as string;
+        }
+      }
+
       return session;
     },
   },

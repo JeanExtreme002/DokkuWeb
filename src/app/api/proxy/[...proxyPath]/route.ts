@@ -5,7 +5,6 @@ import { authOptions } from '../../../../pages/api/auth/[...nextauth]';
 
 const API_URL = process.env.BACKEND_URL!;
 const API_KEY = process.env.BACKEND_API_KEY || '';
-const MASTER_KEY = process.env.BACKEND_MASTER_KEY || '';
 
 const AUTO_CLEANUP_CACHE_INTERVAL = 30 * 60 * 1000;
 
@@ -214,7 +213,6 @@ async function proxyHandler(request: NextRequest) {
 
   const baseHeaders: Record<string, string> = {
     accept: 'application/json',
-    'MASTER-KEY': MASTER_KEY,
     'content-type': 'application/json',
   };
 
@@ -277,7 +275,6 @@ async function updateCacheInBackground(
 
     const baseHeaders: Record<string, string> = {
       accept: 'application/json',
-      'MASTER-KEY': MASTER_KEY,
       'content-type': 'application/json',
     };
 

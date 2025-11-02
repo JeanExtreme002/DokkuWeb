@@ -360,25 +360,149 @@
   background: linear-gradient(90deg, var(--green-8), var(--green-9));
 }
 
-/* Skeleton Loading Animation */
+/* Enhanced Skeleton Loading Animation */
 @keyframes shimmer {
   0% {
-    background-position: -200px 0;
+    background-position: -400px 0;
   }
   100% {
-    background-position: calc(200px + 100%) 0;
+    background-position: 400px 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
   }
 }
 
 .skeletonElement {
   background: linear-gradient(
     90deg,
-    var(--gray-3) 0px,
-    var(--gray-4) 40px,
-    var(--gray-3) 80px
+    var(--gray-3) 0%,
+    var(--gray-4) 20%,
+    var(--gray-5) 40%,
+    var(--gray-4) 60%,
+    var(--gray-3) 100%
   ) !important;
-  background-size: 200px 100% !important;
-  animation: shimmer 1.5s infinite linear;
+  background-size: 400px 100% !important;
+  animation: shimmer 2s infinite linear;
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.skeletonElement::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.1) 75%,
+    transparent 100%
+  );
+  animation: wave 2.5s infinite ease-in-out;
+  border-radius: inherit;
+}
+
+/* Staggered animation delays for skeleton elements */
+.skeleton:nth-child(1) .skeletonElement,
+.skeleton:nth-child(1) .skeletonElement::before {
+  animation-delay: 0s;
+}
+
+.skeleton:nth-child(2) .skeletonElement,
+.skeleton:nth-child(2) .skeletonElement::before {
+  animation-delay: 0.15s;
+}
+
+.skeleton:nth-child(3) .skeletonElement,
+.skeleton:nth-child(3) .skeletonElement::before {
+  animation-delay: 0.3s;
+}
+
+.skeleton:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.skeleton:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.skeleton:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  25% {
+    opacity: 0.65;
+    transform: scale(1.01);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+  75% {
+    opacity: 0.65;
+    transform: scale(1.01);
+  }
+}
+
+/* Skeleton icon animation */
+.iconContainer .skeletonElement,
+.resourceIcon .skeletonElement,
+.healthIcon .skeletonElement {
+  animation:
+    skeletonPulse 2.2s infinite ease-in-out,
+    shimmer 2s infinite linear;
+}
+
+/* Modern loading spinner enhancement */
+.modernSpinner {
+  animation:
+    spin 1s linear infinite,
+    float 2s infinite ease-in-out;
 }
 
 /* Smooth transition for when content loads */
@@ -388,14 +512,70 @@
 
 .statItem[data-loading='true'] {
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.9;
   cursor: default;
+  animation:
+    breathe 3s infinite ease-in-out,
+    float 4s infinite ease-in-out,
+    glow 3.5s infinite ease-in-out;
 }
 
 .statItem[data-loading='true']:hover {
   transform: none;
   box-shadow: 0 4px 16px var(--black-a3);
   border-color: var(--gray-6);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  25% {
+    transform: scale(1.005);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.015);
+    opacity: 0.95;
+  }
+  75% {
+    transform: scale(1.005);
+    opacity: 0.9;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-1px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  75% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  25% {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  75% {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Status Cards */
@@ -615,6 +795,22 @@
 
 .resourceCard:hover::before {
   opacity: 1;
+}
+
+/* Skeleton resource card animation */
+.resourceCard[data-loading='true'] {
+  animation:
+    breathe 3.2s infinite ease-in-out,
+    float 4.5s infinite ease-in-out,
+    glow 3.8s infinite ease-in-out;
+  pointer-events: none;
+  cursor: default;
+}
+
+.resourceCard[data-loading='true']:hover {
+  transform: none;
+  box-shadow: 0 4px 16px var(--black-a3);
+  border-color: var(--gray-6);
 }
 
 .resourceIcon {
