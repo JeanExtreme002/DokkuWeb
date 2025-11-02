@@ -298,8 +298,8 @@ export function HomePage(props: HomePageProps) {
     }
   };
 
-  const getResourceUsagePercentage = (used: number, quota: number) => {
-    return quota > 0 ? Math.min((used / quota) * 100, 100) : 0;
+  const getResourceUsagePercentage = (used: number | undefined, quota: number) => {
+    return quota > 0 ? Math.min(((used || 0) / quota) * 100, 100) : 0;
   };
 
   const getUsageColor = (percentage: number) => {
