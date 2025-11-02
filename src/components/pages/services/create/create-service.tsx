@@ -152,9 +152,9 @@ export function CreateServicePage(props: CreateServicePageProps) {
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
           setError('Você já utilizou toda sua cota disponível de serviços!');
-        } else if (error.response?.data?.detail === 'Service already exists') {
+        } else if (error.response?.data?.detail === 'Database already exists') {
           setError(`O serviço "${serviceName.trim()}" já existe.`);
-        } else if (error.response?.data?.detail === 'Service name already in use') {
+        } else if (error.response?.data?.detail === 'Database name already in use') {
           setError(`O nome de serviço "${serviceName.trim()}" já está em uso.`);
         } else {
           setError('Acesso negado. Verifique suas permissões.');

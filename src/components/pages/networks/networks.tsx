@@ -203,8 +203,14 @@ export function NetworksPage(props: NetworksPageProps) {
     } catch (error: any) {
       console.error('Error creating network:', error);
 
-      if (error.response?.status === 403 && error.response?.data?.detail === 'Quota exceeded') {
-        setCreateNetworkError('Você já utilizou toda sua cota disponível de redes!');
+      if (error.response?.status === 403) {
+        if (error.response?.data?.detail === 'Quota exceeded') {
+          setCreateNetworkError('Você já utilizou toda sua cota disponível de redes!');
+        } else if (error.response?.data?.detail === 'Network already exists') {
+          setCreateNetworkError(`A rede "${newNetworkName.trim()}" já existe.`);
+        } else {
+          setCreateNetworkError('Acesso negado. Verifique suas permissões.');
+        }
       } else {
         setCreateNetworkError('Ocorreu um erro ao criar a rede. Tente novamente.');
       }
