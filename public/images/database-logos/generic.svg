@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="dbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E5C8A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="serverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8F4FD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B8D9F5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="6" y="8" width="36" height="32" rx="3" fill="url(#serverGradient)" stroke="#357ABD" stroke-width="1.5"/>
+  <ellipse cx="24" cy="13" rx="15" ry="4" fill="url(#dbGradient)" stroke="#2E5C8A" stroke-width="1.2"/>
+  <ellipse cx="24" cy="24" rx="15" ry="4" fill="url(#dbGradient)" stroke="#2E5C8A" stroke-width="1.2"/>
+  <ellipse cx="24" cy="35" rx="15" ry="4" fill="url(#dbGradient)" stroke="#2E5C8A" stroke-width="1.2"/>
+  <line x1="9" y1="13" x2="9" y2="31" stroke="#4A90E2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="39" y1="13" x2="39" y2="31" stroke="#4A90E2" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="12" cy="17" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="15" cy="17" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="18" cy="17" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="12" cy="28" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="15" cy="28" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="18" cy="28" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+</svg>

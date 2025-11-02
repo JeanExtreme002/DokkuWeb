@@ -14,7 +14,7 @@ export function LoginPage() {
       height='100vh'
       sx={{
         // Para mobile (xs e sm), o background cobre toda a tela
-        backgroundImage: { xs: `url(/backgrounds/salvador.png)`, md: 'none' },
+        backgroundImage: { xs: `url(/images/backgrounds/salvador.png)`, md: 'none' },
         backgroundSize: { xs: 'cover', md: 'initial' },
         backgroundPosition: { xs: 'center', md: 'initial' },
         // Para mobile, usar flex column e centralizar
@@ -31,7 +31,7 @@ export function LoginPage() {
         flex={1}
         sx={{
           display: { xs: 'none', md: 'block' },
-          backgroundImage: `url(/backgrounds/salvador.png)`,
+          backgroundImage: `url(/images/backgrounds/salvador.png)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

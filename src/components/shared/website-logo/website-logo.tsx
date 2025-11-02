@@ -34,11 +34,11 @@ export function WebsiteLogo({
 
   const getlogoImage = () => {
     if (disableLink) {
-      return <Image src='/logo.png' alt='Logo' className={imgClassName} />;
+      return <Image src='/images/dokku/logo.png' alt='Logo' className={imgClassName} />;
     }
     return (
       <Link underline='none' href={href}>
-        <Image src='/logo.png' alt='Logo' className={imgClassName} />
+        <Image src='/images/dokku/logo.png' alt='Logo' className={imgClassName} />
       </Link>
     );
   };

@@ -24,7 +24,7 @@ export function NotFoundPage() {
         flexDirection={'column'}
         justifyContent={'center'}
       >
-        <Image alt={'Error Image'} src='/logo-error.png' className={styles.logo} />
+        <Image alt={'Error Image'} src='/images/dokku/logo-error.png' className={styles.logo} />
         <Typography marginTop={2} variant={'h2'}>
           404
         </Typography>

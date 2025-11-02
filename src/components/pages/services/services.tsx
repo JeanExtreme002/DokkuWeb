@@ -39,18 +39,16 @@ interface ServicesData {
 }
 
 const DATABASE_IMAGES: Record<string, string> = {
-  postgres: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',
-  mysql: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',
-  mongodb: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg',
-  redis: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg',
-  mariadb: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mariadb/mariadb-original.svg',
-  couchdb: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/couchdb/couchdb-original.svg',
-  cassandra: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cassandra/cassandra-original.svg',
-  elasticsearch:
-    'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/elasticsearch/elasticsearch-original.svg',
-  influxdb: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/influxdb/influxdb-original.svg',
-  generic:
-    'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><defs><linearGradient id="dbGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%234A90E2;stop-opacity:1" /><stop offset="100%" style="stop-color:%232E5C8A;stop-opacity:1" /></linearGradient><linearGradient id="serverGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23E8F4FD;stop-opacity:1" /><stop offset="100%" style="stop-color:%23B8D9F5;stop-opacity:1" /></linearGradient></defs><rect x="6" y="8" width="36" height="32" rx="3" fill="url(%23serverGradient)" stroke="%23357ABD" stroke-width="1.5"/><ellipse cx="24" cy="13" rx="15" ry="4" fill="url(%23dbGradient)" stroke="%232E5C8A" stroke-width="1.2"/><ellipse cx="24" cy="24" rx="15" ry="4" fill="url(%23dbGradient)" stroke="%232E5C8A" stroke-width="1.2"/><ellipse cx="24" cy="35" rx="15" ry="4" fill="url(%23dbGradient)" stroke="%232E5C8A" stroke-width="1.2"/><line x1="9" y1="13" x2="9" y2="31" stroke="%234A90E2" stroke-width="2" stroke-linecap="round"/><line x1="39" y1="13" x2="39" y2="31" stroke="%234A90E2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.5" fill="%23FFFFFF" opacity="0.8"/><circle cx="15" cy="17" r="1.5" fill="%23FFFFFF" opacity="0.8"/><circle cx="18" cy="17" r="1.5" fill="%23FFFFFF" opacity="0.8"/><circle cx="12" cy="28" r="1.5" fill="%23FFFFFF" opacity="0.8"/><circle cx="15" cy="28" r="1.5" fill="%23FFFFFF" opacity="0.8"/><circle cx="18" cy="28" r="1.5" fill="%23FFFFFF" opacity="0.8"/></svg>',
+  postgres: '/images/database-logos/postgresql.svg',
+  mysql: '/images/database-logos/mysql.svg',
+  mongodb: '/images/database-logos/mongodb.svg',
+  redis: '/images/database-logos/redis.svg',
+  mariadb: '/images/database-logos/mariadb.svg',
+  couchdb: '/images/database-logos/couchdb.svg',
+  cassandra: '/images/database-logos/cassandra.svg',
+  elasticsearch: '/images/database-logos/elasticsearch.svg',
+  influxdb: '/images/database-logos/influxdb.svg',
+  generic: '/images/database-logos/generic.svg',
 };
 
 export function ServicesPage(props: ServicesPageProps) {
@@ -350,7 +348,7 @@ export function ServicesPage(props: ServicesPageProps) {
                               className={styles.serviceImage}
                               onError={(e) => {
                                 // Fallback para um ícone genérico de banco de dados se a imagem falhar
-                                e.currentTarget.src = DATABASE_IMAGES.generic;
+                                e.currentTarget.src = '/images/database-logos/generic.svg';
                               }}
                             />
 
