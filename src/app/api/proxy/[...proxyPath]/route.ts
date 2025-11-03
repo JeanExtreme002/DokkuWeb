@@ -10,8 +10,14 @@ const AUTO_CLEANUP_CACHE_INTERVAL = 30 * 60 * 1000;
 
 // Configuration list for which method+endpoint combinations should be cached
 const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
-  { method: 'POST', endpoint: '/api/apps/list' },
-  { method: 'POST', endpoint: '/api/databases/list' },
+  { method: 'POST', endpoint: '/api/apps/list/' },
+  { method: 'POST', endpoint: '/api/databases/list/' },
+  { method: 'POST', endpoint: '/api/networks/list/' },
+  { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/deployment-token/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/url/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/network/' },
 ];
 
 interface CacheEntry {
@@ -32,13 +38,46 @@ class ServerCache {
   ): string {
     const params = searchParams.toString();
     const bodyStr = body || '';
+
     return `${method}:${path}:${params}:${bodyStr}`;
   }
 
+  private isPatternEndpoint(endpoint: string): boolean {
+    // Check if endpoint contains dynamic parameters (starts with :)
+    return endpoint.includes(':');
+  }
+
   private shouldCache(method: string, endpoint: string): boolean {
-    return CACHEABLE_ENDPOINTS.some(
-      (config) => config.method === method && endpoint.startsWith(config.endpoint)
-    );
+    return CACHEABLE_ENDPOINTS.some((config) => {
+      if (config.method !== method) {
+        return false;
+      }
+
+      // For pattern-based endpoints, use regex matching
+      if (this.isPatternEndpoint(config.endpoint)) {
+        return this.matchesPattern(config.endpoint, endpoint);
+      }
+
+      // For static endpoints, use startsWith
+      return endpoint.startsWith(config.endpoint);
+    });
+  }
+
+  private matchesPattern(pattern: string, endpoint: string): boolean {
+    // Convert pattern like "/api/apps/:app_name/something/:port_number/foo/bar"
+    // to regex like "^\/api\/apps\/[^\/]+\/something\/[^\/]+\/foo\/bar$"
+
+    // Escape special regex characters except for our placeholders
+    const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\:/g, ':'); // Restore colons for placeholder detection
+
+    // Replace :parameter_name with regex pattern to match path segments
+    // [^\/]+ matches one or more characters that are not forward slashes
+    const regexPattern = escapedPattern.replace(/:[\w_]+/g, '[^/]+').replace(/\\\//g, '/'); // Unescape forward slashes
+
+    // Create regex with start and optional end anchors
+    const regex = new RegExp(`^${regexPattern}(?:/.*)?$`);
+
+    return regex.test(endpoint);
   }
 
   private isValid(entry: CacheEntry): boolean {
@@ -102,7 +141,19 @@ class ServerCache {
       const [keyMethod, keyEndpoint] = key.split(':');
 
       const methodMatches = !method || keyMethod === method;
-      const endpointMatches = !endpoint || keyEndpoint.startsWith(endpoint);
+
+      let endpointMatches = false;
+      if (!endpoint) {
+        endpointMatches = true;
+      } else {
+        // Try exact match first
+        endpointMatches = keyEndpoint.startsWith(endpoint);
+
+        // If not matched and endpoint looks like a pattern, try pattern matching
+        if (!endpointMatches && endpoint.includes(':')) {
+          endpointMatches = this.matchesPattern(endpoint, keyEndpoint);
+        }
+      }
 
       if (methodMatches && endpointMatches) {
         keysToDelete.push(key);

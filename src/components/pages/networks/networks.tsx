@@ -55,13 +55,14 @@ export function NetworksPage(props: NetworksPageProps) {
   const [newNetworkName, setNewNetworkName] = useState('');
   const [createNetworkError, setCreateNetworkError] = useState<string | null>(null);
   const [creatingNetwork, setCreatingNetwork] = useState(false);
+  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const fetchNetworksAndApps = async () => {
       try {
         setLoading(true);
 
-        // Primeiro busca as redes
+        // Primeiro busca as redes (pode vir do cache)
         const networksResponse = await api.post('/api/networks/list/');
 
         if (networksResponse.status === 200 && networksResponse.data.success) {
@@ -72,10 +73,10 @@ export function NetworksPage(props: NetworksPageProps) {
           const networkNames = Object.keys(networksData);
 
           if (networkNames.length > 0) {
-            // Busca os linked-apps de todas as redes em paralelo
+            // Busca os linked-apps de todas as redes em paralelo (pode vir do cache)
             const linkedAppsPromises = networkNames.map(async (networkName) => {
               try {
-                const response = await api.post(`/api/networks/${networkName}/linked-apps`);
+                const response = await api.post(`/api/networks/${networkName}/linked-apps/`);
 
                 if (response.status === 200 && response.data.success) {
                   return {
@@ -107,6 +108,13 @@ export function NetworksPage(props: NetworksPageProps) {
 
             setLinkedApps(allLinkedApps);
           }
+
+          // Verifica se a resposta das redes veio do cache
+          const cacheStatus = networksResponse.headers['x-cache'];
+          if (cacheStatus === 'HIT') {
+            // Se veio do cache, faz uma requisição em background para obter dados atualizados
+            fetchFreshNetworksAndApps();
+          }
         } else {
           throw new Error(`HTTP error! status: ${networksResponse.status}`);
         }
@@ -118,12 +126,90 @@ export function NetworksPage(props: NetworksPageProps) {
       }
     };
 
+    const fetchFreshNetworksAndApps = async () => {
+      try {
+        setIsUpdatingFromServer(true);
+
+        // Busca as redes sem cache
+        const networksResponse = await api.post(
+          '/api/networks/list/',
+          {},
+          {
+            headers: { 'x-cache': 'false' },
+          }
+        );
+
+        if (networksResponse.status === 200 && networksResponse.data.success) {
+          const networksData = networksResponse.data.result;
+          setNetworks(networksData);
+
+          // Lista de nomes das redes
+          const networkNames = Object.keys(networksData);
+
+          if (networkNames.length > 0) {
+            // Busca os linked-apps de todas as redes em paralelo sem cache
+            const linkedAppsPromises = networkNames.map(async (networkName) => {
+              try {
+                const response = await api.post(
+                  `/api/networks/${networkName}/linked-apps/`,
+                  {},
+                  {
+                    headers: { 'x-cache': 'false' },
+                  }
+                );
+
+                if (response.status === 200 && response.data.success) {
+                  return {
+                    networkName,
+                    apps: response.data.result,
+                  };
+                }
+                return {
+                  networkName,
+                  apps: [],
+                };
+              } catch (error) {
+                console.error(`Error fetching fresh linked apps for ${networkName}:`, error);
+                return {
+                  networkName,
+                  apps: [],
+                };
+              }
+            });
+
+            // Aguarda todas as requisições terminarem
+            const linkedAppsResults = await Promise.all(linkedAppsPromises);
+
+            // Monta o objeto com todos os linked-apps
+            const allLinkedApps: Record<string, string[]> = {};
+            linkedAppsResults.forEach(({ networkName, apps }) => {
+              allLinkedApps[networkName] = apps;
+            });
+
+            setLinkedApps(allLinkedApps);
+          }
+        }
+      } catch (error) {
+        // Ignora erros na atualização em background
+        console.warn('Failed to fetch fresh networks data:', error);
+      } finally {
+        setIsUpdatingFromServer(false);
+      }
+    };
+
     fetchNetworksAndApps();
   }, []);
 
   const fetchLinkedApps = async (networkName: string) => {
     try {
-      const response = await api.post(`/api/networks/${networkName}/linked-apps`);
+      // Sempre busca dados frescos quando chamado manualmente (após ações como vincular/desvincular)
+      const response = await api.post(
+        `/api/networks/${networkName}/linked-apps/`,
+        {},
+        {
+          headers: { 'x-cache': 'false' },
+        }
+      );
 
       if (response.status === 200 && response.data.success) {
         setLinkedApps((prev) => ({
@@ -298,6 +384,25 @@ export function NetworksPage(props: NetworksPageProps) {
 
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
+
+          {/* Indicador de atualização do servidor */}
+          {isUpdatingFromServer && (
+            <Flex align='center' gap='3'>
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid var(--gray-6)',
+                  borderTop: '2px solid var(--gray-9)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
+                Sincronizando informações com o servidor...
+              </Text>
+            </Flex>
+          )}
 
           {/* Estado de carregamento */}
           {loading && (

@@ -272,6 +272,38 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [props.appName]);
 
+  // Silent refresh for overview data only - updates app info and URL every 10 seconds
+  // This keeps the overview tab current without affecting loading states or other tabs
+  const silentRefreshOverview = useCallback(async () => {
+    try {
+      // Fetch fresh app info without cache
+      const appInfoResponse = await api.post(
+        `/api/apps/${props.appName}/info/`,
+        {},
+        {
+          headers: { 'x-cache': 'false' },
+        }
+      );
+      if (appInfoResponse.data.success) {
+        setAppInfo(appInfoResponse.data.result);
+      }
+
+      // Fetch fresh app URL without cache
+      const appUrlResponse = await api.post(
+        `/api/apps/${props.appName}/url/`,
+        {},
+        {
+          headers: { 'x-cache': 'false' },
+        }
+      );
+      if (appUrlResponse.data.success) {
+        setAppUrl(appUrlResponse.data.result);
+      }
+    } catch (error) {
+      console.warn('Silent overview refresh error (ignored):', error);
+    }
+  }, [props.appName]);
+
   // Refresh logs function that activates loading state
   const refreshLogs = useCallback(async () => {
     await fetchWithRetry(fetchLogs, setLogsLoading, (error) =>
@@ -348,6 +380,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   useEffect(() => {
     setDataLoaded(false);
   }, [props.appName]);
+
+  // Auto-refresh overview data every 10 seconds without showing loading spinners
+  useEffect(() => {
+    if (!session || !props.appName || !dataLoaded) return;
+
+    const intervalId = setInterval(() => {
+      silentRefreshOverview();
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(intervalId);
+  }, [session, props.appName, dataLoaded, silentRefreshOverview]);
 
   // Helper functions
   const getStatusInfo = () => {
