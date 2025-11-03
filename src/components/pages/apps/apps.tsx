@@ -380,7 +380,7 @@ export function AppsPage(props: AppsPageProps) {
                         onClick={
                           isMobile
                             ? undefined
-                            : () => (window.location.href = `/apps/${displayName}`)
+                            : () => (window.location.href = `/apps/a/${displayName}`)
                         }
                         onMouseEnter={
                           isMobile
@@ -660,7 +660,7 @@ export function AppsPage(props: AppsPageProps) {
 
                             <Button
                               size='3'
-                              onClick={() => (window.location.href = `/apps/${displayName}`)}
+                              onClick={() => (window.location.href = `/apps/a/${displayName}`)}
                               style={{
                                 background:
                                   'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',

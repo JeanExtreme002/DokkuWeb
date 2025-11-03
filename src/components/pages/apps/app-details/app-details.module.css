@@ -1,0 +1,523 @@
+.root {
+  min-height: 100vh;
+  background: var(--gray-1);
+  padding-top: 20px;
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.appTitle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.statusBadge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: fit-content;
+  vertical-align: baseline;
+  margin: 0;
+  align-self: center;
+  transform: translateY(2px);
+}
+
+.deploySection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deployTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.codeBlock {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray-11);
+  overflow-x: auto;
+}
+
+.codeBlock .command {
+  color: var(--purple-11);
+}
+
+.tabsRoot {
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.tabsList {
+  display: flex;
+  background: var(--gray-2);
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.tabsTrigger {
+  flex: 1;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-11);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.tabsTrigger:hover {
+  background: transparent !important;
+  color: var(--gray-12);
+}
+
+.tabsTrigger[data-state='active'] {
+  background: var(--gray-3);
+  color: var(--gray-12);
+  position: relative;
+}
+
+.tabsTrigger[data-state='active']::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--purple-9);
+}
+
+.tabsContent {
+  background: var(--color-panel-solid);
+  color: var(--gray-12);
+  padding: 24px;
+}
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--gray-6);
+  border-top: 3px solid var(--green-9);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.buttonSpinner {
+  animation: spin 1s linear infinite !important;
+}
+
+.errorMessage {
+  padding: 20px;
+  text-align: center;
+  background: var(--red-2);
+  border: 1px solid var(--red-6);
+  border-radius: 8px;
+  color: var(--red-11);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.infoCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.infoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-11);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.infoValue {
+  font-size: 14px;
+  color: var(--gray-12);
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.serviceCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.serviceCard:hover {
+  background: var(--gray-3);
+  border-color: var(--gray-7);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.portMappingForm {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  border: 1px solid var(--gray-6);
+}
+
+.ports {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.portInput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 120px;
+}
+
+.portMappingCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.logsContainer {
+  background: var(--gray-1);
+  border-radius: 8px;
+  padding: 16px;
+  height: 500px;
+  overflow-y: auto;
+  font-family: 'Courier New', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--gray-11);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border: 1px solid var(--gray-6);
+}
+
+.logsContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.logsContainer::-webkit-scrollbar-track {
+  background: var(--gray-4);
+  border-radius: 4px;
+}
+
+.logsContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-8);
+  border-radius: 4px;
+}
+
+.logsContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-9);
+}
+
+.envVarForm {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  border: 1px solid var(--gray-6);
+}
+
+.envVarCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.envVarContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.envVarKey {
+  font-weight: 600;
+  color: var(--gray-12);
+  font-family: monospace;
+  margin-right: 12px;
+}
+
+.envVarValue {
+  color: var(--gray-11);
+  font-family: monospace;
+  word-break: break-all;
+}
+
+/* Responsive title sizes */
+.appTitleText {
+  font-size: 2.5rem; /* Default size */
+}
+
+@media (max-width: 992px) {
+  .appTitleText {
+    font-size: 2.2rem; /* Medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContainer {
+    padding: 0 16px;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .appTitle {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .appTitleText {
+    font-size: 1.8rem; /* Small screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .appTitleText {
+    font-size: 1.5rem; /* Extra small screens */
+  }
+
+  .portMappingForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .portInput {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabsList {
+    flex-wrap: wrap;
+  }
+
+  .tabsTrigger {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .envVarForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .portMappingButton {
+    width: 100% !important;
+  }
+
+  .envVarButton {
+    width: 100% !important;
+  }
+
+  .envVarKey {
+    font-size: 13px;
+  }
+
+  .envVarValue {
+    font-size: 13px;
+  }
+}
+
+/* Responsive visibility classes */
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .desktopOnly {
+    display: none !important;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+
+  .urlButton {
+    width: 100%;
+  }
+
+  .networkName {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+  }
+
+  .loadingSpinner {
+    flex-direction: column;
+    gap: 15px;
+    padding-inline: 0;
+  }
+
+  .envVarKey {
+    font-size: 12px;
+  }
+
+  .envVarValue {
+    font-size: 12px;
+  }
+
+  .envVarButton {
+    width: 100% !important;
+  }
+
+  .emptyPortMessage {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .logsHeader {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .logsButtons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .envVarKey {
+    font-size: 11px;
+  }
+
+  .envVarValue {
+    font-size: 11px;
+  }
+
+  .envVarButton {
+    width: 100% !important;
+  }
+
+  .emptyPortMessage {
+    font-size: 12px !important;
+  }
+}
+
+/* Purple outline button override - force all states */
+.purpleOutlineButton,
+.purpleOutlineButton[data-state],
+.purpleOutlineButton[data-accent-color] {
+  background: transparent !important;
+  border: 1px solid var(--purple-9) !important;
+  border-color: var(--purple-9) !important;
+  color: var(--purple-9) !important;
+  box-shadow: none !important;
+}
+
+.purpleOutlineButton:hover,
+.purpleOutlineButton:focus,
+.purpleOutlineButton[data-state]:hover,
+.purpleOutlineButton[data-accent-color]:hover {
+  background: var(--purple-2) !important;
+  border: 1px solid var(--purple-9) !important;
+  border-color: var(--purple-9) !important;
+  color: var(--purple-9) !important;
+  box-shadow: none !important;
+}
+
+.purpleOutlineButton:active,
+.purpleOutlineButton[data-state]:active,
+.purpleOutlineButton[data-accent-color]:active {
+  background: var(--purple-3) !important;
+  border: 1px solid var(--purple-9) !important;
+  border-color: var(--purple-9) !important;
+  color: var(--purple-9) !important;
+  box-shadow: none !important;
+}
+
+/* Additional overrides for Radix UI internal classes */
+.purpleOutlineButton[data-accent-color='green'],
+.purpleOutlineButton[data-accent-color],
+button.purpleOutlineButton {
+  --accent-9: var(--purple-9) !important;
+  --accent-2: var(--purple-2) !important;
+  --accent-3: var(--purple-3) !important;
+  border-color: var(--purple-9) !important;
+}
