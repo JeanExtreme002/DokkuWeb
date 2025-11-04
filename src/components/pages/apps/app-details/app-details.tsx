@@ -244,7 +244,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   }, [props.appName]);
 
   const fetchPortMappings = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/ports/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/ports/`,
+      {},
+      { params: { use_proxy: true } }
+    );
     if (response.data.success) {
       setPortMappings(response.data.result);
     }
@@ -493,7 +497,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     setPortSubmitting(true);
     try {
-      await api.post(`/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}`);
+      await api.post(
+        `/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}`,
+        {},
+        { params: { use_proxy: true } }
+      );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))
       );
@@ -520,7 +528,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     try {
       await api.delete(
-        `/api/apps/${props.appName}/ports/${portToDelete.protocol}/${portToDelete.origin}/${portToDelete.dest}/`
+        `/api/apps/${props.appName}/ports/${portToDelete.protocol}/${portToDelete.origin}/${portToDelete.dest}/`,
+        { use_proxy: true }
       );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))

@@ -6,7 +6,7 @@ interface ApiRequestOptions {
   endpoint: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   data?: any;
-  params?: Record<string, string | number>;
+  params?: Record<string, string | number | boolean>;
   headers?: Record<string, string>;
 }
 
@@ -47,14 +47,17 @@ export async function apiRequest<T = any>(options: ApiRequestOptions): Promise<A
 export const api = {
   get: <T = any>(
     endpoint: string,
-    params?: Record<string, string | number>,
+    params?: Record<string, string | number | boolean>,
     headers?: Record<string, string>
   ) => apiRequest<T>({ endpoint, method: 'GET', params, headers }),
 
   post: <T = any>(
     endpoint: string,
     data?: any,
-    options?: { params?: Record<string, string | number>; headers?: Record<string, string> }
+    options?: {
+      params?: Record<string, string | number | boolean>;
+      headers?: Record<string, string>;
+    }
   ) =>
     apiRequest<T>({
       endpoint,
@@ -67,7 +70,10 @@ export const api = {
   put: <T = any>(
     endpoint: string,
     data?: any,
-    options?: { params?: Record<string, string | number>; headers?: Record<string, string> }
+    options?: {
+      params?: Record<string, string | number | boolean>;
+      headers?: Record<string, string>;
+    }
   ) =>
     apiRequest<T>({
       endpoint,
@@ -79,7 +85,7 @@ export const api = {
 
   delete: <T = any>(
     endpoint: string,
-    params?: Record<string, string | number>,
+    params?: Record<string, string | number | boolean>,
     headers?: Record<string, string>
   ) => apiRequest<T>({ endpoint, method: 'DELETE', params, headers }),
 };
