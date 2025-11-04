@@ -134,6 +134,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [appUrlLoading, setAppUrlLoading] = useState(true);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [networkLoading, setNetworkLoading] = useState(true);
+  const [portMappingsLoading, setPortMappingsLoading] = useState(true);
   const [logsLoading, setLogsLoading] = useState(true);
   const [configLoading, setConfigLoading] = useState(true);
 
@@ -151,6 +152,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   // Environment variable delete modal states
   const [showDeleteEnvModal, setShowDeleteEnvModal] = useState(false);
   const [envToDelete, setEnvToDelete] = useState<string | null>(null);
+
+  // Port mapping delete modal states
+  const [showDeletePortModal, setShowDeletePortModal] = useState(false);
+  const [portToDelete, setPortToDelete] = useState<PortMapping | null>(null);
 
   // Current tab
   const [currentTab, setCurrentTab] = useState('overview');
@@ -175,6 +180,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     main: null as string | null,
     services: null as string | null,
     network: null as string | null,
+    portMappings: null as string | null,
     logs: null as string | null,
     config: null as string | null,
     deploy: null as string | null,
@@ -330,10 +336,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           fetchWithRetry(fetchNetwork, setNetworkLoading, (error) =>
             setErrors((prev) => ({ ...prev, network: error }))
           ),
-          fetchWithRetry(
-            fetchPortMappings,
-            () => {}, // Network loading covers ports too
-            (error) => setErrors((prev) => ({ ...prev, network: error }))
+          fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
+            setErrors((prev) => ({ ...prev, portMappings: error }))
           ),
           fetchWithRetry(fetchLogs, setLogsLoading, (error) =>
             setErrors((prev) => ({ ...prev, logs: error }))
@@ -490,7 +494,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setPortSubmitting(true);
     try {
       await api.post(`/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}`);
-      await fetchPortMappings();
+      await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
+        setErrors((prev) => ({ ...prev, portMappings: error }))
+      );
       setOriginPort('');
       setDestPort('');
     } catch (error) {
@@ -500,24 +506,30 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   };
 
-  const removePortMapping = async (mapping: PortMapping) => {
-    const confirmed = window.confirm(
-      `Tem certeza que deseja remover o mapeamento ${mapping.protocol.toUpperCase()}: ${mapping.origin} → ${mapping.dest}?`
-    );
-    if (!confirmed) return;
+  const openDeletePortModal = (mapping: PortMapping) => {
+    setPortToDelete(mapping);
+    setShowDeletePortModal(true);
+  };
 
-    const mappingId = `${mapping.protocol}-${mapping.origin}-${mapping.dest}`;
+  const removePortMapping = async () => {
+    if (!portToDelete) return;
+
+    const mappingId = `${portToDelete.protocol}-${portToDelete.origin}-${portToDelete.dest}`;
     setDeletingPort(mappingId);
+    setShowDeletePortModal(false);
 
     try {
       await api.delete(
-        `/api/apps/${props.appName}/ports/${mapping.protocol}/${mapping.origin}/${mapping.dest}/`
+        `/api/apps/${props.appName}/ports/${portToDelete.protocol}/${portToDelete.origin}/${portToDelete.dest}/`
       );
-      await fetchPortMappings();
+      await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
+        setErrors((prev) => ({ ...prev, portMappings: error }))
+      );
     } catch (error) {
       console.error('Error removing port mapping:', error);
     } finally {
       setDeletingPort(null);
+      setPortToDelete(null);
     }
   };
 
@@ -1632,7 +1644,24 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
                       {/* Port Mappings List */}
                       <Box>
-                        {portMappings.length === 0 ? (
+                        {portMappingsLoading ? (
+                          <Box className={styles.loadingSpinner}>
+                            <Box className={styles.spinner}></Box>
+                            <Text style={{ marginLeft: '12px' }}>
+                              Carregando mapeamentos de porta...
+                            </Text>
+                          </Box>
+                        ) : errors.portMappings ? (
+                          <Card
+                            style={{
+                              border: '1px solid var(--red-6)',
+                              backgroundColor: 'var(--red-2)',
+                              padding: '20px',
+                            }}
+                          >
+                            <Text style={{ color: 'var(--red-11)' }}>{errors.portMappings}</Text>
+                          </Card>
+                        ) : portMappings.length === 0 ? (
                           <Card
                             style={{
                               border: '1px solid var(--gray-6)',
@@ -1658,7 +1687,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                 size='2'
                                 color='red'
                                 variant='ghost'
-                                onClick={() => removePortMapping(mapping)}
+                                onClick={() => openDeletePortModal(mapping)}
                                 disabled={
                                   deletingPort ===
                                   `${mapping.protocol}-${mapping.origin}-${mapping.dest}`
@@ -2055,6 +2084,57 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               }}
             >
               {deletingEnv === envToDelete ? 'Removendo...' : 'Confirmar Remoção'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Delete Port Mapping Modal */}
+      <Dialog.Root open={showDeletePortModal} onOpenChange={setShowDeletePortModal}>
+        <Dialog.Content
+          maxWidth='450px'
+          style={{
+            padding: '24px',
+          }}
+        >
+          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Remoção</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja remover o mapeamento de porta{' '}
+            <strong>
+              {portToDelete?.protocol.toUpperCase()}: {portToDelete?.origin} → {portToDelete?.dest}
+            </strong>
+            ?
+            <br />
+            <br />
+            Esta ação não pode ser desfeita e pode afetar o acesso ao aplicativo.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray'>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              color='red'
+              onClick={removePortMapping}
+              disabled={
+                !!(
+                  portToDelete &&
+                  deletingPort ===
+                    `${portToDelete.protocol}-${portToDelete.origin}-${portToDelete.dest}`
+                )
+              }
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+              }}
+            >
+              {portToDelete &&
+              deletingPort ===
+                `${portToDelete.protocol}-${portToDelete.origin}-${portToDelete.dest}`
+                ? 'Removendo...'
+                : 'Confirmar Remoção'}
             </Button>
           </Flex>
         </Dialog.Content>
