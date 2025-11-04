@@ -29,7 +29,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSpinner, NavBar } from '@/components/shared';
 import { api, config as websiteConfig } from '@/lib';
@@ -119,6 +119,11 @@ const DATABASE_IMAGES: Record<string, string> = {
 export function AppDetailsPage(props: AppDetailsPageProps) {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Stable session reference to prevent unnecessary re-renders
+  const stableSession = useMemo(() => {
+    return session?.user?.email ? session : null;
+  }, [session]);
 
   // States
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
@@ -323,7 +328,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   // Initialize all data fetching
   useEffect(() => {
-    if (!session || !props.appName || dataLoaded) return;
+    if (!stableSession || !props.appName || dataLoaded) return;
 
     const loadAllData = async () => {
       try {
@@ -370,7 +375,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     loadAllData();
   }, [
-    session,
+    stableSession, // Stable session reference
     props.appName,
     dataLoaded,
     fetchWithRetry,
@@ -391,14 +396,14 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   // Auto-refresh overview data every 10 seconds without showing loading spinners
   useEffect(() => {
-    if (!session || !props.appName || !dataLoaded) return;
+    if (!stableSession || !props.appName || !dataLoaded) return;
 
     const intervalId = setInterval(() => {
       silentRefreshOverview();
     }, 10000); // 10 seconds
 
     return () => clearInterval(intervalId);
-  }, [session, props.appName, dataLoaded, silentRefreshOverview]);
+  }, [stableSession, props.appName, dataLoaded, silentRefreshOverview]);
 
   // Helper functions
   const getStatusInfo = () => {
@@ -666,7 +671,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   };
 
-  if (!session) {
+  if (!stableSession) {
     return null;
   }
 
@@ -675,7 +680,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   return (
     <>
-      <NavBar session={session} />
+      <NavBar session={stableSession} />
 
       <main className={styles.root}>
         {mainLoading || appUrlLoading ? (
@@ -708,11 +713,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     <Avatar
                       size='4'
                       src={
-                        !session?.user?.name?.toLowerCase().startsWith('takeover')
-                          ? session?.user?.image || undefined
+                        !stableSession?.user?.name?.toLowerCase().startsWith('takeover')
+                          ? stableSession?.user?.image || undefined
                           : undefined
                       }
-                      fallback={session?.user?.name?.charAt(0).toUpperCase() || 'U'}
+                      fallback={stableSession?.user?.name?.charAt(0).toUpperCase() || 'U'}
                       radius='full'
                       style={{ flexShrink: 0 }}
                     />

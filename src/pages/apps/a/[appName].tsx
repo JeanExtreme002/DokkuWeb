@@ -2,13 +2,19 @@ import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
 import { AppDetailsPage } from '@/components/pages/apps';
+import Header from '@/pages/header';
 
 interface AppDetailsPageProps {
   appName: string;
 }
 
 export default function AppDetails(props: AppDetailsPageProps) {
-  return <AppDetailsPage appName={props.appName} />;
+  return (
+    <>
+      <Header />
+      <AppDetailsPage appName={props.appName} />
+    </>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

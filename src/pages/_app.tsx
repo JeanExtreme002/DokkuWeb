@@ -8,7 +8,11 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider
+      session={pageProps.session}
+      refetchOnWindowFocus={false}
+      refetchWhenOffline={false}
+    >
       <ThemeProvider>
         <Component {...pageProps} />
       </ThemeProvider>
