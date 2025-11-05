@@ -52,16 +52,18 @@ interface AppInfo {
   info_origin: 'inspect' | 'report';
 }
 
-interface AppData {
-  [appName: string]: AppInfo;
+interface AppListItem {
+  name: string;
+  info: AppInfo | null;
+  loading: boolean;
+  error: string | null;
 }
 
 export function AppsPage(props: AppsPageProps) {
-  const [apps, setApps] = useState<AppData>({});
+  const [appsList, setAppsList] = useState<AppListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -74,59 +76,76 @@ export function AppsPage(props: AppsPageProps) {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
   useEffect(() => {
-    const fetchApps = async () => {
+    const fetchAppsList = async () => {
+      const startTime = Date.now();
       try {
         setLoading(true);
-        const response = await api.post('/api/apps/list');
+        const response = await api.post('/api/apps/list/', {}, { params: { return_info: false } });
 
         if (response.status === 200 && response.data.success) {
-          setApps(response.data.result);
+          const appNames = Object.keys(response.data.result);
 
-          // Verifica se a resposta veio do cache
-          const cacheStatus = response.headers['x-cache'];
-          if (cacheStatus === 'HIT') {
-            // Se veio do cache, faz uma requisição em background para obter dados atualizados
-            fetchFreshApps();
-          }
+          const initialAppsList: AppListItem[] = appNames.map((name) => ({
+            name,
+            info: null,
+            loading: true,
+            error: null,
+          }));
+
+          setAppsList(initialAppsList);
+
+          fetchAppsInfo(appNames);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } catch (error) {
-        console.error('Error fetching apps:', error);
-        setError('Erro ao carregar aplicativos');
-      } finally {
+        console.error('Error fetching apps list:', error);
+        setError('Erro ao carregar lista de aplicativos');
+      }
+
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 1000 - elapsedTime);
+
+      setTimeout(() => {
         setLoading(false);
-      }
+      }, remainingTime);
     };
 
-    const fetchFreshApps = async () => {
-      try {
-        setIsUpdatingFromServer(true);
-        const response = await api.post(
-          '/api/apps/list',
-          {},
-          {
-            headers: {
-              'x-cache': 'false',
-            },
+    const fetchAppsInfo = async (appNames: string[]) => {
+      // Carrega informações de cada app de forma assíncrona
+      const promises = appNames.map(async (appName) => {
+        try {
+          const response = await api.post(`/api/apps/${appName}/info/`);
+
+          if (response.status === 200 && response.data.success) {
+            // Atualiza o estado do app específico
+            setAppsList((prevList) =>
+              prevList.map((app) =>
+                app.name === appName ? { ...app, info: response.data.result, loading: false } : app
+              )
+            );
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-        );
-
-        if (response.status === 200 && response.data.success) {
-          setApps(response.data.result);
+        } catch (error) {
+          console.error(`Error fetching info for app ${appName}:`, error);
+          // Atualiza o estado com erro para este app específico
+          setAppsList((prevList) =>
+            prevList.map((app) =>
+              app.name === appName
+                ? { ...app, loading: false, error: 'Erro ao carregar informações' }
+                : app
+            )
+          );
         }
-      } catch (error) {
-        // Ignora erros na atualização em background
-        console.warn('Failed to fetch fresh apps data:', error);
-      } finally {
-        setIsUpdatingFromServer(false);
-      }
+      });
+
+      // Aguarda todas as requisições terminarem
+      await Promise.allSettled(promises);
     };
 
-    fetchApps();
+    fetchAppsList();
   }, []);
-
-  const appEntries = Object.entries(apps);
 
   const getStatusInfo = (appInfo: AppInfo) => {
     if (appInfo.info_origin === 'report') {
@@ -223,6 +242,173 @@ export function AppsPage(props: AppsPageProps) {
     }
   };
 
+  const AppCardSkeleton = ({ appName }: { appName: string }) => {
+    const displayName = formatAppName(appName);
+
+    return (
+      <Card
+        style={{
+          border: '1px solid var(--gray-6)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.2s ease',
+          cursor: isMobile ? 'default' : 'pointer',
+        }}
+        className={`${styles.appCard} ${styles.skeleton}`}
+        onClick={isMobile ? undefined : () => (window.location.href = `/apps/a/${displayName}`)}
+        onMouseEnter={
+          isMobile
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
+              }
+        }
+        onMouseLeave={
+          isMobile
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+              }
+        }
+      >
+        <Flex className={styles.appCardContent} style={{ alignItems: 'flex-start' }}>
+          {/* Ícone do app */}
+          <Avatar
+            size='6'
+            fallback={
+              <svg
+                width='48'
+                height='48'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <rect
+                  x='6'
+                  y='6'
+                  width='12'
+                  height='12'
+                  rx='2'
+                  stroke='#4fa8d8'
+                  strokeWidth='1.5'
+                  fill='none'
+                  filter='drop-shadow(0 0 4px #4fa8d8) drop-shadow(0 0 8px #4fa8d8)'
+                />
+                <rect
+                  x='9'
+                  y='9'
+                  width='6'
+                  height='6'
+                  rx='1'
+                  stroke='#87ceeb'
+                  strokeWidth='1.2'
+                  fill='currentColor'
+                  fillOpacity='0.2'
+                />
+              </svg>
+            }
+            style={{
+              background:
+                'linear-gradient(135deg, #ff1744 0%, #e91e63 25%, #f06292 50%, #ba68c8 75%, #9c27b0 100%)',
+              color: 'white',
+              marginRight: '10px',
+              border: '2px solid rgba(255, 255, 255, 0.25)',
+              boxShadow:
+                '0 8px 32px rgba(233, 30, 99, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+            }}
+          />
+
+          {/* Informações principais */}
+          <Flex direction='column' className={styles.appInfo}>
+            <Flex align='center' gap='2'>
+              <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                {displayName}
+              </Heading>
+              <Text size='2' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
+                • carregando...
+              </Text>
+            </Flex>
+
+            {/* Status skeleton */}
+            <Flex align='center' gap='2'>
+              <Box
+                className={styles.skeletonElement}
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                }}
+              />
+              <Text size='2' weight='medium' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
+                Carregando status...
+              </Text>
+            </Flex>
+
+            {/* Info skeleton */}
+            <Flex align='center' gap='2'>
+              <div
+                className={styles.skeletonElement}
+                style={{
+                  width: '160px',
+                  height: '12px',
+                  borderRadius: '4px',
+                }}
+              />
+              <div
+                className={styles.skeletonElement}
+                style={{
+                  width: '80px',
+                  height: '12px',
+                  borderRadius: '4px',
+                }}
+              />
+            </Flex>
+          </Flex>
+
+          {/* Data e botão skeleton */}
+          <Flex direction='column' className={styles.appActions}>
+            <div
+              className={styles.skeletonElement}
+              style={{
+                width: '190px',
+                height: '12px',
+                borderRadius: '4px',
+                marginBottom: '12px',
+              }}
+            />
+            <Button
+              size='3'
+              onClick={() => (window.location.href = `/apps/a/${displayName}`)}
+              style={{
+                background: 'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                fontWeight: '500',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.2s ease',
+                minWidth: '120px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+              }}
+            >
+              Ver detalhes
+            </Button>
+          </Flex>
+        </Flex>
+      </Card>
+    );
+  };
+
   const getPortInfo = (container: AppContainer) => {
     const envVars = container.Config.Env || [];
     const portEnv = envVars.find((env) => env.startsWith('PORT='));
@@ -290,25 +476,6 @@ export function AppsPage(props: AppsPageProps) {
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Indicador de atualização do servidor */}
-          {isUpdatingFromServer && (
-            <Flex align='center' gap='3'>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid var(--gray-6)',
-                  borderTop: '2px solid var(--gray-9)',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                }}
-              />
-              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
-                Sincronizando informações com o servidor...
-              </Text>
-            </Flex>
-          )}
-
           {/* Estado de carregamento */}
           {loading && (
             <LoadingSpinner
@@ -346,7 +513,7 @@ export function AppsPage(props: AppsPageProps) {
           {/* Lista de aplicativos */}
           {!loading && !error && (
             <>
-              {appEntries.length === 0 ? (
+              {appsList.length === 0 ? (
                 <Card
                   style={{
                     border: '1px solid var(--gray-6)',
@@ -361,15 +528,20 @@ export function AppsPage(props: AppsPageProps) {
                 </Card>
               ) : (
                 <Flex direction='column' gap='4'>
-                  {appEntries.map(([appName, appData]) => {
-                    const statusInfo = getStatusInfo(appData);
-                    const displayName = formatAppName(appName);
-                    const processInfo = getProcessInfo(appData);
-                    const containerInfo = getContainerInfo(appData);
+                  {appsList.map((appItem) => {
+                    // Se ainda está carregando ou houve erro, mostra skeleton
+                    if (appItem.loading || appItem.error || !appItem.info) {
+                      return <AppCardSkeleton key={appItem.name} appName={appItem.name} />;
+                    }
+
+                    const statusInfo = getStatusInfo(appItem.info);
+                    const displayName = formatAppName(appItem.name);
+                    const processInfo = getProcessInfo(appItem.info);
+                    const containerInfo = getContainerInfo(appItem.info);
 
                     return (
                       <Card
-                        key={appName}
+                        key={appItem.name}
                         style={{
                           border: '1px solid var(--gray-6)',
                           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
@@ -644,19 +816,19 @@ export function AppsPage(props: AppsPageProps) {
 
                           {/* Data de inicialização e botão */}
                           <Flex direction='column' className={styles.appActions}>
-                            {containerInfo?.State.StartedAt && (
-                              <Text
-                                size='2'
-                                style={{
-                                  color: 'var(--gray-9)',
-                                  textAlign: 'right',
-                                  whiteSpace: 'nowrap',
-                                }}
-                                className={styles.dateText}
-                              >
-                                Iniciado em {formatStartedAt(containerInfo.State.StartedAt)}
-                              </Text>
-                            )}
+                            <Text
+                              size='2'
+                              style={{
+                                color: 'var(--gray-9)',
+                                textAlign: 'right',
+                                whiteSpace: 'nowrap',
+                              }}
+                              className={styles.dateText}
+                            >
+                              {containerInfo?.State.StartedAt
+                                ? `Iniciado em ${formatStartedAt(containerInfo.State.StartedAt)}`
+                                : 'Não inicializado ainda'}
+                            </Text>
 
                             <Button
                               size='3'

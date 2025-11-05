@@ -327,7 +327,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .mainContainer {
     padding: 0 16px;
   }
@@ -358,6 +358,11 @@
   }
   .portInput {
     max-width: 100%;
+  }
+
+  .codeBlock {
+    font-size: 10px;
+    padding: 8px;
   }
 }
 
@@ -395,6 +400,11 @@
   .envVarValue {
     font-size: 13px;
   }
+
+  .codeBlock {
+    font-size: 12px;
+    padding: 12px;
+  }
 }
 
 /* Responsive visibility classes */
@@ -407,7 +417,7 @@
   width: 100%;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .desktopOnly {
     display: none !important;
   }
@@ -456,11 +466,21 @@
   }
 }
 
+@media (max-width: 470px) {
+  .appTitle {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 400px) {
   .logsButtons {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 8px !important;
+  }
+
+  .appTitle {
+    flex-direction: column;
   }
 
   .envVarKey {

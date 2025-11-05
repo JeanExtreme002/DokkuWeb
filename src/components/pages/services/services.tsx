@@ -32,12 +32,6 @@ interface ServiceData {
   post_start_network?: string;
 }
 
-interface ServicesData {
-  [pluginType: string]: {
-    [serviceName: string]: ServiceData;
-  };
-}
-
 const DATABASE_IMAGES: Record<string, string> = {
   postgres: '/images/database-logos/postgresql.svg',
   mysql: '/images/database-logos/mysql.svg',
@@ -51,12 +45,19 @@ const DATABASE_IMAGES: Record<string, string> = {
   generic: '/images/database-logos/generic.svg',
 };
 
+interface ServiceListItem {
+  pluginType: string;
+  serviceName: string;
+  serviceData: ServiceData | null;
+  loading: boolean;
+  error: string | null;
+}
+
 export function ServicesPage(props: ServicesPageProps) {
-  const [services, setServices] = useState<ServicesData>({});
+  const [servicesList, setServicesList] = useState<ServiceListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -70,56 +71,99 @@ export function ServicesPage(props: ServicesPageProps) {
   }, []);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchServicesList = async () => {
+      const startTime = Date.now();
       try {
         setLoading(true);
-        const response = await api.post('/api/databases/list');
+        const response = await api.post(
+          '/api/databases/list/',
+          {},
+          { params: { return_info: false } }
+        );
 
         if (response.status === 200 && response.data.success) {
-          setServices(response.data.result);
+          const servicesData = response.data.result;
 
-          // Verifica se a resposta veio do cache
-          const cacheStatus = response.headers['x-cache'];
-          if (cacheStatus === 'HIT') {
-            // Se veio do cache, faz uma requisição em background para obter dados atualizados
-            fetchFreshServices();
-          }
+          const initialServicesList: ServiceListItem[] = [];
+
+          Object.entries(servicesData).forEach(([pluginType, servicesByType]) => {
+            Object.keys(servicesByType as Record<string, any>).forEach((serviceName) => {
+              initialServicesList.push({
+                pluginType,
+                serviceName,
+                serviceData: null,
+                loading: true,
+                error: null,
+              });
+            });
+          });
+
+          setServicesList(initialServicesList);
+
+          fetchServicesInfo(initialServicesList);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } catch (error) {
-        console.error('Error fetching services:', error);
-        setError('Erro ao carregar serviços');
-      } finally {
+        console.error('Error fetching services list:', error);
+        setError('Erro ao carregar lista de serviços');
+      }
+
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 1000 - elapsedTime);
+
+      setTimeout(() => {
         setLoading(false);
-      }
+      }, remainingTime);
     };
 
-    const fetchFreshServices = async () => {
-      try {
-        setIsUpdatingFromServer(true);
-        const response = await api.post(
-          '/api/databases/list',
-          {},
-          {
-            headers: {
-              'x-cache': 'false',
-            },
+    const fetchServicesInfo = async (servicesList: ServiceListItem[]) => {
+      // Carrega informações de cada serviço de forma assíncrona
+      const promises = servicesList.map(async (serviceItem) => {
+        try {
+          const response = await api.post(
+            `/api/databases/${serviceItem.pluginType}/${serviceItem.serviceName}/info/`
+          );
+
+          if (response.status === 200 && response.data.success) {
+            // Atualiza o estado do serviço específico
+            setServicesList((prevList) =>
+              prevList.map((service) =>
+                service.pluginType === serviceItem.pluginType &&
+                service.serviceName === serviceItem.serviceName
+                  ? {
+                      ...service,
+                      serviceData: { ...response.data.result, plugin_name: serviceItem.pluginType },
+                      loading: false,
+                    }
+                  : service
+              )
+            );
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-        );
-
-        if (response.status === 200 && response.data.success) {
-          setServices(response.data.result);
+        } catch (error) {
+          console.error(
+            `Error fetching info for service ${serviceItem.pluginType}/${serviceItem.serviceName}:`,
+            error
+          );
+          // Atualiza o estado com erro para este serviço específico
+          setServicesList((prevList) =>
+            prevList.map((service) =>
+              service.pluginType === serviceItem.pluginType &&
+              service.serviceName === serviceItem.serviceName
+                ? { ...service, loading: false, error: 'Erro ao carregar informações' }
+                : service
+            )
+          );
         }
-      } catch (error) {
-        // Ignora erros na atualização em background
-        console.warn('Failed to fetch fresh services data:', error);
-      } finally {
-        setIsUpdatingFromServer(false);
-      }
+      });
+
+      // Aguarda todas as requisições terminarem
+      await Promise.allSettled(promises);
     };
 
-    fetchServices();
+    fetchServicesList();
   }, []);
 
   const getStatusInfo = (status: string) => {
@@ -166,14 +210,144 @@ export function ServicesPage(props: ServicesPageProps) {
     return typeMap[pluginName] || pluginName.charAt(0).toUpperCase() + pluginName.slice(1);
   };
 
-  // Converte os dados em um array plano para facilitar a renderização
-  const allServices = Object.entries(services).flatMap(([pluginType, servicesByType]) =>
-    Object.entries(servicesByType).map(([serviceName, serviceData]) => ({
-      pluginType,
-      serviceName,
-      ...serviceData,
-    }))
-  );
+  // Componente skeleton para cards de serviços
+  const ServiceCardSkeleton = ({
+    pluginType,
+    serviceName,
+  }: {
+    pluginType: string;
+    serviceName: string;
+  }) => {
+    const displayName = formatServiceName(serviceName);
+    const serviceType = formatDatabaseType(pluginType);
+
+    return (
+      <Card
+        style={{
+          border: '1px solid var(--gray-6)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.2s ease',
+          cursor: isMobile ? 'default' : 'pointer',
+        }}
+        className={`${styles.serviceCard} ${styles.skeleton}`}
+        onClick={isMobile ? undefined : () => (window.location.href = `/services/${displayName}`)}
+        onMouseEnter={
+          isMobile
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
+              }
+        }
+        onMouseLeave={
+          isMobile
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+              }
+        }
+      >
+        <Flex className={styles.serviceCardContent}>
+          {/* Header com imagem e info principal */}
+          <Flex className={styles.serviceHeader}>
+            <Image
+              src={getServiceImage(pluginType)}
+              alt={`${serviceType} logo`}
+              width={48}
+              height={48}
+              className={styles.serviceImage}
+              onError={(e) => {
+                e.currentTarget.src = '/images/database-logos/generic.svg';
+              }}
+            />
+
+            {/* Informações principais */}
+            <Flex direction='column' className={styles.serviceInfo}>
+              <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                {displayName}
+              </Heading>
+              <Flex align='center' gap='2'>
+                <Text size='2' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
+                  {serviceType}
+                </Text>
+                <div
+                  className={styles.skeletonElement}
+                  style={{
+                    width: '40px',
+                    height: '12px',
+                    borderRadius: '4px',
+                  }}
+                />
+              </Flex>
+
+              {/* Status skeleton */}
+              <Flex align='center' gap='2' style={{ marginTop: '4px' }}>
+                <Box
+                  className={styles.skeletonElement}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                  }}
+                />
+                <Text size='2' weight='medium' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
+                  Carregando status...
+                </Text>
+              </Flex>
+            </Flex>
+          </Flex>
+
+          {/* Informações técnicas skeleton */}
+          <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
+            <Flex align='center' gap='2'>
+              <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
+                IP:
+              </Text>
+              <div
+                className={styles.skeletonElement}
+                style={{
+                  width: '150px',
+                  height: '12px',
+                  borderRadius: '4px',
+                }}
+              />
+            </Flex>
+          </Flex>
+
+          {/* Botão de ação */}
+          <Flex className={styles.serviceActions}>
+            <Button
+              size='3'
+              onClick={() => (window.location.href = `/services/${displayName}`)}
+              style={{
+                background: 'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                fontWeight: '500',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.2s ease',
+                width: '100%',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+              }}
+            >
+              Ver detalhes
+            </Button>
+          </Flex>
+        </Flex>
+      </Card>
+    );
+  };
 
   return (
     <>
@@ -229,25 +403,6 @@ export function ServicesPage(props: ServicesPageProps) {
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Indicador de atualização do servidor */}
-          {isUpdatingFromServer && (
-            <Flex align='center' gap='3'>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid var(--gray-6)',
-                  borderTop: '2px solid var(--gray-9)',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                }}
-              />
-              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
-                Sincronizando informações com o servidor...
-              </Text>
-            </Flex>
-          )}
-
           {/* Estado de carregamento */}
           {loading && (
             <LoadingSpinner
@@ -285,7 +440,7 @@ export function ServicesPage(props: ServicesPageProps) {
           {/* Lista de serviços */}
           {!loading && !error && (
             <>
-              {allServices.length === 0 ? (
+              {servicesList.length === 0 ? (
                 <Card
                   style={{
                     border: '1px solid var(--gray-6)',
@@ -300,14 +455,25 @@ export function ServicesPage(props: ServicesPageProps) {
                 </Card>
               ) : (
                 <div className={styles.servicesGrid}>
-                  {allServices.map((service) => {
-                    const statusInfo = getStatusInfo(service.status);
-                    const displayName = formatServiceName(service.serviceName);
-                    const serviceType = formatDatabaseType(service.plugin_name);
+                  {servicesList.map((serviceItem) => {
+                    // Se ainda está carregando ou houve erro, mostra skeleton
+                    if (serviceItem.loading || serviceItem.error || !serviceItem.serviceData) {
+                      return (
+                        <ServiceCardSkeleton
+                          key={`${serviceItem.pluginType}-${serviceItem.serviceName}`}
+                          pluginType={serviceItem.pluginType}
+                          serviceName={serviceItem.serviceName}
+                        />
+                      );
+                    }
+
+                    const statusInfo = getStatusInfo(serviceItem.serviceData.status);
+                    const displayName = formatServiceName(serviceItem.serviceName);
+                    const serviceType = formatDatabaseType(serviceItem.pluginType);
 
                     return (
                       <Card
-                        key={`${service.pluginType}-${service.serviceName}`}
+                        key={`${serviceItem.pluginType}-${serviceItem.serviceName}`}
                         style={{
                           border: '1px solid var(--gray-6)',
                           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
@@ -341,7 +507,7 @@ export function ServicesPage(props: ServicesPageProps) {
                           {/* Header com imagem e info principal */}
                           <Flex className={styles.serviceHeader}>
                             <Image
-                              src={getServiceImage(service.plugin_name)}
+                              src={getServiceImage(serviceItem.pluginType)}
                               alt={`${serviceType} logo`}
                               width={48}
                               height={48}
@@ -358,7 +524,7 @@ export function ServicesPage(props: ServicesPageProps) {
                                 {displayName}
                               </Heading>
                               <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                                {serviceType} v{formatVersion(service.version)}
+                                {serviceType} v{formatVersion(serviceItem.serviceData.version)}
                               </Text>
 
                               {/* Status com círculo colorido */}
@@ -388,10 +554,10 @@ export function ServicesPage(props: ServicesPageProps) {
                                 size='2'
                                 style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
                               >
-                                {service.internal_ip}
+                                {serviceItem.serviceData.internal_ip}
                               </Text>
                             </Flex>
-                            {service.exposed_ports !== '-' && (
+                            {serviceItem.serviceData.exposed_ports !== '-' && (
                               <Flex align='center' gap='2'>
                                 <Text
                                   size='2'
@@ -403,7 +569,7 @@ export function ServicesPage(props: ServicesPageProps) {
                                   size='2'
                                   style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
                                 >
-                                  {service.exposed_ports}
+                                  {serviceItem.serviceData.exposed_ports}
                                 </Text>
                               </Flex>
                             )}

@@ -168,3 +168,166 @@
     gap: 10px;
   }
 }
+
+/* Enhanced Skeleton Loading Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.skeletonElement {
+  background: linear-gradient(
+    90deg,
+    var(--gray-3) 0%,
+    var(--gray-4) 20%,
+    var(--gray-5) 40%,
+    var(--gray-4) 60%,
+    var(--gray-3) 100%
+  ) !important;
+  background-size: 400px 100% !important;
+  animation: shimmer 2s infinite linear;
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.skeletonElement::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.1) 75%,
+    transparent 100%
+  );
+  animation: wave 2.5s infinite ease-in-out;
+  border-radius: inherit;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  25% {
+    transform: scale(1.005);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.01);
+    opacity: 0.95;
+  }
+  75% {
+    transform: scale(1.005);
+    opacity: 0.92;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-1px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  75% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  25% {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  75% {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Skeleton card animation */
+.appCard.skeleton {
+  animation:
+    breathe 3s infinite ease-in-out,
+    float 4s infinite ease-in-out,
+    glow 3.5s infinite ease-in-out;
+}
+
+/* Staggered animation delays for skeleton elements */
+.skeleton:nth-child(1),
+.skeleton:nth-child(1) .skeletonElement,
+.skeleton:nth-child(1) .skeletonElement::before {
+  animation-delay: 0s;
+}
+
+.skeleton:nth-child(2),
+.skeleton:nth-child(2) .skeletonElement,
+.skeleton:nth-child(2) .skeletonElement::before {
+  animation-delay: 0.15s;
+}
+
+.skeleton:nth-child(3),
+.skeleton:nth-child(3) .skeletonElement,
+.skeleton:nth-child(3) .skeletonElement::before {
+  animation-delay: 0.3s;
+}
+
+.skeleton:nth-child(4),
+.skeleton:nth-child(4) .skeletonElement,
+.skeleton:nth-child(4) .skeletonElement::before {
+  animation-delay: 0.45s;
+}
+
+.skeleton:nth-child(5),
+.skeleton:nth-child(5) .skeletonElement,
+.skeleton:nth-child(5) .skeletonElement::before {
+  animation-delay: 0.6s;
+}

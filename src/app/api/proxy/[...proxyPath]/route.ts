@@ -6,12 +6,15 @@ import { authOptions } from '../../../../pages/api/auth/[...nextauth]';
 const API_URL = process.env.BACKEND_URL!;
 const API_KEY = process.env.BACKEND_API_KEY || '';
 
-const AUTO_CLEANUP_CACHE_INTERVAL = 30 * 60 * 1000;
+const AUTO_CLEANUP_CACHE_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours
 
 // Configuration list for which method+endpoint combinations should be cached
 const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
+  { method: 'GET', endpoint: '/api/' },
   { method: 'POST', endpoint: '/api/apps/list/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
   { method: 'POST', endpoint: '/api/databases/list/' },
+  { method: 'POST', endpoint: '/api/databases/:plugin/:service_name/info/' },
   { method: 'POST', endpoint: '/api/networks/list/' },
   { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
@@ -28,7 +31,7 @@ interface CacheEntry {
 
 class ServerCache {
   private cache = new Map<string, CacheEntry>();
-  private defaultTTL = 10 * 60 * 1000; // 10 minutes
+  private defaultTTL = 30 * 60 * 1000; // 30 minutes
 
   private generateKey(
     method: string,
