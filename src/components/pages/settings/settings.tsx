@@ -1,4 +1,5 @@
 import { Link } from '@mui/material';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 import {
   Avatar,
   Badge,
@@ -11,6 +12,7 @@ import {
   Separator,
   Text,
   TextField,
+  Tooltip,
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
@@ -262,9 +264,21 @@ export function SettingsPage(props: SettingsPageProps) {
 
               {/* Access Token Section */}
               <Flex direction='column' gap='2'>
-                <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                  Token de Acesso
-                </Text>
+                <Flex align='center' gap='2'>
+                  <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                    Token de Acesso
+                  </Text>
+                  <Tooltip content='Token de autenticação para requisições via API'>
+                    <InfoCircledIcon
+                      style={{
+                        color: 'var(--gray-9)',
+                        cursor: 'help',
+                        width: '14px',
+                        height: '14px',
+                      }}
+                    />
+                  </Tooltip>
+                </Flex>
                 <Flex gap='2' align='center'>
                   <TextField.Root
                     value={session?.accessToken || ''}

@@ -5,7 +5,6 @@ import {
   CheckCircledIcon,
   ChevronDownIcon,
   ComponentInstanceIcon,
-  CounterClockwiseClockIcon,
   CrossCircledIcon,
   CubeIcon,
   DashboardIcon,
@@ -53,20 +52,13 @@ interface UsedResourcesData {
 interface DetailedResourcesData {
   apps: Array<{
     name: string;
-    status?: string;
-    running?: boolean;
-    url?: string;
   }>;
   services: Array<{
     name: string;
     type?: string;
-    status?: string;
-    linked_apps?: string[];
   }>;
   networks: Array<{
     name: string;
-    attached_apps?: number;
-    apps?: string[];
   }>;
 }
 
@@ -79,16 +71,12 @@ interface QuotaInfo {
 interface DashboardStats {
   apps: {
     total: number | undefined;
-    running: number | undefined;
-    stopped: number | undefined;
   };
   networks: {
     total: number | undefined;
   };
   services: {
     total: number | undefined;
-    running: number | undefined;
-    stopped: number | undefined;
   };
   quota: QuotaInfo | null;
 }
@@ -102,9 +90,9 @@ interface SystemInfo {
 export function HomePage(props: HomePageProps) {
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
-    apps: { total: undefined, running: undefined, stopped: undefined },
+    apps: { total: undefined },
     networks: { total: undefined },
-    services: { total: undefined, running: undefined, stopped: undefined },
+    services: { total: undefined },
     quota: null,
   });
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
@@ -159,13 +147,13 @@ export function HomePage(props: HomePageProps) {
       // Fetch detailed information for each resource type
       const [appsResponse, servicesResponse, networksResponse] = await Promise.all([
         api
-          .post('/api/apps/list')
+          .post('/api/apps/list/', {}, { params: { return_info: false } })
           .catch(() => ({ status: 500, data: { success: false, result: {} } })),
         api
-          .post('/api/databases/list')
+          .post('/api/databases/list/', {}, { params: { return_info: false } })
           .catch(() => ({ status: 500, data: { success: false, result: {} } })),
         api
-          .post('/api/networks/list/')
+          .post('/api/networks/list/', {}, { params: { return_info: false } })
           .catch(() => ({ status: 500, data: { success: false, result: {} } })),
       ]);
 
@@ -173,15 +161,9 @@ export function HomePage(props: HomePageProps) {
       let appsData: any[] = [];
       if (appsResponse.status === 200 && appsResponse.data.success) {
         const appsResult = appsResponse.data.result;
-        appsData = Object.entries(appsResult).map(([appName, appInfo]: [string, any]) => {
-          const statusInfo = getAppStatusInfo(appInfo);
-          return {
-            name: appName.replace(/^\d+-/, ''),
-            status: statusInfo.isRunning ? 'running' : 'stopped',
-            running: statusInfo.isRunning,
-            url: null, // Will be populated if needed
-          };
-        });
+        appsData = Object.keys(appsResult).map((appName) => ({
+          name: appName.replace(/^\d+-/, ''),
+        }));
       }
 
       // Process services data
@@ -190,11 +172,9 @@ export function HomePage(props: HomePageProps) {
         const servicesResult = servicesResponse.data.result;
         servicesData = Object.entries(servicesResult).flatMap(
           ([pluginType, services]: [string, any]) =>
-            Object.entries(services).map(([serviceName, serviceData]: [string, any]) => ({
+            Object.keys(services).map((serviceName) => ({
               name: serviceName.replace(/^\d+_/, ''),
               type: pluginType,
-              status: serviceData.status || 'unknown',
-              linked_apps: [],
             }))
         );
       }
@@ -205,8 +185,6 @@ export function HomePage(props: HomePageProps) {
         const networksResult = networksResponse.data.result;
         networksData = Object.keys(networksResult).map((networkName) => ({
           name: networkName,
-          attached_apps: 0,
-          apps: [],
         }));
       }
 
@@ -217,42 +195,9 @@ export function HomePage(props: HomePageProps) {
       };
 
       setDetailedResources(detailedData);
-
-      // Update stats with running/stopped counts after we have detailed data
-      setStats((prevStats) => ({
-        ...prevStats,
-        apps: {
-          ...prevStats.apps,
-          running: appsData.filter((app) => app.running).length,
-          stopped: appsData.filter((app) => !app.running).length,
-        },
-        services: {
-          ...prevStats.services,
-          running: servicesData.filter((service) => service.status === 'running').length,
-          stopped: servicesData.filter((service) => service.status !== 'running').length,
-        },
-      }));
     } catch (error) {
       console.error('Error fetching detailed resources:', error);
     }
-  };
-
-  // Helper function to get app status info (similar to AppsPage)
-  const getAppStatusInfo = (appInfo: any) => {
-    if (appInfo.info_origin === 'report') {
-      const reportData = appInfo.data;
-      return {
-        isRunning: reportData.running === 'true' && reportData.deployed === 'true',
-      };
-    } else {
-      const containers = appInfo.data;
-      if (Array.isArray(containers) && containers.length > 0) {
-        return {
-          isRunning: containers.some((container: any) => container.State?.Running),
-        };
-      }
-    }
-    return { isRunning: false };
   };
 
   const fetchQuotaData = async () => {
@@ -275,9 +220,9 @@ export function HomePage(props: HomePageProps) {
         const usedData: UsedResourcesData = response.data;
 
         const newStats = {
-          apps: { total: usedData.apps_used || 0, running: 0, stopped: 0 },
+          apps: { total: usedData.apps_used || 0 },
           networks: { total: usedData.networks_used || 0 },
-          services: { total: usedData.services_used || 0, running: 0, stopped: 0 },
+          services: { total: usedData.services_used || 0 },
         };
 
         setStats((prev) => {
@@ -372,60 +317,6 @@ export function HomePage(props: HomePageProps) {
           style={{ width: '16px', height: '16px', borderRadius: '2px' }}
         />
       </Flex>
-
-      {type !== 'networks' ? (
-        <Flex justify='between' mb='3'>
-          <Box className={styles.metricBox}>
-            <Flex align='center' justify='center' gap='1' mb='2'>
-              <div
-                className={styles.skeletonElement}
-                style={{ width: '14px', height: '14px', borderRadius: '2px' }}
-              />
-              <div
-                className={styles.skeletonElement}
-                style={{ width: '28px', height: '28px', borderRadius: '6px' }}
-              />
-            </Flex>
-            <div
-              className={styles.skeletonElement}
-              style={{ width: '40px', height: '10px', borderRadius: '4px', margin: '0 auto' }}
-            />
-          </Box>
-          <Box className={styles.metricBox}>
-            <Flex align='center' justify='center' gap='1' mb='2'>
-              <div
-                className={styles.skeletonElement}
-                style={{ width: '14px', height: '14px', borderRadius: '2px' }}
-              />
-              <div
-                className={styles.skeletonElement}
-                style={{ width: '28px', height: '28px', borderRadius: '6px' }}
-              />
-            </Flex>
-            <div
-              className={styles.skeletonElement}
-              style={{ width: '40px', height: '10px', borderRadius: '4px', margin: '0 auto' }}
-            />
-          </Box>
-        </Flex>
-      ) : (
-        <Box className={styles.metricBox} style={{ marginBottom: '16px', textAlign: 'center' }}>
-          <Flex align='center' justify='center' gap='1' mb='2'>
-            <div
-              className={styles.skeletonElement}
-              style={{ width: '14px', height: '14px', borderRadius: '2px' }}
-            />
-            <div
-              className={styles.skeletonElement}
-              style={{ width: '32px', height: '32px', borderRadius: '6px' }}
-            />
-          </Flex>
-          <div
-            className={styles.skeletonElement}
-            style={{ width: '70px', height: '10px', borderRadius: '4px', margin: '0 auto' }}
-          />
-        </Box>
-      )}
 
       <Box className={styles.resourceList}>
         {[1, 2, 3].map((item) => (
@@ -855,49 +746,6 @@ export function HomePage(props: HomePageProps) {
                                   />
                                 </Flex>
 
-                                <Flex justify='between' mb='3'>
-                                  <Box className={styles.metricBox}>
-                                    <Flex align='center' justify='center' gap='1' mb='1'>
-                                      <CheckCircledIcon
-                                        width='14'
-                                        height='14'
-                                        style={{ color: 'var(--green-9)' }}
-                                      />
-                                      <Text
-                                        size='5'
-                                        weight='bold'
-                                        className={styles.metricNumber}
-                                        style={{ color: 'var(--green-11)' }}
-                                      >
-                                        {stats.apps.running}
-                                      </Text>
-                                    </Flex>
-                                    <Text size='1' className={styles.metricLabel}>
-                                      Ativos
-                                    </Text>
-                                  </Box>
-                                  <Box className={styles.metricBox}>
-                                    <Flex align='center' justify='center' gap='1' mb='1'>
-                                      <CounterClockwiseClockIcon
-                                        width='14'
-                                        height='14'
-                                        style={{ color: 'var(--gray-9)' }}
-                                      />
-                                      <Text
-                                        size='5'
-                                        weight='bold'
-                                        className={styles.metricNumber}
-                                        style={{ color: 'var(--gray-11)' }}
-                                      >
-                                        {stats.apps.stopped}
-                                      </Text>
-                                    </Flex>
-                                    <Text size='1' className={styles.metricLabel}>
-                                      Parados
-                                    </Text>
-                                  </Box>
-                                </Flex>
-
                                 <Box className={styles.resourceList}>
                                   {detailedResources.apps.length > 0 ? (
                                     <>
@@ -910,7 +758,7 @@ export function HomePage(props: HomePageProps) {
                                         >
                                           <div
                                             className={styles.statusIndicator}
-                                            data-status={app.running ? 'active' : 'inactive'}
+                                            data-status='active'
                                           />
                                           <Text size='2' className={styles.resourceName}>
                                             {app.name}
@@ -1006,49 +854,6 @@ export function HomePage(props: HomePageProps) {
                                   />
                                 </Flex>
 
-                                <Flex justify='between' mb='3'>
-                                  <Box className={styles.metricBox}>
-                                    <Flex align='center' justify='center' gap='1' mb='1'>
-                                      <CheckCircledIcon
-                                        width='14'
-                                        height='14'
-                                        style={{ color: 'var(--green-9)' }}
-                                      />
-                                      <Text
-                                        size='5'
-                                        weight='bold'
-                                        className={styles.metricNumber}
-                                        style={{ color: 'var(--green-11)' }}
-                                      >
-                                        {stats.services.running}
-                                      </Text>
-                                    </Flex>
-                                    <Text size='1' className={styles.metricLabel}>
-                                      Ativos
-                                    </Text>
-                                  </Box>
-                                  <Box className={styles.metricBox}>
-                                    <Flex align='center' justify='center' gap='1' mb='1'>
-                                      <CounterClockwiseClockIcon
-                                        width='14'
-                                        height='14'
-                                        style={{ color: 'var(--gray-9)' }}
-                                      />
-                                      <Text
-                                        size='5'
-                                        weight='bold'
-                                        className={styles.metricNumber}
-                                        style={{ color: 'var(--gray-11)' }}
-                                      >
-                                        {stats.services.stopped}
-                                      </Text>
-                                    </Flex>
-                                    <Text size='1' className={styles.metricLabel}>
-                                      Parados
-                                    </Text>
-                                  </Box>
-                                </Flex>
-
                                 <Box className={styles.resourceList}>
                                   {detailedResources.services.length > 0 ? (
                                     <>
@@ -1063,9 +868,7 @@ export function HomePage(props: HomePageProps) {
                                           >
                                             <div
                                               className={styles.statusIndicator}
-                                              data-status={
-                                                service.status === 'running' ? 'active' : 'inactive'
-                                              }
+                                              data-status='active'
                                             />
                                             <Text size='2' className={styles.resourceName}>
                                               {service.name}
@@ -1168,30 +971,6 @@ export function HomePage(props: HomePageProps) {
                                     style={{ color: 'var(--gray-9)' }}
                                   />
                                 </Flex>
-
-                                <Box
-                                  className={styles.metricBox}
-                                  style={{ marginBottom: '16px', textAlign: 'center' }}
-                                >
-                                  <Flex align='center' justify='center' gap='1' mb='1'>
-                                    <CheckCircledIcon
-                                      width='14'
-                                      height='14'
-                                      style={{ color: 'var(--green-9)' }}
-                                    />
-                                    <Text
-                                      size='5'
-                                      weight='bold'
-                                      className={styles.metricNumber}
-                                      style={{ color: 'var(--green-11)' }}
-                                    >
-                                      {detailedResources.networks.length}
-                                    </Text>
-                                  </Flex>
-                                  <Text size='1' className={styles.metricLabel}>
-                                    Configuradas
-                                  </Text>
-                                </Box>
 
                                 <Box className={styles.resourceList}>
                                   {detailedResources.networks.length > 0 ? (
