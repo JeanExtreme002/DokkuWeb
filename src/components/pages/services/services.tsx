@@ -1,3 +1,4 @@
+import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { Session } from 'next-auth';
@@ -319,28 +320,11 @@ export function ServicesPage(props: ServicesPageProps) {
           <Flex className={styles.serviceActions}>
             <Button
               size='3'
+              color='blue'
+              variant='outline'
               onClick={() => (window.location.href = `/services/${displayName}`)}
-              style={{
-                background: 'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-                fontWeight: '500',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                transition: 'all 0.2s ease',
-                width: '100%',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-              }}
             >
+              <EyeOpenIcon />
               Ver detalhes
             </Button>
           </Flex>
@@ -579,31 +563,11 @@ export function ServicesPage(props: ServicesPageProps) {
                           <Flex className={styles.serviceActions}>
                             <Button
                               size='3'
+                              color='blue'
+                              variant='outline'
                               onClick={() => (window.location.href = `/services/${displayName}`)}
-                              style={{
-                                background:
-                                  'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
-                                border: 'none',
-                                color: 'white',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                padding: '12px 20px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                                transition: 'all 0.2s ease',
-                                width: '100%',
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-1px)';
-                                e.currentTarget.style.boxShadow =
-                                  '0 4px 12px rgba(59, 130, 246, 0.4)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow =
-                                  '0 2px 8px rgba(59, 130, 246, 0.3)';
-                              }}
                             >
+                              <EyeOpenIcon />
                               Ver detalhes
                             </Button>
                           </Flex>

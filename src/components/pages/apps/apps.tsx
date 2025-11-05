@@ -1,3 +1,4 @@
+import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Avatar, Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
@@ -284,38 +285,162 @@ export function AppsPage(props: AppsPageProps) {
                 fill='none'
                 xmlns='http://www.w3.org/2000/svg'
               >
+                {/* CPU Body */}
                 <rect
                   x='6'
                   y='6'
                   width='12'
                   height='12'
                   rx='2'
-                  stroke='#4fa8d8'
-                  strokeWidth='1.5'
+                  stroke='#22d3ee'
+                  strokeWidth='2'
                   fill='none'
-                  filter='drop-shadow(0 0 4px #4fa8d8) drop-shadow(0 0 8px #4fa8d8)'
                 />
+                {/* CPU Core */}
                 <rect
                   x='9'
                   y='9'
                   width='6'
                   height='6'
                   rx='1'
-                  stroke='#87ceeb'
-                  strokeWidth='1.2'
-                  fill='currentColor'
-                  fillOpacity='0.2'
+                  stroke='#67e8f9'
+                  strokeWidth='1.5'
+                  fill='none'
+                />
+                {/* CPU Pins - Top */}
+                <line
+                  x1='8'
+                  y1='6'
+                  x2='8'
+                  y2='3'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='12'
+                  y1='6'
+                  x2='12'
+                  y2='3'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='16'
+                  y1='6'
+                  x2='16'
+                  y2='3'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                {/* CPU Pins - Bottom */}
+                <line
+                  x1='8'
+                  y1='18'
+                  x2='8'
+                  y2='21'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='12'
+                  y1='18'
+                  x2='12'
+                  y2='21'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='16'
+                  y1='18'
+                  x2='16'
+                  y2='21'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                {/* CPU Pins - Left */}
+                <line
+                  x1='6'
+                  y1='8'
+                  x2='3'
+                  y2='8'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='6'
+                  y1='12'
+                  x2='3'
+                  y2='12'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='6'
+                  y1='16'
+                  x2='3'
+                  y2='16'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                {/* CPU Pins - Right */}
+                <line
+                  x1='18'
+                  y1='8'
+                  x2='21'
+                  y2='8'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='18'
+                  y1='12'
+                  x2='21'
+                  y2='12'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
+                />
+                <line
+                  x1='18'
+                  y1='16'
+                  x2='21'
+                  y2='16'
+                  stroke='#67e8f9'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  className={styles.energyLine}
                 />
               </svg>
             }
             style={{
               background:
-                'linear-gradient(135deg, #ff1744 0%, #e91e63 25%, #f06292 50%, #ba68c8 75%, #9c27b0 100%)',
+                'linear-gradient(135deg, #8e24aa 0%, #ab47bc 25%, #c39bd3 50%, #b39ddb 75%, #9c5cb5 100%)',
               color: 'white',
               marginRight: '10px',
               border: '2px solid rgba(255, 255, 255, 0.25)',
               boxShadow:
-                '0 8px 32px rgba(233, 30, 99, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                '0 8px 32px rgba(142, 36, 170, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
             }}
           />
 
@@ -325,9 +450,17 @@ export function AppsPage(props: AppsPageProps) {
               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
                 {displayName}
               </Heading>
-              <Text size='2' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
-                • carregando...
+              <Text size='2' style={{ color: 'var(--gray-9)' }}>
+                •
               </Text>
+              <div
+                className={styles.skeletonElement}
+                style={{
+                  width: '60px',
+                  height: '12px',
+                  borderRadius: '4px',
+                }}
+              />
             </Flex>
 
             {/* Status skeleton */}
@@ -379,28 +512,11 @@ export function AppsPage(props: AppsPageProps) {
             />
             <Button
               size='3'
+              color='blue'
+              variant='outline'
               onClick={() => (window.location.href = `/apps/a/${displayName}`)}
-              style={{
-                background: 'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-                fontWeight: '500',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                transition: 'all 0.2s ease',
-                minWidth: '120px',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-              }}
             >
+              <EyeOpenIcon />
               Ver detalhes
             </Button>
           </Flex>
@@ -593,10 +709,9 @@ export function AppsPage(props: AppsPageProps) {
                                   width='12'
                                   height='12'
                                   rx='2'
-                                  stroke='#4fa8d8'
-                                  strokeWidth='1.5'
+                                  stroke='#22d3ee'
+                                  strokeWidth='2'
                                   fill='none'
-                                  filter='drop-shadow(0 0 4px #4fa8d8) drop-shadow(0 0 8px #4fa8d8)'
                                 />
                                 {/* CPU Core */}
                                 <rect
@@ -605,10 +720,9 @@ export function AppsPage(props: AppsPageProps) {
                                   width='6'
                                   height='6'
                                   rx='1'
-                                  stroke='#87ceeb'
-                                  strokeWidth='1.2'
-                                  fill='currentColor'
-                                  fillOpacity='0.2'
+                                  stroke='#67e8f9'
+                                  strokeWidth='1.5'
+                                  fill='none'
                                 />
                                 {/* CPU Pins - Top */}
                                 <line
@@ -616,27 +730,30 @@ export function AppsPage(props: AppsPageProps) {
                                   y1='6'
                                   x2='8'
                                   y2='3'
-                                  stroke='#87ceeb'
-                                  strokeWidth='1.5'
+                                  stroke='#67e8f9'
+                                  strokeWidth='2'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='12'
                                   y1='6'
                                   x2='12'
                                   y2='3'
-                                  stroke='#87ceeb'
-                                  strokeWidth='1.5'
+                                  stroke='#67e8f9'
+                                  strokeWidth='2'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='16'
                                   y1='6'
                                   x2='16'
                                   y2='3'
-                                  stroke='#87ceeb'
-                                  strokeWidth='1.5'
+                                  stroke='#67e8f9'
+                                  strokeWidth='2'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 {/* CPU Pins - Bottom */}
                                 <line
@@ -647,6 +764,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='12'
@@ -656,6 +774,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='16'
@@ -665,6 +784,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 {/* CPU Pins - Left */}
                                 <line
@@ -675,6 +795,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='6'
@@ -684,6 +805,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='6'
@@ -693,6 +815,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 {/* CPU Pins - Right */}
                                 <line
@@ -703,6 +826,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='18'
@@ -712,6 +836,7 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                                 <line
                                   x1='18'
@@ -721,17 +846,18 @@ export function AppsPage(props: AppsPageProps) {
                                   stroke='#87ceeb'
                                   strokeWidth='1.5'
                                   strokeLinecap='round'
+                                  className={styles.energyLine}
                                 />
                               </svg>
                             }
                             style={{
                               background:
-                                'linear-gradient(135deg, #ff1744 0%, #e91e63 25%, #f06292 50%, #ba68c8 75%, #9c27b0 100%)',
+                                'linear-gradient(135deg, #8e24aa 0%, #ab47bc 25%, #c39bd3 50%, #b39ddb 75%, #9c5cb5 100%)',
                               color: 'white',
                               marginRight: '10px',
                               border: '2px solid rgba(255, 255, 255, 0.25)',
                               boxShadow:
-                                '0 8px 32px rgba(233, 30, 99, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                                '0 8px 32px rgba(142, 36, 170, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 1px, 0.3)',
                             }}
                           />
 
@@ -832,31 +958,11 @@ export function AppsPage(props: AppsPageProps) {
 
                             <Button
                               size='3'
+                              color='blue'
+                              variant='outline'
                               onClick={() => (window.location.href = `/apps/a/${displayName}`)}
-                              style={{
-                                background:
-                                  'linear-gradient(135deg, var(--blue-9) 0%, var(--blue-10) 100%)',
-                                border: 'none',
-                                color: 'white',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                padding: '12px 20px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                                transition: 'all 0.2s ease',
-                                minWidth: '120px',
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-1px)';
-                                e.currentTarget.style.boxShadow =
-                                  '0 4px 12px rgba(59, 130, 246, 0.4)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow =
-                                  '0 2px 8px rgba(59, 130, 246, 0.3)';
-                              }}
                             >
+                              <EyeOpenIcon />
                               Ver detalhes
                             </Button>
                           </Flex>
