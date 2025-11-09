@@ -71,7 +71,7 @@ export function SettingsPage(props: SettingsPageProps) {
     const fetchQuota = async () => {
       try {
         setLoading(true);
-        const response = await api.post('/api/quota');
+        const response = await api.post('/api/quota/');
 
         if (response.status === 200) {
           setQuota(response.data);
@@ -92,7 +92,7 @@ export function SettingsPage(props: SettingsPageProps) {
         const userEmail = props.session?.user?.email;
         if (userEmail) {
           const response = await api.post<AdminCheckResponse>(
-            `/api/admin/users/${userEmail}/admin`
+            `/api/admin/users/${userEmail}/admin/`
           );
           setIsAdmin(response.data.result);
         }
@@ -114,7 +114,7 @@ export function SettingsPage(props: SettingsPageProps) {
     try {
       setUserQuotaLoading(true);
       setUserQuotaError(null);
-      const response = await api.post<QuotaInfo>(`/api/admin/users/${searchEmail}/quota`);
+      const response = await api.post<QuotaInfo>(`/api/admin/users/${searchEmail}/quota/`);
       setUserQuota({ ...response.data, email: searchEmail });
       setEditQuota(response.data);
     } catch (error) {
@@ -132,7 +132,7 @@ export function SettingsPage(props: SettingsPageProps) {
     try {
       setUpdateLoading(true);
       await api.put(
-        `/api/admin/users/${userQuota.email}/quota`,
+        `/api/admin/users/${userQuota.email}/quota/`,
         {},
         {
           params: {

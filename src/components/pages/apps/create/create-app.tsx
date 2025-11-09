@@ -159,7 +159,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
       // Adiciona requisição de vinculação à rede (se uma foi selecionada)
       if (selectedNetwork && selectedNetwork !== 'none') {
         promises.push(
-          api.post(`/api/networks/${selectedNetwork}/link/${appName.trim()}`).catch((error) => {
+          api.post(`/api/networks/${selectedNetwork}/link/${appName.trim()}/`).catch((error) => {
             console.error('Error linking app to network:', error);
             // Não falha o processo se network link der erro
           })
@@ -169,10 +169,12 @@ export function CreateAppPage(props: CreateAppPageProps) {
       // Adiciona requisições de config para cada variável de ambiente
       environmentVariables.forEach((envVar) => {
         promises.push(
-          api.post(`/api/config/${appName.trim()}/${envVar.key}/${envVar.value}`).catch((error) => {
-            console.error(`Error setting config ${envVar.key}:`, error);
-            // Não falha o processo se config der erro
-          })
+          api
+            .post(`/api/config/${appName.trim()}/${envVar.key}/${envVar.value}/`)
+            .catch((error) => {
+              console.error(`Error setting config ${envVar.key}:`, error);
+              // Não falha o processo se config der erro
+            })
         );
       });
 

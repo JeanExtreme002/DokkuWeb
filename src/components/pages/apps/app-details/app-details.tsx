@@ -261,7 +261,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   }, [props.appName]);
 
   const fetchDatabases = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/databases`);
+    const response = await api.post(`/api/apps/${props.appName}/databases/`);
     if (response.data.success) {
       setDatabases(response.data.result);
     }
@@ -286,7 +286,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   }, [props.appName]);
 
   const fetchLogs = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/logs`);
+    const response = await api.post(`/api/apps/${props.appName}/logs/`);
     if (response.data.success) {
       setLogs(response.data.result);
     }
@@ -581,7 +581,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setPortSubmitting(true);
     try {
       await api.post(
-        `/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}`,
+        `/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}/`,
         {},
         { params: { use_proxy: true } }
       );
@@ -629,7 +629,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const startApp = async () => {
     setStartLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/start`);
+      await api.post(`/api/apps/${props.appName}/start/`);
       // Refresh app info after action
       setDataLoaded(false);
       await fetchAppInfo();
@@ -647,7 +647,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const stopApp = async () => {
     setStopLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/stop`);
+      await api.post(`/api/apps/${props.appName}/stop/`);
       // Refresh app info after action
       setDataLoaded(false);
       await fetchAppInfo();
@@ -665,7 +665,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const restartApp = async () => {
     setRestartLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/restart`);
+      await api.post(`/api/apps/${props.appName}/restart/`);
       // Refresh app info after action
       setDataLoaded(false);
       await fetchAppInfo();
@@ -683,7 +683,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const rebuildApp = async () => {
     setRebuildLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/rebuild`);
+      await api.post(`/api/apps/${props.appName}/rebuild/`);
       // Refresh app info after action
       setDataLoaded(false);
       await fetchAppInfo();
@@ -711,7 +711,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     setBuilderConfigLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/builder/${selectedBuilder.toLowerCase()}`);
+      await api.post(`/api/apps/${props.appName}/builder/${selectedBuilder.toLowerCase()}/`);
       // Refresh builder info after configuration
       await fetchBuilderInfo();
       setBuilderModalOpen(false);
@@ -735,7 +735,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     try {
       await api.put(
-        `/api/deploy/${props.appName}`,
+        `/api/deploy/${props.appName}/`,
         {},
         {
           params: {
@@ -772,7 +772,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       const formData = new FormData();
       formData.append('file', file);
 
-      await api.put(`/api/deploy/?wait=false`, formData, {
+      await api.put(`/api/deploy/`, formData, {
+        params: {
+          wait: false,
+        },
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -817,7 +820,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     setEnvSubmitting(true);
     try {
-      await api.post(`/api/config/${props.appName}/${newEnvKey.trim()}/${newEnvValue.trim()}`);
+      await api.post(`/api/config/${props.appName}/${newEnvKey.trim()}/${newEnvValue.trim()}/`);
       await fetchConfig();
       setNewEnvKey('');
       setNewEnvValue('');

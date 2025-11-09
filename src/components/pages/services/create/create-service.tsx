@@ -136,7 +136,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
 
     try {
       const createServiceResponse = await api.post(
-        `/api/databases/${selectedDatabase}/${serviceName.trim()}`
+        `/api/databases/${selectedDatabase}/${serviceName.trim()}/`
       );
 
       if (createServiceResponse.status !== 200 && createServiceResponse.status !== 201) {

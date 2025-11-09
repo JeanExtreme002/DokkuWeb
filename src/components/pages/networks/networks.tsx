@@ -229,7 +229,7 @@ export function NetworksPage(props: NetworksPageProps) {
     setActionLoading((prev) => ({ ...prev, [networkName]: true }));
 
     try {
-      const response = await api.post(`/api/networks/${networkName}/link/${appName}`);
+      const response = await api.post(`/api/networks/${networkName}/link/${appName}/`);
 
       if (response.status === 200) {
         await fetchLinkedApps(networkName);
@@ -273,7 +273,7 @@ export function NetworksPage(props: NetworksPageProps) {
     setCreatingNetwork(true); // Inicia loading
 
     try {
-      const response = await api.post(`/api/networks/${newNetworkName.trim()}`);
+      const response = await api.post(`/api/networks/${newNetworkName.trim()}/`);
 
       if (response.status === 200 || response.status === 201) {
         // Recarrega a lista de redes

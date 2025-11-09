@@ -202,7 +202,7 @@ export function HomePage(props: HomePageProps) {
 
   const fetchQuotaData = async () => {
     try {
-      const response = await api.post('/api/quota');
+      const response = await api.post('/api/quota/');
       if (response.status === 200) {
         setStats((prev) => ({ ...prev, quota: response.data }));
       }
@@ -215,7 +215,7 @@ export function HomePage(props: HomePageProps) {
 
   const fetchUsedResourcesData = async () => {
     try {
-      const response = await api.post('/api/quota/used');
+      const response = await api.post('/api/quota/used/');
       if (response.status === 200) {
         const usedData: UsedResourcesData = response.data;
 
