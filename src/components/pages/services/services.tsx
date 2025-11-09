@@ -80,7 +80,10 @@ export function ServicesPage(props: ServicesPageProps) {
         const response = await api.post(
           '/api/databases/list/',
           {},
-          { params: { return_info: false } }
+          {
+            headers: { 'x-cache': 'false' },
+            params: { return_info: false },
+          }
         );
 
         if (response.status === 200 && response.data.success) {
@@ -102,14 +105,9 @@ export function ServicesPage(props: ServicesPageProps) {
 
           setServicesList(initialServicesList);
 
-          fetchServicesInfo(initialServicesList);
-
-          // Verifica se a resposta veio do cache
-          const cacheStatus = response.headers['x-cache'];
-          if (cacheStatus === 'HIT') {
-            // Se veio do cache, faz uma requisição em background para obter dados atualizados
-            fetchFreshServicesInfo(initialServicesList);
-          }
+          // Carrega informações dos serviços
+          // A sincronização será feita automaticamente para itens que vieram do cache
+          await fetchServicesInfo(initialServicesList);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -127,6 +125,8 @@ export function ServicesPage(props: ServicesPageProps) {
     };
 
     const fetchServicesInfo = async (servicesList: ServiceListItem[]) => {
+      const cachedServices: ServiceListItem[] = [];
+
       // Carrega informações de cada serviço de forma assíncrona
       const promises = servicesList.map(async (serviceItem) => {
         try {
@@ -135,6 +135,12 @@ export function ServicesPage(props: ServicesPageProps) {
           );
 
           if (response.status === 200 && response.data.success) {
+            // Verifica se esta requisição individual veio do cache
+            const cacheStatus = response.headers['x-cache'];
+            if (cacheStatus === 'HIT') {
+              cachedServices.push(serviceItem);
+            }
+
             // Atualiza o estado do serviço específico
             setServicesList((prevList) =>
               prevList.map((service) =>
@@ -170,6 +176,11 @@ export function ServicesPage(props: ServicesPageProps) {
 
       // Aguarda todas as requisições terminarem
       await Promise.allSettled(promises);
+
+      // Se houver serviços que vieram do cache, atualiza eles em background
+      if (cachedServices.length > 0) {
+        fetchFreshServicesInfo(cachedServices);
+      }
     };
 
     const fetchFreshServicesInfo = async (servicesList: ServiceListItem[]) => {

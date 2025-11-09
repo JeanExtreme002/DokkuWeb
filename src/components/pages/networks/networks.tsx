@@ -62,8 +62,12 @@ export function NetworksPage(props: NetworksPageProps) {
       try {
         setLoading(true);
 
-        // Primeiro busca as redes (pode vir do cache)
-        const networksResponse = await api.post('/api/networks/list/');
+        // Primeiro busca as redes
+        const networksResponse = await api.post(
+          '/api/networks/list/',
+          {},
+          { headers: { 'x-cache': 'false' } }
+        );
 
         if (networksResponse.status === 200 && networksResponse.data.success) {
           const networksData = networksResponse.data.result;
@@ -74,11 +78,19 @@ export function NetworksPage(props: NetworksPageProps) {
 
           if (networkNames.length > 0) {
             // Busca os linked-apps de todas as redes em paralelo (pode vir do cache)
+            const cachedNetworks: string[] = [];
+
             const linkedAppsPromises = networkNames.map(async (networkName) => {
               try {
                 const response = await api.post(`/api/networks/${networkName}/linked-apps/`);
 
                 if (response.status === 200 && response.data.success) {
+                  // Verifica se esta requisição individual veio do cache
+                  const cacheStatus = response.headers['x-cache'];
+                  if (cacheStatus === 'HIT') {
+                    cachedNetworks.push(networkName);
+                  }
+
                   return {
                     networkName,
                     apps: response.data.result,
@@ -107,13 +119,11 @@ export function NetworksPage(props: NetworksPageProps) {
             });
 
             setLinkedApps(allLinkedApps);
-          }
 
-          // Verifica se a resposta das redes veio do cache
-          const cacheStatus = networksResponse.headers['x-cache'];
-          if (cacheStatus === 'HIT') {
-            // Se veio do cache, faz uma requisição em background para obter dados atualizados
-            fetchFreshNetworksAndApps();
+            // Se houver networks cujas linked-apps vieram do cache, atualiza elas em background
+            if (cachedNetworks.length > 0) {
+              fetchFreshLinkedApps(cachedNetworks);
+            }
           }
         } else {
           throw new Error(`HTTP error! status: ${networksResponse.status}`);
@@ -126,72 +136,53 @@ export function NetworksPage(props: NetworksPageProps) {
       }
     };
 
-    const fetchFreshNetworksAndApps = async () => {
+    const fetchFreshLinkedApps = async (networkNames: string[]) => {
       try {
         setIsUpdatingFromServer(true);
 
-        // Busca as redes sem cache
-        const networksResponse = await api.post(
-          '/api/networks/list/',
-          {},
-          {
-            headers: { 'x-cache': 'false' },
-          }
-        );
-
-        if (networksResponse.status === 200 && networksResponse.data.success) {
-          const networksData = networksResponse.data.result;
-          setNetworks(networksData);
-
-          // Lista de nomes das redes
-          const networkNames = Object.keys(networksData);
-
-          if (networkNames.length > 0) {
-            // Busca os linked-apps de todas as redes em paralelo sem cache
-            const linkedAppsPromises = networkNames.map(async (networkName) => {
-              try {
-                const response = await api.post(
-                  `/api/networks/${networkName}/linked-apps/`,
-                  {},
-                  {
-                    headers: { 'x-cache': 'false' },
-                  }
-                );
-
-                if (response.status === 200 && response.data.success) {
-                  return {
-                    networkName,
-                    apps: response.data.result,
-                  };
-                }
-                return {
-                  networkName,
-                  apps: [],
-                };
-              } catch (error) {
-                console.error(`Error fetching fresh linked apps for ${networkName}:`, error);
-                return {
-                  networkName,
-                  apps: [],
-                };
+        // Busca os linked-apps apenas das redes especificadas sem cache
+        const linkedAppsPromises = networkNames.map(async (networkName) => {
+          try {
+            const response = await api.post(
+              `/api/networks/${networkName}/linked-apps/`,
+              {},
+              {
+                headers: { 'x-cache': 'false' },
               }
-            });
+            );
 
-            // Aguarda todas as requisições terminarem
-            const linkedAppsResults = await Promise.all(linkedAppsPromises);
-
-            // Monta o objeto com todos os linked-apps
-            const allLinkedApps: Record<string, string[]> = {};
-            linkedAppsResults.forEach(({ networkName, apps }) => {
-              allLinkedApps[networkName] = apps;
-            });
-
-            setLinkedApps(allLinkedApps);
+            if (response.status === 200 && response.data.success) {
+              return {
+                networkName,
+                apps: response.data.result,
+              };
+            }
+            return {
+              networkName,
+              apps: [],
+            };
+          } catch (error) {
+            console.error(`Error fetching fresh linked apps for ${networkName}:`, error);
+            return {
+              networkName,
+              apps: [],
+            };
           }
-        }
+        });
+
+        // Aguarda todas as requisições terminarem
+        const linkedAppsResults = await Promise.all(linkedAppsPromises);
+
+        // Atualiza apenas os linked-apps das redes especificadas
+        linkedAppsResults.forEach(({ networkName, apps }) => {
+          setLinkedApps((prev) => ({
+            ...prev,
+            [networkName]: apps,
+          }));
+        });
       } catch (error) {
         // Ignora erros na atualização em background
-        console.warn('Failed to fetch fresh networks data:', error);
+        console.warn('Failed to fetch fresh linked apps data:', error);
       } finally {
         setIsUpdatingFromServer(false);
       }

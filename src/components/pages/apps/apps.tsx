@@ -82,7 +82,14 @@ export function AppsPage(props: AppsPageProps) {
       const startTime = Date.now();
       try {
         setLoading(true);
-        const response = await api.post('/api/apps/list/', {}, { params: { return_info: false } });
+        const response = await api.post(
+          '/api/apps/list/',
+          {},
+          {
+            headers: { 'x-cache': 'false' },
+            params: { return_info: false },
+          }
+        );
 
         if (response.status === 200 && response.data.success) {
           const appNames = Object.keys(response.data.result);
@@ -96,14 +103,9 @@ export function AppsPage(props: AppsPageProps) {
 
           setAppsList(initialAppsList);
 
-          fetchAppsInfo(appNames);
-
-          // Verifica se a resposta veio do cache
-          const cacheStatus = response.headers['x-cache'];
-          if (cacheStatus === 'HIT') {
-            // Se veio do cache, faz uma requisição em background para obter dados atualizados
-            fetchFreshAppsInfo(appNames);
-          }
+          // Carrega informações dos apps
+          // A sincronização será feita automaticamente para itens que vieram do cache
+          await fetchAppsInfo(appNames);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -121,12 +123,20 @@ export function AppsPage(props: AppsPageProps) {
     };
 
     const fetchAppsInfo = async (appNames: string[]) => {
+      const cachedApps: string[] = [];
+
       // Carrega informações de cada app de forma assíncrona
       const promises = appNames.map(async (appName) => {
         try {
           const response = await api.post(`/api/apps/${appName}/info/`);
 
           if (response.status === 200 && response.data.success) {
+            // Verifica se esta requisição individual veio do cache
+            const cacheStatus = response.headers['x-cache'];
+            if (cacheStatus === 'HIT') {
+              cachedApps.push(appName);
+            }
+
             // Atualiza o estado do app específico
             setAppsList((prevList) =>
               prevList.map((app) =>
@@ -151,6 +161,11 @@ export function AppsPage(props: AppsPageProps) {
 
       // Aguarda todas as requisições terminarem
       await Promise.allSettled(promises);
+
+      // Se houver apps que vieram do cache, atualiza eles em background
+      if (cachedApps.length > 0) {
+        fetchFreshAppsInfo(cachedApps);
+      }
     };
 
     const fetchFreshAppsInfo = async (appNames: string[]) => {
