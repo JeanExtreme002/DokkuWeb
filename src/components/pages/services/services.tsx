@@ -59,6 +59,7 @@ export function ServicesPage(props: ServicesPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -102,6 +103,13 @@ export function ServicesPage(props: ServicesPageProps) {
           setServicesList(initialServicesList);
 
           fetchServicesInfo(initialServicesList);
+
+          // Verifica se a resposta veio do cache
+          const cacheStatus = response.headers['x-cache'];
+          if (cacheStatus === 'HIT') {
+            // Se veio do cache, faz uma requisição em background para obter dados atualizados
+            fetchFreshServicesInfo(initialServicesList);
+          }
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -162,6 +170,57 @@ export function ServicesPage(props: ServicesPageProps) {
 
       // Aguarda todas as requisições terminarem
       await Promise.allSettled(promises);
+    };
+
+    const fetchFreshServicesInfo = async (servicesList: ServiceListItem[]) => {
+      try {
+        setIsUpdatingFromServer(true);
+
+        // Carrega informações de cada serviço de forma assíncrona sem cache
+        const promises = servicesList.map(async (serviceItem) => {
+          try {
+            const response = await api.post(
+              `/api/databases/${serviceItem.pluginType}/${serviceItem.serviceName}/info/`,
+              {},
+              {
+                headers: { 'x-cache': 'false' },
+              }
+            );
+
+            if (response.status === 200 && response.data.success) {
+              // Atualiza o estado do serviço específico
+              setServicesList((prevList) =>
+                prevList.map((service) =>
+                  service.pluginType === serviceItem.pluginType &&
+                  service.serviceName === serviceItem.serviceName
+                    ? {
+                        ...service,
+                        serviceData: {
+                          ...response.data.result,
+                          plugin_name: serviceItem.pluginType,
+                        },
+                        loading: false,
+                      }
+                    : service
+                )
+              );
+            }
+          } catch (error) {
+            console.error(
+              `Error fetching fresh info for service ${serviceItem.pluginType}/${serviceItem.serviceName}:`,
+              error
+            );
+          }
+        });
+
+        // Aguarda todas as requisições terminarem
+        await Promise.allSettled(promises);
+      } catch (error) {
+        // Ignora erros na atualização em background
+        console.warn('Failed to fetch fresh services data:', error);
+      } finally {
+        setIsUpdatingFromServer(false);
+      }
     };
 
     fetchServicesList();
@@ -386,6 +445,25 @@ export function ServicesPage(props: ServicesPageProps) {
 
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
+
+          {/* Indicador de atualização do servidor */}
+          {isUpdatingFromServer && (
+            <Flex align='center' gap='3'>
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid var(--gray-6)',
+                  borderTop: '2px solid var(--gray-9)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
+                Sincronizando informações com o servidor...
+              </Text>
+            </Flex>
+          )}
 
           {/* Estado de carregamento */}
           {loading && (

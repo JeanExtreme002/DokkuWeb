@@ -371,3 +371,13 @@
 .skeleton:nth-child(5) .skeletonElement::before {
   animation-delay: 0.6s;
 }
+
+/* Spin animation for the sync indicator */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -65,6 +65,7 @@ export function AppsPage(props: AppsPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -96,6 +97,13 @@ export function AppsPage(props: AppsPageProps) {
           setAppsList(initialAppsList);
 
           fetchAppsInfo(appNames);
+
+          // Verifica se a resposta veio do cache
+          const cacheStatus = response.headers['x-cache'];
+          if (cacheStatus === 'HIT') {
+            // Se veio do cache, faz uma requisição em background para obter dados atualizados
+            fetchFreshAppsInfo(appNames);
+          }
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -143,6 +151,46 @@ export function AppsPage(props: AppsPageProps) {
 
       // Aguarda todas as requisições terminarem
       await Promise.allSettled(promises);
+    };
+
+    const fetchFreshAppsInfo = async (appNames: string[]) => {
+      try {
+        setIsUpdatingFromServer(true);
+
+        // Carrega informações de cada app de forma assíncrona sem cache
+        const promises = appNames.map(async (appName) => {
+          try {
+            const response = await api.post(
+              `/api/apps/${appName}/info/`,
+              {},
+              {
+                headers: { 'x-cache': 'false' },
+              }
+            );
+
+            if (response.status === 200 && response.data.success) {
+              // Atualiza o estado do app específico
+              setAppsList((prevList) =>
+                prevList.map((app) =>
+                  app.name === appName
+                    ? { ...app, info: response.data.result, loading: false }
+                    : app
+                )
+              );
+            }
+          } catch (error) {
+            console.error(`Error fetching fresh info for app ${appName}:`, error);
+          }
+        });
+
+        // Aguarda todas as requisições terminarem
+        await Promise.allSettled(promises);
+      } catch (error) {
+        // Ignora erros na atualização em background
+        console.warn('Failed to fetch fresh apps data:', error);
+      } finally {
+        setIsUpdatingFromServer(false);
+      }
     };
 
     fetchAppsList();
@@ -619,6 +667,25 @@ export function AppsPage(props: AppsPageProps) {
 
           {/* Separador */}
           <Separator size='4' style={{ margin: '10px 0' }} />
+
+          {/* Indicador de atualização do servidor */}
+          {isUpdatingFromServer && (
+            <Flex align='center' gap='3'>
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid var(--gray-6)',
+                  borderTop: '2px solid var(--gray-9)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
+                Sincronizando informações com o servidor...
+              </Text>
+            </Flex>
+          )}
 
           {/* Estado de carregamento */}
           {loading && (
