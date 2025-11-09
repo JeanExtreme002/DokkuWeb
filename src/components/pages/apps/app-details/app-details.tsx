@@ -2,11 +2,14 @@ import {
   ChevronDownIcon,
   CodeIcon,
   DownloadIcon,
+  GearIcon,
   GitHubLogoIcon,
   GlobeIcon,
   InfoCircledIcon,
+  PlayIcon,
   PlusIcon,
   ReloadIcon,
+  RocketIcon,
   TrashIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
@@ -102,6 +105,15 @@ interface ConfigData {
   [key: string]: string;
 }
 
+interface BuilderData {
+  builder_build_dir: string;
+  builder_computed_build_dir: string;
+  builder_computed_selected: string;
+  builder_global_build_dir: string;
+  builder_global_selected: string;
+  builder_selected: string;
+}
+
 // Database images mapping (same as services page)
 const DATABASE_IMAGES: Record<string, string> = {
   postgres: '/images/database-logos/postgresql.svg',
@@ -133,6 +145,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [logs, setLogs] = useState<string>('');
   const [config, setConfig] = useState<ConfigData>({});
   const [appUrl, setAppUrl] = useState<string | null>(null);
+  const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
 
   // Loading states
   const [mainLoading, setMainLoading] = useState(true);
@@ -142,6 +155,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [portMappingsLoading, setPortMappingsLoading] = useState(true);
   const [logsLoading, setLogsLoading] = useState(true);
   const [configLoading, setConfigLoading] = useState(true);
+  const [builderLoading, setBuilderLoading] = useState(true);
 
   // Form states
   const [originPort, setOriginPort] = useState('');
@@ -180,6 +194,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   // Data loaded state to prevent unnecessary re-fetching
   const [dataLoaded, setDataLoaded] = useState(false);
 
+  // App control loading states
+  const [startLoading, setStartLoading] = useState(false);
+  const [stopLoading, setStopLoading] = useState(false);
+  const [restartLoading, setRestartLoading] = useState(false);
+  const [rebuildLoading, setRebuildLoading] = useState(false);
+
+  // Builder configuration states
+  const [builderModalOpen, setBuilderModalOpen] = useState(false);
+  const [selectedBuilder, setSelectedBuilder] = useState('');
+  const [builderConfigLoading, setBuilderConfigLoading] = useState(false);
+
   // Error states
   const [errors, setErrors] = useState({
     main: null as string | null,
@@ -189,6 +214,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     logs: null as string | null,
     config: null as string | null,
     deploy: null as string | null,
+    builder: null as string | null,
   });
 
   // Fetch functions with retry logic
@@ -287,6 +313,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [props.appName]);
 
+  const fetchBuilderInfo = useCallback(async () => {
+    const response = await api.post(`/api/apps/${props.appName}/builder/`);
+    if (response.data.success) {
+      setBuilderInfo(response.data.result);
+    }
+  }, [props.appName]);
+
   // Silent refresh for overview data only - updates app info and URL every 10 seconds
   // This keeps the overview tab current without affecting loading states or other tabs
   const silentRefreshOverview = useCallback(async () => {
@@ -332,12 +365,27 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     const loadAllData = async () => {
       try {
-        // Main app info (required for page load)
-        await fetchWithRetry(fetchAppInfo, setMainLoading, (error) =>
-          setErrors((prev) => ({ ...prev, main: error }))
-        );
+        // Critical data (required for page load) - fetch in parallel
+        await Promise.all([
+          fetchWithRetry(fetchAppInfo, setMainLoading, (error) =>
+            setErrors((prev) => ({ ...prev, main: error }))
+          ),
+          fetchWithRetry(fetchBuilderInfo, setBuilderLoading, (error) =>
+            setErrors((prev) => ({ ...prev, builder: error }))
+          ),
+          fetchWithRetry(
+            fetchAppUrl,
+            setAppUrlLoading,
+            () => {} // Não precisa de erro separado
+          ),
+          fetchWithRetry(
+            fetchDeploymentToken,
+            () => {}, // Não precisa de loading separado
+            () => {} // Não precisa de erro separado
+          ),
+        ]);
 
-        // All other data (parallel fetch)
+        // All other data (parallel fetch - non-blocking)
         await Promise.allSettled([
           fetchWithRetry(fetchDatabases, setServicesLoading, (error) =>
             setErrors((prev) => ({ ...prev, services: error }))
@@ -353,16 +401,6 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           ),
           fetchWithRetry(fetchConfig, setConfigLoading, (error) =>
             setErrors((prev) => ({ ...prev, config: error }))
-          ),
-          fetchWithRetry(
-            fetchAppUrl,
-            setAppUrlLoading,
-            () => {} // Não precisa de erro separado
-          ),
-          fetchWithRetry(
-            fetchDeploymentToken,
-            () => {}, // Não precisa de loading separado
-            () => {} // Não precisa de erro separado
           ),
         ]);
 
@@ -387,6 +425,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     fetchConfig,
     fetchAppUrl,
     fetchDeploymentToken,
+    fetchBuilderInfo,
   ]);
 
   // Reset dataLoaded when appName changes
@@ -547,6 +586,107 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   };
 
+  // App control functions
+  const startApp = async () => {
+    setStartLoading(true);
+    try {
+      await api.post(`/api/apps/${props.appName}/start`);
+      // Refresh app info after action
+      setDataLoaded(false);
+      await fetchAppInfo();
+    } catch (error: any) {
+      console.error('Error starting app:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao iniciar aplicativo',
+      }));
+    } finally {
+      setStartLoading(false);
+    }
+  };
+
+  const stopApp = async () => {
+    setStopLoading(true);
+    try {
+      await api.post(`/api/apps/${props.appName}/stop`);
+      // Refresh app info after action
+      setDataLoaded(false);
+      await fetchAppInfo();
+    } catch (error: any) {
+      console.error('Error stopping app:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao parar aplicativo',
+      }));
+    } finally {
+      setStopLoading(false);
+    }
+  };
+
+  const restartApp = async () => {
+    setRestartLoading(true);
+    try {
+      await api.post(`/api/apps/${props.appName}/restart`);
+      // Refresh app info after action
+      setDataLoaded(false);
+      await fetchAppInfo();
+    } catch (error: any) {
+      console.error('Error restarting app:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao reiniciar aplicativo',
+      }));
+    } finally {
+      setRestartLoading(false);
+    }
+  };
+
+  const rebuildApp = async () => {
+    setRebuildLoading(true);
+    try {
+      await api.post(`/api/apps/${props.appName}/rebuild`);
+      // Refresh app info after action
+      setDataLoaded(false);
+      await fetchAppInfo();
+    } catch (error: any) {
+      console.error('Error rebuilding app:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao reconstruir aplicativo',
+      }));
+    } finally {
+      setRebuildLoading(false);
+    }
+  };
+
+  // Builder configuration functions
+  const openBuilderModal = () => {
+    // Set the current builder as the default selection
+    const currentBuilder = builderInfo?.builder_computed_selected || 'herokuish';
+    setSelectedBuilder(currentBuilder);
+    setBuilderModalOpen(true);
+  };
+
+  const configureBuilder = async () => {
+    if (!selectedBuilder) return;
+
+    setBuilderConfigLoading(true);
+    try {
+      await api.post(`/api/apps/${props.appName}/builder/${selectedBuilder.toLowerCase()}`);
+      // Refresh builder info after configuration
+      await fetchBuilderInfo();
+      setBuilderModalOpen(false);
+    } catch (error: any) {
+      console.error('Error configuring builder:', error);
+      setErrors((prev) => ({
+        ...prev,
+        builder: error.response?.data?.message || 'Erro ao configurar builder',
+      }));
+    } finally {
+      setBuilderConfigLoading(false);
+    }
+  };
+
   // Deploy functions
   const deployFromRepo = async () => {
     if (!repoUrl.trim() || !branch.trim()) return;
@@ -683,24 +823,25 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       <NavBar session={stableSession} />
 
       <main className={styles.root}>
-        {mainLoading || appUrlLoading ? (
+        {mainLoading || appUrlLoading || builderLoading ? (
           <LoadingSpinner
             asCard={false}
             title='Carregando Aplicativo'
             messages={[
               'Conectando ao Dokku...',
               'Obtendo informações do aplicativo...',
+              'Carregando informações do builder...',
               'Verificando status...',
               'Quase pronto...',
             ]}
           />
-        ) : errors.main ? (
+        ) : errors.main || errors.builder ? (
           <Flex direction='column' align='center' justify='center' style={{ minHeight: '50vh' }}>
             <Text size='5' color='red'>
-              {errors.main}
+              {errors.main || errors.builder}
             </Text>
             <Button size='3' onClick={() => window.location.reload()} style={{ marginTop: '16px' }}>
-              <ReloadIcon /> Tentar Novamente
+              <ReloadIcon /> Recarregar
             </Button>
           </Flex>
         ) : (
@@ -995,6 +1136,104 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
             <Separator size='4' />
 
+            {/* App Control Buttons */}
+            <Flex direction='column' gap='3'>
+              <Flex
+                direction='column'
+                gap='3'
+                className={styles.appControlButtons}
+                style={{ width: '100%' }}
+              >
+                {/* Primeira linha: Iniciar, Parar, Reiniciar */}
+                <Flex gap='3' className={styles.buttonRow} style={{ width: '100%' }}>
+                  <Button
+                    size='3'
+                    variant='soft'
+                    color='green'
+                    onClick={startApp}
+                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                  >
+                    {startLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <PlayIcon />}
+                    Iniciar
+                  </Button>
+
+                  <Button
+                    size='3'
+                    variant='soft'
+                    color='red'
+                    onClick={stopApp}
+                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                  >
+                    {stopLoading ? (
+                      <ReloadIcon className={styles.buttonSpinner} />
+                    ) : (
+                      <svg
+                        width='16'
+                        height='16'
+                        viewBox='0 0 16 16'
+                        fill='currentColor'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <rect x='4' y='2' width='2' height='12' rx='1' />
+                        <rect x='10' y='2' width='2' height='12' rx='1' />
+                      </svg>
+                    )}
+                    Parar
+                  </Button>
+
+                  <Button
+                    size='3'
+                    variant='soft'
+                    color='orange'
+                    onClick={restartApp}
+                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                  >
+                    {restartLoading ? (
+                      <ReloadIcon className={styles.buttonSpinner} />
+                    ) : (
+                      <ReloadIcon />
+                    )}
+                    Reiniciar
+                  </Button>
+                </Flex>
+
+                {/* Segunda linha: Reconstruir, Configurar Builder */}
+                <Flex gap='3' className={styles.buttonRow} style={{ width: '100%' }}>
+                  <Button
+                    size='3'
+                    variant='soft'
+                    color='violet'
+                    onClick={rebuildApp}
+                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                  >
+                    {rebuildLoading ? (
+                      <ReloadIcon className={styles.buttonSpinner} />
+                    ) : (
+                      <RocketIcon />
+                    )}
+                    Reconstruir
+                  </Button>
+
+                  <Button
+                    size='3'
+                    variant='soft'
+                    color='blue'
+                    onClick={openBuilderModal}
+                    disabled={
+                      startLoading ||
+                      stopLoading ||
+                      restartLoading ||
+                      rebuildLoading ||
+                      builderConfigLoading
+                    }
+                  >
+                    <GearIcon />
+                    Configurar Builder
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
+
             {/* Tabs */}
             <Tabs.Root value={currentTab} onValueChange={setCurrentTab} className={styles.tabsRoot}>
               <Tabs.List className={styles.tabsList}>
@@ -1248,6 +1487,107 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                   </Text>
                                 </Flex>
                               </Box>
+
+                              {/* Builder Information */}
+                              {builderInfo && (
+                                <>
+                                  <Box
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Flex
+                                      direction={{ initial: 'column', sm: 'row' }}
+                                      justify={{ sm: 'between' }}
+                                      align={{ sm: 'center' }}
+                                      gap='1'
+                                    >
+                                      <Text
+                                        size='3'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-11)' }}
+                                      >
+                                        Builder
+                                      </Text>
+                                      <Text
+                                        size='3'
+                                        style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                      >
+                                        {builderInfo.builder_computed_selected || 'N/A'}
+                                      </Text>
+                                    </Flex>
+                                  </Box>
+
+                                  {builderInfo.builder_computed_build_dir && (
+                                    <Box
+                                      style={{
+                                        borderBottom: '1px solid var(--gray-6)',
+                                        paddingBottom: '8px',
+                                      }}
+                                    >
+                                      <Flex
+                                        direction={{ initial: 'column', sm: 'row' }}
+                                        justify={{ sm: 'between' }}
+                                        align={{ sm: 'center' }}
+                                        gap='1'
+                                      >
+                                        <Text
+                                          size='3'
+                                          weight='medium'
+                                          style={{ color: 'var(--gray-11)' }}
+                                        >
+                                          Build Directory
+                                        </Text>
+                                        <Text
+                                          size='3'
+                                          style={{
+                                            fontFamily: 'monospace',
+                                            color: 'var(--gray-12)',
+                                          }}
+                                        >
+                                          {builderInfo.builder_computed_build_dir}
+                                        </Text>
+                                      </Flex>
+                                    </Box>
+                                  )}
+
+                                  {builderInfo.builder_selected &&
+                                    builderInfo.builder_selected !==
+                                      builderInfo.builder_computed_selected && (
+                                      <Box
+                                        style={{
+                                          borderBottom: '1px solid var(--gray-6)',
+                                          paddingBottom: '8px',
+                                        }}
+                                      >
+                                        <Flex
+                                          direction={{ initial: 'column', sm: 'row' }}
+                                          justify={{ sm: 'between' }}
+                                          align={{ sm: 'center' }}
+                                          gap='1'
+                                        >
+                                          <Text
+                                            size='3'
+                                            weight='medium'
+                                            style={{ color: 'var(--gray-11)' }}
+                                          >
+                                            Builder Configurado
+                                          </Text>
+                                          <Text
+                                            size='3'
+                                            style={{
+                                              fontFamily: 'monospace',
+                                              color: 'var(--gray-12)',
+                                            }}
+                                          >
+                                            {builderInfo.builder_selected}
+                                          </Text>
+                                        </Flex>
+                                      </Box>
+                                    )}
+                                </>
+                              )}
                             </Flex>
                           );
                         })()
@@ -1354,6 +1694,89 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                   {reportData.ps_procfile_path || 'N/A'}
                                 </Text>
                               </Flex>
+
+                              {/* Builder Information */}
+                              {builderInfo && (
+                                <>
+                                  <Flex
+                                    justify='between'
+                                    align='center'
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Text
+                                      size='3'
+                                      weight='medium'
+                                      style={{ color: 'var(--gray-11)' }}
+                                    >
+                                      Builder Selecionado
+                                    </Text>
+                                    <Text
+                                      size='3'
+                                      style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                    >
+                                      {builderInfo.builder_computed_selected || 'N/A'}
+                                    </Text>
+                                  </Flex>
+
+                                  {builderInfo.builder_computed_build_dir && (
+                                    <Flex
+                                      justify='between'
+                                      align='center'
+                                      style={{
+                                        borderBottom: '1px solid var(--gray-6)',
+                                        paddingBottom: '8px',
+                                      }}
+                                    >
+                                      <Text
+                                        size='3'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-11)' }}
+                                      >
+                                        Build Directory
+                                      </Text>
+                                      <Text
+                                        size='3'
+                                        style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                      >
+                                        {builderInfo.builder_computed_build_dir}
+                                      </Text>
+                                    </Flex>
+                                  )}
+
+                                  {builderInfo.builder_selected &&
+                                    builderInfo.builder_selected !==
+                                      builderInfo.builder_computed_selected && (
+                                      <Flex
+                                        justify='between'
+                                        align='center'
+                                        style={{
+                                          borderBottom: '1px solid var(--gray-6)',
+                                          paddingBottom: '8px',
+                                        }}
+                                      >
+                                        <Text
+                                          size='3'
+                                          weight='medium'
+                                          style={{ color: 'var(--gray-11)' }}
+                                        >
+                                          Builder Configurado
+                                        </Text>
+                                        <Text
+                                          size='3'
+                                          style={{
+                                            fontFamily: 'monospace',
+                                            color: 'var(--gray-12)',
+                                          }}
+                                        >
+                                          {builderInfo.builder_selected}
+                                        </Text>
+                                      </Flex>
+                                    )}
+                                </>
+                              )}
                             </Flex>
                           );
                         })()}
@@ -2149,6 +2572,80 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 `${portToDelete.protocol}-${portToDelete.origin}-${portToDelete.dest}`
                 ? 'Removendo...'
                 : 'Confirmar Remoção'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Builder Configuration Modal */}
+      <Dialog.Root
+        open={builderModalOpen}
+        onOpenChange={(open) => {
+          setBuilderModalOpen(open);
+          if (!open) {
+            setErrors((prev) => ({ ...prev, builder: null }));
+          }
+        }}
+      >
+        <Dialog.Content style={{ maxWidth: '450px' }}>
+          <Dialog.Title>Configurar Builder</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Selecione o builder que será usado para construir e implantar seu aplicativo.
+          </Dialog.Description>
+
+          {errors.builder && (
+            <Box
+              style={{
+                padding: '12px',
+                background: 'var(--red-2)',
+                border: '1px solid var(--red-6)',
+                borderRadius: '6px',
+                marginBottom: '16px',
+              }}
+            >
+              <Text size='2' color='red'>
+                {errors.builder}
+              </Text>
+            </Box>
+          )}
+
+          <Flex direction='column' gap='4' style={{ marginTop: '20px' }}>
+            <Box>
+              <Select.Root value={selectedBuilder} onValueChange={setSelectedBuilder}>
+                <Select.Trigger style={{ width: '100%' }} />
+                <Select.Content>
+                  <Select.Item value='herokuish'>Herokuish</Select.Item>
+                  <Select.Item value='dockerfile'>Dockerfile</Select.Item>
+                  <Select.Item value='lambda'>Lambda</Select.Item>
+                  <Select.Item value='pack'>Pack</Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </Box>
+          </Flex>
+
+          <Flex gap='3' mt='6' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={builderConfigLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              onClick={configureBuilder}
+              disabled={!selectedBuilder || builderConfigLoading}
+              style={{
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                border: 'none',
+                color: 'white',
+              }}
+            >
+              {builderConfigLoading ? (
+                <>
+                  <ReloadIcon className={styles.buttonSpinner} />
+                  Configurando...
+                </>
+              ) : (
+                'Configurar'
+              )}
             </Button>
           </Flex>
         </Dialog.Content>

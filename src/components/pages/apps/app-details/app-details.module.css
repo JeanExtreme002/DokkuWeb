@@ -541,3 +541,98 @@ button.purpleOutlineButton {
   --accent-3: var(--purple-3) !important;
   border-color: var(--purple-9) !important;
 }
+
+/* App Control Buttons Layout */
+.appControlButtons {
+  width: 100% !important;
+}
+
+.buttonRow {
+  width: 100% !important;
+}
+
+/* Layout para telas muito pequenas (<=440px): pares de botões nas linhas */
+@media (max-width: 440px) {
+  .appControlButtons {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .buttonRow {
+    display: contents !important;
+  }
+
+  /* Linha 1: Iniciar | Parar */
+  .buttonRow:first-child button:nth-child(1) {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 / 2 !important;
+  }
+
+  .buttonRow:first-child button:nth-child(2) {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 / 2 !important;
+  }
+
+  /* Linha 2: Reiniciar | Reconstruir */
+  .buttonRow:first-child button:nth-child(3) {
+    grid-column: 1 / 2 !important;
+    grid-row: 2 / 3 !important;
+  }
+
+  .buttonRow:last-child button:nth-child(1) {
+    grid-column: 2 / 3 !important;
+    grid-row: 2 / 3 !important;
+  }
+
+  /* Linha 3: Configurar Builder (ocupando toda a largura) */
+  .buttonRow:last-child button:nth-child(2) {
+    grid-column: 1 / 3 !important;
+    grid-row: 3 / 4 !important;
+  }
+}
+
+/* Layout para telas médias (441px-785px): duas linhas com botões esticados */
+@media (min-width: 441px) and (max-width: 785px) {
+  .appControlButtons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .buttonRow {
+    display: flex !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  /* Forçar todos os botões a esticarem em ambas as linhas */
+  .buttonRow button {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: 0 !important;
+  }
+}
+
+/* Layout para telas grandes (>785px): uma linha só */
+@media (min-width: 786px) {
+  .appControlButtons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .buttonRow {
+    display: contents !important;
+  }
+
+  .buttonRow button {
+    min-width: 120px !important;
+    flex: 0 0 auto !important;
+  }
+}

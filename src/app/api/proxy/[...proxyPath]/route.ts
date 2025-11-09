@@ -18,6 +18,7 @@ const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
   { method: 'POST', endpoint: '/api/networks/list/' },
   { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
+  { method: 'POST', endpoint: '/api/apps/:app_name/builder/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/deployment-token/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/url/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/network/' },
