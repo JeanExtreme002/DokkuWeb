@@ -347,6 +347,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       if (appUrlResponse.data.success) {
         setAppUrl(appUrlResponse.data.result);
       }
+      // Fetch fresh app builder without cache
+      const appBuilderResponse = await api.post(
+        `/api/apps/${props.appName}/builder/`,
+        {},
+        {
+          headers: { 'x-cache': 'false' },
+        }
+      );
+      if (appBuilderResponse.data.success) {
+        setBuilderInfo(appBuilderResponse.data.result);
+      }
     } catch (error) {
       console.warn('Silent overview refresh error (ignored):', error);
     }
@@ -475,6 +486,34 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       } else {
         return { color: 'var(--green-9)', text: 'Ativo', bgColor: 'var(--green-3)' };
       }
+    }
+  };
+
+  const getIsDeployed = () => {
+    if (!appInfo) return false;
+
+    if (appInfo.info_origin === 'report') {
+      const reportData = appInfo.data as AppReportData;
+      return reportData.deployed === 'true';
+    } else {
+      const containers = appInfo.data as AppContainer[];
+      return containers.length > 0;
+    }
+  };
+
+  const getIsRunning = () => {
+    if (!appInfo) return false;
+
+    if (appInfo.info_origin === 'report') {
+      const reportData = appInfo.data as AppReportData;
+      const isDeployed = reportData.deployed === 'true';
+      const isRunning = reportData.running === 'true';
+      const processCount = parseInt(reportData.processes) || 0;
+      return isDeployed && isRunning && processCount > 0;
+    } else {
+      const containers = appInfo.data as AppContainer[];
+      const runningContainers = containers.filter((container) => container.State.Running);
+      return runningContainers.length > 0;
     }
   };
 
@@ -1007,119 +1046,6 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               </Flex>
             </Box>
 
-            {/* Deployment Token Section */}
-            <Card
-              style={{
-                border: '1px solid var(--gray-6)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                padding: '16px',
-              }}
-            >
-              <Flex direction='column' gap='1'>
-                <Flex align='center' gap='2'>
-                  <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                    Token da Aplicação
-                  </Text>
-                  <Tooltip content='Use este token para fazer deployments via arquivo .ZIP ou programáticos CI/CD via API'>
-                    <InfoCircledIcon
-                      style={{
-                        color: 'var(--gray-9)',
-                        cursor: 'help',
-                        width: '14px',
-                        height: '14px',
-                      }}
-                    />
-                  </Tooltip>
-                </Flex>
-
-                <Flex gap='2' align='center' mt='1'>
-                  <TextField.Root
-                    value={deploymentToken || ''}
-                    readOnly
-                    style={{
-                      flex: 1,
-                      fontFamily: 'monospace',
-                      fontSize: '12px',
-                      filter: showDeploymentToken ? 'none' : 'blur(4px)',
-                      transition: 'filter 0.2s ease',
-                    }}
-                    placeholder={deploymentToken ? 'Token de deployment' : 'Carregando token...'}
-                  />
-                  <Button
-                    size='2'
-                    variant='soft'
-                    onClick={() => setShowDeploymentToken(!showDeploymentToken)}
-                    style={{
-                      minWidth: '34px',
-                      width: '34px',
-                      height: '34px',
-                      padding: '0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: 'var(--purple-3)',
-                      border: '1px solid var(--purple-6)',
-                      color: 'var(--purple-11)',
-                    }}
-                    title={showDeploymentToken ? 'Ocultar token' : 'Mostrar token'}
-                  >
-                    <svg
-                      width='16'
-                      height='16'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      {showDeploymentToken ? (
-                        // Cadeado aberto (destrancado)
-                        <path
-                          d='M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8M6 10H18M6 10V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V10'
-                          stroke='currentColor'
-                          strokeWidth='2'
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                        />
-                      ) : (
-                        // Cadeado fechado (trancado)
-                        <>
-                          <rect
-                            x='3'
-                            y='11'
-                            width='18'
-                            height='11'
-                            rx='2'
-                            ry='2'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            fill='none'
-                          />
-                          <path
-                            d='M7 11V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V11'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            fill='none'
-                          />
-                        </>
-                      )}
-                    </svg>
-                  </Button>
-                  <Button
-                    size='2'
-                    onClick={copyDeploymentToken}
-                    disabled={!deploymentToken}
-                    style={{
-                      minWidth: '70px',
-                      background: 'var(--purple-9)',
-                      border: 'none',
-                      color: 'white',
-                    }}
-                  >
-                    Copiar
-                  </Button>
-                </Flex>
-              </Flex>
-            </Card>
-
             {/* Deploy Section */}
             <div className={styles.deploySection}>
               <Text className={styles.deployTitle}>Deploy com Git:</Text>
@@ -1148,10 +1074,16 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 <Flex gap='3' className={styles.buttonRow} style={{ width: '100%' }}>
                   <Button
                     size='3'
-                    variant='soft'
+                    variant='outline'
                     color='green'
                     onClick={startApp}
-                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                    disabled={
+                      !getIsDeployed() ||
+                      startLoading ||
+                      stopLoading ||
+                      restartLoading ||
+                      rebuildLoading
+                    }
                   >
                     {startLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <PlayIcon />}
                     Iniciar
@@ -1159,10 +1091,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
                   <Button
                     size='3'
-                    variant='soft'
+                    variant='outline'
                     color='red'
                     onClick={stopApp}
-                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                    disabled={
+                      !getIsDeployed() ||
+                      !getIsRunning() ||
+                      startLoading ||
+                      stopLoading ||
+                      restartLoading ||
+                      rebuildLoading
+                    }
                   >
                     {stopLoading ? (
                       <ReloadIcon className={styles.buttonSpinner} />
@@ -1183,10 +1122,16 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
                   <Button
                     size='3'
-                    variant='soft'
+                    variant='outline'
                     color='orange'
                     onClick={restartApp}
-                    disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
+                    disabled={
+                      !getIsDeployed() ||
+                      startLoading ||
+                      stopLoading ||
+                      restartLoading ||
+                      rebuildLoading
+                    }
                   >
                     {restartLoading ? (
                       <ReloadIcon className={styles.buttonSpinner} />
@@ -1251,6 +1196,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 </Tabs.Trigger>
                 <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
                   Variáveis
+                </Tabs.Trigger>
+                <Tabs.Trigger value='security' className={styles.tabsTrigger}>
+                  Tokens
                 </Tabs.Trigger>
               </Tabs.List>
 
@@ -1514,7 +1462,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                         size='3'
                                         style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
                                       >
-                                        {builderInfo.builder_computed_selected || 'N/A'}
+                                        {builderInfo.builder_computed_selected || 'Padrão'}
                                       </Text>
                                     </Flex>
                                   </Box>
@@ -1711,13 +1659,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                       weight='medium'
                                       style={{ color: 'var(--gray-11)' }}
                                     >
-                                      Builder Selecionado
+                                      Builder
                                     </Text>
                                     <Text
                                       size='3'
                                       style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
                                     >
-                                      {builderInfo.builder_computed_selected || 'N/A'}
+                                      {builderInfo.builder_computed_selected || 'Padrão'}
                                     </Text>
                                   </Flex>
 
@@ -2296,6 +2244,128 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     </Box>
                   </Box>
                 )}
+              </Tabs.Content>
+
+              {/* Security Tab */}
+              <Tabs.Content value='security' className={styles.tabsContent}>
+                <Heading size='5' style={{ marginBottom: '20px' }}>
+                  Tokens
+                </Heading>
+
+                {/* Deployment Token Section */}
+                <Card
+                  style={{
+                    border: '1px solid var(--gray-6)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                    padding: '16px',
+                  }}
+                >
+                  <Flex direction='column' gap='1'>
+                    <Flex align='center' gap='2'>
+                      <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                        Token da Aplicação
+                      </Text>
+                      <Tooltip content='Use este token para fazer deployments via arquivo .ZIP ou programáticos CI/CD via API'>
+                        <InfoCircledIcon
+                          style={{
+                            color: 'var(--gray-9)',
+                            cursor: 'help',
+                            width: '14px',
+                            height: '14px',
+                          }}
+                        />
+                      </Tooltip>
+                    </Flex>
+
+                    <Flex gap='2' align='center' mt='1'>
+                      <TextField.Root
+                        value={deploymentToken || ''}
+                        readOnly
+                        style={{
+                          flex: 1,
+                          fontFamily: 'monospace',
+                          fontSize: '12px',
+                          filter: showDeploymentToken ? 'none' : 'blur(4px)',
+                          transition: 'filter 0.2s ease',
+                        }}
+                        placeholder={
+                          deploymentToken ? 'Token de deployment' : 'Carregando token...'
+                        }
+                      />
+                      <Button
+                        size='2'
+                        variant='soft'
+                        onClick={() => setShowDeploymentToken(!showDeploymentToken)}
+                        style={{
+                          minWidth: '34px',
+                          width: '34px',
+                          height: '34px',
+                          padding: '0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'var(--purple-3)',
+                          border: '1px solid var(--purple-6)',
+                          color: 'var(--purple-11)',
+                        }}
+                        title={showDeploymentToken ? 'Ocultar token' : 'Mostrar token'}
+                      >
+                        <svg
+                          width='16'
+                          height='16'
+                          viewBox='0 0 24 24'
+                          fill='none'
+                          xmlns='http://www.w3.org/2000/svg'
+                        >
+                          {showDeploymentToken ? (
+                            // Cadeado aberto (destrancado)
+                            <path
+                              d='M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8M6 10H18M6 10V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V10'
+                              stroke='currentColor'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          ) : (
+                            // Cadeado fechado (trancado)
+                            <>
+                              <rect
+                                x='3'
+                                y='11'
+                                width='18'
+                                height='11'
+                                rx='2'
+                                ry='2'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                                fill='none'
+                              />
+                              <path
+                                d='M7 11V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V11'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                                fill='none'
+                              />
+                            </>
+                          )}
+                        </svg>
+                      </Button>
+                      <Button
+                        size='2'
+                        onClick={copyDeploymentToken}
+                        disabled={!deploymentToken}
+                        style={{
+                          minWidth: '70px',
+                          background: 'var(--purple-9)',
+                          border: 'none',
+                          color: 'white',
+                        }}
+                      >
+                        Copiar
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </Card>
               </Tabs.Content>
             </Tabs.Root>
           </Flex>

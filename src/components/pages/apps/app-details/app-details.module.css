@@ -617,22 +617,41 @@ button.purpleOutlineButton {
   }
 }
 
-/* Layout para telas grandes (>785px): uma linha só */
+/* Layout para telas grandes (>785px): uma linha só com "Configurar Builder" à direita */
 @media (min-width: 786px) {
   .appControlButtons {
     display: flex !important;
     flex-direction: row !important;
     gap: 12px !important;
     width: 100% !important;
-    flex-wrap: wrap !important;
+    align-items: center !important;
   }
 
-  .buttonRow {
-    display: contents !important;
+  .buttonRow:first-child {
+    display: flex !important;
+    gap: 12px !important;
+    flex: 1 !important;
   }
 
-  .buttonRow button {
+  .buttonRow:first-child button {
     min-width: 120px !important;
     flex: 0 0 auto !important;
+  }
+
+  .buttonRow:last-child {
+    display: flex !important;
+    gap: 12px !important;
+    justify-content: flex-end !important;
+  }
+
+  .buttonRow:last-child button:first-child {
+    min-width: 120px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .buttonRow:last-child button:last-child {
+    min-width: 120px !important;
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
   }
 }
