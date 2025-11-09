@@ -254,11 +254,22 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   // API fetch functions
   const fetchAppInfo = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/info/`);
-    if (response.data.success) {
-      setAppInfo(response.data.result);
+    try {
+      const response = await api.post(`/api/apps/${props.appName}/info/`);
+      if (response.data.success) {
+        setAppInfo(response.data.result);
+      }
+    } catch (error: any) {
+      // Check if it's a 404 error with "App does not exist" message
+      if (error.response?.status === 404 && error.response?.data?.detail === 'App does not exist') {
+        // Redirect to 404 page
+        router.push('/404');
+        return;
+      }
+      // Re-throw the error for the retry logic to handle
+      throw error;
     }
-  }, [props.appName]);
+  }, [props.appName, router]);
 
   const fetchDatabases = useCallback(async () => {
     const response = await api.post(`/api/apps/${props.appName}/databases/`);

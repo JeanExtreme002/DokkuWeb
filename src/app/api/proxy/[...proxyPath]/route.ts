@@ -224,23 +224,39 @@ async function proxyHandler(request: NextRequest) {
 
   const rawBody = method === 'GET' || method === 'HEAD' ? undefined : await request.arrayBuffer();
 
-  let bodyToSend = JSON.stringify({ access_token: session.accessToken });
+  const contentType = request.headers.get('content-type') || '';
+  const isMultipartFormData = contentType.includes('multipart/form-data');
 
-  if (rawBody) {
-    try {
-      const original = JSON.parse(Buffer.from(rawBody).toString('utf-8'));
-      bodyToSend = JSON.stringify({ ...original, access_token: session.accessToken });
-    } catch {}
+  let bodyToSend: string | ArrayBuffer | undefined;
+  let requestContentType = 'application/json';
+  let isFileUpload = false;
+  let bodyForCaching: string | undefined;
+
+  if (isMultipartFormData && rawBody) {
+    bodyToSend = rawBody;
+    requestContentType = contentType;
+    isFileUpload = true;
+    bodyForCaching = undefined;
+  } else {
+    bodyForCaching = JSON.stringify({ access_token: session.accessToken });
+    bodyToSend = bodyForCaching;
+
+    if (rawBody) {
+      try {
+        const original = JSON.parse(Buffer.from(rawBody).toString('utf-8'));
+        bodyForCaching = JSON.stringify({ ...original, access_token: session.accessToken });
+        bodyToSend = bodyForCaching;
+      } catch {}
+    }
   }
 
   // Check if cache should be bypassed
   const cacheHeader = request.headers.get('x-cache');
   const shouldBypassCache = cacheHeader === 'false';
 
-  // Check cache first (only if not bypassing)
   let cachedResult = null;
-  if (!shouldBypassCache) {
-    cachedResult = serverCache.get(method, `/${fullPath}`, outQs, bodyToSend);
+  if (!shouldBypassCache && !isFileUpload) {
+    cachedResult = serverCache.get(method, `/${fullPath}`, outQs, bodyForCaching);
   }
 
   if (cachedResult) {
@@ -250,7 +266,9 @@ async function proxyHandler(request: NextRequest) {
     headers.set('x-cache-date', formatTimestamp(cachedResult.timestamp));
 
     // Start background update
-    updateCacheInBackground(method, fullPath, outQs, bodyToSend);
+    if (bodyForCaching) {
+      updateCacheInBackground(method, fullPath, outQs, bodyForCaching);
+    }
 
     return new Response(JSON.stringify(cachedResult.data, null, 2), {
       status: 200,
@@ -268,7 +286,7 @@ async function proxyHandler(request: NextRequest) {
 
   const baseHeaders: Record<string, string> = {
     accept: 'application/json',
-    'content-type': 'application/json',
+    'content-type': requestContentType,
   };
 
   try {
@@ -294,9 +312,8 @@ async function proxyHandler(request: NextRequest) {
       });
     }
 
-    // Cache successful responses
-    if (res.status === 200) {
-      serverCache.set(method, `/${fullPath}`, outQs, json, bodyToSend);
+    if (res.status === 200 && !isFileUpload && bodyForCaching) {
+      serverCache.set(method, `/${fullPath}`, outQs, json, bodyForCaching);
     }
 
     const headers = new Headers(res.headers);
