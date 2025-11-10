@@ -9,6 +9,7 @@ import {
   Dialog,
   Flex,
   Heading,
+  Select,
   Separator,
   Text,
   TextField,
@@ -50,7 +51,9 @@ export function SettingsPage(props: SettingsPageProps) {
   // Admin states
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminLoading, setAdminLoading] = useState(true);
-  const [searchEmail, setSearchEmail] = useState('');
+  const [usersList, setUsersList] = useState<string[]>([]);
+  const [usersListLoading, setUsersListLoading] = useState(false);
+  const [selectedUserEmail, setSelectedUserEmail] = useState('');
   const [userQuota, setUserQuota] = useState<UserQuotaInfo | null>(null);
   const [userQuotaLoading, setUserQuotaLoading] = useState(false);
   const [userQuotaError, setUserQuotaError] = useState<string | null>(null);
@@ -95,6 +98,11 @@ export function SettingsPage(props: SettingsPageProps) {
             `/api/admin/users/${userEmail}/admin/`
           );
           setIsAdmin(response.data.result);
+
+          // Se for admin, buscar lista de usuários
+          if (response.data.result) {
+            await fetchUsersList();
+          }
         }
       } catch (error) {
         console.error('Error checking admin status:', error);
@@ -104,18 +112,31 @@ export function SettingsPage(props: SettingsPageProps) {
       }
     };
 
+    const fetchUsersList = async () => {
+      try {
+        setUsersListLoading(true);
+        const response = await api.post<string[]>('/api/admin/users/list/');
+        setUsersList(response.data);
+      } catch (error) {
+        console.error('Error fetching users list:', error);
+        setUsersList([]);
+      } finally {
+        setUsersListLoading(false);
+      }
+    };
+
     fetchQuota();
     checkAdminStatus();
   }, [props.session?.user?.email]);
 
   const searchUserQuota = async () => {
-    if (!searchEmail.trim()) return;
+    if (!selectedUserEmail.trim()) return;
 
     try {
       setUserQuotaLoading(true);
       setUserQuotaError(null);
-      const response = await api.post<QuotaInfo>(`/api/admin/users/${searchEmail}/quota/`);
-      setUserQuota({ ...response.data, email: searchEmail });
+      const response = await api.post<QuotaInfo>(`/api/admin/users/${selectedUserEmail}/quota/`);
+      setUserQuota({ ...response.data, email: selectedUserEmail });
       setEditQuota(response.data);
     } catch (error) {
       console.error('Error fetching user quota:', error);
@@ -577,16 +598,36 @@ export function SettingsPage(props: SettingsPageProps) {
                   </Text>
 
                   <Flex gap='3'>
-                    <TextField.Root
-                      placeholder='Digite o email do usuário'
-                      value={searchEmail}
-                      onChange={(e) => setSearchEmail(e.target.value)}
-                      style={{ flex: 1 }}
-                      onKeyDown={(e) => e.key === 'Enter' && searchUserQuota()}
-                    />
+                    <Select.Root
+                      value={selectedUserEmail}
+                      onValueChange={(value) => {
+                        setSelectedUserEmail(value);
+                        // Limpar dados do usuário anterior quando trocar de seleção
+                        setUserQuota(null);
+                        setUserQuotaError(null);
+                        setEditMode(false);
+                      }}
+                      disabled={usersListLoading}
+                    >
+                      <Select.Trigger
+                        placeholder={
+                          usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
+                        }
+                        style={{ flex: 1 }}
+                      />
+                      <Select.Content>
+                        <Select.Group>
+                          {usersList.map((email) => (
+                            <Select.Item key={email} value={email}>
+                              {email}
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
+                      </Select.Content>
+                    </Select.Root>
                     <Button
                       onClick={searchUserQuota}
-                      disabled={userQuotaLoading || !searchEmail.trim()}
+                      disabled={userQuotaLoading || !selectedUserEmail.trim()}
                     >
                       {userQuotaLoading ? 'Buscando...' : 'Buscar'}
                     </Button>
