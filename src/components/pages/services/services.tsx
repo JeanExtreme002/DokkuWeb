@@ -60,6 +60,7 @@ export function ServicesPage(props: ServicesPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
+  const [hasInitialList, setHasInitialList] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -104,6 +105,7 @@ export function ServicesPage(props: ServicesPageProps) {
           });
 
           setServicesList(initialServicesList);
+          setHasInitialList(true); // Marca que já temos a lista inicial
 
           // Carrega informações dos serviços
           // A sincronização será feita automaticamente para itens que vieram do cache
@@ -476,16 +478,14 @@ export function ServicesPage(props: ServicesPageProps) {
             </Flex>
           )}
 
-          {/* Estado de carregamento */}
-          {loading && (
+          {/* Estado de carregamento inicial - só mostra se não temos a lista ainda */}
+          {!hasInitialList && loading && (
             <LoadingSpinner
               title='Carregando Serviços'
               messages={[
                 'Conectando ao Dokku...',
                 'Listando serviços de banco de dados...',
-                'Verificando status dos serviços...',
-                'Coletando informações de rede...',
-                'Preparando visualização...',
+                'Preparando listagem...',
               ]}
             />
           )}
@@ -510,8 +510,8 @@ export function ServicesPage(props: ServicesPageProps) {
             </Card>
           )}
 
-          {/* Lista de serviços */}
-          {!loading && !error && (
+          {/* Lista de serviços - mostra assim que temos a lista inicial */}
+          {hasInitialList && !error && (
             <>
               {servicesList.length === 0 ? (
                 <Card

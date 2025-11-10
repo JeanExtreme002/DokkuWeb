@@ -66,6 +66,7 @@ export function AppsPage(props: AppsPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
+  const [hasInitialList, setHasInitialList] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -102,6 +103,7 @@ export function AppsPage(props: AppsPageProps) {
           }));
 
           setAppsList(initialAppsList);
+          setHasInitialList(true); // Marca que já temos a lista inicial
 
           // Carrega informações dos apps
           // A sincronização será feita automaticamente para itens que vieram do cache
@@ -701,16 +703,14 @@ export function AppsPage(props: AppsPageProps) {
             </Flex>
           )}
 
-          {/* Estado de carregamento */}
-          {loading && (
+          {/* Estado de carregamento inicial - só mostra se não temos a lista ainda */}
+          {!hasInitialList && loading && (
             <LoadingSpinner
               title='Carregando Aplicativos'
               messages={[
                 'Conectando ao Dokku...',
                 'Buscando aplicativos...',
-                'Verificando status dos containers...',
-                'Organizando informações...',
-                'Quase pronto...',
+                'Preparando listagem...',
               ]}
             />
           )}
@@ -735,8 +735,8 @@ export function AppsPage(props: AppsPageProps) {
             </Card>
           )}
 
-          {/* Lista de aplicativos */}
-          {!loading && !error && (
+          {/* Lista de aplicativos - mostra assim que temos a lista inicial */}
+          {hasInitialList && !error && (
             <>
               {appsList.length === 0 ? (
                 <Card
