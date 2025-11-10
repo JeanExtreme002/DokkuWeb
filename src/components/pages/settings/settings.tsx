@@ -597,41 +597,49 @@ export function SettingsPage(props: SettingsPageProps) {
                     Gerenciar limite de recursos de usuário
                   </Text>
 
-                  <Flex gap='3'>
-                    <Select.Root
-                      value={selectedUserEmail}
-                      onValueChange={(value) => {
-                        setSelectedUserEmail(value);
-                        // Limpar dados do usuário anterior quando trocar de seleção
-                        setUserQuota(null);
-                        setUserQuotaError(null);
-                        setEditMode(false);
-                      }}
-                      disabled={usersListLoading}
-                    >
-                      <Select.Trigger
-                        placeholder={
-                          usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
-                        }
-                        style={{ flex: 1 }}
-                      />
-                      <Select.Content>
-                        <Select.Group>
-                          {usersList.map((email) => (
-                            <Select.Item key={email} value={email}>
-                              {email}
-                            </Select.Item>
-                          ))}
-                        </Select.Group>
-                      </Select.Content>
-                    </Select.Root>
-                    <Button
-                      onClick={searchUserQuota}
-                      disabled={userQuotaLoading || !selectedUserEmail.trim()}
-                    >
-                      {userQuotaLoading ? 'Buscando...' : 'Buscar'}
-                    </Button>
-                  </Flex>
+                  <Box>
+                    <div className={styles.userSearchContainer}>
+                      <Select.Root
+                        value={selectedUserEmail}
+                        onValueChange={(value) => {
+                          setSelectedUserEmail(value);
+                          // Limpar dados do usuário anterior quando trocar de seleção
+                          setUserQuota(null);
+                          setUserQuotaError(null);
+                          setEditMode(false);
+                        }}
+                        disabled={usersListLoading}
+                      >
+                        <Select.Trigger
+                          placeholder={
+                            usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
+                          }
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        />
+                        <Select.Content>
+                          <Select.Group>
+                            {usersList.map((email) => (
+                              <Select.Item key={email} value={email}>
+                                {email}
+                              </Select.Item>
+                            ))}
+                          </Select.Group>
+                        </Select.Content>
+                      </Select.Root>
+                      <Button
+                        onClick={searchUserQuota}
+                        disabled={userQuotaLoading || !selectedUserEmail.trim()}
+                        style={{
+                          minWidth: 'auto',
+                        }}
+                      >
+                        {userQuotaLoading ? 'Buscando...' : 'Buscar'}
+                      </Button>
+                    </div>
+                  </Box>
                 </Flex>
 
                 {/* Erro na busca */}
