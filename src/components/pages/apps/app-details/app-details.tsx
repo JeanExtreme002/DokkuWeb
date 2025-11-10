@@ -35,7 +35,7 @@ import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSpinner, NavBar } from '@/components/shared';
-import { api, config as websiteConfig } from '@/lib';
+import { api, config as websiteConfig, formatDate, formatTimestamp } from '@/lib';
 
 import styles from './app-details.module.css';
 
@@ -114,6 +114,15 @@ interface BuilderData {
   builder_selected: string;
 }
 
+interface DeployInfoData {
+  'Git deploy branch'?: string;
+  'Git global deploy branch'?: string;
+  'Git keep git dir'?: string;
+  'Git rev env var'?: string;
+  'Git sha'?: string;
+  'Git last updated at'?: string;
+}
+
 // Database images mapping (same as services page)
 const DATABASE_IMAGES: Record<string, string> = {
   postgres: '/images/database-logos/postgresql.svg',
@@ -146,6 +155,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [config, setConfig] = useState<ConfigData>({});
   const [appUrl, setAppUrl] = useState<string | null>(null);
   const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
+  const [deployInfo, setDeployInfo] = useState<DeployInfoData | null>(null);
 
   // Loading states
   const [mainLoading, setMainLoading] = useState(true);
@@ -156,6 +166,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [logsLoading, setLogsLoading] = useState(true);
   const [configLoading, setConfigLoading] = useState(true);
   const [builderLoading, setBuilderLoading] = useState(true);
+  const [deployInfoLoading, setDeployInfoLoading] = useState(true);
 
   // Form states
   const [originPort, setOriginPort] = useState('');
@@ -215,6 +226,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     config: null as string | null,
     deploy: null as string | null,
     builder: null as string | null,
+    deployInfo: null as string | null,
   });
 
   // Fetch functions with retry logic
@@ -331,6 +343,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [props.appName]);
 
+  const fetchDeployInfo = useCallback(async () => {
+    const response = await api.post(`/api/deploy/${props.appName}/info/`);
+    if (response.data.success) {
+      setDeployInfo(response.data.result);
+    }
+  }, [props.appName]);
+
   // Silent refresh for overview data only - updates app info and URL every 10 seconds
   // This keeps the overview tab current without affecting loading states or other tabs
   const silentRefreshOverview = useCallback(async () => {
@@ -369,6 +388,18 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       if (appBuilderResponse.data.success) {
         setBuilderInfo(appBuilderResponse.data.result);
       }
+
+      // Fetch fresh deploy info without cache
+      const appDeployInfoResponse = await api.post(
+        `/api/deploy/${props.appName}/info/`,
+        {},
+        {
+          headers: { 'x-cache': 'false' },
+        }
+      );
+      if (appDeployInfoResponse.data.success) {
+        setDeployInfo(appDeployInfoResponse.data.result);
+      }
     } catch (error) {
       console.warn('Silent overview refresh error (ignored):', error);
     }
@@ -394,6 +425,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           ),
           fetchWithRetry(fetchBuilderInfo, setBuilderLoading, (error) =>
             setErrors((prev) => ({ ...prev, builder: error }))
+          ),
+          fetchWithRetry(fetchDeployInfo, setDeployInfoLoading, (error) =>
+            setErrors((prev) => ({ ...prev, deployInfo: error }))
           ),
           fetchWithRetry(
             fetchAppUrl,
@@ -448,6 +482,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     fetchAppUrl,
     fetchDeploymentToken,
     fetchBuilderInfo,
+    fetchDeployInfo,
   ]);
 
   // Reset dataLoaded when appName changes
@@ -876,7 +911,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       <NavBar session={stableSession} />
 
       <main className={styles.root}>
-        {mainLoading || appUrlLoading || builderLoading ? (
+        {mainLoading || appUrlLoading || builderLoading || deployInfoLoading ? (
           <LoadingSpinner
             asCard={false}
             title='Carregando Aplicativo'
@@ -888,10 +923,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               'Quase pronto...',
             ]}
           />
-        ) : errors.main || errors.builder ? (
+        ) : errors.main || errors.builder || errors.deployInfo ? (
           <Flex direction='column' align='center' justify='center' style={{ minHeight: '50vh' }}>
             <Text size='5' color='red'>
-              {errors.main || errors.builder}
+              {errors.main || errors.builder || errors.deployInfo}
             </Text>
             <Button size='3' onClick={() => window.location.reload()} style={{ marginTop: '16px' }}>
               <ReloadIcon /> Recarregar
@@ -1361,7 +1396,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                   </Text>
                                   <Text size='3' style={{ color: 'var(--gray-12)' }}>
                                     {container?.State?.StartedAt
-                                      ? new Date(container.State.StartedAt).toLocaleString('pt-BR')
+                                      ? formatDate(container.State.StartedAt)
                                       : 'N/A'}
                                   </Text>
                                 </Flex>
@@ -1443,12 +1478,98 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                     Criado em
                                   </Text>
                                   <Text size='3' style={{ color: 'var(--gray-12)' }}>
-                                    {container?.Created
-                                      ? new Date(container.Created).toLocaleString('pt-BR')
-                                      : 'N/A'}
+                                    {container?.Created ? formatDate(container.Created) : 'N/A'}
                                   </Text>
                                 </Flex>
                               </Box>
+
+                              {/* Deploy Information */}
+                              {deployInfo && (
+                                <>
+                                  <Box
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Flex
+                                      direction={{ initial: 'column', sm: 'row' }}
+                                      justify={{ sm: 'between' }}
+                                      align={{ sm: 'center' }}
+                                      gap='1'
+                                    >
+                                      <Text
+                                        size='3'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-11)' }}
+                                      >
+                                        Git Branch
+                                      </Text>
+                                      <Text
+                                        size='3'
+                                        style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                      >
+                                        {deployInfo['Git deploy branch'] || 'N/A'}
+                                      </Text>
+                                    </Flex>
+                                  </Box>
+
+                                  <Box
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Flex
+                                      direction={{ initial: 'column', sm: 'row' }}
+                                      justify={{ sm: 'between' }}
+                                      align={{ sm: 'center' }}
+                                      gap='1'
+                                    >
+                                      <Text
+                                        size='3'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-11)' }}
+                                      >
+                                        Git SHA
+                                      </Text>
+                                      <Text
+                                        size='3'
+                                        style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                      >
+                                        {deployInfo['Git sha'] || 'N/A'}
+                                      </Text>
+                                    </Flex>
+                                  </Box>
+
+                                  <Box
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Flex
+                                      direction={{ initial: 'column', sm: 'row' }}
+                                      justify={{ sm: 'between' }}
+                                      align={{ sm: 'center' }}
+                                      gap='1'
+                                    >
+                                      <Text
+                                        size='3'
+                                        weight='medium'
+                                        style={{ color: 'var(--gray-11)' }}
+                                      >
+                                        Último Deploy
+                                      </Text>
+                                      <Text size='3' style={{ color: 'var(--gray-12)' }}>
+                                        {deployInfo['Git last updated at']
+                                          ? formatTimestamp(deployInfo['Git last updated at'])
+                                          : 'N/A'}
+                                      </Text>
+                                    </Flex>
+                                  </Box>
+                                </>
+                              )}
 
                               {/* Builder Information */}
                               {builderInfo && (
@@ -1656,6 +1777,79 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                   {reportData.ps_procfile_path || 'N/A'}
                                 </Text>
                               </Flex>
+
+                              {/* Deploy Information */}
+                              {deployInfo && (
+                                <>
+                                  <Flex
+                                    justify='between'
+                                    align='center'
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Text
+                                      size='3'
+                                      weight='medium'
+                                      style={{ color: 'var(--gray-11)' }}
+                                    >
+                                      Git Branch
+                                    </Text>
+                                    <Text
+                                      size='3'
+                                      style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                    >
+                                      {deployInfo['Git deploy branch'] || 'N/A'}
+                                    </Text>
+                                  </Flex>
+
+                                  <Flex
+                                    justify='between'
+                                    align='center'
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Text
+                                      size='3'
+                                      weight='medium'
+                                      style={{ color: 'var(--gray-11)' }}
+                                    >
+                                      Git SHA
+                                    </Text>
+                                    <Text
+                                      size='3'
+                                      style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                    >
+                                      {deployInfo['Git sha'] || 'N/A'}
+                                    </Text>
+                                  </Flex>
+
+                                  <Flex
+                                    justify='between'
+                                    align='center'
+                                    style={{
+                                      borderBottom: '1px solid var(--gray-6)',
+                                      paddingBottom: '8px',
+                                    }}
+                                  >
+                                    <Text
+                                      size='3'
+                                      weight='medium'
+                                      style={{ color: 'var(--gray-11)' }}
+                                    >
+                                      Último Deploy
+                                    </Text>
+                                    <Text size='3' style={{ color: 'var(--gray-12)' }}>
+                                      {deployInfo['Git last updated at']
+                                        ? formatTimestamp(deployInfo['Git last updated at'])
+                                        : 'N/A'}
+                                    </Text>
+                                  </Flex>
+                                </>
+                              )}
 
                               {/* Builder Information */}
                               {builderInfo && (

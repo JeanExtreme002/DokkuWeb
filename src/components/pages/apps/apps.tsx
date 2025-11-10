@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
-import { api } from '@/lib';
+import { api, formatDate } from '@/lib';
 
 import styles from './apps.module.css';
 
@@ -293,8 +293,7 @@ export function AppsPage(props: AppsPageProps) {
 
   const formatStartedAt = (startedAt: string) => {
     try {
-      const date = new Date(startedAt);
-      return date.toLocaleString('pt-BR', {
+      return formatDate(startedAt, {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',

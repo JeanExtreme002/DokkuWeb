@@ -13,15 +13,15 @@ const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
   { method: 'GET', endpoint: '/api/' },
   { method: 'POST', endpoint: '/api/apps/list/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
-  { method: 'POST', endpoint: '/api/databases/list/' },
-  { method: 'POST', endpoint: '/api/databases/:plugin/:service_name/info/' },
-  { method: 'POST', endpoint: '/api/networks/list/' },
-  { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
-  { method: 'POST', endpoint: '/api/apps/:app_name/info/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/builder/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/deployment-token/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/url/' },
   { method: 'POST', endpoint: '/api/apps/:app_name/network/' },
+  { method: 'POST', endpoint: '/api/databases/list/' },
+  { method: 'POST', endpoint: '/api/databases/:plugin/:service_name/info/' },
+  { method: 'POST', endpoint: '/api/deploy/:app_name/info/' },
+  { method: 'POST', endpoint: '/api/networks/list/' },
+  { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
 ];
 
 interface CacheEntry {
