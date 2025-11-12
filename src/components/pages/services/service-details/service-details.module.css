@@ -1,0 +1,688 @@
+.root {
+  margin: 0;
+  flex-grow: 1;
+  align-items: center;
+  width: 100%;
+  padding: 32px 24px;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, var(--gray-1) 0%, var(--gray-2) 100%);
+  box-sizing: border-box;
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  padding: 24px;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.serviceImage {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: white;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-4);
+}
+
+.tabsRoot {
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.tabsList {
+  display: flex;
+  background: var(--gray-2);
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.tabsTrigger {
+  flex: 1;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-11);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.tabsTrigger:hover {
+  background: transparent !important;
+  color: var(--gray-12);
+}
+
+.tabsTrigger[data-state='active'] {
+  background: var(--gray-3);
+  color: var(--gray-12);
+  position: relative;
+}
+
+.tabsTrigger[data-state='active']::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--purple-9);
+}
+
+.tabsContent {
+  background: var(--color-panel-solid);
+  color: var(--gray-12);
+  padding: 24px;
+}
+
+.connectedAppCard {
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.connectedAppCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--blue-7) !important;
+}
+
+.connectedAppCard:hover svg {
+  color: var(--blue-9) !important;
+  transform: translateX(2px);
+}
+
+.appTitle {
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.appDescription {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chevronIcon {
+  flex-shrink: 0;
+}
+
+.serviceName {
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.serviceTypeVersion {
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.statusBadge {
+  flex-shrink: 0;
+}
+
+.uriWarningText {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.uriTextArea {
+  /* Default dots for larger screens */
+  --uri-dots: '••••••••••••••••••••••••••••••••••••••••••••';
+}
+
+/* Altura menor para o campo URI em telas MD e maiores */
+@media (min-width: 768px) {
+  .uriTextArea {
+    min-height: 38px !important;
+    max-height: 38px !important;
+    height: 38px !important;
+    padding: 4px !important;
+  }
+}
+
+.uriButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.uriButton {
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonSpinner {
+  animation: spin 1s linear infinite;
+}
+
+.unlinkButton {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.unlinkButton:hover {
+  opacity: 1;
+}
+
+/* Prevent card hover effects from affecting the unlink button */
+.connectedAppCard .unlinkButton {
+  color: var(--red-11) !important;
+  background-color: var(--red-3) !important;
+  transform: none !important;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease !important;
+}
+
+.connectedAppCard .unlinkButton:hover {
+  color: var(--red-12) !important;
+  background-color: var(--red-4) !important;
+  transform: none !important;
+}
+
+/* Ensure button icon doesn't change color */
+.connectedAppCard .unlinkButton svg {
+  color: inherit !important;
+}
+
+/* Mobile unlink button - full width below content */
+.unlinkButtonMobile {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Responsive adjustments for unlink button */
+@media (max-width: 480px) {
+  .unlinkButton:not(.unlinkButtonMobile) {
+    padding: 4px 6px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .unlinkButton:not(.unlinkButtonMobile) {
+    padding: 3px 5px !important;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Service Control Buttons Layout */
+.serviceControlButtons {
+  width: 100% !important;
+}
+
+.buttonRow {
+  width: 100% !important;
+}
+
+/* Button layout responsiveness */
+.desktopButtonLayout {
+  display: flex;
+}
+
+.mobileButtonLayout {
+  display: none;
+}
+
+@media (max-width: 785px) {
+  .desktopButtonLayout {
+    display: none;
+  }
+
+  .mobileButtonLayout {
+    display: flex;
+  }
+}
+
+/* Layout para telas muito pequenas (<=440px): botões em coluna */
+@media (max-width: 440px) {
+  .serviceControlButtons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .buttonRow {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .buttonRow button {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Layout para telas médias (441px-785px): botões esticados na linha */
+@media (min-width: 441px) and (max-width: 785px) {
+  .serviceControlButtons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .buttonRow {
+    display: flex !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  /* Forçar todos os botões a esticarem */
+  .buttonRow button {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: 0 !important;
+  }
+}
+
+/* Layout para telas grandes (>785px): uma linha só */
+@media (min-width: 786px) {
+  .serviceControlButtons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
+  .buttonRow {
+    display: flex !important;
+    gap: 12px !important;
+    flex: 1 !important;
+  }
+
+  .buttonRow button {
+    min-width: 120px !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    padding: 16px;
+  }
+
+  .mainContainer {
+    padding: 0 8px;
+  }
+
+  .headerSection {
+    padding: 20px;
+  }
+
+  .serviceImage {
+    width: 56px;
+    height: 56px;
+    padding: 10px;
+  }
+
+  .tabsContent {
+    padding: 20px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .infoCard {
+    padding: 16px;
+  }
+
+  /* Ajustes para o header em telas MD */
+  .serviceName {
+    font-size: 28px !important;
+    line-height: 1.1 !important;
+  }
+
+  .serviceTypeVersion {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  .statusBadge {
+    padding: 3px 10px !important;
+  }
+
+  .statusBadge span {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabsList {
+    flex-wrap: wrap;
+  }
+
+  .tabsTrigger {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 12px;
+  }
+
+  .mainContainer {
+    padding: 0 4px;
+  }
+
+  .headerSection {
+    padding: 16px;
+  }
+
+  .serviceImage {
+    width: 48px;
+    height: 48px;
+    padding: 8px;
+  }
+
+  .tabsContent {
+    padding: 16px;
+  }
+
+  .tabsList {
+    padding: 2px;
+  }
+
+  .tabsTrigger {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* Ajustes para o header em telas SM */
+  .serviceName {
+    font-size: 24px !important;
+    line-height: 1.1 !important;
+  }
+
+  .serviceTypeVersion {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+
+  .statusBadge {
+    padding: 2px 8px !important;
+  }
+
+  .statusBadge span {
+    font-size: 11px !important;
+  }
+
+  /* Ajustes para cards de aplicações conectadas em telas pequenas */
+  .connectedAppCard {
+    margin-bottom: 8px;
+  }
+
+  .connectedAppCard > div {
+    padding: 12px 16px !important;
+  }
+
+  .appTitle {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+  }
+
+  .appDescription {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+  }
+
+  .chevronIcon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Ajustes para o texto de aviso da URI em telas SM */
+  .uriWarningText {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+  }
+
+  .uriTextArea {
+    /* 20% fewer dots for SM screens (from 44 to 35 dots) */
+    --uri-dots: '•••••••••••••••••••••••••••••••••••••';
+  }
+
+  /* Ajustes para textos da visão geral em telas SM */
+  .overviewLabel {
+    font-size: 13px !important;
+  }
+
+  .overviewValue {
+    font-size: 13px !important;
+  }
+
+  /* Ajustes para botões da URI em telas SM */
+  .uriButtons {
+    flex-direction: column !important;
+  }
+
+  .uriButton {
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 5px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .root {
+    padding: 8px;
+  }
+
+  .mainContainer {
+    padding: 0 2px;
+  }
+
+  .tabsContent {
+    padding: 12px;
+  }
+
+  .tabsTrigger {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* Ajustes para o header em telas XS */
+  .serviceName {
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .serviceTypeVersion {
+    font-size: 11px !important;
+    line-height: 1.1 !important;
+  }
+
+  .statusBadge {
+    padding: 2px 6px !important;
+  }
+
+  .statusBadge span {
+    font-size: 10px !important;
+  }
+
+  /* Ajustes específicos para telas extra pequenas */
+  .connectedAppCard {
+    margin-bottom: 6px;
+  }
+
+  .connectedAppCard > div {
+    padding: 10px 14px !important;
+  }
+
+  .appTitle {
+    font-size: 14px !important;
+    line-height: 1.1 !important;
+  }
+
+  .appDescription {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  .chevronIcon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Ajustes para o texto de aviso da URI em telas XS */
+  .uriWarningText {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  .uriTextArea {
+    /* 40% fewer dots for XS screens (from 44 to ~26 dots) */
+    --uri-dots: '••••••••••••••••••••••••••';
+  }
+
+  /* Ajustes para textos da visão geral em telas XS */
+  .overviewLabel {
+    font-size: 12px !important;
+  }
+
+  .overviewValue {
+    font-size: 12px !important;
+  }
+
+  /* Ajustes para botões da URI em telas XS */
+  .uriButtons {
+    flex-direction: column !important;
+    gap: 5px !important;
+  }
+
+  .uriButton {
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 3px !important;
+  }
+}
+
+/* Logs styles */
+.logsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.logsButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.logsContainer {
+  background: var(--gray-1);
+  border-radius: 8px;
+  padding: 16px;
+  height: 500px;
+  overflow-y: auto;
+  font-family: 'Courier New', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--gray-11);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border: 1px solid var(--gray-6);
+}
+
+.logsContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.logsContainer::-webkit-scrollbar-track {
+  background: var(--gray-4);
+  border-radius: 4px;
+}
+
+.logsContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-8);
+  border-radius: 4px;
+}
+
+.logsContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-9);
+}
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--gray-11);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gray-6);
+  border-top: 2px solid var(--gray-9);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.errorMessage {
+  padding: 20px;
+  text-align: center;
+  color: var(--red-11);
+  background: var(--red-2);
+  border: 1px solid var(--red-6);
+  border-radius: 8px;
+}
+
+/* Responsive adjustments for logs */
+@media (max-width: 600px) {
+  .logsHeader {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .logsButtons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+}

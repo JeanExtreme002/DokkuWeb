@@ -245,6 +245,7 @@ export function ServicesPage(props: ServicesPageProps) {
         return { color: 'var(--green-9)', text: 'Ativo', bgColor: 'var(--green-3)' };
       case 'stopped':
       case 'exited':
+      case 'missing':
         return { color: 'var(--red-9)', text: 'Parado', bgColor: 'var(--red-3)' };
       case 'starting':
         return { color: 'var(--amber-9)', text: 'Iniciando', bgColor: 'var(--amber-3)' };
@@ -263,6 +264,7 @@ export function ServicesPage(props: ServicesPageProps) {
   };
 
   const formatVersion = (version: string) => {
+    if (!version) return '';
     // Extrai apenas a versão do formato "mysql:8.1.0"
     const versionMatch = version.match(/:(.+)$/);
     return versionMatch ? versionMatch[1] : version;
@@ -303,7 +305,11 @@ export function ServicesPage(props: ServicesPageProps) {
           cursor: isMobile ? 'default' : 'pointer',
         }}
         className={`${styles.serviceCard} ${styles.skeleton}`}
-        onClick={isMobile ? undefined : () => (window.location.href = `/services/${displayName}`)}
+        onClick={
+          isMobile
+            ? undefined
+            : () => (window.location.href = `/services/s/${pluginType}/${serviceName}`)
+        }
         onMouseEnter={
           isMobile
             ? undefined
@@ -394,7 +400,7 @@ export function ServicesPage(props: ServicesPageProps) {
               size='3'
               color='blue'
               variant='outline'
-              onClick={() => (window.location.href = `/services/${displayName}`)}
+              onClick={() => (window.location.href = `/services/s/${pluginType}/${serviceName}`)}
             >
               <EyeOpenIcon />
               Ver detalhes
@@ -557,7 +563,8 @@ export function ServicesPage(props: ServicesPageProps) {
                         onClick={
                           isMobile
                             ? undefined
-                            : () => (window.location.href = `/services/${displayName}`)
+                            : () =>
+                                (window.location.href = `/services/s/${serviceItem.pluginType}/${serviceItem.serviceName}`)
                         }
                         onMouseEnter={
                           isMobile
@@ -597,7 +604,9 @@ export function ServicesPage(props: ServicesPageProps) {
                                 {displayName}
                               </Heading>
                               <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                                {serviceType} v{formatVersion(serviceItem.serviceData.version)}
+                                {serviceType}{' '}
+                                {formatVersion(serviceItem.serviceData.version) &&
+                                  `v${formatVersion(serviceItem.serviceData.version)}`}
                               </Text>
 
                               {/* Status com círculo colorido */}
@@ -627,7 +636,7 @@ export function ServicesPage(props: ServicesPageProps) {
                                 size='2'
                                 style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
                               >
-                                {serviceItem.serviceData.internal_ip}
+                                {serviceItem.serviceData.internal_ip || 'Indisponível'}
                               </Text>
                             </Flex>
                             {serviceItem.serviceData.exposed_ports !== '-' && (
@@ -654,7 +663,9 @@ export function ServicesPage(props: ServicesPageProps) {
                               size='3'
                               color='blue'
                               variant='outline'
-                              onClick={() => (window.location.href = `/services/${displayName}`)}
+                              onClick={() =>
+                                (window.location.href = `/services/s/${serviceItem.pluginType}/${serviceItem.serviceName}`)
+                              }
                             >
                               <EyeOpenIcon />
                               Ver detalhes

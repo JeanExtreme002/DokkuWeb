@@ -86,7 +86,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
         }
       } catch (error) {
         console.error('Error fetching databases:', error);
-        setError('Erro ao carregar tipos de banco de dados');
+        setError('Erro ao carregar tipos de serviços');
       } finally {
         setDatabasesLoading(false);
       }
@@ -235,12 +235,12 @@ export function CreateServicePage(props: CreateServicePageProps) {
               {/* Seleção do Tipo de Banco de Dados */}
               <Flex direction='column' gap='2'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                  Tipo de Banco de Dados
+                  Tipo de Serviço
                 </Text>
                 {databasesLoading ? (
                   <Box style={{ padding: '12px' }}>
                     <Text size='2' color='gray' style={{ fontStyle: 'italic' }}>
-                      Carregando bancos de dados...
+                      Carregando serviços...
                     </Text>
                   </Box>
                 ) : (

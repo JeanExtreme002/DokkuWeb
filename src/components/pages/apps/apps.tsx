@@ -1125,7 +1125,7 @@ export function AppsPage(props: AppsPageProps) {
                             >
                               {containerInfo?.State.StartedAt
                                 ? `Iniciado em ${formatStartedAt(containerInfo.State.StartedAt)}`
-                                : 'Não inicializado ainda'}
+                                : 'Não inicializado'}
                             </Text>
 
                             <Button

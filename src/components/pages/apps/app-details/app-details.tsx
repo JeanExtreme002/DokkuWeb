@@ -1994,7 +1994,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                     cursor: 'pointer',
                                     padding: '20px',
                                   }}
-                                  onClick={() => router.push(`/services/s/${displayName}`)}
+                                  onClick={() =>
+                                    router.push(`/services/s/${dbType}/${displayName}`)
+                                  }
                                   onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-2px)';
                                     e.currentTarget.style.boxShadow =
