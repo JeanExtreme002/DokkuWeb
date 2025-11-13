@@ -155,6 +155,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [config, setConfig] = useState<ConfigData>({});
   const [appUrl, setAppUrl] = useState<string | null>(null);
   const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
+  const [logLinesLimit, setLogLinesLimit] = useState<number>(1000);
   const [deployInfo, setDeployInfo] = useState<DeployInfoData | null>(null);
 
   // Loading states
@@ -309,11 +310,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   }, [props.appName]);
 
   const fetchLogs = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/logs/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/logs/`,
+      {},
+      {
+        params: { n_lines: logLinesLimit },
+      }
+    );
     if (response.data.success) {
       setLogs(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, logLinesLimit]);
 
   const fetchConfig = useCallback(async () => {
     const response = await api.post(`/api/config/${props.appName}/`);
@@ -2306,13 +2313,36 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
               {/* Logs Tab */}
               <Tabs.Content value='logs' className={styles.tabsContent}>
+                {/* Desktop Layout - Inline (> 720px) */}
                 <Flex
                   justify='between'
                   align='center'
                   className={styles.logsHeader}
-                  style={{ marginBottom: '16px' }}
+                  style={{
+                    marginBottom: '16px',
+                  }}
                 >
-                  <Heading size='5'>Logs do Aplicativo</Heading>
+                  <Flex align='center' gap='3'>
+                    <Heading size='5'>Logs do Aplicativo</Heading>
+                    <Flex align='center' gap='2'>
+                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                        Linhas:
+                      </Text>
+                      <Select.Root
+                        value={logLinesLimit.toString()}
+                        onValueChange={(value) => setLogLinesLimit(Number(value))}
+                      >
+                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Content>
+                          <Select.Item value='500'>500</Select.Item>
+                          <Select.Item value='1000'>1000</Select.Item>
+                          <Select.Item value='2000'>2000</Select.Item>
+                          <Select.Item value='5000'>5000</Select.Item>
+                          <Select.Item value='7000'>7000</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Flex>
+                  </Flex>
                   <Flex gap='2' align='center' className={styles.logsButtons}>
                     {/* Refresh Button */}
                     <Button onClick={refreshLogs} disabled={logsLoading} variant='outline'>
@@ -2337,6 +2367,69 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     )}
                   </Flex>
                 </Flex>
+
+                {/* Mobile/Tablet Layout - Stacked (≤ 720px) */}
+                <Box
+                  style={{
+                    marginBottom: '16px',
+                  }}
+                  className={styles.mobileLogsHeader}
+                >
+                  <Heading size='5' style={{ marginBottom: '12px' }}>
+                    Logs do Aplicativo
+                  </Heading>
+
+                  <Flex direction='column' gap='3'>
+                    <Flex align='center' gap='2'>
+                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                        Linhas:
+                      </Text>
+                      <Select.Root
+                        value={logLinesLimit.toString()}
+                        onValueChange={(value) => setLogLinesLimit(Number(value))}
+                      >
+                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Content>
+                          <Select.Item value='500'>500</Select.Item>
+                          <Select.Item value='1000'>1000</Select.Item>
+                          <Select.Item value='2000'>2000</Select.Item>
+                          <Select.Item value='5000'>5000</Select.Item>
+                          <Select.Item value='7000'>7000</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Flex>
+
+                    <Flex gap='2' align='center' direction='column' style={{ width: '100%' }}>
+                      {/* Refresh Button */}
+                      <Button
+                        onClick={refreshLogs}
+                        disabled={logsLoading}
+                        variant='outline'
+                        style={{ width: '100%' }}
+                      >
+                        <ReloadIcon className={logsLoading ? styles.buttonSpinner : ''} />
+                        {logsLoading ? 'Atualizando...' : 'Atualizar'}
+                      </Button>
+
+                      {/* Download Button - only show when logs are loaded */}
+                      {!logsLoading && !errors.logs && logs && (
+                        <Button
+                          onClick={downloadLogs}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
+                            border: 'none',
+                            color: 'white',
+                            width: '100%',
+                          }}
+                        >
+                          <DownloadIcon />
+                          Baixar arquivo de logs
+                        </Button>
+                      )}
+                    </Flex>
+                  </Flex>
+                </Box>
 
                 {logsLoading ? (
                   <Box className={styles.loadingSpinner}>

@@ -670,19 +670,36 @@
   border-radius: 8px;
 }
 
+/* Logs header responsive layout */
+.logsHeader {
+  display: flex !important;
+}
+
+.mobileLogsHeader {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .logsHeader {
+    display: none !important;
+  }
+
+  .mobileLogsHeader {
+    display: block !important;
+  }
+
+  .logsButtons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+}
+
 /* Responsive adjustments for logs */
 @media (max-width: 600px) {
   .logsHeader {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 12px;
-  }
-}
-
-@media (max-width: 400px) {
-  .logsButtons {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
   }
 }

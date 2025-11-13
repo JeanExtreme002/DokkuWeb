@@ -655,3 +655,22 @@ button.purpleOutlineButton {
     margin-left: auto !important;
   }
 }
+
+/* Logs header responsive layout */
+.logsHeader {
+  display: flex !important;
+}
+
+.mobileLogsHeader {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .logsHeader {
+    display: none !important;
+  }
+
+  .mobileLogsHeader {
+    display: block !important;
+  }
+}

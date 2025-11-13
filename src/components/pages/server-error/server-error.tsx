@@ -27,7 +27,15 @@ export function ServerErrorPage() {
         justifyContent={'center'}
       >
         <Image alt={'Error Image'} src='/images/dokku/logo-error.png' className={styles.logo} />
-        <Typography margin={5} variant={'h5'}>
+        <Typography
+          margin={5}
+          variant={'h5'}
+          sx={{
+            '@media (max-width: 600px)': {
+              fontSize: '1.20rem',
+            },
+          }}
+        >
           [500] Internal Server Error
         </Typography>
         <Typography marginInline={5} align='center'>

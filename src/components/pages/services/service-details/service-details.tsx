@@ -85,6 +85,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [serviceUri, setServiceUri] = useState<string | null>(null);
   const [linkedApps, setLinkedApps] = useState<string[]>([]);
   const [logs, setLogs] = useState<string>('');
+  const [logLinesLimit, setLogLinesLimit] = useState<number>(1000);
 
   // Loading states
   const [mainLoading, setMainLoading] = useState(true);
@@ -208,12 +209,16 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
   const fetchLogs = useCallback(async () => {
     const response = await api.post(
-      `/api/databases/${props.pluginType}/${props.serviceName}/logs/`
+      `/api/databases/${props.pluginType}/${props.serviceName}/logs/`,
+      {},
+      {
+        params: { n_lines: logLinesLimit },
+      }
     );
     if (response.data.success) {
       setLogs(response.data.result);
     }
-  }, [props.pluginType, props.serviceName]);
+  }, [props.pluginType, props.serviceName, logLinesLimit]);
 
   // Silent refresh for overview data only - updates service info every 10 seconds
   const silentRefreshOverview = useCallback(async () => {
@@ -1519,13 +1524,34 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
               {/* Logs Tab */}
               <Tabs.Content value='logs' className={styles.tabsContent}>
+                {/* Desktop Layout - Inline (> 720px) */}
                 <Flex
                   justify='between'
                   align='center'
                   className={styles.logsHeader}
                   style={{ marginBottom: '16px' }}
                 >
-                  <Heading size='5'>Logs do Serviço</Heading>
+                  <Flex align='center' gap='3'>
+                    <Heading size='5'>Logs do Serviço</Heading>
+                    <Flex align='center' gap='2'>
+                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                        Linhas:
+                      </Text>
+                      <Select.Root
+                        value={logLinesLimit.toString()}
+                        onValueChange={(value) => setLogLinesLimit(Number(value))}
+                      >
+                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Content>
+                          <Select.Item value='500'>500</Select.Item>
+                          <Select.Item value='1000'>1000</Select.Item>
+                          <Select.Item value='2000'>2000</Select.Item>
+                          <Select.Item value='5000'>5000</Select.Item>
+                          <Select.Item value='7000'>7000</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Flex>
+                  </Flex>
                   <Flex gap='2' align='center' className={styles.logsButtons}>
                     {/* Refresh Button */}
                     <Button onClick={refreshLogs} disabled={logsLoading} variant='outline'>
@@ -1550,6 +1576,69 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                     )}
                   </Flex>
                 </Flex>
+
+                {/* Mobile Layout - Stacked (≤ 720px) */}
+                <Box
+                  style={{
+                    marginBottom: '16px',
+                  }}
+                  className={styles.mobileLogsHeader}
+                >
+                  <Heading size='5' style={{ marginBottom: '12px' }}>
+                    Logs do Serviço
+                  </Heading>
+
+                  <Flex direction='column' gap='3'>
+                    <Flex align='center' gap='2'>
+                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                        Linhas:
+                      </Text>
+                      <Select.Root
+                        value={logLinesLimit.toString()}
+                        onValueChange={(value) => setLogLinesLimit(Number(value))}
+                      >
+                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Content>
+                          <Select.Item value='500'>500</Select.Item>
+                          <Select.Item value='1000'>1000</Select.Item>
+                          <Select.Item value='2000'>2000</Select.Item>
+                          <Select.Item value='5000'>5000</Select.Item>
+                          <Select.Item value='7000'>7000</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Flex>
+
+                    <Flex gap='2' align='center' direction='column' style={{ width: '100%' }}>
+                      {/* Refresh Button */}
+                      <Button
+                        onClick={refreshLogs}
+                        disabled={logsLoading}
+                        variant='outline'
+                        style={{ width: '100%' }}
+                      >
+                        <ReloadIcon className={logsLoading ? styles.buttonSpinner : ''} />
+                        {logsLoading ? 'Atualizando...' : 'Atualizar'}
+                      </Button>
+
+                      {/* Download Button - only show when logs are loaded */}
+                      {!logsLoading && !errors.logs && logs && (
+                        <Button
+                          onClick={downloadLogs}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
+                            border: 'none',
+                            color: 'white',
+                            width: '100%',
+                          }}
+                        >
+                          <DownloadIcon />
+                          Baixar arquivo de logs
+                        </Button>
+                      )}
+                    </Flex>
+                  </Flex>
+                </Box>
 
                 {logsLoading ? (
                   <Box className={styles.loadingSpinner}>
