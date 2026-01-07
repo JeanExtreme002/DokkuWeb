@@ -500,6 +500,17 @@
   }
 }
 
+/* Hide small label text on very small screens */
+.editText {
+  margin-left: 2px;
+}
+
+@media (max-width: 500px) {
+  .editText {
+    display: none;
+  }
+}
+
 /* Purple outline button override - force all states */
 .purpleOutlineButton,
 .purpleOutlineButton[data-state],

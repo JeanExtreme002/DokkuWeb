@@ -6,6 +6,7 @@ import {
   GitHubLogoIcon,
   GlobeIcon,
   InfoCircledIcon,
+  Pencil1Icon,
   PlayIcon,
   PlusIcon,
   ReloadIcon,
@@ -179,6 +180,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [envSubmitting, setEnvSubmitting] = useState(false);
   const [deletingPort, setDeletingPort] = useState<string | null>(null);
   const [deletingEnv, setDeletingEnv] = useState<string | null>(null);
+
+  // Environment variable edit states
+  const [editingEnvKey, setEditingEnvKey] = useState<string | null>(null);
+  const [editingEnvValue, setEditingEnvValue] = useState<string>('');
+  const [savingEnv, setSavingEnv] = useState<boolean>(false);
 
   // Environment variable delete modal states
   const [showDeleteEnvModal, setShowDeleteEnvModal] = useState(false);
@@ -903,6 +909,88 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } finally {
       setDeletingEnv(null);
       setEnvToDelete(null);
+    }
+  };
+
+  // Export environment variables helpers
+  const downloadFile = (filename: string, content: string, mimeType: string) => {
+    try {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
+  const exportEnvAsJSON = () => {
+    try {
+      const jsonContent = JSON.stringify(config, null, 2);
+      const filename = `${props.appName}-env.json`;
+      downloadFile(filename, jsonContent, 'application/json');
+    } catch (error) {
+      console.error('Error exporting env as JSON:', error);
+    }
+  };
+
+  const exportEnvAsENV = () => {
+    try {
+      const lines = Object.entries(config).map(([key, value]) => {
+        const raw = String(value);
+        const escaped = raw.replace(/'/g, "\\'");
+        return `${key}='${escaped}'`;
+      });
+      const envContent = lines.join('\n');
+      const filename = `${props.appName}.env`;
+      downloadFile(filename, envContent, 'text/plain');
+    } catch (error) {
+      console.error('Error exporting env as .ENV:', error);
+    }
+  };
+
+  const exportEnvAsYML = () => {
+    try {
+      const lines = Object.entries(config).map(([key, value]) => {
+        const raw = String(value);
+        const escaped = raw.replace(/'/g, "''");
+        return `${key}: '${escaped}'`;
+      });
+      const ymlContent = lines.join('\n');
+      const filename = `${props.appName}-env.yml`;
+      downloadFile(filename, ymlContent, 'text/yaml');
+    } catch (error) {
+      console.error('Error exporting env as .YML:', error);
+    }
+  };
+
+  const startEditEnvVar = (key: string, currentValue: string) => {
+    setEditingEnvKey(key);
+    setEditingEnvValue(currentValue);
+  };
+
+  const cancelEditEnvVar = () => {
+    setEditingEnvKey(null);
+    setEditingEnvValue('');
+  };
+
+  const saveEditedEnvironmentVariable = async () => {
+    if (!editingEnvKey || !editingEnvValue.trim()) return;
+    setSavingEnv(true);
+    try {
+      await api.post(`/api/config/${props.appName}/${editingEnvKey}/${editingEnvValue.trim()}/`);
+      await fetchConfig();
+      setEditingEnvKey(null);
+      setEditingEnvValue('');
+    } catch (error) {
+      console.error('Error updating environment variable:', error);
+    } finally {
+      setSavingEnv(false);
     }
   };
 
@@ -2452,9 +2540,29 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
               {/* Variables Tab */}
               <Tabs.Content value='variables' className={styles.tabsContent}>
-                <Heading size='5' style={{ marginBottom: '20px' }}>
-                  Variáveis de Ambiente
-                </Heading>
+                <Flex justify='between' align='center' style={{ marginBottom: '20px' }}>
+                  <Heading size='5'>Variáveis de Ambiente</Heading>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                      <Button
+                        variant='outline'
+                        disabled={configLoading || Object.keys(config).length === 0}
+                        title='Exportar variáveis de ambiente'
+                      >
+                        <DownloadIcon />
+                        Exportar
+                        <ChevronDownIcon />
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content>
+                      <DropdownMenu.Label>Exportar como:</DropdownMenu.Label>
+                      <DropdownMenu.Separator />
+                      <DropdownMenu.Item onClick={exportEnvAsENV}>.ENV</DropdownMenu.Item>
+                      <DropdownMenu.Item onClick={exportEnvAsJSON}>.JSON</DropdownMenu.Item>
+                      <DropdownMenu.Item onClick={exportEnvAsYML}>.YML</DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                </Flex>
 
                 {configLoading ? (
                   <Box className={styles.loadingSpinner}>
@@ -2523,13 +2631,80 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                               className={styles.envVarContent}
                               style={{ flex: 1 }}
                             >
-                              <Text className={styles.envVarKey}>{key}</Text>
-                              <Flex align='center' gap='1'>
-                                <Text size='2' color='gray'>
-                                  =
+                              <Flex align='center' gap='2'>
+                                <Text className={styles.envVarKey} style={{ marginRight: 0 }}>
+                                  {key}
                                 </Text>
-                                <Text className={styles.envVarValue}>{value}</Text>
+                                <Button
+                                  size='1'
+                                  variant='ghost'
+                                  style={{
+                                    background: 'transparent',
+                                    color: 'var(--gray-9)',
+                                    border: 'none',
+                                    boxShadow: 'none',
+                                    cursor: 'pointer',
+                                  }}
+                                  onClick={() => startEditEnvVar(key, String(value))}
+                                  disabled={savingEnv && editingEnvKey === key}
+                                  aria-label={`Editar variável ${key}`}
+                                >
+                                  <Pencil1Icon />
+                                  <span className={styles.editText}>editar</span>
+                                </Button>
                               </Flex>
+
+                              {editingEnvKey === key ? (
+                                <>
+                                  <Flex
+                                    align='center'
+                                    gap='1'
+                                    style={{ width: '100%', marginTop: '8px' }}
+                                  >
+                                    <Text size='2' color='gray'>
+                                      =
+                                    </Text>
+                                    <TextField.Root
+                                      value={editingEnvValue}
+                                      onChange={(e) => setEditingEnvValue(e.target.value)}
+                                      style={{ flex: 1 }}
+                                      disabled={savingEnv}
+                                    />
+                                  </Flex>
+                                  <Flex gap='2' style={{ marginTop: '10px' }}>
+                                    <Button
+                                      variant='soft'
+                                      color='gray'
+                                      onClick={cancelEditEnvVar}
+                                      disabled={savingEnv}
+                                    >
+                                      Cancelar
+                                    </Button>
+                                    <Button
+                                      onClick={saveEditedEnvironmentVariable}
+                                      disabled={!editingEnvValue.trim() || savingEnv}
+                                      style={{
+                                        background: 'var(--green-9)',
+                                        border: 'none',
+                                        color: 'white',
+                                      }}
+                                    >
+                                      {savingEnv ? (
+                                        <ReloadIcon className={styles.buttonSpinner} />
+                                      ) : (
+                                        'Salvar'
+                                      )}
+                                    </Button>
+                                  </Flex>
+                                </>
+                              ) : (
+                                <Flex align='center' gap='1'>
+                                  <Text size='2' color='gray'>
+                                    =
+                                  </Text>
+                                  <Text className={styles.envVarValue}>{value}</Text>
+                                </Flex>
+                              )}
                             </Flex>
                             <Button
                               size='2'
