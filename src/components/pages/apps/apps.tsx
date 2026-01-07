@@ -31,7 +31,11 @@ interface AppContainer {
     Env: string[];
   };
   NetworkSettings: {
-    IPAddress: string;
+    Networks: {
+      bridge: {
+        IPAddress: string;
+      };
+    };
     Ports: Record<string, any>;
   };
 }
@@ -1072,7 +1076,7 @@ export function AppsPage(props: AppsPageProps) {
                             </Flex>
 
                             {/* Informações técnicas - só para apps inspecionados */}
-                            {containerInfo?.NetworkSettings.IPAddress && (
+                            {containerInfo?.NetworkSettings?.Networks?.bridge?.IPAddress && (
                               <Flex align='center' gap='2'>
                                 <Text
                                   size='2'
@@ -1084,7 +1088,7 @@ export function AppsPage(props: AppsPageProps) {
                                   size='2'
                                   style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}
                                 >
-                                  {containerInfo.NetworkSettings.IPAddress}
+                                  {containerInfo.NetworkSettings?.Networks?.bridge?.IPAddress}
                                 </Text>
                                 {getPortInfo(containerInfo) && (
                                   <>

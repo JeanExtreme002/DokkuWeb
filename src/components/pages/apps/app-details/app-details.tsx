@@ -64,9 +64,11 @@ interface AppContainer {
     Hostname: string;
   };
   NetworkSettings: {
-    IPAddress: string;
-    Gateway: string;
-    Networks: Record<string, any>;
+    Networks: {
+      bridge: {
+        IPAddress: string;
+      };
+    };
   };
 }
 
@@ -1374,6 +1376,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     color='green'
                     onClick={startApp}
                     disabled={
+                      getIsRunning() ||
                       !getIsDeployed() ||
                       startLoading ||
                       stopLoading ||
@@ -1617,7 +1620,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                     size='3'
                                     style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
                                   >
-                                    {container?.NetworkSettings?.IPAddress || 'N/A'}
+                                    {container?.NetworkSettings?.Networks?.bridge?.IPAddress ||
+                                      'N/A'}
                                   </Text>
                                 </Flex>
                               </Box>
