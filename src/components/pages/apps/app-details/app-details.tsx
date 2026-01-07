@@ -302,7 +302,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     const response = await api.post(
       `/api/apps/${props.appName}/ports/`,
       {},
-      { params: { use_proxy: true } }
+      { params: { use_proxy: false } }
     );
     if (response.data.success) {
       setPortMappings(response.data.result);
@@ -636,7 +636,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await api.post(
         `/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}/`,
         {},
-        { params: { use_proxy: true } }
+        { params: { use_proxy: false } }
       );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))
@@ -665,7 +665,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     try {
       await api.delete(
         `/api/apps/${props.appName}/ports/${portToDelete.protocol}/${portToDelete.origin}/${portToDelete.dest}/`,
-        { use_proxy: true }
+        { use_proxy: false }
       );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))
