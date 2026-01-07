@@ -880,7 +880,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     setEnvSubmitting(true);
     try {
-      await api.post(`/api/config/${props.appName}/${newEnvKey.trim()}/${newEnvValue.trim()}/`);
+      await api.put(`/api/config/${props.appName}/${newEnvKey.trim()}/`, undefined, {
+        params: { value: newEnvValue.trim() },
+      });
       await fetchConfig();
       setNewEnvKey('');
       setNewEnvValue('');
@@ -1084,7 +1086,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setErrors((prev) => ({ ...prev, config: null }));
     for (const [key, value] of entries) {
       try {
-        await api.post(`/api/config/${props.appName}/${key}/${String(value)}/`);
+        await api.put(`/api/config/${props.appName}/${key}/`, undefined, {
+          params: { value: String(value) },
+        });
       } catch (e) {
         console.error('Failed to import variable:', key, e);
       }
@@ -1126,7 +1130,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     if (!editingEnvKey || !editingEnvValue.trim()) return;
     setSavingEnv(true);
     try {
-      await api.post(`/api/config/${props.appName}/${editingEnvKey}/${editingEnvValue.trim()}/`);
+      await api.put(`/api/config/${props.appName}/${editingEnvKey}/`, undefined, {
+        params: { value: editingEnvValue.trim() },
+      });
       await fetchConfig();
       setEditingEnvKey(null);
       setEditingEnvValue('');

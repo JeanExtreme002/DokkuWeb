@@ -170,7 +170,9 @@ export function CreateAppPage(props: CreateAppPageProps) {
       environmentVariables.forEach((envVar) => {
         promises.push(
           api
-            .post(`/api/config/${appName.trim()}/${envVar.key}/${envVar.value}/`)
+            .put(`/api/config/${appName.trim()}/${envVar.key}/`, undefined, {
+              params: { value: envVar.value },
+            })
             .catch((error) => {
               console.error(`Error setting config ${envVar.key}:`, error);
               // Não falha o processo se config der erro
