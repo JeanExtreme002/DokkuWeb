@@ -553,6 +553,48 @@ button.purpleOutlineButton {
   border-color: var(--purple-9) !important;
 }
 
+/* Orange outline button for Export */
+.envExportButtonOrange,
+.envExportButtonOrange[data-state],
+.envExportButtonOrange[data-accent-color] {
+  background: transparent !important;
+  border: 1px solid var(--orange-9) !important;
+  border-color: var(--orange-9) !important;
+  color: var(--orange-9) !important;
+  box-shadow: none !important;
+}
+
+.envExportButtonOrange:hover,
+.envExportButtonOrange:focus,
+.envExportButtonOrange[data-state]:hover,
+.envExportButtonOrange[data-accent-color]:hover {
+  background: var(--orange-2) !important;
+  border: 1px solid var(--orange-9) !important;
+  border-color: var(--orange-9) !important;
+  color: var(--orange-9) !important;
+  box-shadow: none !important;
+}
+
+.envExportButtonOrange:active,
+.envExportButtonOrange[data-state]:active,
+.envExportButtonOrange[data-accent-color]:active {
+  background: var(--orange-3) !important;
+  border: 1px solid var(--orange-9) !important;
+  border-color: var(--orange-9) !important;
+  color: var(--orange-9) !important;
+  box-shadow: none !important;
+}
+
+/* Additional overrides for Radix UI internal classes */
+.envExportButtonOrange[data-accent-color='green'],
+.envExportButtonOrange[data-accent-color],
+button.envExportButtonOrange {
+  --accent-9: var(--orange-9) !important;
+  --accent-2: var(--orange-2) !important;
+  --accent-3: var(--orange-3) !important;
+  border-color: var(--orange-9) !important;
+}
+
 /* App Control Buttons Layout */
 .appControlButtons {
   width: 100% !important;
@@ -683,5 +725,47 @@ button.purpleOutlineButton {
 
   .mobileLogsHeader {
     display: block !important;
+  }
+}
+
+/* Variables header: stack export button under title on small screens */
+.envHeader {
+  /* default layout handled by Flex props; keep for larger screens */
+}
+
+/* Actions container: default inline layout */
+.envActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 550px) {
+  .envHeader {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+
+  /* Keep actions side-by-side and allow shrinking */
+  .envActions {
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .envExportTrigger {
+    display: inline-flex !important;
+    width: auto !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+
+  .envExportButton {
+    width: auto !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
   }
 }

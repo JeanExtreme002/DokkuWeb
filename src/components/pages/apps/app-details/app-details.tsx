@@ -178,6 +178,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [newEnvValue, setNewEnvValue] = useState('');
   const [portSubmitting, setPortSubmitting] = useState(false);
   const [envSubmitting, setEnvSubmitting] = useState(false);
+  const [envImportLoading, setEnvImportLoading] = useState(false);
   const [deletingPort, setDeletingPort] = useState<string | null>(null);
   const [deletingEnv, setDeletingEnv] = useState<string | null>(null);
 
@@ -603,7 +604,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         await navigator.clipboard.writeText(deploymentToken);
         // Aqui você pode adicionar uma notificação de sucesso se tiver um sistema de toast
       } catch (error) {
-        console.error('Erro ao copiar token de deployment:', error);
+        console.error('Error copying deployment token:', error);
       }
     }
   };
@@ -966,6 +967,148 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       downloadFile(filename, ymlContent, 'text/yaml');
     } catch (error) {
       console.error('Error exporting env as .YML:', error);
+    }
+  };
+
+  // Import environment variables helpers
+  const parseDotEnv = (content: string): Record<string, string> => {
+    const result: Record<string, string> = {};
+    const lines = content.split(/\r?\n/);
+    for (let line of lines) {
+      if (!line) continue;
+      // Trim spaces and ignore comments
+      line = line.trim();
+      if (!line || line.startsWith('#')) continue;
+      // Remove optional export keyword
+      line = line.replace(/^export\s+/, '');
+      const match = line.match(/^([A-Za-z_][A-Za-z0-9_\.-]*)\s*=\s*(.*)$/);
+      if (!match) continue;
+      const key = match[1];
+      let value = match[2] ?? '';
+      // Remove inline comments for unquoted values
+      const isQuoted =
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"));
+      if (!isQuoted) {
+        const hashIndex = value.indexOf('#');
+        if (hashIndex > -1) value = value.slice(0, hashIndex).trim();
+      }
+      // Strip quotes and unescape
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value
+          .slice(1, -1)
+          .replace(/\\n/g, '\n')
+          .replace(/\\r/g, '\r')
+          .replace(/\\t/g, '\t')
+          .replace(/\\"/g, '"')
+          .replace(/\\\\/g, '\\');
+      } else if (value.startsWith("'") && value.endsWith("'")) {
+        value = value.slice(1, -1).replace(/''/g, "'");
+      } else {
+        value = value.trim();
+      }
+      result[key] = value;
+    }
+    return result;
+  };
+
+  const parseYmlSimple = (content: string): Record<string, string> => {
+    const result: Record<string, string> = {};
+    const lines = content.split(/\r?\n/);
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#') || line.startsWith('- ')) continue;
+      const match = line.match(/^([A-Za-z0-9_.-]+)\s*:\s*(.*)$/);
+      if (!match) continue;
+      const key = match[1];
+      let value = match[2] ?? '';
+      // handle comments for unquoted
+      const isQuoted =
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"));
+      if (!isQuoted) {
+        const hashIndex = value.indexOf('#');
+        if (hashIndex > -1) value = value.slice(0, hashIndex).trim();
+      }
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value
+          .slice(1, -1)
+          .replace(/\\n/g, '\n')
+          .replace(/\\r/g, '\r')
+          .replace(/\\t/g, '\t')
+          .replace(/\\"/g, '"')
+          .replace(/\\\\/g, '\\');
+      } else if (value.startsWith("'") && value.endsWith("'")) {
+        value = value.slice(1, -1).replace(/''/g, "'");
+      } else {
+        value = value.trim();
+      }
+      if (key) result[key] = value;
+    }
+    return result;
+  };
+
+  const parseJsonEnv = (content: string): Record<string, string> => {
+    try {
+      const obj = JSON.parse(content);
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return {};
+      const out: Record<string, string> = {};
+      for (const [k, v] of Object.entries(obj)) {
+        if (!k) continue;
+        const key = k as string;
+        const val = typeof v === 'string' ? v : JSON.stringify(v);
+        out[key] = val;
+      }
+      return out;
+    } catch (e) {
+      console.error('Failed to parse JSON:', e);
+      return {};
+    }
+  };
+
+  const sanitizeEnvKeys = (vars: Record<string, string>): Record<string, string> => {
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(vars)) {
+      if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(k)) out[k] = String(v);
+    }
+    return out;
+  };
+
+  const importEnvVariables = async (vars: Record<string, string>) => {
+    const entries = Object.entries(vars);
+    if (entries.length === 0) {
+      setErrors((prev) => ({ ...prev, config: 'Nenhuma variável válida encontrada no arquivo.' }));
+      return;
+    }
+    setEnvImportLoading(true);
+    setErrors((prev) => ({ ...prev, config: null }));
+    for (const [key, value] of entries) {
+      try {
+        await api.post(`/api/config/${props.appName}/${key}/${String(value)}/`);
+      } catch (e) {
+        console.error('Failed to import variable:', key, e);
+      }
+    }
+    await fetchConfig();
+    setEnvImportLoading(false);
+  };
+
+  const handleEnvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    try {
+      const name = file.name.toLowerCase();
+      const content = await file.text();
+      let parsed: Record<string, string> = {};
+      if (name.endsWith('.json')) parsed = parseJsonEnv(content);
+      else if (name.endsWith('.yml') || name.endsWith('.yaml')) parsed = parseYmlSimple(content);
+      else parsed = parseDotEnv(content);
+      const sanitized = sanitizeEnvKeys(parsed);
+      await importEnvVariables(sanitized);
+    } catch (err) {
+      console.error('Error importing variables:', err);
+      setErrors((prev) => ({ ...prev, config: 'Erro ao importar variáveis do arquivo.' }));
     }
   };
 
@@ -2540,28 +2683,46 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
               {/* Variables Tab */}
               <Tabs.Content value='variables' className={styles.tabsContent}>
-                <Flex justify='between' align='center' style={{ marginBottom: '20px' }}>
+                <Flex
+                  justify='between'
+                  align='center'
+                  className={styles.envHeader}
+                  style={{ marginBottom: '20px' }}
+                >
                   <Heading size='5'>Variáveis de Ambiente</Heading>
-                  <DropdownMenu.Root>
-                    <DropdownMenu.Trigger>
-                      <Button
-                        variant='outline'
-                        disabled={configLoading || Object.keys(config).length === 0}
-                        title='Exportar variáveis de ambiente'
-                      >
-                        <DownloadIcon />
-                        Exportar
-                        <ChevronDownIcon />
-                      </Button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content>
-                      <DropdownMenu.Label>Exportar como:</DropdownMenu.Label>
-                      <DropdownMenu.Separator />
-                      <DropdownMenu.Item onClick={exportEnvAsENV}>.ENV</DropdownMenu.Item>
-                      <DropdownMenu.Item onClick={exportEnvAsJSON}>.JSON</DropdownMenu.Item>
-                      <DropdownMenu.Item onClick={exportEnvAsYML}>.YML</DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
+                  <Flex align='center' gap='2' className={styles.envActions}>
+                    <Button
+                      className={styles.envExportButton}
+                      variant='outline'
+                      onClick={() => document.getElementById('env-file-upload')?.click()}
+                      disabled={envImportLoading}
+                      title='Importar variáveis de um arquivo (.env, .json, .yml)'
+                    >
+                      <UploadIcon />
+                      Importar
+                    </Button>
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger className={styles.envExportTrigger}>
+                        <Button
+                          className={`${styles.envExportButton} ${styles.envExportButtonOrange}`}
+                          variant='outline'
+                          disabled={configLoading}
+                          title='Exportar variáveis de ambiente'
+                        >
+                          <DownloadIcon />
+                          Exportar
+                          <ChevronDownIcon />
+                        </Button>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Content>
+                        <DropdownMenu.Label>Exportar como:</DropdownMenu.Label>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item onClick={exportEnvAsENV}>.ENV</DropdownMenu.Item>
+                        <DropdownMenu.Item onClick={exportEnvAsJSON}>.JSON</DropdownMenu.Item>
+                        <DropdownMenu.Item onClick={exportEnvAsYML}>.YML</DropdownMenu.Item>
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Root>
+                  </Flex>
                 </Flex>
 
                 {configLoading ? (
@@ -3014,6 +3175,16 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         style={{ display: 'none' }}
         onChange={handleFileUpload}
         disabled={fileDeployLoading}
+      />
+
+      {/* Hidden file input for importing env vars */}
+      <input
+        id='env-file-upload'
+        type='file'
+        accept='.env,.json,.yml,.yaml,application/json,text/plain,text/yaml'
+        style={{ display: 'none' }}
+        onChange={handleEnvImport}
+        disabled={envImportLoading}
       />
 
       {/* Loading overlay for file upload */}
