@@ -988,7 +988,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                           className={styles.overviewValue}
                           style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
                         >
-                          {serviceData?.id ? serviceData.id.substring(0, 12) : '-'}
+                          {serviceData?.id || 'N/A'}
                         </Text>
                       </Flex>
                     </Box>

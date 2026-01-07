@@ -67,6 +67,8 @@ interface AppContainer {
     Networks: {
       bridge: {
         IPAddress: string;
+        Gateway: string;
+        MacAddress: string;
       };
     };
   };
@@ -1621,6 +1623,63 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                     style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
                                   >
                                     {container?.NetworkSettings?.Networks?.bridge?.IPAddress ||
+                                      'N/A'}
+                                  </Text>
+                                </Flex>
+                              </Box>
+
+                              <Box
+                                style={{
+                                  borderBottom: '1px solid var(--gray-6)',
+                                  paddingBottom: '8px',
+                                }}
+                              >
+                                <Flex
+                                  direction={{ initial: 'column', sm: 'row' }}
+                                  justify={{ sm: 'between' }}
+                                  align={{ sm: 'center' }}
+                                  gap='1'
+                                >
+                                  <Text
+                                    size='3'
+                                    weight='medium'
+                                    style={{ color: 'var(--gray-11)' }}
+                                  >
+                                    Gateway
+                                  </Text>
+                                  <Text
+                                    size='3'
+                                    style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                  >
+                                    {container?.NetworkSettings?.Networks?.bridge?.Gateway || 'N/A'}
+                                  </Text>
+                                </Flex>
+                              </Box>
+
+                              <Box
+                                style={{
+                                  borderBottom: '1px solid var(--gray-6)',
+                                  paddingBottom: '8px',
+                                }}
+                              >
+                                <Flex
+                                  direction={{ initial: 'column', sm: 'row' }}
+                                  justify={{ sm: 'between' }}
+                                  align={{ sm: 'center' }}
+                                  gap='1'
+                                >
+                                  <Text
+                                    size='3'
+                                    weight='medium'
+                                    style={{ color: 'var(--gray-11)' }}
+                                  >
+                                    MAC Address
+                                  </Text>
+                                  <Text
+                                    size='3'
+                                    style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
+                                  >
+                                    {container?.NetworkSettings?.Networks?.bridge?.MacAddress ||
                                       'N/A'}
                                   </Text>
                                 </Flex>
