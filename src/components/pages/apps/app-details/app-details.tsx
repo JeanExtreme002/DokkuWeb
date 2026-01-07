@@ -1111,7 +1111,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   {websiteConfig.server.domain}:{appInfo?.raw_name}
                 </div>
                 <div>
-                  <span className={styles.command}>$ git push dokku {(deployInfo ? deployInfo['Git deploy branch'] : null) || '<branch>'}</span>
+                  <span className={styles.command}>
+                    $ git push dokku{' '}
+                    {(deployInfo ? deployInfo['Git deploy branch'] : null) || '<branch>'}
+                  </span>
                 </div>
               </Box>
             </div>
