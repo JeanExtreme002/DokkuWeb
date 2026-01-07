@@ -254,7 +254,7 @@ export function NetworksPage(props: NetworksPageProps) {
   };
 
   const handleViewApp = (appName: string) => {
-    router.push(`/apps/${appName}`);
+    router.push(`/apps/a/${appName}`);
   };
 
   const handleCreateNetwork = async () => {
