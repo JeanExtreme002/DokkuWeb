@@ -873,11 +873,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setTimeout(() => terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 0);
     setTerminalBusy(true);
     try {
-      const response = await api.post(
-        `/api/apps/${props.appName}/exec/`,
-        {},
-        { params: { command } }
-      );
+      // Determine container type from inspect data, if available
+      let containerType: string | undefined = undefined;
+      if (appInfo && appInfo.info_origin === 'inspect') {
+        const containers = appInfo.data as AppContainer[];
+        containerType = containers?.[0]?.Config?.Labels?.['com.dokku.process-type'];
+      }
+      const params: Record<string, any> = { command };
+      if (containerType) {
+        params.container_type = containerType;
+      }
+      const response = await api.post(`/api/apps/${props.appName}/exec/`, {}, { params });
       const cleaned = processAnsiCodes(String(response.data.result ?? ''));
       if (response?.data?.success) {
         setTerminalOutputs((prev) => [...prev, cleaned, '']);
