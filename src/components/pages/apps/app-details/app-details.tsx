@@ -228,6 +228,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [selectedBuilder, setSelectedBuilder] = useState('');
   const [builderConfigLoading, setBuilderConfigLoading] = useState(false);
 
+  // Confirmation modals for app actions
+  const [showStopConfirmModal, setShowStopConfirmModal] = useState(false);
+  const [showRestartConfirmModal, setShowRestartConfirmModal] = useState(false);
+  const [showRebuildConfirmModal, setShowRebuildConfirmModal] = useState(false);
+
   // Error states
   const [errors, setErrors] = useState({
     main: null as string | null,
@@ -1394,7 +1399,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     size='3'
                     variant='outline'
                     color='red'
-                    onClick={stopApp}
+                    onClick={() => setShowStopConfirmModal(true)}
                     disabled={
                       !getIsDeployed() ||
                       !getIsRunning() ||
@@ -1425,7 +1430,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     size='3'
                     variant='outline'
                     color='orange'
-                    onClick={restartApp}
+                    onClick={() => setShowRestartConfirmModal(true)}
                     disabled={
                       !getIsDeployed() ||
                       startLoading ||
@@ -1449,7 +1454,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     size='3'
                     variant='soft'
                     color='violet'
-                    onClick={rebuildApp}
+                    onClick={() => setShowRebuildConfirmModal(true)}
                     disabled={startLoading || stopLoading || restartLoading || rebuildLoading}
                   >
                     {rebuildLoading ? (
@@ -3363,6 +3368,125 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 `${portToDelete.protocol}-${portToDelete.origin}-${portToDelete.dest}`
                 ? 'Removendo...'
                 : 'Confirmar Remoção'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Stop App Confirmation Modal */}
+      <Dialog.Root open={showStopConfirmModal} onOpenChange={setShowStopConfirmModal}>
+        <Dialog.Content
+          maxWidth='450px'
+          style={{
+            padding: '24px',
+          }}
+        >
+          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Ação</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja parar o aplicativo?
+            <br />
+            <br />
+            Esta ação interromperá todos os processos e conexões ativas desse aplicativo.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={stopLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              color='red'
+              onClick={() => {
+                setShowStopConfirmModal(false);
+                stopApp();
+              }}
+              disabled={stopLoading}
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+              }}
+            >
+              {stopLoading ? 'Parando...' : 'Parar Aplicativo'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Restart App Confirmation Modal */}
+      <Dialog.Root open={showRestartConfirmModal} onOpenChange={setShowRestartConfirmModal}>
+        <Dialog.Content
+          maxWidth='450px'
+          style={{
+            padding: '24px',
+          }}
+        >
+          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Ação</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja reiniciar o aplicativo?
+            <br />
+            <br />
+            Esta ação interromperá temporariamente todos os processos e conexões ativas, e
+            inicializar novamente o aplicativo.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={restartLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              onClick={() => {
+                setShowRestartConfirmModal(false);
+                restartApp();
+              }}
+              disabled={restartLoading}
+              style={{
+                backgroundColor: 'var(--orange-8)',
+                color: 'white',
+              }}
+            >
+              {restartLoading ? 'Reiniciando...' : 'Reiniciar Aplicativo'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Rebuild App Confirmation Modal */}
+      <Dialog.Root open={showRebuildConfirmModal} onOpenChange={setShowRebuildConfirmModal}>
+        <Dialog.Content
+          maxWidth='450px'
+          style={{
+            padding: '24px',
+          }}
+        >
+          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Ação</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja reconstruir o aplicativo?
+            <br />
+            <br />
+            Esta ação irá reconstruir do zero a imagem do aplicativo, podendo levar alguns minutos.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={rebuildLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              onClick={() => {
+                setShowRebuildConfirmModal(false);
+                rebuildApp();
+              }}
+              disabled={rebuildLoading}
+              style={{
+                backgroundColor: 'var(--violet-9)',
+                color: 'white',
+              }}
+            >
+              {rebuildLoading ? 'Reconstruindo...' : 'Reconstruir Aplicativo'}
             </Button>
           </Flex>
         </Dialog.Content>
