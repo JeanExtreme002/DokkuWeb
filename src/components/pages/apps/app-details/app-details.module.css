@@ -728,6 +728,41 @@ button.envExportButtonOrange {
   }
 }
 
+/* Terminal prompt layouts */
+.terminalPromptLabel {
+  display: none;
+  margin-bottom: 6px;
+}
+
+.terminalPromptRow {
+  display: flex;
+  align-items: center;
+}
+
+.terminalPromptFull,
+.terminalPromptSymbol {
+  color: #93c5fd;
+  margin-right: 8px;
+}
+
+/* Hide % by default; show it only on very small screens */
+.terminalPromptSymbol {
+  display: none;
+}
+
+/* Under 450px: show label above and only % on input line */
+@media (max-width: 450px) {
+  .terminalPromptLabel {
+    display: block;
+  }
+  .terminalPromptFull {
+    display: none;
+  }
+  .terminalPromptSymbol {
+    display: inline;
+  }
+}
+
 /* Danger section layout: stack on small screens */
 .dangerRow {
   /* default horizontal layout handled by Flex props */

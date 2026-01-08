@@ -33,7 +33,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingSpinner, NavBar } from '@/components/shared';
 import { api, config as websiteConfig, formatDate, formatTimestamp } from '@/lib';
@@ -62,6 +62,7 @@ interface AppContainer {
     Env: string[];
     Image: string;
     Hostname: string;
+    WorkingDir: string;
   };
   NetworkSettings: {
     Networks: {
@@ -227,6 +228,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [builderModalOpen, setBuilderModalOpen] = useState(false);
   const [selectedBuilder, setSelectedBuilder] = useState('');
   const [builderConfigLoading, setBuilderConfigLoading] = useState(false);
+
+  // Shell terminal states
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalOutputs, setTerminalOutputs] = useState<string[]>([]);
+  const [terminalBusy, setTerminalBusy] = useState(false);
+  const terminalEndRef = useRef<HTMLDivElement | null>(null);
+  const terminalInputRef = useRef<HTMLInputElement | null>(null);
+  const [terminalHistory, setTerminalHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
 
   // Confirmation modals for app actions
   const [showStopConfirmModal, setShowStopConfirmModal] = useState(false);
@@ -599,6 +609,26 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     return text.replace(/\u001b\[[0-9;]*m/g, '');
   };
 
+  // Terminal prompt builder
+  const getPrompt = () => {
+    let workingDir = '';
+    if (appInfo && appInfo.info_origin === 'inspect') {
+      const containers = appInfo.data as AppContainer[];
+      workingDir = containers?.[0]?.Config?.WorkingDir || '';
+    }
+    return `${props.appName} - ${workingDir} %`;
+  };
+
+  // Prompt label for compact view (without the trailing symbol)
+  const getPromptLabel = () => {
+    let workingDir = '';
+    if (appInfo && appInfo.info_origin === 'inspect') {
+      const containers = appInfo.data as AppContainer[];
+      workingDir = containers?.[0]?.Config?.WorkingDir || '';
+    }
+    return `${props.appName} - ${workingDir}`.trim();
+  };
+
   const downloadLogs = () => {
     const blob = new Blob([logs], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -816,6 +846,138 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       setBuilderConfigLoading(false);
     }
   };
+
+  const executeTerminalCommand = async (command: string) => {
+    const trimmed = command.trim();
+    if (!trimmed) {
+      // Echo empty input line and add blank output line
+      setTerminalOutputs((prev) => [...prev, `${getPrompt()} `, '']);
+      setTimeout(() => {
+        terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        terminalInputRef.current?.focus();
+      }, 0);
+      return;
+    }
+    const normalized = command.replace(/\s+/g, '').toLowerCase();
+    // Handle clear locally (ignore case/spacing)
+    if (normalized === 'clear') {
+      setTerminalOutputs([]);
+      setTimeout(() => {
+        terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        terminalInputRef.current?.focus();
+      }, 0);
+      return;
+    }
+    // Save command in terminal stack with prompt
+    setTerminalOutputs((prev) => [...prev, `${getPrompt()} ${command}`]);
+    setTimeout(() => terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 0);
+    setTerminalBusy(true);
+    try {
+      const response = await api.post(
+        `/api/apps/${props.appName}/exec/`,
+        {},
+        { params: { command } }
+      );
+      const cleaned = processAnsiCodes(String(response.data.result ?? ''));
+      if (response?.data?.success) {
+        setTerminalOutputs((prev) => [...prev, cleaned, '']);
+      } else {
+        setTerminalOutputs((prev) => [
+          ...prev,
+          `[Error] Comando não pôde ser executado. \n${cleaned}`,
+          '',
+        ]);
+      }
+    } catch (err: any) {
+      setTerminalOutputs((prev) => [
+        ...prev,
+        `[erro] ${err?.response?.data?.message || 'Falha ao executar comando'}`,
+        '',
+      ]);
+    } finally {
+      setTerminalBusy(false);
+      setTimeout(() => {
+        terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        terminalInputRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  const handleTerminalKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Enter: execute current input
+    if (e.key === 'Enter' && !terminalBusy) {
+      e.preventDefault();
+      const cmd = terminalInput.trim();
+      if (!cmd) {
+        // Echo empty input line and add blank output line
+        setTerminalOutputs((prev) => [...prev, `${getPrompt()} `, '']);
+        setHistoryIndex(-1);
+        setTerminalInput('');
+        setTimeout(() => terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 0);
+        return;
+      }
+      // push to history and reset index
+      setTerminalHistory((prev) => [...prev, cmd]);
+      setHistoryIndex(-1);
+      setTerminalInput('');
+      const normalized = cmd.replace(/\s+/g, '').toLowerCase();
+      if (normalized === 'clear') {
+        setTerminalOutputs([]);
+        setTimeout(() => {
+          terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          terminalInputRef.current?.focus();
+        }, 0);
+        return;
+      }
+      await executeTerminalCommand(cmd);
+      return;
+    }
+
+    // ArrowUp: navigate backwards in history
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (terminalHistory.length === 0) return;
+      if (historyIndex === -1) {
+        const newIndex = terminalHistory.length - 1;
+        setHistoryIndex(newIndex);
+        setTerminalInput(terminalHistory[newIndex] || '');
+      } else if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+        setHistoryIndex(newIndex);
+        setTerminalInput(terminalHistory[newIndex] || '');
+      }
+      return;
+    }
+
+    // ArrowDown: navigate forwards in history
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (terminalHistory.length === 0) return;
+      if (historyIndex === -1) {
+        // At fresh state; keep input as is
+        return;
+      } else if (historyIndex < terminalHistory.length - 1) {
+        const newIndex = historyIndex + 1;
+        setHistoryIndex(newIndex);
+        setTerminalInput(terminalHistory[newIndex] || '');
+      } else {
+        // Beyond last: reset to fresh input
+        setHistoryIndex(-1);
+        setTerminalInput('');
+      }
+      return;
+    }
+  };
+
+  // Focus input when switching to Shell tab and keep view scrolled
+  useEffect(() => {
+    if (currentTab === 'shell') {
+      setTimeout(() => {
+        terminalInputRef.current?.focus();
+        terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
+    }
+  }, [currentTab]);
 
   // Deploy functions
   const deployFromRepo = async () => {
@@ -1521,6 +1683,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 </Tabs.Trigger>
                 <Tabs.Trigger value='logs' className={styles.tabsTrigger}>
                   Logs
+                </Tabs.Trigger>
+                <Tabs.Trigger value='shell' className={styles.tabsTrigger}>
+                  Shell
                 </Tabs.Trigger>
                 <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
                   Variáveis
@@ -2775,6 +2940,110 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     {logs ? processAnsiCodes(logs) : 'Nenhum log disponível.'}
                   </Box>
                 )}
+              </Tabs.Content>
+
+              {/* Shell Tab */}
+              <Tabs.Content value='shell' className={styles.tabsContent}>
+                <Flex align='center' justify='between' style={{ marginBottom: '12px' }}>
+                  <Heading size='5' style={{ color: 'var(--gray-12)' }}>
+                    Shell
+                  </Heading>
+                  {terminalBusy && (
+                    <ReloadIcon
+                      className={styles.buttonSpinner}
+                      style={{ color: 'var(--gray-10)' }}
+                    />
+                  )}
+                </Flex>
+                <Box
+                  onClick={() => {
+                    try {
+                      const sel =
+                        typeof window !== 'undefined' && window.getSelection
+                          ? window.getSelection()
+                          : null;
+                      const hasSelection = !!sel && sel.toString().length > 0;
+                      if (!hasSelection) terminalInputRef.current?.focus();
+                    } catch {
+                      terminalInputRef.current?.focus();
+                    }
+                  }}
+                  style={{
+                    background: '#0B1220',
+                    color: '#E5E7EB',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                    fontSize: '12.5px',
+                    lineHeight: 1.5,
+                    border: '1px solid var(--gray-6)',
+                    borderRadius: 6,
+                    padding: '16px',
+                    minHeight: '240px',
+                    maxHeight: '420px',
+                    overflowY: 'auto',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    cursor: 'text',
+                  }}
+                >
+                  {terminalOutputs.length === 0 ? (
+                    <div style={{ color: 'var(--gray-11)' }}>
+                      Digite um comando e pressione Enter.
+                    </div>
+                  ) : (
+                    terminalOutputs.map((line, idx) => {
+                      const promptPrefix = `${getPrompt()} `;
+                      if (line.startsWith(promptPrefix)) {
+                        const cmdText = line.slice(promptPrefix.length);
+                        return (
+                          <div key={idx} style={{ marginBottom: 6 }}>
+                            <span style={{ color: '#93C5FD', marginRight: 8 }}>{getPrompt()}</span>
+                            <span>{cmdText}</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={idx} style={{ marginBottom: 6 }}>
+                          {line}
+                        </div>
+                      );
+                    })
+                  )}
+                  {/* Active prompt line: only show when not executing */}
+                  {!terminalBusy && (
+                    <div>
+                      {/* Label line for very small screens (<450px) */}
+                      <div className={styles.terminalPromptLabel}>
+                        <span style={{ color: '#93C5FD' }}>{getPromptLabel()}</span>
+                      </div>
+
+                      {/* Single input row: show full prompt on large screens, only % on small screens */}
+                      <div className={styles.terminalPromptRow}>
+                        <span className={styles.terminalPromptFull}>{getPrompt()}</span>
+                        <span className={styles.terminalPromptSymbol}>%</span>
+                        <input
+                          ref={terminalInputRef}
+                          type='text'
+                          value={terminalInput}
+                          onChange={(e) => setTerminalInput(e.target.value)}
+                          onKeyDown={handleTerminalKeyDown}
+                          style={{
+                            flex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            color: '#E5E7EB',
+                            font: 'inherit',
+                            padding: 0,
+                            margin: 0,
+                          }}
+                          placeholder=''
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div ref={terminalEndRef} />
+                </Box>
               </Tabs.Content>
 
               {/* Variables Tab */}
