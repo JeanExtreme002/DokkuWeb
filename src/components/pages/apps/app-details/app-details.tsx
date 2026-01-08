@@ -232,6 +232,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [showStopConfirmModal, setShowStopConfirmModal] = useState(false);
   const [showRestartConfirmModal, setShowRestartConfirmModal] = useState(false);
   const [showRebuildConfirmModal, setShowRebuildConfirmModal] = useState(false);
+  // Delete app confirmation modal state
+  const [showDeleteAppModal, setShowDeleteAppModal] = useState(false);
+  const [deleteAppLoading, setDeleteAppLoading] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // Error states
   const [errors, setErrors] = useState({
@@ -615,6 +619,24 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       } catch (error) {
         console.error('Error copying deployment token:', error);
       }
+    }
+  };
+
+  // Delete application handler
+  const deleteApp = async () => {
+    setDeleteAppLoading(true);
+    try {
+      await api.delete(`/api/apps/${props.appName}`);
+      router.push('/apps');
+    } catch (error: any) {
+      console.error('Error deleting app:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao deletar aplicativo',
+      }));
+    } finally {
+      setDeleteAppLoading(false);
+      setShowDeleteAppModal(false);
     }
   };
 
@@ -1504,7 +1526,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   Variáveis
                 </Tabs.Trigger>
                 <Tabs.Trigger value='security' className={styles.tabsTrigger}>
-                  Tokens
+                  Segurança
                 </Tabs.Trigger>
               </Tabs.List>
 
@@ -3082,6 +3104,48 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     </Flex>
                   </Flex>
                 </Card>
+                {/* Delete Application Section */}
+                <Box style={{ marginTop: '45px' }}>
+                  <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
+                    Zona de Perigo
+                  </Heading>
+                  <Card
+                    style={{
+                      border: '1px solid var(--red-6)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      padding: '16px',
+                      background: 'var(--red-2)',
+                    }}
+                  >
+                    <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
+                      <Flex direction='column' gap='1'>
+                        <Text
+                          size='3'
+                          weight='bold'
+                          style={{ color: 'var(--gray-12)', display: 'block' }}
+                        >
+                          Deletar essa aplicação
+                        </Text>
+                        <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                          Uma vez que você exclui uma aplicação, não há como voltar atrás.
+                        </Text>
+                      </Flex>
+                      <Button
+                        className={styles.dangerRowButton}
+                        size='2'
+                        onClick={() => setShowDeleteAppModal(true)}
+                        style={{
+                          background: 'var(--gray-4)',
+                          color: 'var(--red-9)',
+                          border: '1px solid var(--gray-7)',
+                        }}
+                      >
+                        <TrashIcon />
+                        Deletar Aplicação
+                      </Button>
+                    </Flex>
+                  </Card>
+                </Box>
               </Tabs.Content>
             </Tabs.Root>
           </Flex>
@@ -3161,6 +3225,50 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               ) : (
                 'Confirmar Deploy'
               )}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Delete App Confirmation Modal */}
+      <Dialog.Root open={showDeleteAppModal} onOpenChange={setShowDeleteAppModal}>
+        <Dialog.Content style={{ maxWidth: '480px' }}>
+          <Dialog.Title>Confirmar Exclusão</Dialog.Title>
+          <Dialog.Description style={{ marginBottom: '16px', color: 'var(--gray-11)' }}>
+            Tem certeza que deseja deletar a aplicação {'"'}
+            {displayName}
+            {'"'}?
+            <br />
+            <br />
+            Esta ação não pode ser desfeita.
+          </Dialog.Description>
+
+          <Box style={{ marginTop: '8px' }}>
+            <Text
+              size='2'
+              style={{ color: 'var(--gray-11)', marginBottom: '8px', display: 'block' }}
+            >
+              Para confirmar, digite <strong>{`deletar-${displayName}`}</strong> abaixo:
+            </Text>
+            <TextField.Root
+              placeholder={`deletar-${displayName}`}
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+            />
+          </Box>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={deleteAppLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              onClick={deleteApp}
+              disabled={deleteAppLoading || deleteConfirmText.trim() !== `deletar-${displayName}`}
+              style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
+            >
+              {deleteAppLoading ? 'Deletando...' : 'Confirmar Exclusão'}
             </Button>
           </Flex>
         </Dialog.Content>

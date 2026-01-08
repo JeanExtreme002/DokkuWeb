@@ -728,9 +728,28 @@ button.envExportButtonOrange {
   }
 }
 
+/* Danger section layout: stack on small screens */
+.dangerRow {
+  /* default horizontal layout handled by Flex props */
+  --danger-row: 1; /* avoid empty ruleset */
+}
+
+@media (max-width: 550px) {
+  .dangerRow {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+  }
+  .dangerRowButton {
+    width: 100% !important;
+  }
+}
+
 /* Variables header: stack export button under title on small screens */
 .envHeader {
   /* default layout handled by Flex props; keep for larger screens */
+  --env-header: 1; /* avoid empty ruleset */
 }
 
 /* Actions container: default inline layout */
