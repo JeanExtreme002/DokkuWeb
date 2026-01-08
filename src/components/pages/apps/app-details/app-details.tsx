@@ -3235,8 +3235,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         <Dialog.Content style={{ maxWidth: '480px' }}>
           <Dialog.Title>Confirmar Exclusão</Dialog.Title>
           <Dialog.Description style={{ marginBottom: '16px', color: 'var(--gray-11)' }}>
-            Tem certeza que deseja deletar a aplicação {'"'}
-            {displayName}
+            Tem certeza que deseja prosseguir com a exclusão da aplicação {'"'}
+            <strong>{displayName}</strong>
             {'"'}?
             <br />
             <br />
@@ -3268,7 +3268,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               disabled={deleteAppLoading || deleteConfirmText.trim() !== `deletar-${displayName}`}
               style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
             >
-              {deleteAppLoading ? 'Deletando...' : 'Confirmar Exclusão'}
+              {deleteAppLoading ? (
+                <>
+                  <ReloadIcon className={styles.buttonSpinner} /> Deletando...
+                </>
+              ) : (
+                'Confirmar Exclusão'
+              )}
             </Button>
           </Flex>
         </Dialog.Content>

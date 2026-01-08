@@ -22,6 +22,7 @@ import {
   Tabs,
   Text,
   TextArea,
+  TextField,
 } from '@radix-ui/themes';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -131,6 +132,11 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [selectedApp, setSelectedApp] = useState<string>('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [appsListLoading, setAppsListLoading] = useState(false);
+
+  // Delete service modal states
+  const [showDeleteServiceModal, setShowDeleteServiceModal] = useState(false);
+  const [deleteServiceLoading, setDeleteServiceLoading] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // Fetch functions with retry logic
   const fetchWithRetry = useCallback(
@@ -453,6 +459,24 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       }));
     } finally {
       setRestartLoading(false);
+    }
+  };
+
+  // Delete service handler
+  const deleteService = async () => {
+    setDeleteServiceLoading(true);
+    try {
+      await api.delete(`/api/databases/${props.pluginType}/${props.serviceName}/`);
+      router.push('/services');
+    } catch (error: any) {
+      console.error('Error deleting service:', error);
+      setErrors((prev) => ({
+        ...prev,
+        main: error.response?.data?.message || 'Erro ao deletar serviço',
+      }));
+    } finally {
+      setDeleteServiceLoading(false);
+      setShowDeleteServiceModal(false);
     }
   };
 
@@ -1746,6 +1770,48 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                       </Flex>
                     </Card>
                   )}
+
+                  {/* Danger Zone */}
+                  <Box style={{ marginTop: '45px' }}>
+                    <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
+                      Zona de Perigo
+                    </Heading>
+                    <Card
+                      style={{
+                        border: '1px solid var(--red-6)',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                        padding: '16px',
+                        background: 'var(--red-2)',
+                      }}
+                    >
+                      <Flex align='center' justify='between' gap='4'>
+                        <Flex direction='column' gap='1'>
+                          <Text
+                            size='3'
+                            weight='bold'
+                            style={{ color: 'var(--gray-12)', display: 'block' }}
+                          >
+                            Deletar esse serviço
+                          </Text>
+                          <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                            Uma vez que você exclui um serviço, não há como voltar atrás.
+                          </Text>
+                        </Flex>
+                        <Button
+                          size='2'
+                          onClick={() => setShowDeleteServiceModal(true)}
+                          style={{
+                            background: 'var(--gray-4)',
+                            color: 'var(--red-9)',
+                            border: '1px solid var(--gray-7)',
+                          }}
+                        >
+                          <TrashIcon />
+                          Deletar Serviço
+                        </Button>
+                      </Flex>
+                    </Card>
+                  </Box>
                 </Flex>
               </Tabs.Content>
             </Tabs.Root>
@@ -1829,6 +1895,58 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
             >
               {linkLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <Link1Icon />}
               {linkLoading ? 'Vinculando...' : 'Vincular'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Delete Service Confirmation Modal */}
+      <Dialog.Root open={showDeleteServiceModal} onOpenChange={setShowDeleteServiceModal}>
+        <Dialog.Content style={{ maxWidth: '480px' }}>
+          <Dialog.Title>Confirmar Exclusão</Dialog.Title>
+          <Dialog.Description style={{ marginBottom: '16px', color: 'var(--gray-11)' }}>
+            Tem certeza que deseja prosseguir com a exclusão do serviço {serviceType} {'"'}
+            <strong>{displayName}</strong>
+            {'"'}?
+            <br />
+            <br />
+            Esta ação não pode ser desfeita.
+          </Dialog.Description>
+
+          <Box style={{ marginTop: '8px' }}>
+            <Text
+              size='2'
+              style={{ color: 'var(--gray-11)', marginBottom: '8px', display: 'block' }}
+            >
+              Para confirmar, digite <strong>{`deletar-${displayName}`}</strong> abaixo:
+            </Text>
+            <TextField.Root
+              placeholder={`deletar-${displayName}`}
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+            />
+          </Box>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button variant='soft' color='gray' disabled={deleteServiceLoading}>
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              onClick={deleteService}
+              disabled={
+                deleteServiceLoading || deleteConfirmText.trim() !== `deletar-${displayName}`
+              }
+              style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
+            >
+              {deleteServiceLoading ? (
+                <>
+                  <ReloadIcon className={styles.buttonSpinner} /> Deletando...
+                </>
+              ) : (
+                'Confirmar Exclusão'
+              )}
             </Button>
           </Flex>
         </Dialog.Content>
