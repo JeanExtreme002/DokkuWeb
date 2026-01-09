@@ -1,0 +1,235 @@
+.root {
+  margin: 0;
+  flex-grow: 1;
+  align-items: center;
+  width: 100%;
+  padding: 32px 24px;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, var(--gray-1) 0%, var(--gray-2) 100%);
+  box-sizing: border-box;
+}
+
+.mainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.appCard {
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.appCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  border-color: var(--blue-7) !important;
+}
+
+.appCardContent {
+  padding: 20px;
+  align-items: flex-start;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.appInfo {
+  flex: 1;
+  gap: 8px;
+}
+
+.appActions {
+  min-width: 180px;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.dateText {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.searchServiceImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  margin-right: 10px;
+  border: 1px solid #999;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.availableSection {
+  margin-top: 16px;
+}
+
+.availableGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Ensure available database cards keep mobile layout on larger screens */
+.availableGrid .appCardContent {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  gap: 16px;
+}
+
+.availableGrid .appInfo {
+  width: 100%;
+  align-items: flex-start;
+}
+
+.availableGrid .appActions {
+  width: 100%;
+  min-width: unset;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Fixed 4-line description clamp for database descriptions */
+.dbDescription {
+  display: -webkit-box;
+  line-clamp: 4;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  min-height: calc(4 * 1.4em);
+  max-height: calc(4 * 1.4em);
+}
+
+@media (max-width: 1024px) {
+  .availableGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .availableGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .appCardContent {
+    gap: 24px;
+  }
+
+  .appInfo {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    padding: 16px;
+  }
+
+  .mainContainer {
+    padding: 0 8px;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .appCardContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .appInfo {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .appActions {
+    width: 100%;
+    min-width: unset;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dateText {
+    text-align: left !important;
+    white-space: normal !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 12px;
+  }
+
+  .mainContainer {
+    padding: 0 4px;
+  }
+
+  .appCardContent {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .appActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .appActions button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .dateText {
+    font-size: 11px !important;
+  }
+
+  .appCard {
+    cursor: default !important;
+  }
+
+  .appCard:hover {
+    transform: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--gray-6) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .root {
+    padding: 8px;
+  }
+
+  .mainContainer {
+    padding: 0 2px;
+  }
+
+  .appCardContent {
+    padding: 10px;
+    gap: 10px;
+  }
+}

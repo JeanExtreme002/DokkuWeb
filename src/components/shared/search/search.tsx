@@ -1,18 +1,23 @@
+import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import InputBase from '@mui/material/InputBase';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export function Search() {
   const theme = useTheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSearch = () => {
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    const q = query.trim();
+    if (q) {
+      router.push(`/search?q=${encodeURIComponent(q)}`);
+    } else {
+      router.push('/search');
     }
   };
 
@@ -59,6 +64,31 @@ export function Search() {
         <SearchIcon />
       </Box>
 
+      {query.trim() && (
+        <Box
+          onClick={() => {
+            setQuery('');
+            inputRef.current?.focus();
+          }}
+          sx={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            zIndex: 1,
+            padding: theme.spacing(0, 2),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backgroundColor: 'transparent',
+          }}
+          aria-label='Limpar'
+        >
+          <ClearIcon />
+        </Box>
+      )}
+
       <InputBase
         fullWidth
         value={query}
@@ -66,11 +96,13 @@ export function Search() {
         onKeyDown={handleKeyDown}
         placeholder='Pesquise por apps, serviços e outros...'
         inputProps={{ 'aria-label': 'search' }}
+        inputRef={inputRef}
         sx={{
           color: 'inherit',
           '& .MuiInputBase-input': {
             padding: theme.spacing(1, 1, 1, 0),
             paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+            paddingRight: theme.spacing(4),
             transition: theme.transitions.create('width'),
             width: '100%',
           },

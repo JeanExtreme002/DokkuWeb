@@ -4,6 +4,7 @@ export * from './loading';
 export * from './login';
 export * from './networks';
 export * from './not-found';
+export * from './search';
 export * from './server-error';
 export * from './services';
 export * from './settings';
