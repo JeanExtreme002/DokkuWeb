@@ -1,3 +1,64 @@
+/* Ensure vertical centering for Files header on larger screens */
+.filesHeader {
+  align-items: center !important;
+}
+
+.filesRefreshButton {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Normalize heading metrics for perfect vertical alignment */
+.filesHeaderTitle {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+/* Files header responsive layout: stack at ≤420px and align button right */
+@media (max-width: 420px) {
+  .filesHeader {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .filesRefreshButton {
+    width: 100% !important;
+    align-self: stretch !important;
+    margin-top: 10px !important;
+  }
+}
+/* Hide date on very small screens */
+.dateInfo {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .dateInfo {
+    display: none;
+  }
+}
+/* Hide permissions on very small screens */
+.permissionsInfo {
+  display: inline;
+}
+
+@media (max-width: 750px) {
+  .permissionsInfo {
+    display: none;
+  }
+}
+/* Hide owner:group on small screens */
+.ownerGroup {
+  display: inline;
+}
+
+@media (max-width: 900px) {
+  .ownerGroup {
+    display: none;
+  }
+}
 .root {
   min-height: 100vh;
   background: var(--gray-1);
@@ -317,6 +378,64 @@
   word-break: break-all;
 }
 
+/* Files tab clickable folder names: remove background */
+.fileLinkButton {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  cursor: pointer;
+  color: var(--purple-11) !important;
+}
+.backButton {
+  cursor: pointer;
+  color: var(--purple-11) !important;
+}
+
+.fileLinkButton:hover,
+.fileLinkButton:focus {
+  background: transparent !important;
+  color: var(--purple-11) !important;
+}
+
+/* Back button hover/focus keeps purple color */
+.backButton:hover,
+.backButton:focus {
+  color: var(--purple-11) !important;
+}
+
+/* File names (non-directories) in Files tab */
+
+/* Reduce folder/directory and file name size on very small screens */
+@media (max-width: 500px) {
+  .fileLinkButton {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+  .fileName {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+  .fileSize {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* Hide size info on ultra small screens */
+@media (max-width: 450px) {
+  .fileSize {
+    display: none;
+  }
+}
+
+/* Reduce folder/directory name size on very small screens */
+@media (max-width: 500px) {
+  .fileLinkButton {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+
 /* Responsive title sizes */
 .appTitleText {
   font-size: 2.5rem; /* Default size */
@@ -367,18 +486,17 @@
   }
 }
 
-@media (max-width: 850px) {
+@media (max-width: 1000px) {
   .tabsTrigger {
     padding: 12px 16px;
     font-size: 13px;
   }
-}
-
-@media (max-width: 768px) {
   .tabsList {
     flex-wrap: wrap;
   }
+}
 
+@media (max-width: 768px) {
   .infoGrid {
     grid-template-columns: 1fr;
   }

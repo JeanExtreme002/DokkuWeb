@@ -143,6 +143,66 @@ const DATABASE_IMAGES: Record<string, string> = {
   generic: '/images/database-logos/generic.svg',
 };
 
+// Utility functions moved to module scope for stability
+const processAnsiCodes = (text: string) => {
+  // Remove ANSI escape codes for cleaner display
+  return text.replace(/\u001b\[[0-9;]*m/g, '');
+};
+
+type DirEntry = {
+  name: string;
+  type: 'file' | 'dir' | 'symlink' | 'other';
+  permissions: string;
+  owner: string;
+  group: string;
+  size: number;
+  date: string;
+  target?: string;
+};
+
+const parseLsOutput = (text: string): DirEntry[] => {
+  const clean = processAnsiCodes(text);
+  const lines = clean.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  const out: DirEntry[] = [];
+  for (const line of lines) {
+    if (/^total\s+\d+/.test(line)) continue;
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 9) continue;
+    const permissions = parts[0];
+    const owner = parts[2] || '';
+    const group = parts[3] || '';
+    const size = parseInt(parts[4] || '0', 10) || 0;
+    const date = `${parts[5]} ${parts[6]} ${parts[7]}`;
+    const nameAndRest = parts.slice(8).join(' ');
+    let name = nameAndRest;
+    let target: string | undefined = undefined;
+    const arrowIdx = nameAndRest.indexOf(' -> ');
+    if (arrowIdx > -1) {
+      name = nameAndRest.slice(0, arrowIdx);
+      target = nameAndRest.slice(arrowIdx + 4);
+    }
+    const typeChar = permissions.charAt(0);
+    let type: DirEntry['type'] = 'other';
+    if (typeChar === 'd') type = 'dir';
+    else if (typeChar === '-') type = 'file';
+    else if (typeChar === 'l') type = 'symlink';
+    out.push({ name, type, permissions, owner, group, size, date, target });
+  }
+  // Sort: directories first, then files, then others; special '.' and '..' first
+  out.sort((a, b) => {
+    const special = (n: string) => (n === '.' ? -2 : n === '..' ? -1 : 0);
+    const sa = special(a.name);
+    const sb = special(b.name);
+    if (sa !== sb) return sa - sb;
+    const order = (t: DirEntry['type']) => (t === 'dir' ? 0 : t === 'file' ? 1 : 2);
+    const oa = order(a.type);
+    const ob = order(b.type);
+    if (oa !== ob) return oa - ob;
+    return a.name.localeCompare(b.name);
+  });
+  return out;
+};
+
 export function AppDetailsPage(props: AppDetailsPageProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -237,6 +297,43 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const terminalInputRef = useRef<HTMLInputElement | null>(null);
   const [terminalHistory, setTerminalHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+
+  const [currentDir, setCurrentDir] = useState<string>('');
+  const [dirEntries, setDirEntries] = useState<DirEntry[]>([]);
+  const [dirLoading, setDirLoading] = useState<boolean>(false);
+  const [dirError, setDirError] = useState<string | null>(null);
+
+  // Tiny screen detection (≤400px) for truncating names
+  const [isTinyScreen, setIsTinyScreen] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 400px)');
+    const update = () => setIsTinyScreen(mq.matches);
+    update();
+    if (mq.addEventListener) {
+      mq.addEventListener('change', update);
+      return () => mq.removeEventListener('change', update);
+    } else if (mq.addListener) {
+      mq.addListener(update);
+      return () => mq.removeListener(update);
+    }
+  }, []);
+
+  // Small screen detection (≤550px) for 30-char truncation
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 650px)');
+    const update = () => setIsSmallScreen(mq.matches);
+    update();
+    if (mq.addEventListener) {
+      mq.addEventListener('change', update);
+      return () => mq.removeEventListener('change', update);
+    } else if (mq.addListener) {
+      mq.addListener(update);
+      return () => mq.removeListener(update);
+    }
+  }, []);
 
   // Confirmation modals for app actions
   const [showStopConfirmModal, setShowStopConfirmModal] = useState(false);
@@ -604,9 +701,91 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     return name.replace(/^\d+-/, '');
   };
 
-  const processAnsiCodes = (text: string) => {
-    // Remove ANSI escape codes for cleaner display
-    return text.replace(/\u001b\[[0-9;]*m/g, '');
+  const getWorkingDir = useCallback(() => {
+    if (appInfo && appInfo.info_origin === 'inspect') {
+      const containers = appInfo.data as AppContainer[];
+      return containers?.[0]?.Config?.WorkingDir || '/';
+    }
+    return '';
+  }, [appInfo]);
+
+  const isAtRoot = () => {
+    const wd = getWorkingDir();
+    if (wd) return currentDir === wd;
+    return !currentDir || currentDir === '/';
+  };
+
+  const pathJoin = (base: string, sub: string) => {
+    if (!base) return sub || '/';
+    const b = base.endsWith('/') ? base.slice(0, -1) : base;
+    const s = sub.startsWith('/') ? sub.slice(1) : sub;
+    const joined = `${b}/${s}`;
+    return joined.replace(/\/+/g, '/');
+  };
+
+  const formatSize = (bytes: number) => {
+    if (!Number.isFinite(bytes) || bytes < 0) return '-';
+    const units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+    let i = 0;
+    let value = bytes;
+    while (value >= 1024 && i < units.length - 1) {
+      value /= 1024;
+      i++;
+    }
+    if (i === 0) return `${bytes} bytes`;
+    const formatted = value.toFixed(value < 10 ? 1 : 0);
+    return `${formatted} ${units[i]}`;
+  };
+
+  const fetchDirectoryListing = useCallback(
+    async (dir: string) => {
+      setDirLoading(true);
+      setDirError(null);
+      try {
+        let containerType: string | undefined = undefined;
+        if (appInfo && appInfo.info_origin === 'inspect') {
+          const containers = appInfo.data as AppContainer[];
+          containerType = containers?.[0]?.Config?.Labels?.['com.dokku.process-type'];
+        }
+        const params: Record<string, any> = { command: `ls ${dir} -a -l` };
+        if (containerType) params.container_type = containerType;
+        const response = await api.post(`/api/apps/${props.appName}/exec/`, {}, { params });
+        const output = String(response?.data?.result ?? '');
+        if (response?.data?.success) {
+          setDirEntries(parseLsOutput(output));
+        } else {
+          setDirError('Falha ao listar diretório.');
+        }
+      } catch (err: any) {
+        setDirError(err?.response?.data?.message || 'Erro ao executar comando ls');
+      } finally {
+        setDirLoading(false);
+      }
+    },
+    [appInfo, props.appName]
+  );
+
+  const navigateToParent = () => {
+    const wd = getWorkingDir();
+    if (!currentDir || currentDir === '/' || (wd && currentDir === wd)) return;
+    const parts = currentDir.split('/').filter((p) => p.length > 0);
+    const parent = '/' + parts.slice(0, -1).join('/');
+    if (wd && !parent.startsWith(wd)) {
+      setCurrentDir(wd);
+      return;
+    }
+    setCurrentDir(parent || '/');
+  };
+
+  const handleEntryClick = (entry: DirEntry) => {
+    if (entry.name === '.') return;
+    if (entry.name === '..') {
+      navigateToParent();
+      return;
+    }
+    if (entry.type === 'dir') {
+      setCurrentDir(pathJoin(currentDir, entry.name));
+    }
   };
 
   // Terminal prompt builder
@@ -984,6 +1163,34 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       }, 0);
     }
   }, [currentTab]);
+
+  // Initialize Files tab working directory when tab opens
+  useEffect(() => {
+    if (currentTab === 'files') {
+      const wd = getWorkingDir();
+      if (!wd) {
+        setDirError('WorkingDir indisponível para este aplicativo.');
+        return;
+      }
+      if (!currentDir) {
+        setCurrentDir(wd);
+      }
+    }
+  }, [currentTab, appInfo, currentDir, getWorkingDir]);
+
+  // Fetch listing when currentDir changes on Files tab
+  useEffect(() => {
+    if (currentTab === 'files' && currentDir) {
+      fetchDirectoryListing(currentDir);
+    }
+  }, [currentTab, currentDir, fetchDirectoryListing]);
+
+  // Refresh Files tab directory listing
+  const refreshDirectory = () => {
+    if (currentTab === 'files' && currentDir) {
+      fetchDirectoryListing(currentDir);
+    }
+  };
 
   // Deploy functions
   const deployFromRepo = async () => {
@@ -1704,6 +1911,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 </Tabs.Trigger>
                 <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
                   Variáveis
+                </Tabs.Trigger>
+                <Tabs.Trigger value='files' className={styles.tabsTrigger}>
+                  Arquivos
                 </Tabs.Trigger>
                 <Tabs.Trigger value='security' className={styles.tabsTrigger}>
                   Segurança
@@ -2455,6 +2665,254 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                         })()}
                   </Box>
                 )}
+              </Tabs.Content>
+
+              {/* Files Tab */}
+              <Tabs.Content value='files' className={styles.tabsContent}>
+                <Box>
+                  <Flex
+                    justify='between'
+                    align='center'
+                    className={styles.filesHeader}
+                    style={{ marginBottom: '20px' }}
+                  >
+                    <Heading size='5' className={styles.filesHeaderTitle}>
+                      Árvore de Diretórios
+                    </Heading>
+                    <Button
+                      onClick={refreshDirectory}
+                      disabled={dirLoading}
+                      variant='outline'
+                      className={styles.filesRefreshButton}
+                    >
+                      <ReloadIcon className={dirLoading ? styles.buttonSpinner : ''} />
+                      {dirLoading ? 'Atualizando...' : 'Atualizar'}
+                    </Button>
+                  </Flex>
+                  {!appInfo || appInfo.info_origin !== 'inspect' ? (
+                    <Text size='3' style={{ color: 'var(--gray-11)' }}>
+                      Árvore de diretórios indisponível no momento.
+                    </Text>
+                  ) : (
+                    <Flex direction='column' gap='3'>
+                      <Flex gap='3' align='center'>
+                        <Button
+                          variant='outline'
+                          size='2'
+                          color='purple'
+                          className={styles.backButton}
+                          onClick={navigateToParent}
+                          disabled={dirLoading || isAtRoot()}
+                        >
+                          <svg
+                            width='16'
+                            height='16'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                          >
+                            <path d='M19 12 H5 M12 19 L5 12 L12 5' />
+                          </svg>
+                        </Button>
+                        {/* Clickable path segments (inline) */}
+                        <Flex align='center' gap='2' style={{ flexWrap: 'wrap' }}>
+                          <Text size='3' style={{ color: 'var(--gray-9)' }}>
+                            /
+                          </Text>
+                          {(() => {
+                            const wd = getWorkingDir();
+                            const baseLabel = wd || '.';
+                            const rel = currentDir.startsWith(wd)
+                              ? currentDir.slice(wd.length)
+                              : '';
+                            const segments = rel.split('/').filter((s) => s.length > 0);
+                            const crumbs = [baseLabel, ...segments];
+                            const buildTargetPath = (index: number) => {
+                              if (index === 0) return wd || '/';
+                              const upTo = segments.slice(0, index).join('/');
+                              return pathJoin(wd || '/', upTo);
+                            };
+                            return crumbs.map((seg, idx) => {
+                              const targetPath = buildTargetPath(idx);
+                              const displaySeg =
+                                idx === 0 ? (wd || '').replace(/^\/+/, '') || '.' : seg;
+                              return (
+                                <Flex key={`path-inline-${seg}-${idx}`} align='center' gap='2'>
+                                  {idx > 0 && (
+                                    <Text size='3' style={{ color: 'var(--gray-9)' }}>
+                                      /
+                                    </Text>
+                                  )}
+                                  <Button
+                                    variant='ghost'
+                                    size='2'
+                                    className={styles.fileLinkButton}
+                                    onClick={() => setCurrentDir(targetPath)}
+                                    style={{ padding: '0 6px' }}
+                                  >
+                                    {displaySeg}
+                                  </Button>
+                                </Flex>
+                              );
+                            });
+                          })()}
+                        </Flex>
+                      </Flex>
+
+                      {dirError && (
+                        <Text size='3' color='red'>
+                          {dirError}
+                        </Text>
+                      )}
+
+                      {dirLoading ? (
+                        <Box className={styles.loadingSpinner}>
+                          <Box className={styles.spinner}></Box>
+                          <Text style={{ marginLeft: '12px' }}>
+                            Carregando informações do diretório...
+                          </Text>
+                        </Box>
+                      ) : (
+                        <Box
+                          style={{
+                            border: '1px solid var(--gray-6)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                          }}
+                        >
+                          <Flex direction='column' gap='2'>
+                            {dirEntries.map((entry) => (
+                              <Flex
+                                key={`${currentDir}/${entry.name}`}
+                                justify='between'
+                                align='center'
+                                style={{
+                                  padding: '6px 8px',
+                                  borderRadius: '6px',
+                                  backgroundColor: 'var(--gray-2)',
+                                }}
+                              >
+                                <Flex align='center' gap='3' style={{ overflow: 'hidden' }}>
+                                  {/* Icon */}
+                                  {entry.name === '..' ? (
+                                    <svg
+                                      width='16'
+                                      height='16'
+                                      viewBox='0 0 24 24'
+                                      fill='none'
+                                      stroke='currentColor'
+                                      strokeWidth='2'
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                    >
+                                      <path d='M19 14l-7-7-7 7' />
+                                    </svg>
+                                  ) : entry.type === 'dir' ? (
+                                    <svg
+                                      width='16'
+                                      height='16'
+                                      viewBox='0 0 24 24'
+                                      fill='none'
+                                      stroke='currentColor'
+                                      strokeWidth='2'
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                    >
+                                      <path d='M3 7h5l2 2h11v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z' />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      width='16'
+                                      height='16'
+                                      viewBox='0 0 24 24'
+                                      fill='none'
+                                      stroke='currentColor'
+                                      strokeWidth='2'
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                    >
+                                      <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' />
+                                      <path d='M14 2v6h6' />
+                                    </svg>
+                                  )}
+                                  {/* Name */}
+                                  {entry.type === 'dir' || entry.name === '..' ? (
+                                    <Button
+                                      variant='ghost'
+                                      size='2'
+                                      className={styles.fileLinkButton}
+                                      onClick={() => handleEntryClick(entry)}
+                                      style={{ padding: '0 8px' }}
+                                    >
+                                      {isTinyScreen && entry.name.length > 20
+                                        ? `${entry.name.slice(0, 17)}...`
+                                        : isSmallScreen && entry.name.length > 30
+                                          ? `${entry.name.slice(0, 27)}...`
+                                          : entry.name}
+                                    </Button>
+                                  ) : (
+                                    <Text
+                                      size='2'
+                                      className={styles.fileName}
+                                      style={{ color: 'var(--gray-12)' }}
+                                    >
+                                      {isTinyScreen && entry.name.length > 20
+                                        ? `${entry.name.slice(0, 17)}...`
+                                        : isSmallScreen && entry.name.length > 30
+                                          ? `${entry.name.slice(0, 27)}...`
+                                          : entry.name}
+                                    </Text>
+                                  )}
+                                </Flex>
+                                {/* Details */}
+                                <Flex align='center' gap='3' style={{ flexShrink: 0 }}>
+                                  <Text
+                                    size='2'
+                                    className={styles.ownerGroup}
+                                    style={{ color: 'var(--gray-11)' }}
+                                  >
+                                    {entry.owner}:{entry.group}
+                                  </Text>
+                                  <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                                    <span className={styles.permissionsInfo}>
+                                      {entry.permissions}
+                                    </span>
+                                  </Text>
+                                  <Text
+                                    size='2'
+                                    className={styles.fileSize}
+                                    style={{
+                                      color: 'var(--gray-11)',
+                                      minWidth: '80px',
+                                      textAlign: 'right',
+                                    }}
+                                  >
+                                    {formatSize(entry.size)}
+                                  </Text>
+                                  <Text
+                                    size='2'
+                                    className={styles.dateInfo}
+                                    style={{ color: 'var(--gray-11)' }}
+                                  >
+                                    {entry.date}
+                                  </Text>
+                                </Flex>
+                              </Flex>
+                            ))}
+                            {dirEntries.length === 0 && !dirError && (
+                              <Text size='3' style={{ color: 'var(--gray-11)' }}>
+                                Diretório vazio.
+                              </Text>
+                            )}
+                          </Flex>
+                        </Box>
+                      )}
+                    </Flex>
+                  )}
+                </Box>
               </Tabs.Content>
 
               {/* Services Tab */}
