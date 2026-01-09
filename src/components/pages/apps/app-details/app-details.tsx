@@ -1402,14 +1402,23 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                       {displayName}
                     </Heading>
                   </Flex>
-                  <Box
-                    className={styles.statusBadge}
-                    style={{
-                      backgroundColor: statusInfo.bgColor,
-                      color: statusInfo.color,
-                    }}
-                  >
-                    {statusInfo.text}
+                  <Box style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    <Box
+                      className={styles.statusBadge}
+                      style={{
+                        backgroundColor: statusInfo.bgColor,
+                        color: statusInfo.color,
+                      }}
+                    >
+                      {statusInfo.text}
+                    </Box>
+                    <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                      {appInfo?.info_origin === 'inspect' &&
+                        ' · ' +
+                          (appInfo?.data as AppContainer[])[0]?.Config?.Labels?.[
+                            'com.dokku.process-type'
+                          ]}
+                    </Text>
                   </Box>
                 </Flex>
 

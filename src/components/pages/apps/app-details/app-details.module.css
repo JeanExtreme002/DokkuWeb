@@ -367,14 +367,16 @@
   }
 }
 
-@media (max-width: 768px) {
-  .tabsList {
-    flex-wrap: wrap;
-  }
-
+@media (max-width: 850px) {
   .tabsTrigger {
     padding: 12px 16px;
     font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabsList {
+    flex-wrap: wrap;
   }
 
   .infoGrid {
