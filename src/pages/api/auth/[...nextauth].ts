@@ -2,6 +2,8 @@ import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { config } from '@/lib';
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -11,7 +13,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ profile }) {
-      return profile?.email?.endsWith('@ufba.br') ?? false;
+      return profile?.email?.endsWith(`@${config.website.emailDomain}`) ?? false;
     },
     async jwt({ token, account, trigger, session }) {
       if (account) {

@@ -1,5 +1,7 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 
+import { config } from '@/lib';
+
 export function useIsLoggedIn(): boolean | undefined {
   const { data: session, status } = useSession();
 
@@ -11,7 +13,7 @@ export function useIsLoggedIn(): boolean | undefined {
     session &&
     session.user &&
     session.user.email &&
-    session.user.email.endsWith('@ufba.br')
+    session.user.email.endsWith(`@${config.website.emailDomain}`)
   );
 }
 

@@ -107,7 +107,10 @@ export function LoginPage() {
 
           <GoogleButton
             style={{ width: '100%', maxWidth: '400px' }}
-            label={isSmallScreen ? 'Entrar com @ufba.br' : 'Entre com seu email @ufba.br'}
+            label={
+              (isSmallScreen ? 'Entrar com @' : 'Entre com seu email @') +
+              config.website.emailDomain
+            }
             onClick={() => login()}
           />
 
