@@ -35,6 +35,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Image as CustomImage } from '@/components';
 import { LoadingSpinner, NavBar } from '@/components/shared';
 import { api, config as websiteConfig, formatDate, formatTimestamp } from '@/lib';
 
@@ -757,7 +758,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           setDirError('Falha ao listar diretório.');
         }
       } catch (err: any) {
-        setDirError(err?.response?.data?.message || 'Erro ao executar comando ls');
+        setDirError(err?.response?.data?.message || 'Erro ao carregar as informações de diretório');
       } finally {
         setDirLoading(false);
       }
@@ -1076,7 +1077,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } catch (err: any) {
       setTerminalOutputs((prev) => [
         ...prev,
-        `[erro] ${err?.response?.data?.message || 'Falha ao executar comando'}`,
+        `[Error] ${err?.response?.data?.message || 'Falha ao executar comando'}`,
         '',
       ]);
     } finally {
@@ -1574,12 +1575,27 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             ]}
           />
         ) : errors.main || errors.builder || errors.deployInfo ? (
-          <Flex direction='column' align='center' justify='center' style={{ minHeight: '50vh' }}>
+          <Flex
+            direction='column'
+            align='center'
+            gap='5'
+            justify='center'
+            style={{ minHeight: '50vh' }}
+          >
+            <CustomImage
+              alt={'Error Image'}
+              src='/images/dokku/logo-error.png'
+              className={styles.errorLogoImage}
+            />
             <Text size='5' color='red'>
               {errors.main || errors.builder || errors.deployInfo}
             </Text>
-            <Button size='3' onClick={() => window.location.reload()} style={{ marginTop: '16px' }}>
-              <ReloadIcon /> Recarregar
+            <Button
+              size='3'
+              onClick={() => window.location.reload()}
+              style={{ marginTop: '16px', cursor: 'pointer' }}
+            >
+              <ReloadIcon /> Recarregar Página
             </Button>
           </Flex>
         ) : (
@@ -2770,9 +2786,34 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                       </Flex>
 
                       {dirError && (
-                        <Text size='3' color='red'>
-                          {dirError}
-                        </Text>
+                        <Box
+                          className={styles.loadingSpinner}
+                          style={{
+                            backgroundColor: 'var(--red-2)',
+                            border: '1px solid var(--red-6)',
+                            borderRadius: '8px',
+                            padding: '8px',
+                          }}
+                        >
+                          <svg
+                            width='16'
+                            height='16'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            style={{ color: 'var(--red-10)' }}
+                          >
+                            <circle cx='12' cy='12' r='10' />
+                            <line x1='12' y1='8' x2='12' y2='12' />
+                            <circle cx='12' cy='16' r='1' />
+                          </svg>
+                          <Text size='3' style={{ marginLeft: '12px', color: 'var(--red-11)' }}>
+                            {dirError}
+                          </Text>
+                        </Box>
                       )}
 
                       {dirLoading ? (
@@ -2783,139 +2824,141 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                           </Text>
                         </Box>
                       ) : (
-                        <Box
-                          style={{
-                            border: '1px solid var(--gray-6)',
-                            borderRadius: '8px',
-                            padding: '8px',
-                          }}
-                        >
-                          <Flex direction='column' gap='2'>
-                            {dirEntries.map((entry) => (
-                              <Flex
-                                key={`${currentDir}/${entry.name}`}
-                                justify='between'
-                                align='center'
-                                style={{
-                                  padding: '6px 8px',
-                                  borderRadius: '6px',
-                                  backgroundColor: 'var(--gray-2)',
-                                }}
-                              >
-                                <Flex align='center' gap='3' style={{ overflow: 'hidden' }}>
-                                  {/* Icon */}
-                                  {entry.name === '..' ? (
-                                    <svg
-                                      width='16'
-                                      height='16'
-                                      viewBox='0 0 24 24'
-                                      fill='none'
-                                      stroke='currentColor'
-                                      strokeWidth='2'
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'
-                                    >
-                                      <path d='M19 14l-7-7-7 7' />
-                                    </svg>
-                                  ) : entry.type === 'dir' ? (
-                                    <svg
-                                      width='16'
-                                      height='16'
-                                      viewBox='0 0 24 24'
-                                      fill='none'
-                                      stroke='currentColor'
-                                      strokeWidth='2'
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'
-                                    >
-                                      <path d='M3 7h5l2 2h11v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z' />
-                                    </svg>
-                                  ) : (
-                                    <svg
-                                      width='16'
-                                      height='16'
-                                      viewBox='0 0 24 24'
-                                      fill='none'
-                                      stroke='currentColor'
-                                      strokeWidth='2'
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'
-                                    >
-                                      <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' />
-                                      <path d='M14 2v6h6' />
-                                    </svg>
-                                  )}
-                                  {/* Name */}
-                                  {entry.type === 'dir' || entry.name === '..' ? (
-                                    <Button
-                                      variant='ghost'
-                                      size='2'
-                                      className={styles.fileLinkButton}
-                                      onClick={() => handleEntryClick(entry)}
-                                      style={{ padding: '0 8px' }}
-                                    >
-                                      {isTinyScreen && entry.name.length > 20
-                                        ? `${entry.name.slice(0, 17)}...`
-                                        : isSmallScreen && entry.name.length > 30
-                                          ? `${entry.name.slice(0, 27)}...`
-                                          : entry.name}
-                                    </Button>
-                                  ) : (
+                        !dirError && (
+                          <Box
+                            style={{
+                              border: '1px solid var(--gray-6)',
+                              borderRadius: '8px',
+                              padding: '8px',
+                            }}
+                          >
+                            <Flex direction='column' gap='2'>
+                              {dirEntries.map((entry) => (
+                                <Flex
+                                  key={`${currentDir}/${entry.name}`}
+                                  justify='between'
+                                  align='center'
+                                  style={{
+                                    padding: '6px 8px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--gray-2)',
+                                  }}
+                                >
+                                  <Flex align='center' gap='3' style={{ overflow: 'hidden' }}>
+                                    {/* Icon */}
+                                    {entry.name === '..' ? (
+                                      <svg
+                                        width='16'
+                                        height='16'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='2'
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                      >
+                                        <path d='M19 14l-7-7-7 7' />
+                                      </svg>
+                                    ) : entry.type === 'dir' ? (
+                                      <svg
+                                        width='16'
+                                        height='16'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='2'
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                      >
+                                        <path d='M3 7h5l2 2h11v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z' />
+                                      </svg>
+                                    ) : (
+                                      <svg
+                                        width='16'
+                                        height='16'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='2'
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                      >
+                                        <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' />
+                                        <path d='M14 2v6h6' />
+                                      </svg>
+                                    )}
+                                    {/* Name */}
+                                    {entry.type === 'dir' || entry.name === '..' ? (
+                                      <Button
+                                        variant='ghost'
+                                        size='2'
+                                        className={styles.fileLinkButton}
+                                        onClick={() => handleEntryClick(entry)}
+                                        style={{ padding: '0 8px' }}
+                                      >
+                                        {isTinyScreen && entry.name.length > 20
+                                          ? `${entry.name.slice(0, 17)}...`
+                                          : isSmallScreen && entry.name.length > 30
+                                            ? `${entry.name.slice(0, 27)}...`
+                                            : entry.name}
+                                      </Button>
+                                    ) : (
+                                      <Text
+                                        size='2'
+                                        className={styles.fileName}
+                                        style={{ color: 'var(--gray-12)' }}
+                                      >
+                                        {isTinyScreen && entry.name.length > 20
+                                          ? `${entry.name.slice(0, 17)}...`
+                                          : isSmallScreen && entry.name.length > 30
+                                            ? `${entry.name.slice(0, 27)}...`
+                                            : entry.name}
+                                      </Text>
+                                    )}
+                                  </Flex>
+                                  {/* Details */}
+                                  <Flex align='center' gap='3' style={{ flexShrink: 0 }}>
                                     <Text
                                       size='2'
-                                      className={styles.fileName}
-                                      style={{ color: 'var(--gray-12)' }}
+                                      className={styles.ownerGroup}
+                                      style={{ color: 'var(--gray-11)' }}
                                     >
-                                      {isTinyScreen && entry.name.length > 20
-                                        ? `${entry.name.slice(0, 17)}...`
-                                        : isSmallScreen && entry.name.length > 30
-                                          ? `${entry.name.slice(0, 27)}...`
-                                          : entry.name}
+                                      {entry.owner}:{entry.group}
                                     </Text>
-                                  )}
+                                    <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                                      <span className={styles.permissionsInfo}>
+                                        {entry.permissions}
+                                      </span>
+                                    </Text>
+                                    <Text
+                                      size='2'
+                                      className={styles.fileSize}
+                                      style={{
+                                        color: 'var(--gray-11)',
+                                        minWidth: '80px',
+                                        textAlign: 'right',
+                                      }}
+                                    >
+                                      {formatSize(entry.size)}
+                                    </Text>
+                                    <Text
+                                      size='2'
+                                      className={styles.dateInfo}
+                                      style={{ color: 'var(--gray-11)' }}
+                                    >
+                                      {entry.date}
+                                    </Text>
+                                  </Flex>
                                 </Flex>
-                                {/* Details */}
-                                <Flex align='center' gap='3' style={{ flexShrink: 0 }}>
-                                  <Text
-                                    size='2'
-                                    className={styles.ownerGroup}
-                                    style={{ color: 'var(--gray-11)' }}
-                                  >
-                                    {entry.owner}:{entry.group}
-                                  </Text>
-                                  <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                    <span className={styles.permissionsInfo}>
-                                      {entry.permissions}
-                                    </span>
-                                  </Text>
-                                  <Text
-                                    size='2'
-                                    className={styles.fileSize}
-                                    style={{
-                                      color: 'var(--gray-11)',
-                                      minWidth: '80px',
-                                      textAlign: 'right',
-                                    }}
-                                  >
-                                    {formatSize(entry.size)}
-                                  </Text>
-                                  <Text
-                                    size='2'
-                                    className={styles.dateInfo}
-                                    style={{ color: 'var(--gray-11)' }}
-                                  >
-                                    {entry.date}
-                                  </Text>
-                                </Flex>
-                              </Flex>
-                            ))}
-                            {dirEntries.length === 0 && !dirError && (
-                              <Text size='3' style={{ color: 'var(--gray-11)' }}>
-                                Diretório vazio.
-                              </Text>
-                            )}
-                          </Flex>
-                        </Box>
+                              ))}
+                              {dirEntries.length === 0 && !dirError && (
+                                <Text size='3' style={{ color: 'var(--gray-11)' }}>
+                                  Diretório vazio.
+                                </Text>
+                              )}
+                            </Flex>
+                          </Box>
+                        )
                       )}
                     </Flex>
                   )}

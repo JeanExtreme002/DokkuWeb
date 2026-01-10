@@ -29,7 +29,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { NavBar } from '@/components';
+import { Image as CustomImage, NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { api } from '@/lib';
@@ -621,11 +621,26 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
             ]}
           />
         ) : errors.main ? (
-          <Flex direction='column' align='center' justify='center' style={{ minHeight: '50vh' }}>
+          <Flex
+            direction='column'
+            align='center'
+            gap='5'
+            justify='center'
+            style={{ minHeight: '50vh' }}
+          >
+            <CustomImage
+              alt={'Error Image'}
+              src='/images/dokku/logo-error.png'
+              className={styles.errorLogoImage}
+            />
             <Text size='5' color='red'>
               {errors.main}
             </Text>
-            <Button size='3' onClick={() => window.location.reload()} style={{ marginTop: '16px' }}>
+            <Button
+              size='3'
+              onClick={() => window.location.reload()}
+              style={{ marginTop: '16px', cursor: 'pointer' }}
+            >
               <ReloadIcon /> Recarregar
             </Button>
           </Flex>

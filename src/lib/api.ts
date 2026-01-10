@@ -34,7 +34,7 @@ export async function apiRequest<T = any>(options: ApiRequestOptions): Promise<A
     const response = (error as { response: AxiosResponse }).response;
     const message = response?.data?.detail;
 
-    if (response.status === 401 && message === 'Invalid access token') {
+    if (response?.status === 401 && message === 'Invalid access token') {
       await logout();
     }
     throw error;

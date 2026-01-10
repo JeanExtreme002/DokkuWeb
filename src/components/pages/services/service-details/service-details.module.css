@@ -36,6 +36,11 @@
   border: 1px solid var(--gray-4);
 }
 
+.errorLogoImage {
+  width: 140px;
+  height: 140px;
+}
+
 .tabsRoot {
   background: var(--color-panel-solid);
   border: 1px solid var(--gray-6);

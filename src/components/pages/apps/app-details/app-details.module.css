@@ -1,3 +1,8 @@
+.errorLogoImage {
+  width: 140px;
+  height: 140px;
+}
+
 /* Ensure vertical centering for Files header on larger screens */
 .filesHeader {
   align-items: center !important;
