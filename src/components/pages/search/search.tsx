@@ -698,16 +698,21 @@ export function SearchPage(props: SearchPageProps) {
         }
       >
         <Flex className={searchStyles.appCardContent}>
-          <Avatar
-            size='6'
-            fallback={<GlobeIcon width={50} height={50} color='var(--blue-9)' />}
+          <Box
             style={{
-              background: 'linear-gradient(135deg, var(--grass-9), var(--lime-9))',
-              color: 'white',
-              marginRight: '10px',
-              border: '2px solid rgba(255,255,255,0.25)',
+              flexShrink: 0,
+              width: '80px',
+              height: '80px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, var(--green-3) 0%, var(--blue-3) 100%)',
+              border: '1px solid var(--green-6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
+          >
+            <GlobeIcon width='48' height='48' style={{ color: 'var(--green-11)' }} />
+          </Box>
           <Flex direction='column' className={searchStyles.appInfo}>
             <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
               {name}
