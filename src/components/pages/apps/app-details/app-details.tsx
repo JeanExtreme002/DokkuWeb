@@ -4070,7 +4070,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 </Text>
                 <Text size='2' style={{ color: 'var(--amber-11)', marginTop: '4px' }}>
                   O arquivo <strong>.deployment_token</strong> deve conter exatamente o token da
-                  aplicação mostrado acima, sem espaços ou quebras de linha adicionais.
+                  aplicação (pode ser encontrado na aba &quot;Segurança&quot;), sem espaços ou
+                  quebras de linha adicionais.
                 </Text>
               </Box>
             </Flex>
