@@ -770,14 +770,11 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                     size='3'
                     variant='outline'
                     color='blue'
+                    style={{ cursor: 'pointer' }}
                     onClick={handleLinkApp}
-                    disabled={startLoading || stopLoading || restartLoading || appsListLoading}
+                    disabled={startLoading || stopLoading || restartLoading}
                   >
-                    {appsListLoading ? (
-                      <ReloadIcon className={styles.buttonSpinner} />
-                    ) : (
-                      <Link1Icon />
-                    )}
+                    <Link1Icon />
                     Vincular Aplicativo
                   </Button>
                 </Flex>
@@ -856,14 +853,10 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                     variant='outline'
                     color='blue'
                     onClick={handleLinkApp}
-                    disabled={startLoading || stopLoading || restartLoading || appsListLoading}
-                    style={{ width: '100%' }}
+                    disabled={startLoading || stopLoading || restartLoading}
+                    style={{ width: '100%', cursor: 'pointer' }}
                   >
-                    {appsListLoading ? (
-                      <ReloadIcon className={styles.buttonSpinner} />
-                    ) : (
-                      <Link1Icon />
-                    )}
+                    <Link1Icon />
                     Vincular Aplicativo
                   </Button>
                 </Flex>
@@ -1468,7 +1461,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                                 <Flex align='center' gap='2'>
                                   <Button
                                     size='1'
-                                    variant='soft'
+                                    variant='surface'
                                     color='red'
                                     className={styles.unlinkButton}
                                     onClick={(e) => {
@@ -1519,7 +1512,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                             {(isXsScreen || isSmScreen) && (
                               <Button
                                 size='2'
-                                variant='soft'
+                                variant='surface'
                                 color='red'
                                 className={`${styles.unlinkButton} ${styles.unlinkButtonMobile}`}
                                 onClick={(e) => {
@@ -1565,20 +1558,35 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                         value={logLinesLimit.toString()}
                         onValueChange={(value) => setLogLinesLimit(Number(value))}
                       >
-                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Trigger style={{ minWidth: '70px', cursor: 'pointer' }} />
                         <Select.Content>
-                          <Select.Item value='500'>500</Select.Item>
-                          <Select.Item value='1000'>1000</Select.Item>
-                          <Select.Item value='2000'>2000</Select.Item>
-                          <Select.Item value='5000'>5000</Select.Item>
-                          <Select.Item value='7000'>7000</Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='500'>
+                            500
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='1000'>
+                            1000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='2000'>
+                            2000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='5000'>
+                            5000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='7000'>
+                            7000
+                          </Select.Item>
                         </Select.Content>
                       </Select.Root>
                     </Flex>
                   </Flex>
                   <Flex gap='2' align='center' className={styles.logsButtons}>
                     {/* Refresh Button */}
-                    <Button onClick={refreshLogs} disabled={logsLoading} variant='outline'>
+                    <Button
+                      onClick={refreshLogs}
+                      disabled={logsLoading}
+                      variant='outline'
+                      style={{ cursor: 'pointer' }}
+                    >
                       <ReloadIcon className={logsLoading ? styles.buttonSpinner : ''} />
                       {logsLoading ? 'Atualizando...' : 'Atualizar'}
                     </Button>
@@ -1592,6 +1600,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                             'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
                           border: 'none',
                           color: 'white',
+                          cursor: 'pointer',
                         }}
                       >
                         <DownloadIcon />
@@ -1839,11 +1848,22 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' onClick={cancelUnlinkApp}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                onClick={cancelUnlinkApp}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
-            <Button variant='solid' color='red' onClick={confirmUnlinkApp} disabled={unlinkLoading}>
+            <Button
+              variant='solid'
+              color='red'
+              style={{ cursor: 'pointer' }}
+              onClick={confirmUnlinkApp}
+              disabled={unlinkLoading}
+            >
               {unlinkLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <TrashIcon />}
               {unlinkLoading ? 'Desvinculando...' : 'Desvincular'}
             </Button>
@@ -1873,12 +1893,15 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
           ) : (
             <Box mb='4'>
               <Select.Root value={selectedApp} onValueChange={setSelectedApp}>
-                <Select.Trigger style={{ width: '100%' }} placeholder='Selecione uma aplicação'>
+                <Select.Trigger
+                  style={{ width: '100%', cursor: 'pointer' }}
+                  placeholder='Selecione uma aplicação'
+                >
                   {selectedApp ? selectedApp.replace(/^\d+-/, '') : 'Selecione uma aplicação'}
                 </Select.Trigger>
                 <Select.Content>
                   {availableApps.map((appName) => (
-                    <Select.Item key={appName} value={appName}>
+                    <Select.Item key={appName} value={appName} style={{ cursor: 'pointer' }}>
                       {appName.replace(/^\d+-/, '')}
                     </Select.Item>
                   ))}
@@ -1889,13 +1912,19 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' onClick={cancelLinkApp}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                onClick={cancelLinkApp}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
             <Button
               variant='solid'
               color='blue'
+              style={{ cursor: 'pointer' }}
               onClick={confirmLinkApp}
               disabled={linkLoading || !selectedApp || availableApps.length === 0}
             >
@@ -1935,7 +1964,12 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={deleteServiceLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={deleteServiceLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -1944,7 +1978,12 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
               disabled={
                 deleteServiceLoading || deleteConfirmText.trim() !== `deletar-${displayName}`
               }
-              style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+              }}
             >
               {deleteServiceLoading ? (
                 <>

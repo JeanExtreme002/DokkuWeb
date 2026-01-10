@@ -167,6 +167,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .buttonSpinner {
@@ -176,6 +177,7 @@
 .unlinkButton {
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -677,6 +679,10 @@
 
 .mobileLogsHeader {
   display: none !important;
+}
+
+.dangerZoneButton {
+  cursor: pointer;
 }
 
 /* Danger Zone responsive layout */

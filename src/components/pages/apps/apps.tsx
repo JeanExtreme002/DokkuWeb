@@ -610,6 +610,7 @@ export function AppsPage(props: AppsPageProps) {
               size='3'
               color='blue'
               variant='outline'
+              style={{ cursor: 'pointer' }}
               onClick={() => (window.location.href = `/apps/a/${displayName}`)}
             >
               <EyeOpenIcon />
@@ -1136,6 +1137,7 @@ export function AppsPage(props: AppsPageProps) {
                               size='3'
                               color='blue'
                               variant='outline'
+                              style={{ cursor: 'pointer' }}
                               onClick={() => (window.location.href = `/apps/a/${displayName}`)}
                             >
                               <EyeOpenIcon />

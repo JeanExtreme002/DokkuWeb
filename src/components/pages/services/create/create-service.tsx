@@ -369,8 +369,9 @@ export function CreateServicePage(props: CreateServicePageProps) {
               <Flex justify='end' gap='3' className={styles.buttonsContainer}>
                 <Button
                   size='3'
-                  color='blue'
+                  color='gray'
                   variant='outline'
+                  style={{ cursor: 'pointer' }}
                   onClick={() => router.push('/services')}
                   disabled={creating}
                 >

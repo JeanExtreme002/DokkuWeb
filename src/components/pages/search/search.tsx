@@ -510,6 +510,7 @@ export function SearchPage(props: SearchPageProps) {
               size='3'
               color='blue'
               variant='outline'
+              style={{ cursor: 'pointer' }}
               onClick={() => (window.location.href = `/apps/a/${displayName}`)}
             >
               <EyeOpenIcon />
@@ -657,6 +658,7 @@ export function SearchPage(props: SearchPageProps) {
               size='3'
               color='blue'
               variant='outline'
+              style={{ cursor: 'pointer' }}
               onClick={() => (window.location.href = `/services/s/${svc.plugin_name}/${name}`)}
             >
               <EyeOpenIcon />
@@ -729,6 +731,7 @@ export function SearchPage(props: SearchPageProps) {
               size='3'
               color='blue'
               variant='outline'
+              style={{ cursor: 'pointer' }}
               onClick={() => (window.location.href = `/networks`)}
             >
               <EyeOpenIcon />
@@ -792,7 +795,7 @@ export function SearchPage(props: SearchPageProps) {
             <Button
               size='3'
               color='green'
-              style={{ color: 'white' }}
+              style={{ color: 'white', cursor: 'pointer' }}
               onClick={() => (window.location.href = `/services/create/`)}
             >
               + Criar serviço

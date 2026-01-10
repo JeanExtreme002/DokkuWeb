@@ -400,6 +400,7 @@ export function ServicesPage(props: ServicesPageProps) {
               size='3'
               color='blue'
               variant='outline'
+              style={{ cursor: 'pointer' }}
               onClick={() => (window.location.href = `/services/s/${pluginType}/${serviceName}`)}
             >
               <EyeOpenIcon />
@@ -663,6 +664,7 @@ export function ServicesPage(props: ServicesPageProps) {
                               size='3'
                               color='blue'
                               variant='outline'
+                              style={{ cursor: 'pointer' }}
                               onClick={() =>
                                 (window.location.href = `/services/s/${serviceItem.pluginType}/${serviceItem.serviceName}`)
                               }

@@ -76,6 +76,7 @@
   color: var(--gray-12);
   font-size: 14px;
   padding: 0 16px;
+  cursor: pointer;
 }
 
 .quickActionButton:hover {
@@ -96,6 +97,7 @@
   font-size: 14px;
   padding: 0 16px;
   box-shadow: 0 2px 8px var(--green-a3);
+  cursor: pointer;
 }
 
 .quickActionButtonGreen:hover {

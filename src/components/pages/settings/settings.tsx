@@ -257,6 +257,7 @@ export function SettingsPage(props: SettingsPageProps) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      cursor: 'pointer',
                     }}
                     title={showToken ? 'Ocultar token' : 'Mostrar token'}
                   >
@@ -304,7 +305,7 @@ export function SettingsPage(props: SettingsPageProps) {
                     size='2'
                     onClick={copyToken}
                     disabled={!session?.accessToken}
-                    style={{ minWidth: '70px' }}
+                    style={{ minWidth: '70px', cursor: 'pointer' }}
                   >
                     Copiar
                   </Button>

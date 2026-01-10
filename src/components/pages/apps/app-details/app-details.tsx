@@ -1667,7 +1667,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   {/* Deploy Button */}
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger>
-                      <Button variant='solid'>
+                      <Button variant='solid' style={{ cursor: 'pointer' }}>
                         <CodeIcon />
                         Deploy
                         <ChevronDownIcon />
@@ -1676,11 +1676,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     <DropdownMenu.Content>
                       <DropdownMenu.Label>Deploy via:</DropdownMenu.Label>
                       <DropdownMenu.Separator />
-                      <DropdownMenu.Item onClick={() => setDeployModalOpen(true)}>
+                      <DropdownMenu.Item
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setDeployModalOpen(true)}
+                      >
                         <GitHubLogoIcon />
                         Repositório público
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item onClick={() => setZipInfoModalOpen(true)}>
+                      <DropdownMenu.Item
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setZipInfoModalOpen(true)}
+                      >
                         <UploadIcon />
                         Arquivo .zip
                       </DropdownMenu.Item>
@@ -1875,6 +1881,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     size='3'
                     variant='soft'
                     color='blue'
+                    style={{ cursor: 'pointer' }}
                     onClick={openBuilderModal}
                     disabled={
                       startLoading ||
@@ -3157,12 +3164,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                             Protocolo:
                           </Text>
                           <Select.Root value={protocol} onValueChange={setProtocol}>
-                            <Select.Trigger style={{ width: '100px' }} />
+                            <Select.Trigger style={{ width: '100px', cursor: 'pointer' }} />
                             <Select.Content>
-                              <Select.Item value='http'>HTTP</Select.Item>
-                              <Select.Item value='https'>HTTPS</Select.Item>
-                              <Select.Item value='tcp'>TCP</Select.Item>
-                              <Select.Item value='udp'>UDP</Select.Item>
+                              <Select.Item style={{ cursor: 'pointer' }} value='http'>
+                                HTTP
+                              </Select.Item>
+                              <Select.Item style={{ cursor: 'pointer' }} value='https'>
+                                HTTPS
+                              </Select.Item>
+                              <Select.Item style={{ cursor: 'pointer' }} value='tcp'>
+                                TCP
+                              </Select.Item>
+                              <Select.Item style={{ cursor: 'pointer' }} value='udp'>
+                                UDP
+                              </Select.Item>
                             </Select.Content>
                           </Select.Root>
                         </Box>
@@ -3205,6 +3220,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
                               border: 'none',
                               color: 'white',
+                              cursor: 'pointer',
                             }}
                           >
                             {portSubmitting ? 'Salvando...' : 'Mapear porta'}
@@ -3256,7 +3272,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                               <Button
                                 size='2'
                                 color='red'
-                                variant='ghost'
+                                variant='surface'
+                                style={{ cursor: 'pointer' }}
                                 onClick={() => openDeletePortModal(mapping)}
                                 disabled={
                                   deletingPort ===
@@ -3300,20 +3317,35 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                         value={logLinesLimit.toString()}
                         onValueChange={(value) => setLogLinesLimit(Number(value))}
                       >
-                        <Select.Trigger style={{ minWidth: '70px' }} />
+                        <Select.Trigger style={{ minWidth: '70px', cursor: 'pointer' }} />
                         <Select.Content>
-                          <Select.Item value='500'>500</Select.Item>
-                          <Select.Item value='1000'>1000</Select.Item>
-                          <Select.Item value='2000'>2000</Select.Item>
-                          <Select.Item value='5000'>5000</Select.Item>
-                          <Select.Item value='7000'>7000</Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='500'>
+                            500
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='1000'>
+                            1000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='2000'>
+                            2000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='5000'>
+                            5000
+                          </Select.Item>
+                          <Select.Item style={{ cursor: 'pointer' }} value='7000'>
+                            7000
+                          </Select.Item>
                         </Select.Content>
                       </Select.Root>
                     </Flex>
                   </Flex>
                   <Flex gap='2' align='center' className={styles.logsButtons}>
                     {/* Refresh Button */}
-                    <Button onClick={refreshLogs} disabled={logsLoading} variant='outline'>
+                    <Button
+                      onClick={refreshLogs}
+                      disabled={logsLoading}
+                      variant='outline'
+                      style={{ cursor: 'pointer' }}
+                    >
                       <ReloadIcon className={logsLoading ? styles.buttonSpinner : ''} />
                       {logsLoading ? 'Atualizando...' : 'Atualizar'}
                     </Button>
@@ -3327,6 +3359,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                             'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
                           border: 'none',
                           color: 'white',
+                          cursor: 'pointer',
                         }}
                       >
                         <DownloadIcon />
@@ -3532,6 +3565,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     <Button
                       className={styles.envExportButton}
                       variant='outline'
+                      style={{ cursor: 'pointer' }}
                       onClick={() => document.getElementById('env-file-upload')?.click()}
                       disabled={envImportLoading}
                       title='Importar variáveis de um arquivo (.env, .json, .yml)'
@@ -3555,9 +3589,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                       <DropdownMenu.Content>
                         <DropdownMenu.Label>Exportar como:</DropdownMenu.Label>
                         <DropdownMenu.Separator />
-                        <DropdownMenu.Item onClick={exportEnvAsENV}>.ENV</DropdownMenu.Item>
-                        <DropdownMenu.Item onClick={exportEnvAsJSON}>.JSON</DropdownMenu.Item>
-                        <DropdownMenu.Item onClick={exportEnvAsYML}>.YML</DropdownMenu.Item>
+                        <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={exportEnvAsENV}>
+                          .ENV
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={exportEnvAsJSON}>
+                          .JSON
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={exportEnvAsYML}>
+                          .YML
+                        </DropdownMenu.Item>
                       </DropdownMenu.Content>
                     </DropdownMenu.Root>
                   </Flex>
@@ -3674,6 +3714,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                     <Button
                                       variant='soft'
                                       color='gray'
+                                      style={{ cursor: 'pointer' }}
                                       onClick={cancelEditEnvVar}
                                       disabled={savingEnv}
                                     >
@@ -3686,6 +3727,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                                         background: 'var(--green-9)',
                                         border: 'none',
                                         color: 'white',
+                                        cursor: 'pointer',
                                       }}
                                     >
                                       {savingEnv ? (
@@ -3709,6 +3751,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                               size='2'
                               color='red'
                               variant='ghost'
+                              style={{ cursor: 'pointer' }}
                               onClick={() => openDeleteEnvModal(key)}
                               disabled={deletingEnv === key}
                             >
@@ -3787,6 +3830,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                           background: 'var(--purple-3)',
                           border: '1px solid var(--purple-6)',
                           color: 'var(--purple-11)',
+                          cursor: 'pointer',
                         }}
                         title={showDeploymentToken ? 'Ocultar token' : 'Mostrar token'}
                       >
@@ -3839,6 +3883,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                           background: 'var(--purple-9)',
                           border: 'none',
                           color: 'white',
+                          cursor: 'pointer',
                         }}
                       >
                         Copiar
@@ -3880,6 +3925,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                           background: 'var(--gray-4)',
                           color: 'var(--red-9)',
                           border: '1px solid var(--gray-7)',
+                          cursor: 'pointer',
                         }}
                       >
                         <TrashIcon />
@@ -3946,7 +3992,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='6' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={deployLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={deployLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -3957,6 +4008,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 border: 'none',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {deployLoading ? (
@@ -4001,14 +4053,24 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={deleteAppLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={deleteAppLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
             <Button
               onClick={deleteApp}
               disabled={deleteAppLoading || deleteConfirmText.trim() !== `deletar-${displayName}`}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+              }}
             >
               {deleteAppLoading ? (
                 <>
@@ -4079,7 +4141,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray'>
+              <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4089,6 +4151,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 border: 'none',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               <UploadIcon />
@@ -4160,7 +4223,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray'>
+              <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4171,6 +4234,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               style={{
                 backgroundColor: 'var(--red-9)',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {deletingEnv === envToDelete ? 'Removendo...' : 'Confirmar Remoção'}
@@ -4201,7 +4265,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray'>
+              <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4218,6 +4282,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               style={{
                 backgroundColor: 'var(--red-9)',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {portToDelete &&
@@ -4248,7 +4313,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={stopLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={stopLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4262,6 +4332,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               style={{
                 backgroundColor: 'var(--red-9)',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {stopLoading ? 'Parando...' : 'Parar Aplicativo'}
@@ -4289,7 +4360,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={restartLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={restartLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4302,6 +4378,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               style={{
                 backgroundColor: 'var(--orange-8)',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {restartLoading ? 'Reiniciando...' : 'Reiniciar Aplicativo'}
@@ -4328,7 +4405,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={rebuildLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={rebuildLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4341,6 +4423,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               style={{
                 backgroundColor: 'var(--violet-9)',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {rebuildLoading ? 'Reconstruindo...' : 'Reconstruir Aplicativo'}
@@ -4384,12 +4467,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           <Flex direction='column' gap='4' style={{ marginTop: '20px' }}>
             <Box>
               <Select.Root value={selectedBuilder} onValueChange={setSelectedBuilder}>
-                <Select.Trigger style={{ width: '100%' }} />
+                <Select.Trigger style={{ width: '100%', cursor: 'pointer' }} />
                 <Select.Content>
-                  <Select.Item value='herokuish'>Herokuish</Select.Item>
-                  <Select.Item value='dockerfile'>Dockerfile</Select.Item>
-                  <Select.Item value='lambda'>Lambda</Select.Item>
-                  <Select.Item value='pack'>Pack</Select.Item>
+                  <Select.Item style={{ cursor: 'pointer' }} value='herokuish'>
+                    Herokuish
+                  </Select.Item>
+                  <Select.Item style={{ cursor: 'pointer' }} value='dockerfile'>
+                    Dockerfile
+                  </Select.Item>
+                  <Select.Item style={{ cursor: 'pointer' }} value='lambda'>
+                    Lambda
+                  </Select.Item>
+                  <Select.Item style={{ cursor: 'pointer' }} value='pack'>
+                    Pack
+                  </Select.Item>
                 </Select.Content>
               </Select.Root>
             </Box>
@@ -4397,7 +4488,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
           <Flex gap='3' mt='6' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={builderConfigLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={builderConfigLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -4408,6 +4504,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
                 border: 'none',
                 color: 'white',
+                cursor: 'pointer',
               }}
             >
               {builderConfigLoading ? (

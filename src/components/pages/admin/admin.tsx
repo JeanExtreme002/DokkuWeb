@@ -473,10 +473,18 @@ export function AdminPage(props: AdminPageProps) {
           </Box>
           <Tabs.Root value={activeTab} onValueChange={setActiveTab} defaultValue='usuarios'>
             <Tabs.List color='orange' className={styles.tabsList}>
-              <Tabs.Trigger value='usuarios'>Usuários</Tabs.Trigger>
-              <Tabs.Trigger value='dokku'>Dokku</Tabs.Trigger>
-              <Tabs.Trigger value='plugins'>Plugins</Tabs.Trigger>
-              <Tabs.Trigger value='seguranca'>Segurança</Tabs.Trigger>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='usuarios'>
+                Usuários
+              </Tabs.Trigger>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='dokku'>
+                Dokku
+              </Tabs.Trigger>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='plugins'>
+                Plugins
+              </Tabs.Trigger>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='seguranca'>
+                Segurança
+              </Tabs.Trigger>
             </Tabs.List>
 
             {/* Usuários Tab */}
@@ -514,12 +522,12 @@ export function AdminPage(props: AdminPageProps) {
                         placeholder={
                           usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
                         }
-                        style={{ flex: 1, minWidth: 0 }}
+                        style={{ flex: 1, minWidth: 0, cursor: 'pointer' }}
                       />
                       <Select.Content>
                         <Select.Group>
                           {usersList.map((email) => (
-                            <Select.Item key={email} value={email}>
+                            <Select.Item style={{ cursor: 'pointer' }} key={email} value={email}>
                               <span className={styles.selectItemEmail}>{email}</span>
                             </Select.Item>
                           ))}
@@ -527,6 +535,7 @@ export function AdminPage(props: AdminPageProps) {
                       </Select.Content>
                     </Select.Root>
                     <Button
+                      style={{ cursor: 'pointer' }}
                       onClick={searchUserData}
                       disabled={userQuotaLoading || !selectedUserEmail.trim()}
                     >
@@ -585,6 +594,7 @@ export function AdminPage(props: AdminPageProps) {
                                 Admin?
                               </Text>
                               <Switch
+                                style={{ cursor: 'pointer' }}
                                 checked={!!selectedUserIsAdmin}
                                 onCheckedChange={(checked) => {
                                   setPendingAdminValue(!!checked);
@@ -604,6 +614,7 @@ export function AdminPage(props: AdminPageProps) {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
+                                cursor: 'pointer',
                               }}
                             >
                               <svg
@@ -820,6 +831,7 @@ export function AdminPage(props: AdminPageProps) {
                               variant='outline'
                               color='orange'
                               size='2'
+                              style={{ cursor: 'pointer' }}
                               onClick={() => setEditMode(true)}
                             >
                               Editar
@@ -830,6 +842,7 @@ export function AdminPage(props: AdminPageProps) {
                                 color='gray'
                                 size='2'
                                 variant='soft'
+                                style={{ cursor: 'pointer' }}
                                 onClick={() => {
                                   setEditMode(false);
                                   setEditQuota(userQuota);
@@ -840,6 +853,7 @@ export function AdminPage(props: AdminPageProps) {
                               <Button
                                 color='orange'
                                 size='2'
+                                style={{ cursor: 'pointer' }}
                                 onClick={updateUserQuota}
                                 disabled={updateLoading}
                               >
@@ -962,6 +976,7 @@ export function AdminPage(props: AdminPageProps) {
                       />
                       <Button
                         color='orange'
+                        style={{ cursor: 'pointer' }}
                         onClick={runDokkuCommand}
                         disabled={commandLoading || !commandInput.trim()}
                       >
@@ -1079,6 +1094,7 @@ export function AdminPage(props: AdminPageProps) {
                       onClick={() => fetchPlugins()}
                       disabled={pluginsLoading}
                       variant='outline'
+                      style={{ cursor: 'pointer' }}
                     >
                       <ReloadIcon className={pluginsLoading ? styles.buttonSpinner : ''} />
                       <span className={styles.refreshLabel}>
@@ -1133,7 +1149,7 @@ export function AdminPage(props: AdminPageProps) {
                             <tr>
                               <td colSpan={4}>
                                 <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                  Nenhum plugin listado. Clique em Atualizar.
+                                  Nenhum plugin listado.
                                 </Text>
                               </td>
                             </tr>
@@ -1170,6 +1186,7 @@ export function AdminPage(props: AdminPageProps) {
                         onClick={fetchSecurityConfig}
                         disabled={securityConfigLoading}
                         variant='outline'
+                        style={{ cursor: 'pointer' }}
                       >
                         <ReloadIcon className={securityConfigLoading ? styles.buttonSpinner : ''} />
                         <span className={styles.refreshLabel}>
@@ -1338,7 +1355,12 @@ export function AdminPage(props: AdminPageProps) {
                           <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
                         </Tooltip>
                       </Flex>
-                      <Button onClick={fetchSshKeyInfo} disabled={sshKeyLoading} variant='outline'>
+                      <Button
+                        onClick={fetchSshKeyInfo}
+                        disabled={sshKeyLoading}
+                        variant='outline'
+                        style={{ cursor: 'pointer' }}
+                      >
                         <ReloadIcon className={sshKeyLoading ? styles.buttonSpinner : ''} />
                         <span className={styles.refreshLabel}>
                           {sshKeyLoading ? 'Atualizando...' : 'Atualizar'}
@@ -1474,6 +1496,7 @@ export function AdminPage(props: AdminPageProps) {
                           background: 'var(--gray-4)',
                           color: 'var(--red-9)',
                           border: '1px solid var(--gray-7)',
+                          cursor: 'pointer',
                         }}
                         className={styles.dangerZoneButton}
                       >
@@ -1508,7 +1531,7 @@ export function AdminPage(props: AdminPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray'>
+              <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                 Cancelar
               </Button>
             </Dialog.Close>
@@ -1516,7 +1539,7 @@ export function AdminPage(props: AdminPageProps) {
               color='red'
               onClick={performTakeover}
               disabled={takeoverLoading}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white' }}
+              style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
             >
               {takeoverLoading ? 'Processando...' : 'Confirmar Takeover'}
             </Button>
@@ -1549,6 +1572,7 @@ export function AdminPage(props: AdminPageProps) {
               <Button
                 variant='soft'
                 color='gray'
+                style={{ cursor: 'pointer' }}
                 onClick={() => {
                   setConfirmAdminModalOpen(false);
                   setPendingAdminValue(null);
@@ -1568,7 +1592,7 @@ export function AdminPage(props: AdminPageProps) {
                 await fetchAdminUsers();
               }}
               disabled={toggleAdminLoading}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white' }}
+              style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
             >
               Confirmar
             </Button>
@@ -1607,14 +1631,24 @@ export function AdminPage(props: AdminPageProps) {
 
           <Flex gap='3' mt='4' justify='end'>
             <Dialog.Close>
-              <Button variant='soft' color='gray' disabled={shutdownLoading}>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                disabled={shutdownLoading}
+              >
                 Cancelar
               </Button>
             </Dialog.Close>
             <Button
               onClick={performShutdown}
               disabled={shutdownLoading || shutdownConfirmText.trim() !== shutdownKeyword}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white', border: 'none' }}
+              style={{
+                backgroundColor: 'var(--red-9)',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+              }}
             >
               {shutdownLoading ? <>Processando...</> : 'Confirmar Desligamento'}
             </Button>

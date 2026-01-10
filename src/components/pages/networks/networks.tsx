@@ -628,7 +628,7 @@ export function NetworksPage(props: NetworksPageProps) {
 
                 <Flex gap='3' mt='4' justify='end'>
                   <AlertDialog.Cancel>
-                    <Button variant='soft' color='gray'>
+                    <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                       Cancelar
                     </Button>
                   </AlertDialog.Cancel>
@@ -636,6 +636,7 @@ export function NetworksPage(props: NetworksPageProps) {
                     <Button
                       variant='solid'
                       color='red'
+                      style={{ cursor: 'pointer' }}
                       onClick={() => handleDeleteNetwork(deleteModalOpen)}
                     >
                       Excluir
@@ -662,12 +663,17 @@ export function NetworksPage(props: NetworksPageProps) {
 
                 <Flex gap='3' mt='4' justify='end'>
                   <AlertDialog.Cancel>
-                    <Button variant='soft' color='gray'>
+                    <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                       Cancelar
                     </Button>
                   </AlertDialog.Cancel>
                   <AlertDialog.Action>
-                    <Button variant='solid' color='red' onClick={confirmUnlinkApp}>
+                    <Button
+                      variant='solid'
+                      color='red'
+                      style={{ cursor: 'pointer' }}
+                      onClick={confirmUnlinkApp}
+                    >
                       Desvincular
                     </Button>
                   </AlertDialog.Action>
@@ -729,13 +735,14 @@ export function NetworksPage(props: NetworksPageProps) {
 
               <Flex gap='3' mt='4' justify='end'>
                 <AlertDialog.Cancel>
-                  <Button variant='soft' color='gray'>
+                  <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
                     Cancelar
                   </Button>
                 </AlertDialog.Cancel>
                 <Button
                   variant='solid'
                   color='green'
+                  style={{ cursor: 'pointer' }}
                   onClick={handleCreateNetwork}
                   disabled={!newNetworkName.trim() || creatingNetwork}
                 >

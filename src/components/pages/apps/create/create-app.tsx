@@ -291,12 +291,18 @@ export function CreateAppPage(props: CreateAppPageProps) {
                   >
                     <Select.Trigger
                       placeholder='Selecione uma rede (opcional)'
-                      style={{ maxWidth: '300px' }}
+                      style={{ maxWidth: '300px', cursor: 'pointer' }}
                     />
                     <Select.Content>
-                      <Select.Item value='none'>Nenhum</Select.Item>
+                      <Select.Item value='none' style={{ cursor: 'pointer' }}>
+                        Nenhum
+                      </Select.Item>
                       {networksList.map((networkName) => (
-                        <Select.Item key={networkName} value={networkName}>
+                        <Select.Item
+                          key={networkName}
+                          value={networkName}
+                          style={{ cursor: 'pointer' }}
+                        >
                           {networkName}
                         </Select.Item>
                       ))}
@@ -353,14 +359,11 @@ export function CreateAppPage(props: CreateAppPageProps) {
                     <div style={{ marginBottom: '4px', height: '14px' }}></div>
                     <Button
                       size='2'
+                      variant='surface'
                       onClick={addEnvironmentVariable}
                       disabled={!currentEnvKey.trim() || !currentEnvValue.trim() || creating}
                       style={{
-                        background:
-                          'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
-                        border: 'none',
-                        color: 'white',
-                        minWidth: isMobile ? 'auto' : '44px',
+                        minWidth: isMobile ? '100%' : '44px',
                         height: '32px',
                         cursor: 'pointer',
                         padding: isMobile ? '8px 16px' : '8px',
@@ -469,8 +472,9 @@ export function CreateAppPage(props: CreateAppPageProps) {
               <Flex justify='end' gap='3' className={styles.buttonsContainer}>
                 <Button
                   size='3'
-                  color='blue'
+                  color='gray'
                   variant='outline'
+                  style={{ cursor: 'pointer' }}
                   onClick={() => router.push('/apps')}
                   disabled={creating}
                 >

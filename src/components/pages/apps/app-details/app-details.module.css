@@ -6,6 +6,7 @@
 .filesRefreshButton {
   display: inline-flex !important;
   align-items: center !important;
+  cursor: pointer;
 }
 
 /* Normalize heading metrics for perfect vertical alignment */
@@ -358,6 +359,10 @@
   margin-bottom: 8px;
 }
 
+.envVarButton {
+  cursor: pointer;
+}
+
 .envVarContent {
   display: flex;
   flex-direction: column;
@@ -536,6 +541,10 @@
 .mobileOnly {
   display: none;
   width: 100%;
+}
+
+.urlButton {
+  cursor: pointer;
 }
 
 @media (max-width: 800px) {
@@ -913,6 +922,10 @@ button.envExportButtonOrange {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.envExportButton {
+  cursor: pointer;
 }
 
 @media (max-width: 550px) {

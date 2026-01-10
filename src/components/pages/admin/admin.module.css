@@ -9,6 +9,14 @@
   font-size: 14px;
 }
 
+.adminListItemButton {
+  cursor: pointer;
+}
+
+.sshUpdateButton {
+  cursor: pointer;
+}
+
 @media (max-width: 380px) {
   /* Prevent triggers from shrinking too much */
   .tabsList :global(.rt-TabsTrigger) {

@@ -1,7 +1,6 @@
 export * from './admin';
 export * from './apps';
 export * from './home';
-export * from './loading';
 export * from './login';
 export * from './networks';
 export * from './not-found';
