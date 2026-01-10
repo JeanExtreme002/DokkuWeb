@@ -121,6 +121,10 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [stopLoading, setStopLoading] = useState(false);
   const [restartLoading, setRestartLoading] = useState(false);
 
+  // Confirmation modals for service actions
+  const [showStopConfirmModal, setShowStopConfirmModal] = useState(false);
+  const [showRestartConfirmModal, setShowRestartConfirmModal] = useState(false);
+
   // Unlink app modal states
   const [showUnlinkModal, setShowUnlinkModal] = useState(false);
   const [appToUnlink, setAppToUnlink] = useState<string | null>(null);
@@ -433,6 +437,8 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       // Refresh service info after action
       setDataLoaded(false);
       await fetchServiceInfo();
+      // Close confirmation modal after successful response
+      setShowStopConfirmModal(false);
     } catch (error: any) {
       console.error('Error stopping service:', error);
       setErrors((prev) => ({
@@ -451,6 +457,8 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       // Refresh service info after action
       setDataLoaded(false);
       await fetchServiceInfo();
+      // Close confirmation modal after successful response
+      setShowRestartConfirmModal(false);
     } catch (error: any) {
       console.error('Error restarting service:', error);
       setErrors((prev) => ({
@@ -724,7 +732,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                       size='3'
                       variant='outline'
                       color='red'
-                      onClick={stopService}
+                      onClick={() => setShowStopConfirmModal(true)}
                       disabled={
                         startLoading ||
                         stopLoading ||
@@ -753,7 +761,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                       size='3'
                       variant='outline'
                       color='orange'
-                      onClick={restartService}
+                      onClick={() => setShowRestartConfirmModal(true)}
                       disabled={startLoading || stopLoading || restartLoading}
                     >
                       {restartLoading ? (
@@ -806,7 +814,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                       size='3'
                       variant='outline'
                       color='red'
-                      onClick={stopService}
+                      onClick={() => setShowStopConfirmModal(true)}
                       disabled={
                         startLoading ||
                         stopLoading ||
@@ -835,7 +843,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                       size='3'
                       variant='outline'
                       color='orange'
-                      onClick={restartService}
+                      onClick={() => setShowRestartConfirmModal(true)}
                       disabled={startLoading || stopLoading || restartLoading}
                     >
                       {restartLoading ? (
@@ -1833,6 +1841,78 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
           </Flex>
         )}
       </main>
+
+      {/* Stop Service Confirmation Modal */}
+      <Dialog.Root open={showStopConfirmModal} onOpenChange={setShowStopConfirmModal}>
+        <Dialog.Content style={{ maxWidth: 450 }}>
+          <Dialog.Title>Confirmar Ação</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja parar o serviço?
+            <br />
+            <br />
+            Esta ação definitivamente interromperá todas as conexões e processos deste serviço.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowStopConfirmModal(false)}
+                disabled={stopLoading}
+              >
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              variant='solid'
+              color='red'
+              style={{ cursor: 'pointer' }}
+              onClick={stopService}
+              disabled={stopLoading}
+            >
+              {stopLoading ? 'Parando...' : 'Parar Serviço'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Restart Service Confirmation Modal */}
+      <Dialog.Root open={showRestartConfirmModal} onOpenChange={setShowRestartConfirmModal}>
+        <Dialog.Content style={{ maxWidth: 450 }}>
+          <Dialog.Title>Confirmar Ação</Dialog.Title>
+          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
+            Tem certeza que deseja reiniciar o serviço?
+            <br />
+            <br />
+            Esta ação pode causar indisponibilidade temporária.
+          </Dialog.Description>
+
+          <Flex gap='3' mt='4' justify='end'>
+            <Dialog.Close>
+              <Button
+                variant='soft'
+                color='gray'
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowRestartConfirmModal(false)}
+                disabled={restartLoading}
+              >
+                Cancelar
+              </Button>
+            </Dialog.Close>
+            <Button
+              variant='solid'
+              color='orange'
+              style={{ cursor: 'pointer' }}
+              onClick={restartService}
+              disabled={restartLoading}
+            >
+              {restartLoading ? 'Reiniciando...' : 'Reiniciar Serviço'}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
 
       {/* Unlink App Confirmation Modal */}
       <Dialog.Root open={showUnlinkModal} onOpenChange={setShowUnlinkModal}>
