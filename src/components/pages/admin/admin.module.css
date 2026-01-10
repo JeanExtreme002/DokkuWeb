@@ -1,0 +1,278 @@
+/* Ensure tabs navigation doesn't get cut off on very small screens */
+.tabsList {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+}
+
+.quotaValue {
+  font-size: 14px;
+}
+
+@media (max-width: 380px) {
+  /* Prevent triggers from shrinking too much */
+  .tabsList :global(.rt-TabsTrigger) {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Prevent triggers from shrinking too much */
+  .tabsList :global(.rt-TabsTrigger) {
+    font-size: 9px;
+  }
+  .sshHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .sshUpdateButton {
+    margin-top: 4px;
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+.pluginsTableWrapper {
+  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 2px; /* avoid subtle right-edge clipping */
+}
+
+.pluginsLoadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--gray-6);
+  border-top-color: var(--gray-12);
+  border-radius: 50%;
+  animation: pluginsSpin 0.8s linear infinite;
+}
+
+@keyframes pluginsSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pluginsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pluginsTable thead th {
+  text-align: left;
+  padding: 8px 12px;
+  background-color: var(--gray-2);
+  color: var(--gray-12);
+  font-weight: 600;
+}
+
+.pluginsTable tbody td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gray-6);
+  vertical-align: top;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.statusEnabled {
+  background-color: var(--green-9);
+  color: white;
+}
+
+.statusDisabled {
+  background-color: var(--red-9);
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .pluginsTable thead {
+    display: none;
+  }
+
+  .pluginsTable,
+  .pluginsTable tbody,
+  .pluginsTable tr,
+  .pluginsTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .pluginsTable tr {
+    margin-bottom: 12px;
+    background-color: var(--gray-1);
+    border: 1px solid var(--gray-6);
+    border-radius: 8px;
+  }
+
+  .pluginsTable td {
+    border: none;
+    padding: 10px 12px;
+  }
+
+  .pluginsTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    color: var(--gray-11);
+    margin-bottom: 4px;
+  }
+}
+.userHeader {
+  display: flex;
+  width: 100%;
+}
+
+.userControlsSeparator {
+  display: none;
+  margin-block: 7px;
+}
+
+.userControls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.adminSwitchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 649px) {
+  .userHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .userControlsSeparator {
+    display: block;
+  }
+
+  .userControls {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .adminSwitchRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .takeoverButton {
+    width: 100%;
+  }
+}
+
+/* Reduce email text size on small screens */
+@media (max-width: 450px) {
+  .userEmailText {
+    font-size: 12px;
+  }
+}
+
+/* Admin users list responsive adjustments */
+@media (max-width: 450px) {
+  .adminListItemEmail {
+    font-size: 12px;
+  }
+  .adminListItemButton {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .adminListItemButton svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (min-width: 650px) {
+  .userHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .userControlsSeparator {
+    display: none;
+  }
+  .userControls {
+    flex-direction: row;
+    align-items: center;
+  }
+  .adminSwitchRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .takeoverButton {
+    width: auto;
+  }
+}
+
+/* Spinner for refresh icons to match service-details */
+.buttonSpinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide refresh button labels on very small screens */
+@media (max-width: 420px) {
+  .refreshLabel {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .quotaLabel {
+    font-size: 12px;
+  }
+}
+
+/* Reduce Select item email size on small screens */
+@media (max-width: 450px) {
+  .selectItemEmail {
+    font-size: 11px;
+  }
+}
+
+/* Danger Zone responsive layout */
+@media (max-width: 700px) {
+  .dangerZoneHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px; /* increase spacing when stacked */
+  }
+  .dangerZoneButton {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+/* Stack SSH key badges on very small screens */
+@media (max-width: 360px) {
+  .sshKeyBadges {
+    flex-direction: column;
+  }
+}

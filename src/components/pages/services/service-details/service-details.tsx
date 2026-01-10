@@ -1784,7 +1784,12 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                         background: 'var(--red-2)',
                       }}
                     >
-                      <Flex align='center' justify='between' gap='4'>
+                      <Flex
+                        align='center'
+                        justify='between'
+                        gap='4'
+                        className={styles.dangerZoneHeader}
+                      >
                         <Flex direction='column' gap='1'>
                           <Text
                             size='3'
@@ -1805,6 +1810,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                             color: 'var(--red-9)',
                             border: '1px solid var(--gray-7)',
                           }}
+                          className={styles.dangerZoneButton}
                         >
                           <TrashIcon />
                           Deletar Serviço

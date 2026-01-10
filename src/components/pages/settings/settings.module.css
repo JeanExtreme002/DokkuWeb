@@ -14,3 +14,19 @@
     flex-direction: column;
   }
 }
+
+.adminButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adminButtonLabel {
+  display: inline;
+}
+
+@media (max-width: 419px) {
+  .adminButtonLabel {
+    display: none;
+  }
+}

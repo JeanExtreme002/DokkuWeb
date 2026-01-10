@@ -6,15 +6,14 @@ import {
   Box,
   Button,
   Card,
-  Dialog,
   Flex,
   Heading,
-  Select,
   Separator,
   Text,
   TextField,
   Tooltip,
 } from '@radix-ui/themes';
+import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -38,12 +37,9 @@ interface AdminCheckResponse {
   result: boolean;
 }
 
-interface UserQuotaInfo extends QuotaInfo {
-  email?: string;
-}
-
 export function SettingsPage(props: SettingsPageProps) {
-  const { data: sessionData, update: updateSession } = useSession();
+  const { data: sessionData } = useSession();
+  const router = useRouter();
   const [quota, setQuota] = useState<QuotaInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,24 +47,9 @@ export function SettingsPage(props: SettingsPageProps) {
   // Admin states
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminLoading, setAdminLoading] = useState(true);
-  const [usersList, setUsersList] = useState<string[]>([]);
-  const [usersListLoading, setUsersListLoading] = useState(false);
-  const [selectedUserEmail, setSelectedUserEmail] = useState('');
-  const [userQuota, setUserQuota] = useState<UserQuotaInfo | null>(null);
-  const [userQuotaLoading, setUserQuotaLoading] = useState(false);
-  const [userQuotaError, setUserQuotaError] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState(false);
-  const [editQuota, setEditQuota] = useState<QuotaInfo>({
-    apps_quota: 0,
-    networks_quota: 0,
-    services_quota: 0,
-  });
-  const [updateLoading, setUpdateLoading] = useState(false);
   const [showToken, setShowToken] = useState(false);
 
-  // Takeover states
-  const [showTakeoverModal, setShowTakeoverModal] = useState(false);
-  const [takeoverLoading, setTakeoverLoading] = useState(false);
+  // Removed admin panel states from Settings; moved to Admin page
 
   useEffect(() => {
     const fetchQuota = async () => {
@@ -98,11 +79,6 @@ export function SettingsPage(props: SettingsPageProps) {
             `/api/admin/users/${userEmail}/admin/`
           );
           setIsAdmin(response.data.result);
-
-          // Se for admin, buscar lista de usuários
-          if (response.data.result) {
-            await fetchUsersList();
-          }
         }
       } catch (error) {
         console.error('Error checking admin status:', error);
@@ -112,66 +88,9 @@ export function SettingsPage(props: SettingsPageProps) {
       }
     };
 
-    const fetchUsersList = async () => {
-      try {
-        setUsersListLoading(true);
-        const response = await api.post<string[]>('/api/admin/users/list/');
-        setUsersList(response.data);
-      } catch (error) {
-        console.error('Error fetching users list:', error);
-        setUsersList([]);
-      } finally {
-        setUsersListLoading(false);
-      }
-    };
-
     fetchQuota();
     checkAdminStatus();
   }, [props.session?.user?.email]);
-
-  const searchUserQuota = async () => {
-    if (!selectedUserEmail.trim()) return;
-
-    try {
-      setUserQuotaLoading(true);
-      setUserQuotaError(null);
-      const response = await api.post<QuotaInfo>(`/api/admin/users/${selectedUserEmail}/quota/`);
-      setUserQuota({ ...response.data, email: selectedUserEmail });
-      setEditQuota(response.data);
-    } catch (error) {
-      console.error('Error fetching user quota:', error);
-      setUserQuotaError('Erro ao buscar informações do usuário');
-      setUserQuota(null);
-    } finally {
-      setUserQuotaLoading(false);
-    }
-  };
-
-  const updateUserQuota = async () => {
-    if (!userQuota?.email) return;
-
-    try {
-      setUpdateLoading(true);
-      await api.put(
-        `/api/admin/users/${userQuota.email}/quota/`,
-        {},
-        {
-          params: {
-            apps_quota: editQuota.apps_quota,
-            networks_quota: editQuota.networks_quota,
-            services_quota: editQuota.services_quota,
-          },
-        }
-      );
-      setUserQuota({ ...editQuota, email: userQuota.email });
-      setEditMode(false);
-    } catch (error) {
-      console.error('Error updating user quota:', error);
-      setUserQuotaError('Erro ao atualizar quota do usuário');
-    } finally {
-      setUpdateLoading(false);
-    }
-  };
 
   const copyToken = async () => {
     const currentSession = sessionData || props.session;
@@ -182,35 +101,6 @@ export function SettingsPage(props: SettingsPageProps) {
       } catch (error) {
         console.error('Erro ao copiar token:', error);
       }
-    }
-  };
-
-  const performTakeover = async () => {
-    if (!userQuota?.email) return;
-
-    try {
-      setTakeoverLoading(true);
-      const response = await api.post<{ access_token: string }>(
-        `/api/admin/users/${userQuota.email}/take-over/`
-      );
-
-      // Atualizar a sessão globalmente usando NextAuth
-      await updateSession({
-        accessToken: response.data.access_token,
-        user: {
-          name: `Takeover User ${userQuota.email}`,
-          email: userQuota.email,
-        },
-      });
-
-      setShowTakeoverModal(false);
-      // A sessão foi atualizada, recarregar para garantir que todas as partes da aplicação reflitam a mudança
-      window.location.reload();
-    } catch (error) {
-      console.error('Error performing takeover:', error);
-      setUserQuotaError('Erro ao realizar takeover do usuário');
-    } finally {
-      setTakeoverLoading(false);
     }
   };
 
@@ -251,9 +141,51 @@ export function SettingsPage(props: SettingsPageProps) {
             }}
           >
             <Flex direction='column' gap='3' style={{ padding: '4px' }}>
-              <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                Perfil do Usuário
-              </Heading>
+              <Flex justify='between' align='center'>
+                <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                  Perfil do Usuário
+                </Heading>
+                {!adminLoading && isAdmin && (
+                  <Tooltip content='Acessar o painel de administrador'>
+                    <Button
+                      size='2'
+                      color='orange'
+                      variant='outline'
+                      onClick={() => router.push('/admin')}
+                      className={styles.adminButton}
+                      aria-label='Acessar o painel de administrador'
+                      title='Acessar o painel de administrador'
+                    >
+                      <svg
+                        width='14'
+                        height='14'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <rect
+                          x='3'
+                          y='10'
+                          width='18'
+                          height='11'
+                          rx='2'
+                          ry='2'
+                          stroke='currentColor'
+                          strokeWidth='2'
+                          fill='none'
+                        />
+                        <path
+                          d='M7 10V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V10'
+                          stroke='currentColor'
+                          strokeWidth='2'
+                          fill='none'
+                        />
+                      </svg>
+                      <span className={styles.adminButtonLabel}>Painel do Admin</span>
+                    </Button>
+                  </Tooltip>
+                )}
+              </Flex>
 
               <Separator size='4' />
 
@@ -573,385 +505,9 @@ export function SettingsPage(props: SettingsPageProps) {
             </Flex>
           </Card>
 
-          {/* Card de Administrador */}
-          {!adminLoading && isAdmin && (
-            <Card
-              style={{
-                background: 'linear-gradient(135deg, var(--amber-1) 0%, var(--amber-2) 100%)',
-                border: '1px solid var(--amber-6)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-              }}
-            >
-              <Flex direction='column' gap='4' style={{ padding: '8px' }}>
-                <Flex align='center' gap='3'>
-                  <Heading size='5' weight='bold' style={{ color: 'var(--amber-12)' }}>
-                    Painel de Administrador
-                  </Heading>
-                </Flex>
-
-                <Separator size='4' style={{ margin: '0' }} />
-
-                {/* Busca por usuário */}
-                <Flex direction='column' gap='3'>
-                  <Text size='4' weight='medium' style={{ color: 'var(--amber-12)' }}>
-                    Gerenciar limite de recursos de usuário
-                  </Text>
-
-                  <Box>
-                    <div className={styles.userSearchContainer}>
-                      <Select.Root
-                        value={selectedUserEmail}
-                        onValueChange={(value) => {
-                          setSelectedUserEmail(value);
-                          // Limpar dados do usuário anterior quando trocar de seleção
-                          setUserQuota(null);
-                          setUserQuotaError(null);
-                          setEditMode(false);
-                        }}
-                        disabled={usersListLoading}
-                      >
-                        <Select.Trigger
-                          placeholder={
-                            usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
-                          }
-                          style={{
-                            flex: 1,
-                            minWidth: 0,
-                          }}
-                        />
-                        <Select.Content>
-                          <Select.Group>
-                            {usersList.map((email) => (
-                              <Select.Item key={email} value={email}>
-                                {email}
-                              </Select.Item>
-                            ))}
-                          </Select.Group>
-                        </Select.Content>
-                      </Select.Root>
-                      <Button
-                        onClick={searchUserQuota}
-                        disabled={userQuotaLoading || !selectedUserEmail.trim()}
-                        style={{
-                          minWidth: 'auto',
-                        }}
-                      >
-                        {userQuotaLoading ? 'Buscando...' : 'Buscar'}
-                      </Button>
-                    </div>
-                  </Box>
-                </Flex>
-
-                {/* Erro na busca */}
-                {userQuotaError && (
-                  <Flex
-                    align='center'
-                    gap='3'
-                    style={{
-                      padding: '12px',
-                      backgroundColor: 'var(--red-2)',
-                      borderRadius: '8px',
-                      border: '1px solid var(--red-6)',
-                    }}
-                  >
-                    <Text size='3' style={{ color: 'var(--red-11)' }}>
-                      {userQuotaError}
-                    </Text>
-                  </Flex>
-                )}
-
-                {/* Informações do usuário encontrado */}
-                {userQuota && (
-                  <Box
-                    style={{
-                      padding: '16px',
-                      backgroundColor: 'var(--gray-2)',
-                      borderRadius: '12px',
-                      border: '1px solid var(--gray-6)',
-                    }}
-                  >
-                    <Flex direction='column' gap='4'>
-                      <Flex justify='between' align='center'>
-                        <Text size='3' weight='bold' style={{ color: 'var(--gray-12)' }}>
-                          Limites de {userQuota.email?.split('@')[0]}
-                        </Text>
-                        <Flex gap='2'>
-                          {!editMode ? (
-                            <Button size='2' onClick={() => setEditMode(true)}>
-                              Editar
-                            </Button>
-                          ) : (
-                            <>
-                              <Button
-                                size='2'
-                                variant='soft'
-                                onClick={() => {
-                                  setEditMode(false);
-                                  setEditQuota(userQuota);
-                                }}
-                              >
-                                Cancelar
-                              </Button>
-                              <Button size='2' onClick={updateUserQuota} disabled={updateLoading}>
-                                {updateLoading ? 'Salvando...' : 'Salvar'}
-                              </Button>
-                            </>
-                          )}
-                        </Flex>
-                      </Flex>
-
-                      <Flex direction='column' gap='3'>
-                        {/* Aplicativos */}
-                        <Flex
-                          justify='between'
-                          align='center'
-                          style={{
-                            padding: '12px',
-                            backgroundColor: 'var(--blue-2)',
-                            borderRadius: '8px',
-                            border: '1px solid var(--blue-6)',
-                          }}
-                        >
-                          <Flex align='center' gap='3'>
-                            <Box
-                              style={{
-                                color: 'var(--blue-11)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                height: '20px',
-                              }}
-                            >
-                              <AppIcon />
-                            </Box>
-                            <Text size='3' weight='medium' style={{ color: 'var(--blue-12)' }}>
-                              Aplicativos
-                            </Text>
-                          </Flex>
-                          {editMode ? (
-                            <TextField.Root
-                              type='number'
-                              value={editQuota.apps_quota.toString()}
-                              onChange={(e) =>
-                                setEditQuota({
-                                  ...editQuota,
-                                  apps_quota: parseInt(e.target.value) || 0,
-                                })
-                              }
-                              style={{ width: '80px' }}
-                            />
-                          ) : (
-                            <Badge
-                              size='1'
-                              style={{
-                                backgroundColor: 'var(--blue-9)',
-                                color: 'white',
-                              }}
-                            >
-                              {userQuota.apps_quota}
-                            </Badge>
-                          )}
-                        </Flex>
-
-                        {/* Serviços */}
-                        <Flex
-                          justify='between'
-                          align='center'
-                          style={{
-                            padding: '12px',
-                            backgroundColor: 'var(--purple-2)',
-                            borderRadius: '8px',
-                            border: '1px solid var(--purple-6)',
-                          }}
-                        >
-                          <Flex align='center' gap='3'>
-                            <Box
-                              style={{
-                                color: 'var(--purple-11)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                height: '20px',
-                              }}
-                            >
-                              <ServiceIcon />
-                            </Box>
-                            <Text size='3' weight='medium' style={{ color: 'var(--purple-12)' }}>
-                              Serviços
-                            </Text>
-                          </Flex>
-                          {editMode ? (
-                            <TextField.Root
-                              type='number'
-                              value={editQuota.services_quota.toString()}
-                              onChange={(e) =>
-                                setEditQuota({
-                                  ...editQuota,
-                                  services_quota: parseInt(e.target.value) || 0,
-                                })
-                              }
-                              style={{ width: '80px' }}
-                            />
-                          ) : (
-                            <Badge
-                              size='1'
-                              style={{
-                                backgroundColor: 'var(--purple-9)',
-                                color: 'white',
-                              }}
-                            >
-                              {userQuota.services_quota}
-                            </Badge>
-                          )}
-                        </Flex>
-
-                        {/* Redes */}
-                        <Flex
-                          justify='between'
-                          align='center'
-                          style={{
-                            padding: '12px',
-                            backgroundColor: 'var(--green-2)',
-                            borderRadius: '8px',
-                            border: '1px solid var(--green-6)',
-                          }}
-                        >
-                          <Flex align='center' gap='3'>
-                            <Box
-                              style={{
-                                color: 'var(--green-11)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                height: '20px',
-                              }}
-                            >
-                              <NetworkIcon />
-                            </Box>
-                            <Text size='3' weight='medium' style={{ color: 'var(--green-12)' }}>
-                              Redes
-                            </Text>
-                          </Flex>
-                          {editMode ? (
-                            <TextField.Root
-                              type='number'
-                              value={editQuota.networks_quota.toString()}
-                              onChange={(e) =>
-                                setEditQuota({
-                                  ...editQuota,
-                                  networks_quota: parseInt(e.target.value) || 0,
-                                })
-                              }
-                              style={{ width: '80px' }}
-                            />
-                          ) : (
-                            <Badge
-                              size='1'
-                              style={{
-                                backgroundColor: 'var(--green-9)',
-                                color: 'white',
-                              }}
-                            >
-                              {userQuota.networks_quota}
-                            </Badge>
-                          )}
-                        </Flex>
-                        <Button
-                          size='2'
-                          color='red'
-                          onClick={() => setShowTakeoverModal(true)}
-                          style={{
-                            backgroundColor: 'var(--red-9)',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                          }}
-                        >
-                          <svg
-                            width='14'
-                            height='14'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'
-                          >
-                            {/* Ícone de switch/alternância entre usuários */}
-                            <circle
-                              cx='9'
-                              cy='7'
-                              r='4'
-                              stroke='currentColor'
-                              strokeWidth='2'
-                              fill='none'
-                            />
-                            <path
-                              d='M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2'
-                              stroke='currentColor'
-                              strokeWidth='2'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                            />
-                            <path
-                              d='M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85'
-                              stroke='currentColor'
-                              strokeWidth='2'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                            />
-                            <path
-                              d='M17 8h4m0 0l-2-2m2 2l-2 2'
-                              stroke='currentColor'
-                              strokeWidth='2'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                            />
-                          </svg>
-                          Takeover
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  </Box>
-                )}
-              </Flex>
-            </Card>
-          )}
+          {/* Painel de administrador movido para página dedicada (/admin) */}
         </Flex>
       </main>
-
-      {/* Modal de confirmação de takeover */}
-      <Dialog.Root open={showTakeoverModal} onOpenChange={setShowTakeoverModal}>
-        <Dialog.Content
-          maxWidth='450px'
-          style={{
-            padding: '24px',
-          }}
-        >
-          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Takeover</Dialog.Title>
-          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-            Tem certeza que deseja assumir o controle da conta <strong>{userQuota?.email}</strong>?
-            Esta ação irá substituir sua sessão atual pela sessão da conta selecionada.
-            <br />
-            <br />
-            Quaisquer ações terão <strong>impacto real</strong> na conta desse usuário.
-          </Dialog.Description>
-
-          <Flex gap='3' mt='4' justify='end'>
-            <Dialog.Close>
-              <Button variant='soft' color='gray'>
-                Cancelar
-              </Button>
-            </Dialog.Close>
-            <Button
-              color='red'
-              onClick={performTakeover}
-              disabled={takeoverLoading}
-              style={{
-                backgroundColor: 'var(--red-9)',
-                color: 'white',
-              }}
-            >
-              {takeoverLoading ? 'Processando...' : 'Confirmar Takeover'}
-            </Button>
-          </Flex>
-        </Dialog.Content>
-      </Dialog.Root>
     </>
   );
 }
