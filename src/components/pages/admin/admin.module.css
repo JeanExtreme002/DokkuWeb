@@ -1,8 +1,70 @@
+.resourcesTableWrapper {
+  background-color: var(--gray-1);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 280px;
+  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 12px; /* keep comfortable right spacing */
+}
+
+/* Ensure table and cells don't overflow horizontally on mobile */
+.resourcesTableWrapper table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.resourcesTableWrapper th,
+.resourcesTableWrapper td {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  /* Fallback for older browsers */
+  word-break: break-all;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+@media (max-width: 500px) {
+  .resourcesTableWrapper th,
+  .resourcesTableWrapper td {
+    padding: 6px;
+    font-size: 12px;
+  }
+}
+.resourcesHeader {
+  /* Default row direction handled by component props */
+}
+
+@media (max-width: 500px) {
+  .resourcesHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .resourcesNavButton {
+    font-size: 12px;
+  }
+
+  .resourcesLimitLabel {
+    font-size: 12px;
+  }
+
+  .resourcesLimitSelect {
+    font-size: 12px;
+  }
+}
 /* Ensure tabs navigation doesn't get cut off on very small screens */
 .tabsList {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   display: flex;
+  margin-bottom: 14px;
 }
 
 .quotaValue {

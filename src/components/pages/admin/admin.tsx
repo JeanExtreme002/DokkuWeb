@@ -148,6 +148,45 @@ export function AdminPage(props: AdminPageProps) {
   const [adminUsersLoading, setAdminUsersLoading] = useState(false);
   const [adminUsersError, setAdminUsersError] = useState<string | null>(null);
 
+  // Resources section states
+  interface ResourceItem {
+    name: string;
+    user_email: string;
+    created_at: string;
+  }
+  const [resourcesTab, setResourcesTab] = useState<'apps' | 'services' | 'networks'>('apps');
+  const [resourcesList, setResourcesList] = useState<ResourceItem[]>([]);
+  const [resourcesLoading, setResourcesLoading] = useState(false);
+  const [resourcesError, setResourcesError] = useState<string | null>(null);
+  const [resourcesLimit, setResourcesLimit] = useState<number>(20);
+  const [resourcesOffset, setResourcesOffset] = useState<number>(0);
+
+  const fetchResources = useCallback(
+    async (tab: 'apps' | 'services' | 'networks', offset: number, limit: number) => {
+      try {
+        setResourcesLoading(true);
+        setResourcesError(null);
+        const resp = await api.post<ResourceItem[]>(
+          `/api/admin/resources/${tab}/?offset=${offset}&limit=${limit}`
+        );
+        setResourcesList(resp.data || []);
+      } catch (error) {
+        console.error('Error fetching resources:', error);
+        setResourcesError('Erro ao carregar recursos');
+        setResourcesList([]);
+      } finally {
+        setResourcesLoading(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    (async () => {
+      await fetchResources(resourcesTab, resourcesOffset, resourcesLimit);
+    })();
+  }, [fetchResources, resourcesTab, resourcesOffset, resourcesLimit]);
+
   useEffect(() => {
     const checkAdminStatus = async (email: string): Promise<boolean> => {
       try {
@@ -489,6 +528,263 @@ export function AdminPage(props: AdminPageProps) {
 
             {/* Usuários Tab */}
             <Tabs.Content value='usuarios'>
+              {/* Recursos Section */}
+              <Card
+                style={{
+                  border: '1px solid var(--amber-6)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                }}
+              >
+                <Flex direction='column' gap='3' style={{ padding: '12px' }}>
+                  <Flex justify='between' align='center' className={styles.resourcesHeader}>
+                    <Flex align='center' gap='3'>
+                      <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                        Recursos
+                      </Heading>
+                      <Tooltip content='Visualize todos os recursos ativos no sistema'>
+                        <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
+                      </Tooltip>
+                    </Flex>
+                    <Flex align='center' gap='2'>
+                      <Text
+                        size='2'
+                        style={{ color: 'var(--gray-11)' }}
+                        className={styles.resourcesLimitLabel}
+                      >
+                        Limite:
+                      </Text>
+                      <Select.Root
+                        value={String(resourcesLimit)}
+                        onValueChange={(value) => {
+                          const lim = parseInt(value) || 20;
+                          setResourcesLimit(lim);
+                          setResourcesOffset(0);
+                        }}
+                      >
+                        <Select.Trigger
+                          style={{ width: '70px', cursor: 'pointer' }}
+                          className={styles.resourcesLimitSelect}
+                        />
+                        <Select.Content>
+                          <Select.Group>
+                            {[10, 20, 30, 50, 100].map((val) => (
+                              <Select.Item
+                                key={val}
+                                value={String(val)}
+                                style={{ cursor: 'pointer' }}
+                              >
+                                {val}
+                              </Select.Item>
+                            ))}
+                          </Select.Group>
+                        </Select.Content>
+                      </Select.Root>
+                      <Button
+                        variant='outline'
+                        onClick={() =>
+                          setResourcesOffset(Math.max(0, resourcesOffset - resourcesLimit))
+                        }
+                        disabled={resourcesLoading || resourcesOffset === 0}
+                        style={{ cursor: 'pointer' }}
+                        className={styles.resourcesNavButton}
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        variant='outline'
+                        onClick={() => setResourcesOffset(resourcesOffset + resourcesLimit)}
+                        disabled={
+                          resourcesLoading ||
+                          (resourcesList.length < resourcesLimit &&
+                            resourcesOffset !== 0 &&
+                            resourcesOffset % resourcesLimit === 0)
+                        }
+                        style={{ cursor: 'pointer' }}
+                        className={styles.resourcesNavButton}
+                      >
+                        Next
+                      </Button>
+                    </Flex>
+                  </Flex>
+
+                  <Tabs.Root
+                    value={resourcesTab}
+                    onValueChange={(val) => {
+                      setResourcesTab(val as 'apps' | 'services' | 'networks');
+                      setResourcesOffset(0);
+                    }}
+                  >
+                    <Tabs.List color='orange' className={styles.tabsList}>
+                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='apps'>
+                        Aplicativos
+                      </Tabs.Trigger>
+                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='services'>
+                        Serviços
+                      </Tabs.Trigger>
+                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='networks'>
+                        Redes
+                      </Tabs.Trigger>
+                    </Tabs.List>
+
+                    <Tabs.Content value='apps'>
+                      <Box className={styles.resourcesTableWrapper}>
+                        {resourcesError && (
+                          <Text size='2' style={{ color: 'var(--red-11)' }}>
+                            {resourcesError}
+                          </Text>
+                        )}
+                        {resourcesLoading ? (
+                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
+                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
+                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                              Carregando recursos...
+                            </Text>
+                          </Flex>
+                        ) : (
+                          <table className={styles.pluginsTable}>
+                            <thead>
+                              <tr>
+                                <th>Email</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Criado em</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {resourcesList.map((r, idx) => (
+                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
+                                  <td data-label='Email'>{r.user_email}</td>
+                                  <td data-label='Nome'>{r.name}</td>
+                                  <td data-label='Tipo'>Aplicativo</td>
+                                  <td data-label='Criado em'>
+                                    {new Date(r.created_at).toLocaleString()}
+                                  </td>
+                                </tr>
+                              ))}
+                              {resourcesList.length === 0 &&
+                                !resourcesLoading &&
+                                !resourcesError && (
+                                  <tr>
+                                    <td colSpan={4}>
+                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                                        Nenhum recurso encontrado.
+                                      </Text>
+                                    </td>
+                                  </tr>
+                                )}
+                            </tbody>
+                          </table>
+                        )}
+                      </Box>
+                    </Tabs.Content>
+
+                    <Tabs.Content value='services'>
+                      <Box className={styles.resourcesTableWrapper}>
+                        {resourcesError && (
+                          <Text size='2' style={{ color: 'var(--red-11)' }}>
+                            {resourcesError}
+                          </Text>
+                        )}
+                        {resourcesLoading ? (
+                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
+                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
+                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                              Carregando recursos...
+                            </Text>
+                          </Flex>
+                        ) : (
+                          <table className={styles.pluginsTable}>
+                            <thead>
+                              <tr>
+                                <th>Email</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Criado em</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {resourcesList.map((r, idx) => (
+                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
+                                  <td data-label='Email'>{r.user_email}</td>
+                                  <td data-label='Nome'>{r.name}</td>
+                                  <td data-label='Tipo'>Serviço</td>
+                                  <td data-label='Criado em'>
+                                    {new Date(r.created_at).toLocaleString()}
+                                  </td>
+                                </tr>
+                              ))}
+                              {resourcesList.length === 0 &&
+                                !resourcesLoading &&
+                                !resourcesError && (
+                                  <tr>
+                                    <td colSpan={4}>
+                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                                        Nenhum recurso encontrado.
+                                      </Text>
+                                    </td>
+                                  </tr>
+                                )}
+                            </tbody>
+                          </table>
+                        )}
+                      </Box>
+                    </Tabs.Content>
+
+                    <Tabs.Content value='networks'>
+                      <Box className={styles.resourcesTableWrapper}>
+                        {resourcesError && (
+                          <Text size='2' style={{ color: 'var(--red-11)' }}>
+                            {resourcesError}
+                          </Text>
+                        )}
+                        {resourcesLoading ? (
+                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
+                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
+                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                              Carregando recursos...
+                            </Text>
+                          </Flex>
+                        ) : (
+                          <table className={styles.pluginsTable}>
+                            <thead>
+                              <tr>
+                                <th>Email</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Criado em</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {resourcesList.map((r, idx) => (
+                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
+                                  <td data-label='Email'>{r.user_email}</td>
+                                  <td data-label='Nome'>{r.name}</td>
+                                  <td data-label='Tipo'>Rede</td>
+                                  <td data-label='Criado em'>
+                                    {new Date(r.created_at).toLocaleString()}
+                                  </td>
+                                </tr>
+                              ))}
+                              {resourcesList.length === 0 &&
+                                !resourcesLoading &&
+                                !resourcesError && (
+                                  <tr>
+                                    <td colSpan={4}>
+                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                                        Nenhum recurso encontrado.
+                                      </Text>
+                                    </td>
+                                  </tr>
+                                )}
+                            </tbody>
+                          </table>
+                        )}
+                      </Box>
+                    </Tabs.Content>
+                  </Tabs.Root>
+                </Flex>
+              </Card>
+
               <Card
                 style={{
                   border: '1px solid var(--amber-6)',
