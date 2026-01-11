@@ -160,14 +160,17 @@ export function AdminPage(props: AdminPageProps) {
   const [resourcesError, setResourcesError] = useState<string | null>(null);
   const [resourcesLimit, setResourcesLimit] = useState<number>(20);
   const [resourcesOffset, setResourcesOffset] = useState<number>(0);
+  const [resourcesAscCreatedAt, setResourcesAscCreatedAt] = useState<boolean>(true);
 
   const fetchResources = useCallback(
-    async (tab: 'apps' | 'services' | 'networks', offset: number, limit: number) => {
+    async (tab: 'apps' | 'services' | 'networks', offset: number, limit: number, asc: boolean) => {
       try {
         setResourcesLoading(true);
         setResourcesError(null);
         const resp = await api.post<ResourceItem[]>(
-          `/api/admin/resources/${tab}/?offset=${offset}&limit=${limit}`
+          `/api/admin/resources/${tab}/?offset=${offset}&limit=${limit}`,
+          {},
+          { params: { asc_created_at: !asc } }
         );
         setResourcesList(resp.data || []);
       } catch (error) {
@@ -183,9 +186,9 @@ export function AdminPage(props: AdminPageProps) {
 
   useEffect(() => {
     (async () => {
-      await fetchResources(resourcesTab, resourcesOffset, resourcesLimit);
+      await fetchResources(resourcesTab, resourcesOffset, resourcesLimit, resourcesAscCreatedAt);
     })();
-  }, [fetchResources, resourcesTab, resourcesOffset, resourcesLimit]);
+  }, [fetchResources, resourcesTab, resourcesOffset, resourcesLimit, resourcesAscCreatedAt]);
 
   useEffect(() => {
     const checkAdminStatus = async (email: string): Promise<boolean> => {
@@ -545,65 +548,86 @@ export function AdminPage(props: AdminPageProps) {
                         <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
                       </Tooltip>
                     </Flex>
-                    <Flex align='center' gap='2'>
-                      <Text
-                        size='2'
-                        style={{ color: 'var(--gray-11)' }}
-                        className={styles.resourcesLimitLabel}
-                      >
-                        Limite:
-                      </Text>
-                      <Select.Root
-                        value={String(resourcesLimit)}
-                        onValueChange={(value) => {
-                          const lim = parseInt(value) || 20;
-                          setResourcesLimit(lim);
-                          setResourcesOffset(0);
-                        }}
-                      >
-                        <Select.Trigger
-                          style={{ width: '70px', cursor: 'pointer' }}
-                          className={styles.resourcesLimitSelect}
-                        />
-                        <Select.Content>
-                          <Select.Group>
-                            {[10, 20, 30, 50, 100].map((val) => (
-                              <Select.Item
-                                key={val}
-                                value={String(val)}
-                                style={{ cursor: 'pointer' }}
-                              >
-                                {val}
-                              </Select.Item>
-                            ))}
-                          </Select.Group>
-                        </Select.Content>
-                      </Select.Root>
-                      <Button
-                        variant='outline'
-                        onClick={() =>
-                          setResourcesOffset(Math.max(0, resourcesOffset - resourcesLimit))
-                        }
-                        disabled={resourcesLoading || resourcesOffset === 0}
-                        style={{ cursor: 'pointer' }}
-                        className={styles.resourcesNavButton}
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        variant='outline'
-                        onClick={() => setResourcesOffset(resourcesOffset + resourcesLimit)}
-                        disabled={
-                          resourcesLoading ||
-                          (resourcesList.length < resourcesLimit &&
-                            resourcesOffset !== 0 &&
-                            resourcesOffset % resourcesLimit === 0)
-                        }
-                        style={{ cursor: 'pointer' }}
-                        className={styles.resourcesNavButton}
-                      >
-                        Next
-                      </Button>
+                    <Flex align='center' gap='2' className={styles.resourcesControlsRow}>
+                      <Flex align='center' gap='2' className={styles.resourcesFiltersRow}>
+                        <Text
+                          size='2'
+                          style={{ color: 'var(--gray-11)' }}
+                          className={styles.resourcesLimitLabel}
+                        >
+                          Limite:
+                        </Text>
+                        <Select.Root
+                          value={String(resourcesLimit)}
+                          onValueChange={(value) => {
+                            const lim = parseInt(value) || 20;
+                            setResourcesLimit(lim);
+                            setResourcesOffset(0);
+                          }}
+                        >
+                          <Select.Trigger
+                            style={{ width: '70px', cursor: 'pointer' }}
+                            className={styles.resourcesLimitSelect}
+                          />
+                          <Select.Content>
+                            <Select.Group>
+                              {[10, 20, 30, 50, 100].map((val) => (
+                                <Select.Item
+                                  key={val}
+                                  value={String(val)}
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  {val}
+                                </Select.Item>
+                              ))}
+                            </Select.Group>
+                          </Select.Content>
+                        </Select.Root>
+                        <Flex align='center' gap='2' className={styles.resourcesOrderRow}>
+                          <Switch
+                            checked={resourcesAscCreatedAt}
+                            onCheckedChange={(checked) => {
+                              setResourcesAscCreatedAt(!!checked);
+                              setResourcesOffset(0);
+                            }}
+                            className={styles.resourcesOrderSwitch}
+                          />
+                          <Text
+                            size='2'
+                            style={{ color: 'var(--gray-11)' }}
+                            className={styles.resourcesOrderLabel}
+                          >
+                            {resourcesAscCreatedAt ? 'Mais recente' : 'Mais antigo'}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                      <Flex align='center' gap='2' className={styles.resourcesButtonsRow}>
+                        <Button
+                          variant='outline'
+                          onClick={() =>
+                            setResourcesOffset(Math.max(0, resourcesOffset - resourcesLimit))
+                          }
+                          disabled={resourcesLoading || resourcesOffset === 0}
+                          style={{ cursor: 'pointer' }}
+                          className={styles.resourcesNavButton}
+                        >
+                          Back
+                        </Button>
+                        <Button
+                          variant='outline'
+                          onClick={() => setResourcesOffset(resourcesOffset + resourcesLimit)}
+                          disabled={
+                            resourcesLoading ||
+                            (resourcesList.length < resourcesLimit &&
+                              resourcesOffset !== 0 &&
+                              resourcesOffset % resourcesLimit === 0)
+                          }
+                          style={{ cursor: 'pointer' }}
+                          className={styles.resourcesNavButton}
+                        >
+                          Next
+                        </Button>
+                      </Flex>
                     </Flex>
                   </Flex>
 
