@@ -1,30 +1,27 @@
-import { InfoCircledIcon, ReloadIcon, TrashIcon } from '@radix-ui/react-icons';
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Card,
-  Dialog,
-  Flex,
-  Heading,
-  Select,
-  Separator,
-  Switch,
-  Tabs,
-  Text,
-  TextField,
-  Tooltip,
-} from '@radix-ui/themes';
+import { Box, Card, Flex, Heading, Tabs } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { AppIcon, NavBar, NetworkIcon, ServiceIcon } from '@/components';
+import { NavBar } from '@/components';
 import { api } from '@/lib';
 
 import styles from './admin.module.css';
+import {
+  AdminPrivilegeConfirmModal,
+  AdminUsersCard,
+  DangerZoneCard,
+  DokkuCommandCard,
+  PluginsCard,
+  ResourcesCard,
+  SecurityConfigCard,
+  ShutdownConfirmModal,
+  SshHistoryCard,
+  SshKeyCard,
+  TakeoverConfirmModal,
+  UserSelectionCard,
+} from './components';
 
 interface AdminPageProps {
   session: Session;
@@ -82,7 +79,7 @@ export function AdminPage(props: AdminPageProps) {
   const [sshHistory, setSshHistory] = useState<string[] | null>(null);
   const [sshHistoryLoading, setSshHistoryLoading] = useState(false);
   const [sshHistoryError, setSshHistoryError] = useState<string | null>(null);
-  const sshHistoryContainerRef = useRef<HTMLDivElement | null>(null);
+
   // Plugins tab states
   interface PluginInfo {
     version: string;
@@ -92,7 +89,8 @@ export function AdminPage(props: AdminPageProps) {
   const [plugins, setPlugins] = useState<Array<{ name: string } & PluginInfo>>([]);
   const [pluginsLoading, setPluginsLoading] = useState(false);
   const [pluginsError, setPluginsError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>('usuarios');
+  const [activeTab, setActiveTab] = useState<string>('users');
+
   // Security tab states
   interface SecurityConfig {
     workers_count: number;
@@ -466,15 +464,6 @@ export function AdminPage(props: AdminPageProps) {
     }
   };
 
-  // Always scroll SSH history to the end when updated
-  useEffect(() => {
-    const el = sshHistoryContainerRef.current;
-    if (!el) return;
-    if (sshHistory && sshHistory.length > 0) {
-      el.scrollTop = el.scrollHeight;
-    }
-  }, [sshHistory]);
-
   // Load plugins when switching to the Plugins tab for the first time
   useEffect(() => {
     if (activeTab === 'plugins' && plugins.length === 0 && !pluginsLoading) {
@@ -484,9 +473,9 @@ export function AdminPage(props: AdminPageProps) {
     }
   }, [activeTab, fetchPlugins, plugins.length, pluginsLoading]);
 
-  // Load security info when switching to Segurança tab for the first time
+  // Load security info when switching to Security tab for the first time
   useEffect(() => {
-    if (activeTab === 'seguranca' && !securityConfig && !securityConfigLoading) {
+    if (activeTab === 'security' && !securityConfig && !securityConfigLoading) {
       (async () => {
         await fetchSecurityConfig();
         await fetchSshKeyInfo();
@@ -513,9 +502,9 @@ export function AdminPage(props: AdminPageProps) {
               Painel de Administrador
             </Heading>
           </Box>
-          <Tabs.Root value={activeTab} onValueChange={setActiveTab} defaultValue='usuarios'>
+          <Tabs.Root value={activeTab} onValueChange={setActiveTab} defaultValue='users'>
             <Tabs.List color='orange' className={styles.tabsList}>
-              <Tabs.Trigger style={{ cursor: 'pointer' }} value='usuarios'>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='users'>
                 Usuários
               </Tabs.Trigger>
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='dokku'>
@@ -524,290 +513,42 @@ export function AdminPage(props: AdminPageProps) {
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='plugins'>
                 Plugins
               </Tabs.Trigger>
-              <Tabs.Trigger style={{ cursor: 'pointer' }} value='seguranca'>
+              <Tabs.Trigger style={{ cursor: 'pointer' }} value='security'>
                 Segurança
               </Tabs.Trigger>
             </Tabs.List>
 
-            {/* Usuários Tab */}
-            <Tabs.Content value='usuarios'>
-              {/* Recursos Section */}
-              <Card
-                style={{
-                  border: '1px solid var(--amber-6)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            {/* Users Tab */}
+            <Tabs.Content value='users'>
+              <ResourcesCard
+                resourcesTab={resourcesTab}
+                resourcesList={resourcesList}
+                resourcesLoading={resourcesLoading}
+                resourcesError={resourcesError}
+                resourcesLimit={resourcesLimit}
+                resourcesOffset={resourcesOffset}
+                resourcesAscCreatedAt={resourcesAscCreatedAt}
+                onChangeTab={(val) => {
+                  setResourcesTab(val);
+                  setResourcesOffset(0);
                 }}
-              >
-                <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                  <Flex justify='between' align='center' className={styles.resourcesHeader}>
-                    <Flex align='center' gap='3'>
-                      <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                        Recursos
-                      </Heading>
-                      <Tooltip content='Visualize todos os recursos ativos no sistema'>
-                        <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                      </Tooltip>
-                    </Flex>
-                    <Flex align='center' gap='2' className={styles.resourcesControlsRow}>
-                      <Flex align='center' gap='2' className={styles.resourcesFiltersRow}>
-                        <Text
-                          size='2'
-                          style={{ color: 'var(--gray-11)' }}
-                          className={styles.resourcesLimitLabel}
-                        >
-                          Limite:
-                        </Text>
-                        <Select.Root
-                          value={String(resourcesLimit)}
-                          onValueChange={(value) => {
-                            const lim = parseInt(value) || 20;
-                            setResourcesLimit(lim);
-                            setResourcesOffset(0);
-                          }}
-                        >
-                          <Select.Trigger
-                            style={{ width: '70px', cursor: 'pointer' }}
-                            className={styles.resourcesLimitSelect}
-                          />
-                          <Select.Content>
-                            <Select.Group>
-                              {[10, 20, 30, 50, 100].map((val) => (
-                                <Select.Item
-                                  key={val}
-                                  value={String(val)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  {val}
-                                </Select.Item>
-                              ))}
-                            </Select.Group>
-                          </Select.Content>
-                        </Select.Root>
-                        <Flex align='center' gap='2' className={styles.resourcesOrderRow}>
-                          <Switch
-                            checked={resourcesAscCreatedAt}
-                            onCheckedChange={(checked) => {
-                              setResourcesAscCreatedAt(!!checked);
-                              setResourcesOffset(0);
-                            }}
-                            className={styles.resourcesOrderSwitch}
-                          />
-                          <Text
-                            size='2'
-                            style={{ color: 'var(--gray-11)' }}
-                            className={styles.resourcesOrderLabel}
-                          >
-                            {resourcesAscCreatedAt ? 'Mais recente' : 'Mais antigo'}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                      <Flex align='center' gap='2' className={styles.resourcesButtonsRow}>
-                        <Button
-                          variant='outline'
-                          onClick={() =>
-                            setResourcesOffset(Math.max(0, resourcesOffset - resourcesLimit))
-                          }
-                          disabled={resourcesLoading || resourcesOffset === 0}
-                          style={{ cursor: 'pointer' }}
-                          className={styles.resourcesNavButton}
-                        >
-                          Back
-                        </Button>
-                        <Button
-                          variant='outline'
-                          onClick={() => setResourcesOffset(resourcesOffset + resourcesLimit)}
-                          disabled={
-                            resourcesLoading ||
-                            (resourcesList.length < resourcesLimit &&
-                              resourcesOffset !== 0 &&
-                              resourcesOffset % resourcesLimit === 0)
-                          }
-                          style={{ cursor: 'pointer' }}
-                          className={styles.resourcesNavButton}
-                        >
-                          Next
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-
-                  <Tabs.Root
-                    value={resourcesTab}
-                    onValueChange={(val) => {
-                      setResourcesTab(val as 'apps' | 'services' | 'networks');
-                      setResourcesOffset(0);
-                    }}
-                  >
-                    <Tabs.List color='orange' className={styles.tabsList}>
-                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='apps'>
-                        Aplicativos
-                      </Tabs.Trigger>
-                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='services'>
-                        Serviços
-                      </Tabs.Trigger>
-                      <Tabs.Trigger style={{ cursor: 'pointer' }} value='networks'>
-                        Redes
-                      </Tabs.Trigger>
-                    </Tabs.List>
-
-                    <Tabs.Content value='apps'>
-                      <Box className={styles.resourcesTableWrapper}>
-                        {resourcesError && (
-                          <Text size='2' style={{ color: 'var(--red-11)' }}>
-                            {resourcesError}
-                          </Text>
-                        )}
-                        {resourcesLoading ? (
-                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
-                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
-                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                              Carregando recursos...
-                            </Text>
-                          </Flex>
-                        ) : (
-                          <table className={styles.pluginsTable}>
-                            <thead>
-                              <tr>
-                                <th>Email</th>
-                                <th>Nome</th>
-                                <th>Tipo</th>
-                                <th>Criado em</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {resourcesList.map((r, idx) => (
-                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
-                                  <td data-label='Email'>{r.user_email}</td>
-                                  <td data-label='Nome'>{r.name}</td>
-                                  <td data-label='Tipo'>Aplicativo</td>
-                                  <td data-label='Criado em'>
-                                    {new Date(r.created_at).toLocaleString()}
-                                  </td>
-                                </tr>
-                              ))}
-                              {resourcesList.length === 0 &&
-                                !resourcesLoading &&
-                                !resourcesError && (
-                                  <tr>
-                                    <td colSpan={4}>
-                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                        Nenhum recurso encontrado.
-                                      </Text>
-                                    </td>
-                                  </tr>
-                                )}
-                            </tbody>
-                          </table>
-                        )}
-                      </Box>
-                    </Tabs.Content>
-
-                    <Tabs.Content value='services'>
-                      <Box className={styles.resourcesTableWrapper}>
-                        {resourcesError && (
-                          <Text size='2' style={{ color: 'var(--red-11)' }}>
-                            {resourcesError}
-                          </Text>
-                        )}
-                        {resourcesLoading ? (
-                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
-                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
-                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                              Carregando recursos...
-                            </Text>
-                          </Flex>
-                        ) : (
-                          <table className={styles.pluginsTable}>
-                            <thead>
-                              <tr>
-                                <th>Email</th>
-                                <th>Nome</th>
-                                <th>Tipo</th>
-                                <th>Criado em</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {resourcesList.map((r, idx) => (
-                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
-                                  <td data-label='Email'>{r.user_email}</td>
-                                  <td data-label='Nome'>{r.name}</td>
-                                  <td data-label='Tipo'>Serviço</td>
-                                  <td data-label='Criado em'>
-                                    {new Date(r.created_at).toLocaleString()}
-                                  </td>
-                                </tr>
-                              ))}
-                              {resourcesList.length === 0 &&
-                                !resourcesLoading &&
-                                !resourcesError && (
-                                  <tr>
-                                    <td colSpan={4}>
-                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                        Nenhum recurso encontrado.
-                                      </Text>
-                                    </td>
-                                  </tr>
-                                )}
-                            </tbody>
-                          </table>
-                        )}
-                      </Box>
-                    </Tabs.Content>
-
-                    <Tabs.Content value='networks'>
-                      <Box className={styles.resourcesTableWrapper}>
-                        {resourcesError && (
-                          <Text size='2' style={{ color: 'var(--red-11)' }}>
-                            {resourcesError}
-                          </Text>
-                        )}
-                        {resourcesLoading ? (
-                          <Flex align='center' gap='2' style={{ padding: '8px' }}>
-                            <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
-                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                              Carregando recursos...
-                            </Text>
-                          </Flex>
-                        ) : (
-                          <table className={styles.pluginsTable}>
-                            <thead>
-                              <tr>
-                                <th>Email</th>
-                                <th>Nome</th>
-                                <th>Tipo</th>
-                                <th>Criado em</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {resourcesList.map((r, idx) => (
-                                <tr key={`${r.user_email}-${r.name}-${idx}`}>
-                                  <td data-label='Email'>{r.user_email}</td>
-                                  <td data-label='Nome'>{r.name}</td>
-                                  <td data-label='Tipo'>Rede</td>
-                                  <td data-label='Criado em'>
-                                    {new Date(r.created_at).toLocaleString()}
-                                  </td>
-                                </tr>
-                              ))}
-                              {resourcesList.length === 0 &&
-                                !resourcesLoading &&
-                                !resourcesError && (
-                                  <tr>
-                                    <td colSpan={4}>
-                                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                        Nenhum recurso encontrado.
-                                      </Text>
-                                    </td>
-                                  </tr>
-                                )}
-                            </tbody>
-                          </table>
-                        )}
-                      </Box>
-                    </Tabs.Content>
-                  </Tabs.Root>
-                </Flex>
-              </Card>
+                onChangeLimit={(lim) => {
+                  setResourcesLimit(lim);
+                  setResourcesOffset(0);
+                }}
+                onChangeOrder={(asc) => {
+                  setResourcesAscCreatedAt(asc);
+                  setResourcesOffset(0);
+                }}
+                onBack={() => setResourcesOffset(Math.max(0, resourcesOffset - resourcesLimit))}
+                onNext={() => setResourcesOffset(resourcesOffset + resourcesLimit)}
+                backDisabled={resourcesOffset === 0}
+                nextDisabled={
+                  resourcesList.length < resourcesLimit &&
+                  resourcesOffset !== 0 &&
+                  resourcesOffset % resourcesLimit === 0
+                }
+              />
 
               <Card
                 style={{
@@ -816,1155 +557,145 @@ export function AdminPage(props: AdminPageProps) {
                   marginTop: '12px',
                 }}
               >
-                <Flex direction='column' gap='4' style={{ padding: '12px' }}>
-                  <Flex align='center' gap='3'>
-                    <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                      Seleção de Usuário
-                    </Heading>
-                    <Tooltip content='Selecione o usuário para gerenciar'>
-                      <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                    </Tooltip>
-                  </Flex>
-
-                  <Flex gap='3' align='center'>
-                    <Select.Root
-                      value={selectedUserEmail}
-                      onValueChange={(value) => {
-                        setSelectedUserEmail(value);
-                        setUserQuota(null);
-                        setUserQuotaError(null);
-                        setEditMode(false);
-                        setSelectedUserIsAdmin(null);
-                      }}
-                      disabled={usersListLoading}
-                    >
-                      <Select.Trigger
-                        placeholder={
-                          usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'
-                        }
-                        style={{ flex: 1, minWidth: 0, cursor: 'pointer' }}
-                      />
-                      <Select.Content>
-                        <Select.Group>
-                          {usersList.map((email) => (
-                            <Select.Item style={{ cursor: 'pointer' }} key={email} value={email}>
-                              <span className={styles.selectItemEmail}>{email}</span>
-                            </Select.Item>
-                          ))}
-                        </Select.Group>
-                      </Select.Content>
-                    </Select.Root>
-                    <Button
-                      style={{ cursor: 'pointer' }}
-                      onClick={searchUserData}
-                      disabled={userQuotaLoading || !selectedUserEmail.trim()}
-                    >
-                      {userQuotaLoading ? 'Buscando...' : 'Buscar'}
-                    </Button>
-                  </Flex>
-
-                  {userQuotaError && (
-                    <Flex
-                      align='center'
-                      gap='3'
-                      style={{
-                        padding: '12px',
-                        backgroundColor: 'var(--red-2)',
-                        borderRadius: '8px',
-                        border: '1px solid var(--red-6)',
-                      }}
-                    >
-                      <Text size='3' style={{ color: 'var(--red-11)' }}>
-                        {userQuotaError}
-                      </Text>
-                    </Flex>
-                  )}
-
-                  {userQuota && (
-                    <Box
-                      style={{
-                        padding: '16px',
-                        backgroundColor: 'var(--gray-2)',
-                        borderRadius: '12px',
-                        border: '1px solid var(--gray-6)',
-                      }}
-                    >
-                      <Flex direction='column' gap='4'>
-                        <Flex justify='between' align='center' className={styles.userHeader}>
-                          <Flex align='center' gap='3'>
-                            <Avatar
-                              size='3'
-                              className={styles.userAvatar}
-                              fallback={userQuota.email?.charAt(0).toUpperCase() || 'U'}
-                              radius='full'
-                            />
-                            <Text
-                              size='3'
-                              weight='bold'
-                              style={{ color: 'var(--gray-12)' }}
-                              className={styles.userEmailText}
-                            >
-                              {userQuota.email}
-                            </Text>
-                          </Flex>
-                          <Separator size='4' className={styles.userControlsSeparator} />
-                          <Flex className={styles.userControls}>
-                            <Flex align='center' gap='3' className={styles.adminSwitchRow}>
-                              <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                Admin?
-                              </Text>
-                              <Switch
-                                style={{ cursor: 'pointer' }}
-                                checked={!!selectedUserIsAdmin}
-                                onCheckedChange={(checked) => {
-                                  setPendingAdminValue(!!checked);
-                                  setConfirmAdminModalOpen(true);
-                                }}
-                                disabled={toggleAdminLoading || selectedUserIsAdmin === null}
-                              />
-                            </Flex>
-                            <Button
-                              size='2'
-                              color='red'
-                              onClick={() => setShowTakeoverModal(true)}
-                              className={styles.takeoverButton}
-                              style={{
-                                backgroundColor: 'var(--red-9)',
-                                color: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <svg
-                                width='14'
-                                height='14'
-                                viewBox='0 0 24 24'
-                                fill='none'
-                                xmlns='http://www.w3.org/2000/svg'
-                              >
-                                <circle
-                                  cx='9'
-                                  cy='7'
-                                  r='4'
-                                  stroke='currentColor'
-                                  strokeWidth='2'
-                                  fill='none'
-                                />
-                                <path
-                                  d='M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2'
-                                  stroke='currentColor'
-                                  strokeWidth='2'
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                />
-                                <path
-                                  d='M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85'
-                                  stroke='currentColor'
-                                  strokeWidth='2'
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                />
-                                <path
-                                  d='M17 8h4m0 0l-2-2m2 2l-2 2'
-                                  stroke='currentColor'
-                                  strokeWidth='2'
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                />
-                              </svg>
-                              Takeover
-                            </Button>
-                          </Flex>
-                        </Flex>
-
-                        <Separator size='4' />
-
-                        <Flex direction='column' gap='3'>
-                          {/* Aplicativos */}
-                          <Flex
-                            justify='between'
-                            align='center'
-                            style={{
-                              padding: '12px',
-                              backgroundColor: 'var(--blue-2)',
-                              borderRadius: '8px',
-                              border: '1px solid var(--blue-6)',
-                            }}
-                          >
-                            <Flex align='center' gap='3'>
-                              <Box
-                                style={{
-                                  color: 'var(--blue-11)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  height: '20px',
-                                }}
-                              >
-                                <AppIcon />
-                              </Box>
-                              <Text
-                                size='3'
-                                weight='medium'
-                                style={{ color: 'var(--blue-12)' }}
-                                className={styles.quotaLabel}
-                              >
-                                Aplicativos
-                              </Text>
-                            </Flex>
-                            {editMode ? (
-                              <TextField.Root
-                                type='number'
-                                value={editQuota.apps_quota.toString()}
-                                onChange={(e) =>
-                                  setEditQuota({
-                                    ...editQuota,
-                                    apps_quota: parseInt(e.target.value) || 0,
-                                  })
-                                }
-                                style={{ width: '50px' }}
-                              />
-                            ) : (
-                              <Badge
-                                size='1'
-                                className={styles.quotaValue}
-                                style={{ backgroundColor: 'var(--blue-9)', color: 'white' }}
-                              >
-                                {userQuota.apps_quota}
-                              </Badge>
-                            )}
-                          </Flex>
-
-                          {/* Serviços */}
-                          <Flex
-                            justify='between'
-                            align='center'
-                            style={{
-                              padding: '12px',
-                              backgroundColor: 'var(--purple-2)',
-                              borderRadius: '8px',
-                              border: '1px solid var(--purple-6)',
-                            }}
-                          >
-                            <Flex align='center' gap='3'>
-                              <Box
-                                style={{
-                                  color: 'var(--purple-11)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  height: '20px',
-                                }}
-                              >
-                                <ServiceIcon />
-                              </Box>
-                              <Text
-                                size='3'
-                                weight='medium'
-                                style={{ color: 'var(--purple-12)' }}
-                                className={styles.quotaLabel}
-                              >
-                                Serviços
-                              </Text>
-                            </Flex>
-                            {editMode ? (
-                              <TextField.Root
-                                type='number'
-                                value={editQuota.services_quota.toString()}
-                                onChange={(e) =>
-                                  setEditQuota({
-                                    ...editQuota,
-                                    services_quota: parseInt(e.target.value) || 0,
-                                  })
-                                }
-                                style={{ width: '50px' }}
-                              />
-                            ) : (
-                              <Badge
-                                size='1'
-                                className={styles.quotaValue}
-                                style={{ backgroundColor: 'var(--purple-9)', color: 'white' }}
-                              >
-                                {userQuota.services_quota}
-                              </Badge>
-                            )}
-                          </Flex>
-
-                          {/* Redes */}
-                          <Flex
-                            justify='between'
-                            align='center'
-                            style={{
-                              padding: '12px',
-                              backgroundColor: 'var(--green-2)',
-                              borderRadius: '8px',
-                              border: '1px solid var(--green-6)',
-                            }}
-                          >
-                            <Flex align='center' gap='3'>
-                              <Box
-                                style={{
-                                  color: 'var(--green-11)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  height: '20px',
-                                }}
-                              >
-                                <NetworkIcon />
-                              </Box>
-                              <Text
-                                size='3'
-                                weight='medium'
-                                style={{ color: 'var(--green-12)' }}
-                                className={styles.quotaLabel}
-                              >
-                                Redes
-                              </Text>
-                            </Flex>
-                            {editMode ? (
-                              <TextField.Root
-                                type='number'
-                                value={editQuota.networks_quota.toString()}
-                                onChange={(e) =>
-                                  setEditQuota({
-                                    ...editQuota,
-                                    networks_quota: parseInt(e.target.value) || 0,
-                                  })
-                                }
-                                style={{ width: '50px' }}
-                              />
-                            ) : (
-                              <Badge
-                                size='1'
-                                className={styles.quotaValue}
-                                style={{ backgroundColor: 'var(--green-9)', color: 'white' }}
-                              >
-                                {userQuota.networks_quota}
-                              </Badge>
-                            )}
-                          </Flex>
-                        </Flex>
-
-                        <Flex justify='end' gap='2'>
-                          {!editMode ? (
-                            <Button
-                              variant='outline'
-                              color='orange'
-                              size='2'
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => setEditMode(true)}
-                            >
-                              Editar
-                            </Button>
-                          ) : (
-                            <>
-                              <Button
-                                color='gray'
-                                size='2'
-                                variant='soft'
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                  setEditMode(false);
-                                  setEditQuota(userQuota);
-                                }}
-                              >
-                                Cancelar
-                              </Button>
-                              <Button
-                                color='orange'
-                                size='2'
-                                style={{ cursor: 'pointer' }}
-                                onClick={updateUserQuota}
-                                disabled={updateLoading}
-                              >
-                                {updateLoading ? 'Salvando...' : 'Salvar'}
-                              </Button>
-                            </>
-                          )}
-                        </Flex>
-                      </Flex>
-                    </Box>
-                  )}
-                </Flex>
+                <UserSelectionCard
+                  usersList={usersList}
+                  usersListLoading={usersListLoading}
+                  selectedUserEmail={selectedUserEmail}
+                  onSelectUser={(value) => {
+                    setSelectedUserEmail(value);
+                    setUserQuota(null);
+                    setUserQuotaError(null);
+                    setEditMode(false);
+                    setSelectedUserIsAdmin(null);
+                  }}
+                  onSearch={searchUserData}
+                  userQuota={userQuota}
+                  userQuotaError={userQuotaError}
+                  userQuotaLoading={userQuotaLoading}
+                  editMode={editMode}
+                  updateLoading={updateLoading}
+                  onStartEdit={() => setEditMode(true)}
+                  onCancelEdit={() => {
+                    setEditMode(false);
+                    if (userQuota) setEditQuota(userQuota);
+                  }}
+                  onSaveEdit={updateUserQuota}
+                  editQuota={editQuota}
+                  onEditQuotaChange={(partial) => setEditQuota({ ...editQuota, ...partial })}
+                  selectedUserIsAdmin={selectedUserIsAdmin}
+                  toggleAdminLoading={toggleAdminLoading}
+                  onRequestAdminChange={(val) => {
+                    setPendingAdminValue(val);
+                    setConfirmAdminModalOpen(true);
+                  }}
+                  onOpenTakeoverModal={() => setShowTakeoverModal(true)}
+                />
               </Card>
 
-              {/* Administradores */}
-              <Card
-                style={{
-                  border: '1px solid var(--amber-6)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                  marginTop: '12px',
+              <AdminUsersCard
+                adminUsers={adminUsers}
+                adminUsersLoading={adminUsersLoading}
+                adminUsersError={adminUsersError}
+                onRemoveAdmin={(email) => {
+                  setSelectedUserEmail(email);
+                  setPendingAdminValue(false);
+                  setConfirmAdminModalOpen(true);
                 }}
-              >
-                <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                  <Flex justify='between' align='center'>
-                    <Flex align='center' gap='3'>
-                      <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                        Usuários Administradores
-                      </Heading>
-                      <Tooltip content='Lista de usuários com privilégio de administrador'>
-                        <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                      </Tooltip>
-                    </Flex>
-                  </Flex>
-
-                  {adminUsersError && (
-                    <Text size='2' style={{ color: 'var(--red-11)' }}>
-                      {adminUsersError}
-                    </Text>
-                  )}
-
-                  {adminUsersLoading ? (
-                    <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                      Carregando usuários admin...
-                    </Text>
-                  ) : adminUsers.length === 0 ? (
-                    <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                      Nenhum administrador encontrado.
-                    </Text>
-                  ) : (
-                    <Flex direction='column' gap='2'>
-                      {adminUsers.map((email) => (
-                        <Flex
-                          key={email}
-                          justify='between'
-                          align='center'
-                          style={{
-                            border: '1px solid var(--gray-6)',
-                            borderRadius: 8,
-                            padding: 8,
-                            backgroundColor: 'var(--gray-1)',
-                          }}
-                        >
-                          <Text
-                            size='3'
-                            style={{ color: 'var(--gray-12)' }}
-                            className={styles.adminListItemEmail}
-                          >
-                            {email}
-                          </Text>
-                          <Button
-                            variant='surface'
-                            color='red'
-                            size='2'
-                            className={styles.adminListItemButton}
-                            onClick={() => {
-                              setSelectedUserEmail(email);
-                              setPendingAdminValue(false);
-                              setConfirmAdminModalOpen(true);
-                            }}
-                          >
-                            <TrashIcon />
-                          </Button>
-                        </Flex>
-                      ))}
-                    </Flex>
-                  )}
-                </Flex>
-              </Card>
+              />
             </Tabs.Content>
 
             {/* Dokku Tab */}
             <Tabs.Content value='dokku'>
               <Flex direction='column' gap='4' style={{ marginTop: '12px' }}>
-                {/* Rodar comandos Dokku */}
-                <Card
-                  style={{
-                    border: '1px solid var(--amber-6)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                    <Flex align='center' gap='3'>
-                      <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                        Rodar comando no Dokku
-                      </Heading>
-                      <Tooltip content='Execute qualquer comando Dokku disponível'>
-                        <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                      </Tooltip>
-                    </Flex>
-                    <Flex gap='2' align='center'>
-                      <TextField.Root
-                        color='orange'
-                        placeholder='dokku apps'
-                        value={commandInput}
-                        onChange={(e) => setCommandInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') runDokkuCommand();
-                        }}
-                        style={{ flex: 1 }}
-                      />
-                      <Button
-                        color='orange'
-                        style={{
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                        }}
-                        onClick={runDokkuCommand}
-                        disabled={commandLoading || !commandInput.trim()}
-                      >
-                        {commandLoading ? (
-                          'Executando...'
-                        ) : (
-                          <>
-                            <svg
-                              width='18'
-                              height='18'
-                              viewBox='0 0 24 24'
-                              fill='none'
-                              xmlns='http://www.w3.org/2000/svg'
-                            >
-                              <rect
-                                x='3'
-                                y='4'
-                                width='18'
-                                height='14'
-                                rx='2'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                                fill='none'
-                              />
-                              <path
-                                d='M7 9l3 3-3 3'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                              />
-                              <path
-                                d='M13 15h4'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                              />
-                            </svg>
-                            Executar
-                          </>
-                        )}
-                      </Button>
-                    </Flex>
-                    {commandError && (
-                      <Text size='2' style={{ color: 'var(--red-11)' }}>
-                        {commandError}
-                      </Text>
-                    )}
-                    <Box
-                      style={{
-                        backgroundColor: 'var(--gray-1)',
-                        border: '1px solid var(--gray-6)',
-                        borderRadius: 8,
-                        padding: 12,
-                        maxHeight: 280,
-                        overflow: 'auto',
-                        fontFamily: 'monospace',
-                        fontSize: 12,
-                      }}
-                    >
-                      <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{commandOutput}</pre>
-                    </Box>
-                  </Flex>
-                </Card>
+                <DokkuCommandCard
+                  commandInput={commandInput}
+                  onCommandInputChange={setCommandInput}
+                  onRun={runDokkuCommand}
+                  commandLoading={commandLoading}
+                  commandError={commandError}
+                  commandOutput={commandOutput}
+                />
 
-                {/* Histórico SSH */}
-                <Card
-                  style={{
-                    border: '1px solid var(--amber-6)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                    <Flex justify='between' align='center' className={styles.sshHeader}>
-                      <Flex align='center' gap='3'>
-                        <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                          Histórico SSH
-                        </Heading>
-                        <Tooltip content='Últimos comandos executados via SSH'>
-                          <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                        </Tooltip>
-                      </Flex>
-                      <Button
-                        className={styles.sshUpdateButton}
-                        onClick={fetchSshHistory}
-                        disabled={sshHistoryLoading}
-                        variant='outline'
-                      >
-                        <ReloadIcon className={sshHistoryLoading ? styles.buttonSpinner : ''} />
-                        {sshHistoryLoading ? 'Atualizando...' : 'Atualizar'}
-                      </Button>
-                    </Flex>
-                    {sshHistoryError && (
-                      <Text size='2' style={{ color: 'var(--red-11)' }}>
-                        {sshHistoryError}
-                      </Text>
-                    )}
-                    <Box
-                      ref={sshHistoryContainerRef}
-                      style={{
-                        backgroundColor: 'var(--gray-1)',
-                        border: '1px solid var(--gray-6)',
-                        borderRadius: 8,
-                        padding: 12,
-                        maxHeight: 280,
-                        overflow: 'auto',
-                        fontFamily: 'monospace',
-                        fontSize: 12,
-                      }}
-                    >
-                      {sshHistory && sshHistory.length > 0 ? (
-                        <ul style={{ paddingLeft: 16, margin: 0 }}>
-                          {sshHistory.map((line, idx) => (
-                            <li key={idx} style={{ marginBottom: 4 }}>
-                              {line}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                          {sshHistoryLoading
-                            ? 'Carregando...'
-                            : 'Sem histórico disponível. Clique em Atualizar.'}
-                        </Text>
-                      )}
-                    </Box>
-                  </Flex>
-                </Card>
+                <SshHistoryCard
+                  history={sshHistory}
+                  loading={sshHistoryLoading}
+                  error={sshHistoryError}
+                  onRefresh={fetchSshHistory}
+                />
               </Flex>
             </Tabs.Content>
 
             {/* Plugins Tab */}
             <Tabs.Content value='plugins'>
-              <Card
-                style={{
-                  border: '1px solid var(--amber-6)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  marginTop: '12px',
-                }}
-              >
-                <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                  <Flex justify='between' align='center' className={styles.pluginsHeader}>
-                    <Flex align='center' gap='3'>
-                      <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                        Plugins
-                      </Heading>
-                      <Tooltip content='Lista de plugins instalados no Dokku'>
-                        <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                      </Tooltip>
-                    </Flex>
-                    <Button
-                      onClick={() => fetchPlugins()}
-                      disabled={pluginsLoading}
-                      variant='outline'
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <ReloadIcon className={pluginsLoading ? styles.buttonSpinner : ''} />
-                      <span className={styles.refreshLabel}>
-                        {pluginsLoading ? 'Atualizando...' : 'Atualizar'}
-                      </span>
-                    </Button>
-                  </Flex>
-                  {pluginsError && (
-                    <Text size='2' style={{ color: 'var(--red-11)' }}>
-                      {pluginsError}
-                    </Text>
-                  )}
-                  {pluginsLoading ? (
-                    <Flex align='center' gap='2' style={{ padding: '8px' }}>
-                      <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
-                      <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                        Carregando plugins...
-                      </Text>
-                    </Flex>
-                  ) : (
-                    <Box className={styles.pluginsTableWrapper}>
-                      <table className={styles.pluginsTable}>
-                        <thead>
-                          <tr>
-                            <th>Nome</th>
-                            <th>Versão</th>
-                            <th>Status</th>
-                            <th>Descrição</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {plugins.map((p) => (
-                            <tr key={p.name}>
-                              <td data-label='Nome'>{p.name}</td>
-                              <td data-label='Versão'>{p.version}</td>
-                              <td data-label='Status'>
-                                <Badge
-                                  size='1'
-                                  className={
-                                    p.status === 'enabled'
-                                      ? styles.statusEnabled
-                                      : styles.statusDisabled
-                                  }
-                                >
-                                  {p.status}
-                                </Badge>
-                              </td>
-                              <td data-label='Descrição'>{p.description}</td>
-                            </tr>
-                          ))}
-                          {plugins.length === 0 && !pluginsLoading && !pluginsError && (
-                            <tr>
-                              <td colSpan={4}>
-                                <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                  Nenhum plugin listado.
-                                </Text>
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </Box>
-                  )}
-                </Flex>
-              </Card>
+              <PluginsCard
+                plugins={plugins}
+                loading={pluginsLoading}
+                error={pluginsError}
+                onRefresh={fetchPlugins}
+              />
             </Tabs.Content>
 
-            {/* Segurança Tab */}
-            <Tabs.Content value='seguranca'>
+            {/* Security Tab */}
+            <Tabs.Content value='security'>
               <Flex direction='column' gap='4' style={{ marginTop: '12px' }}>
-                {/* Configurações */}
-                <Card
-                  style={{
-                    border: '1px solid var(--amber-6)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                <SecurityConfigCard
+                  config={securityConfig}
+                  loading={securityConfigLoading}
+                  error={securityConfigError}
+                  onRefresh={fetchSecurityConfig}
+                />
+
+                <SshKeyCard
+                  info={sshKeyInfo}
+                  loading={sshKeyLoading}
+                  error={sshKeyError}
+                  onRefresh={fetchSshKeyInfo}
+                />
+
+                <DangerZoneCard
+                  shutdownError={shutdownError}
+                  onOpenShutdownModal={() => {
+                    setShutdownKeyword(generateShutdownKeyword());
+                    setShutdownConfirmText('');
+                    setShowShutdownModal(true);
                   }}
-                >
-                  <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                    <Flex justify='between' align='center'>
-                      <Flex align='center' gap='3'>
-                        <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                          Configurações
-                        </Heading>
-                        <Tooltip content='Informações de configuração da API e servidor'>
-                          <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                        </Tooltip>
-                      </Flex>
-                      <Button
-                        onClick={fetchSecurityConfig}
-                        disabled={securityConfigLoading}
-                        variant='outline'
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <ReloadIcon className={securityConfigLoading ? styles.buttonSpinner : ''} />
-                        <span className={styles.refreshLabel}>
-                          {securityConfigLoading ? 'Atualizando...' : 'Atualizar'}
-                        </span>
-                      </Button>
-                    </Flex>
-                    {securityConfigError && (
-                      <Text size='2' style={{ color: 'var(--red-11)' }}>
-                        {securityConfigError}
-                      </Text>
-                    )}
-                    {securityConfig && (
-                      <Flex direction='column' gap='3'>
-                        <Box
-                          style={{
-                            backgroundColor: 'var(--gray-1)',
-                            border: '1px solid var(--gray-6)',
-                            borderRadius: 8,
-                            padding: 12,
-                          }}
-                        >
-                          <Heading size='4' style={{ color: 'var(--gray-12)', marginBottom: 8 }}>
-                            General
-                          </Heading>
-                          <Flex direction='column' gap='2'>
-                            <Text size='2'>
-                              <strong>API Version: </strong>
-                              {securityConfig.api_version_number ?? '—'}
-                            </Text>
-                            <Text size='2'>
-                              <strong>Workers: </strong>
-                              {securityConfig.workers_count}
-                            </Text>
-                            <Text size='2'>
-                              <strong>Max connections per request: </strong>
-                              {securityConfig.max_connections_per_request}
-                            </Text>
-                            <Text size='2'>
-                              <strong>Reload: </strong>
-                              {securityConfig.reload ? 'true' : 'false'}
-                            </Text>
-                            <Text size='2'>
-                              <strong>Log Level: </strong>
-                              {securityConfig.log_level}
-                            </Text>
-                            {securityConfig.api_key && (
-                              <Text size='2'>
-                                <strong>API Key: </strong>
-                                <code>{securityConfig.api_key}</code>
-                              </Text>
-                            )}
-                            {securityConfig.volume_dir && (
-                              <Text size='2'>
-                                <strong>Volume Dir: </strong>
-                                <code>{securityConfig.volume_dir}</code>
-                              </Text>
-                            )}
-                          </Flex>
-                        </Box>
-                        <Box
-                          style={{
-                            backgroundColor: 'var(--gray-1)',
-                            border: '1px solid var(--gray-6)',
-                            borderRadius: 8,
-                            padding: 12,
-                          }}
-                        >
-                          <Heading size='4' style={{ color: 'var(--gray-12)', marginBottom: 8 }}>
-                            SSH Server
-                          </Heading>
-                          {securityConfig.ssh_server ? (
-                            <Flex direction='column' gap='2'>
-                              <Text size='2'>
-                                <strong>Hostname: </strong>
-                                {securityConfig.ssh_server.hostname}
-                              </Text>
-                              <Text size='2'>
-                                <strong>Port: </strong>
-                                {securityConfig.ssh_server.port}
-                              </Text>
-                              <Text size='2'>
-                                <strong>Key Path: </strong>
-                                <code>{securityConfig.ssh_server.key_path}</code>
-                              </Text>
-                            </Flex>
-                          ) : (
-                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                              Sem informação de servidor SSH.
-                            </Text>
-                          )}
-                        </Box>
-                        <Box
-                          style={{
-                            backgroundColor: 'var(--gray-1)',
-                            border: '1px solid var(--gray-6)',
-                            borderRadius: 8,
-                            padding: 12,
-                          }}
-                        >
-                          <Heading size='4' style={{ color: 'var(--gray-12)', marginBottom: 8 }}>
-                            Database
-                          </Heading>
-                          {securityConfig.database ? (
-                            <Flex direction='column' gap='2'>
-                              <Text size='2'>
-                                <strong>Host: </strong>
-                                {securityConfig.database.host}
-                              </Text>
-                              <Text size='2'>
-                                <strong>Port: </strong>
-                                {securityConfig.database.port}
-                              </Text>
-                              <Text size='2'>
-                                <strong>Name: </strong>
-                                {securityConfig.database.db_name}
-                              </Text>
-                              <Text size='2'>
-                                <strong>User: </strong>
-                                {securityConfig.database.user}
-                              </Text>
-                              <Text size='2'>
-                                <strong>URI: </strong> <code>{securityConfig.database.url}</code>
-                              </Text>
-                            </Flex>
-                          ) : (
-                            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                              Sem informação de banco de dados.
-                            </Text>
-                          )}
-                          {securityConfig.available_databases &&
-                            securityConfig.available_databases.length > 0 && (
-                              <Box style={{ marginTop: 8 }}>
-                                <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                                  Available Services:
-                                </Text>
-                                <Flex wrap='wrap' gap='2' style={{ marginTop: 6 }}>
-                                  {securityConfig.available_databases.map((db) => (
-                                    <Badge key={db} size='1' variant='soft'>
-                                      {db}
-                                    </Badge>
-                                  ))}
-                                </Flex>
-                              </Box>
-                            )}
-                        </Box>
-                      </Flex>
-                    )}
-                  </Flex>
-                </Card>
-
-                {/* Chave SSH */}
-                <Card
-                  style={{
-                    border: '1px solid var(--amber-6)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <Flex direction='column' gap='3' style={{ padding: '12px' }}>
-                    <Flex justify='between' align='center'>
-                      <Flex align='center' gap='3'>
-                        <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                          SSH Key
-                        </Heading>
-                        <Tooltip content='Informações e atualização da chave SSH usada nas operações'>
-                          <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
-                        </Tooltip>
-                      </Flex>
-                      <Button
-                        onClick={fetchSshKeyInfo}
-                        disabled={sshKeyLoading}
-                        variant='outline'
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <ReloadIcon className={sshKeyLoading ? styles.buttonSpinner : ''} />
-                        <span className={styles.refreshLabel}>
-                          {sshKeyLoading ? 'Atualizando...' : 'Atualizar'}
-                        </span>
-                      </Button>
-                    </Flex>
-                    {sshKeyError && (
-                      <Text size='2' style={{ color: 'var(--red-11)' }}>
-                        {sshKeyError}
-                      </Text>
-                    )}
-                    {sshKeyInfo && (
-                      <Box
-                        style={{
-                          backgroundColor: 'var(--gray-1)',
-                          border: '1px solid var(--gray-6)',
-                          borderRadius: 8,
-                          padding: 12,
-                        }}
-                      >
-                        <Flex direction='column' gap='2'>
-                          <Text size='2'>
-                            <strong>File: </strong>
-                            <code>{sshKeyInfo.file_path}</code>
-                          </Text>
-                          <Text size='2'>
-                            <strong>Path: </strong>
-                            <code>{sshKeyInfo.directory}</code>
-                          </Text>
-                          <Text size='2'>
-                            <strong>Name: </strong>
-                            {sshKeyInfo.filename}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Size: </strong>
-                            {sshKeyInfo.size_bytes} bytes
-                          </Text>
-                          <Text size='2'>
-                            <strong>Permissions: </strong>
-                            {sshKeyInfo.permissions}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Owner UID: </strong>
-                            {sshKeyInfo.owner_uid}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Group GID: </strong>
-                            {sshKeyInfo.group_gid}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Created at: </strong>
-                            {new Date(sshKeyInfo.created_at).toLocaleString()}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Modified at: </strong>
-                            {new Date(sshKeyInfo.modified_at).toLocaleString()}
-                          </Text>
-                          <Text size='2'>
-                            <strong>Accessed at: </strong>
-                            {new Date(sshKeyInfo.accessed_at).toLocaleString()}
-                          </Text>
-                          <Flex gap='2' style={{ marginTop: 6 }} className={styles.sshKeyBadges}>
-                            <Badge
-                              size='1'
-                              variant='soft'
-                              color={sshKeyInfo.is_readable ? 'green' : 'red'}
-                            >
-                              {sshKeyInfo.is_readable ? 'readable' : 'not readable'}
-                            </Badge>
-                            <Badge
-                              size='1'
-                              variant='soft'
-                              color={sshKeyInfo.is_writable ? 'green' : 'red'}
-                            >
-                              {sshKeyInfo.is_writable ? 'writable' : 'not writable'}
-                            </Badge>
-                            <Badge
-                              size='1'
-                              variant='soft'
-                              color={sshKeyInfo.is_executable ? 'green' : 'red'}
-                            >
-                              {sshKeyInfo.is_executable ? 'executable' : 'not executable'}
-                            </Badge>
-                          </Flex>
-                        </Flex>
-                      </Box>
-                    )}
-
-                    {/* Upload de chave SSH removido conforme solicitado */}
-                  </Flex>
-                </Card>
-
-                {/* Zona de Perigo - Desligar API */}
-                <Box style={{ marginTop: '45px' }}>
-                  <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
-                    Zona de Perigo
-                  </Heading>
-                  <Card
-                    style={{
-                      border: '1px solid var(--red-6)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                      padding: '16px',
-                      background: 'var(--red-2)',
-                    }}
-                  >
-                    <Flex
-                      align='center'
-                      justify='between'
-                      gap='4'
-                      className={styles.dangerZoneHeader}
-                    >
-                      <Flex direction='column' gap='1'>
-                        <Text
-                          size='3'
-                          weight='bold'
-                          style={{ color: 'var(--gray-12)', display: 'block' }}
-                        >
-                          Encerrar serviço Dokku-API
-                        </Text>
-                        <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
-                          Uma vez que você desligar a API, as funcionalidades do website ficarão
-                          indisponíveis até reiniciar a API no servidor internamente.
-                        </Text>
-                      </Flex>
-                      <Button
-                        size='2'
-                        onClick={() => {
-                          setShutdownKeyword(generateShutdownKeyword());
-                          setShutdownConfirmText('');
-                          setShowShutdownModal(true);
-                        }}
-                        style={{
-                          background: 'var(--gray-4)',
-                          color: 'var(--red-9)',
-                          border: '1px solid var(--gray-7)',
-                          cursor: 'pointer',
-                        }}
-                        className={styles.dangerZoneButton}
-                      >
-                        <TrashIcon />
-                        Desligar API
-                      </Button>
-                    </Flex>
-                    {shutdownError && (
-                      <Text size='2' style={{ color: 'var(--red-11)' }}>
-                        {shutdownError}
-                      </Text>
-                    )}
-                  </Card>
-                </Box>
+                />
               </Flex>
             </Tabs.Content>
           </Tabs.Root>
         </Flex>
       </main>
 
-      {/* Modal de confirmação de takeover */}
-      <Dialog.Root open={showTakeoverModal} onOpenChange={setShowTakeoverModal}>
-        <Dialog.Content maxWidth='450px' style={{ padding: '24px' }}>
-          <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Takeover</Dialog.Title>
-          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-            Tem certeza que deseja assumir o controle da conta <strong>{userQuota?.email}</strong>?
-            Esta ação irá substituir sua sessão atual pela sessão da conta selecionada.
-            <br />
-            <br />
-            Quaisquer ações terão <strong>impacto real</strong> na conta desse usuário.
-          </Dialog.Description>
+      {/* Takeover confirmation modal */}
+      <TakeoverConfirmModal
+        open={showTakeoverModal}
+        onOpenChange={setShowTakeoverModal}
+        targetEmail={userQuota?.email}
+        onConfirm={performTakeover}
+        loading={takeoverLoading}
+      />
 
-          <Flex gap='3' mt='4' justify='end'>
-            <Dialog.Close>
-              <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
-                Cancelar
-              </Button>
-            </Dialog.Close>
-            <Button
-              color='red'
-              onClick={performTakeover}
-              disabled={takeoverLoading}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
-            >
-              {takeoverLoading ? 'Processando...' : 'Confirmar Takeover'}
-            </Button>
-          </Flex>
-        </Dialog.Content>
-      </Dialog.Root>
+      {/* Admin privilege change confirmation modal */}
+      <AdminPrivilegeConfirmModal
+        open={confirmAdminModalOpen}
+        onOpenChange={(open) => {
+          setConfirmAdminModalOpen(open);
+          if (!open) setPendingAdminValue(null);
+        }}
+        targetEmail={userQuota?.email || selectedUserEmail}
+        pendingAdminValue={pendingAdminValue}
+        onConfirm={async () => {
+          if (pendingAdminValue === null) return;
+          await toggleUserAdmin(pendingAdminValue);
+          setConfirmAdminModalOpen(false);
+          setPendingAdminValue(null);
+          await fetchAdminUsers();
+        }}
+        loading={toggleAdminLoading}
+      />
 
-      {/* Modal de confirmação de privilégio de admin */}
-      <Dialog.Root open={confirmAdminModalOpen} onOpenChange={setConfirmAdminModalOpen}>
-        <Dialog.Content maxWidth='450px' style={{ padding: '24px' }}>
-          <Dialog.Title style={{ marginBottom: '12px' }}>
-            Confirmar Alteração de Privilégio
-          </Dialog.Title>
-          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-            {pendingAdminValue ? (
-              <>
-                Deseja conceder privilégio de administrador para o usuário{' '}
-                <strong>{userQuota?.email || selectedUserEmail}</strong>?
-              </>
-            ) : (
-              <>
-                Deseja remover o privilégio de administrador do usuário{' '}
-                <strong>{userQuota?.email || selectedUserEmail}</strong>?
-              </>
-            )}
-          </Dialog.Description>
-
-          <Flex gap='3' mt='4' justify='end'>
-            <Dialog.Close>
-              <Button
-                variant='soft'
-                color='gray'
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  setConfirmAdminModalOpen(false);
-                  setPendingAdminValue(null);
-                }}
-              >
-                Cancelar
-              </Button>
-            </Dialog.Close>
-            <Button
-              color='red'
-              onClick={async () => {
-                if (pendingAdminValue === null) return;
-                await toggleUserAdmin(pendingAdminValue);
-                setConfirmAdminModalOpen(false);
-                setPendingAdminValue(null);
-                // Refresh admin users list after change
-                await fetchAdminUsers();
-              }}
-              disabled={toggleAdminLoading}
-              style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
-            >
-              Confirmar
-            </Button>
-          </Flex>
-        </Dialog.Content>
-      </Dialog.Root>
-
-      {/* Modal de confirmação de desligamento da API */}
-      <Dialog.Root
+      {/* API shutdown confirmation modal */}
+      <ShutdownConfirmModal
         open={showShutdownModal}
         onOpenChange={(open) => {
           setShowShutdownModal(open);
@@ -1973,51 +704,12 @@ export function AdminPage(props: AdminPageProps) {
             setShutdownError(null);
           }
         }}
-      >
-        <Dialog.Content maxWidth='480px' style={{ padding: '24px' }}>
-          <Dialog.Title style={{ marginBottom: '12px' }}>
-            Confirmar Desligamento da API
-          </Dialog.Title>
-          <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-            Esta ação irá desligar a API e interromper as funcionalidades do website.
-            <br />
-            Para confirmar, digite <strong>{shutdownKeyword}</strong> abaixo.
-          </Dialog.Description>
-
-          <Box style={{ marginTop: '8px' }}>
-            <TextField.Root
-              placeholder={shutdownKeyword || 'shutdown-XXXXXX'}
-              value={shutdownConfirmText}
-              onChange={(e) => setShutdownConfirmText(e.target.value)}
-            />
-          </Box>
-
-          <Flex gap='3' mt='4' justify='end'>
-            <Dialog.Close>
-              <Button
-                variant='soft'
-                color='gray'
-                style={{ cursor: 'pointer' }}
-                disabled={shutdownLoading}
-              >
-                Cancelar
-              </Button>
-            </Dialog.Close>
-            <Button
-              onClick={performShutdown}
-              disabled={shutdownLoading || shutdownConfirmText.trim() !== shutdownKeyword}
-              style={{
-                backgroundColor: 'var(--red-9)',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              {shutdownLoading ? <>Processando...</> : 'Confirmar Desligamento'}
-            </Button>
-          </Flex>
-        </Dialog.Content>
-      </Dialog.Root>
+        keyword={shutdownKeyword}
+        confirmText={shutdownConfirmText}
+        onConfirmTextChange={setShutdownConfirmText}
+        onConfirm={performShutdown}
+        loading={shutdownLoading}
+      />
     </>
   );
 }

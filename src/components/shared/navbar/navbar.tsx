@@ -122,7 +122,7 @@ export function NavBar(props: NavBarProps) {
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
                 <DropdownMenu.Item
-                  color='purple'
+                  color='gray'
                   style={{ cursor: 'pointer' }}
                   onClick={() => handleCreateRedirect('/apps/create/')}
                 >
@@ -131,7 +131,7 @@ export function NavBar(props: NavBarProps) {
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
-                  color='purple'
+                  color='gray'
                   style={{ cursor: 'pointer' }}
                   onClick={() => handleCreateRedirect('/services/create/')}
                 >
@@ -140,7 +140,7 @@ export function NavBar(props: NavBarProps) {
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
-                  color='purple'
+                  color='gray'
                   style={{ cursor: 'pointer' }}
                   onClick={() => handleCreateRedirect('/networks/')}
                 >
