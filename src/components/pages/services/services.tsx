@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
-import { api } from '@/lib';
+import { api, getServiceImage } from '@/lib';
 
 import styles from './services.module.css';
 
@@ -32,19 +32,6 @@ interface ServiceData {
   post_create_network?: string;
   post_start_network?: string;
 }
-
-const DATABASE_IMAGES: Record<string, string> = {
-  postgres: '/images/database-logos/postgresql.svg',
-  mysql: '/images/database-logos/mysql.svg',
-  mongodb: '/images/database-logos/mongodb.svg',
-  redis: '/images/database-logos/redis.svg',
-  mariadb: '/images/database-logos/mariadb.svg',
-  couchdb: '/images/database-logos/couchdb.svg',
-  cassandra: '/images/database-logos/cassandra.svg',
-  elasticsearch: '/images/database-logos/elasticsearch.svg',
-  influxdb: '/images/database-logos/influxdb.svg',
-  generic: '/images/database-logos/generic.svg',
-};
 
 interface ServiceListItem {
   pluginType: string;
@@ -257,10 +244,6 @@ export function ServicesPage(props: ServicesPageProps) {
   const formatServiceName = (serviceName: string) => {
     // Remove prefixos numéricos como "1_" se existirem
     return serviceName.replace(/^\d+_/, '');
-  };
-
-  const getServiceImage = (pluginName: string) => {
-    return DATABASE_IMAGES[pluginName] || DATABASE_IMAGES.generic;
   };
 
   const formatVersion = (version: string) => {

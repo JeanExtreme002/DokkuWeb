@@ -2,8 +2,10 @@ import { Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
+import { getServiceImage } from '@/lib';
+
 import styles from '../../app-details.module.css';
-import { formatDatabaseType, formatServiceName, getServiceImage } from '../../helpers';
+import { formatDatabaseType, formatServiceName } from '../../helpers';
 
 interface ServicesSectionProps {
   servicesLoading: boolean;

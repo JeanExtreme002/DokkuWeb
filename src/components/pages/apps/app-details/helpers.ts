@@ -1,22 +1,5 @@
 import type { AppContainer, AppInfo } from './types';
 
-export const DATABASE_IMAGES: Record<string, string> = {
-  postgres: '/images/database-logos/postgresql.svg',
-  mysql: '/images/database-logos/mysql.svg',
-  mongodb: '/images/database-logos/mongodb.svg',
-  redis: '/images/database-logos/redis.svg',
-  mariadb: '/images/database-logos/mariadb.svg',
-  couchdb: '/images/database-logos/couchdb.svg',
-  cassandra: '/images/database-logos/cassandra.svg',
-  elasticsearch: '/images/database-logos/elasticsearch.svg',
-  influxdb: '/images/database-logos/influxdb.svg',
-  generic: '/images/database-logos/generic.svg',
-};
-
-export const getServiceImage = (pluginName: string) => {
-  return DATABASE_IMAGES[pluginName] || DATABASE_IMAGES.generic;
-};
-
 export const formatDatabaseType = (pluginName: string) => {
   const typeMap: Record<string, string> = {
     postgres: 'PostgreSQL',
