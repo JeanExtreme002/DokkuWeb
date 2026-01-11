@@ -7,12 +7,16 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { ChevronDownIcon, PlusIcon } from '@radix-ui/react-icons';
+import { Button, DropdownMenu } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import * as React from 'react';
 
-import { Search, SideBar, WebsiteLogo } from '@/components';
+import { AppIcon, NetworkIcon, Search, ServiceIcon, SideBar, WebsiteLogo } from '@/components';
 import { logout } from '@/lib';
+
+import styles from './navbar.module.css';
 
 interface ProfileMenuProps {
   anchorEl?: HTMLElement;
@@ -68,6 +72,13 @@ export function NavBar(props: NavBarProps) {
   };
 
   const profileMenuId = 'profile-menu';
+  const router = useRouter();
+
+  const handleCreateRedirect = (path: string) => {
+    if (router.asPath.replace(/^\/+|\/+$/g, '') !== path.replace(/^\/+|\/+$/g, '')) {
+      router.push(path);
+    }
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -92,6 +103,52 @@ export function NavBar(props: NavBarProps) {
           <Search />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'flex' } }} alignItems={'center'}>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button
+                  variant='surface'
+                  size='2'
+                  color='gray'
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: 'var(--gray-4)',
+                    marginRight: '12px',
+                  }}
+                  className={styles.createButtonTrigger}
+                >
+                  <PlusIcon />
+                  <ChevronDownIcon />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  color='purple'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleCreateRedirect('/apps/create/')}
+                >
+                  <AppIcon />
+                  Novo Aplicativo
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item
+                  color='purple'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleCreateRedirect('/services/create/')}
+                >
+                  <ServiceIcon />
+                  Novo Serviço
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item
+                  color='purple'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleCreateRedirect('/networks/')}
+                >
+                  <NetworkIcon />
+                  Nova Rede
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
             <Typography
               sx={{ display: { xs: 'none', md: 'flex' } }}
               marginInline={1}
