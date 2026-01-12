@@ -108,10 +108,10 @@ export function NavBar(props: NavBarProps) {
                 <Button
                   variant='surface'
                   size='2'
-                  color='gray'
+                  color='purple'
                   style={{
                     cursor: 'pointer',
-                    backgroundColor: 'var(--gray-4)',
+                    backgroundColor: 'var(--gray-2)',
                     marginRight: '12px',
                   }}
                   className={styles.createButtonTrigger}
