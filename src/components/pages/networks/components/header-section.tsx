@@ -1,3 +1,4 @@
+import { PlusIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
 import styles from '../networks.module.css';
@@ -49,7 +50,8 @@ export function HeaderSection({ onOpenCreateModal }: HeaderSectionProps) {
           e.currentTarget.style.boxShadow = '0 2px 8px rgba(34, 197, 94, 0.3)';
         }}
       >
-        + Criar Rede
+        <PlusIcon />
+        Criar Rede
       </Button>
     </Flex>
   );

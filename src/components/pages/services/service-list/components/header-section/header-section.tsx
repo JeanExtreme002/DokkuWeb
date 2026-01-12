@@ -1,9 +1,14 @@
 import { PlusIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
+import React from 'react';
 
-import styles from '../../app-list.module.css';
+import styles from '../../service-list.module.css';
 
-export function HeaderSection() {
+interface HeaderSectionProps {
+  onCreate: () => void;
+}
+
+export function HeaderSection({ onCreate }: HeaderSectionProps) {
   return (
     <Flex className={styles.headerSection}>
       <Box>
@@ -15,16 +20,16 @@ export function HeaderSection() {
             marginBottom: '4px',
           }}
         >
-          Meus Aplicativos
+          Meus Serviços
         </Heading>
         <Text size='3' color='gray'>
-          Gerencie seus aplicativos Dokku implantados
+          Gerencie seus serviços de banco de dados no Dokku
         </Text>
       </Box>
 
       <Button
         size='3'
-        onClick={() => (window.location.href = '/apps/create')}
+        onClick={onCreate}
         className={styles.createButton}
         style={{
           background: 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
@@ -47,7 +52,7 @@ export function HeaderSection() {
         }}
       >
         <PlusIcon />
-        Nova Aplicação
+        Novo Serviço
       </Button>
     </Flex>
   );

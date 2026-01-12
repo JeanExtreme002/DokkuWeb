@@ -7,12 +7,15 @@ import { NavBar } from '@/components/shared';
 import { api } from '@/lib';
 
 import styles from './app-creation.module.css';
-import { ActionButtons } from './components/actions';
-import { AppNameInput } from './components/app-name';
-import { EnvInputs, EnvList } from './components/env-variables';
-import { ErrorMessage } from './components/feedback';
-import { HeaderSection } from './components/header';
-import { NetworkSelection } from './components/network';
+import {
+  ActionButtons,
+  AppNameInput,
+  EnvInputs,
+  EnvList,
+  ErrorMessage,
+  HeaderSection,
+  NetworkSelection,
+} from './components';
 import { useIsMobile, validateAppName } from './utils';
 
 interface AppCreationPageProps {
