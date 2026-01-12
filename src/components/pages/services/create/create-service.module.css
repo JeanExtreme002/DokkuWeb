@@ -19,7 +19,7 @@
   }
 }
 
-/* Garantir que a animação continue funcionando */
+/* Ensure the animation keeps running */
 .spinner {
   animation: spin 1s linear infinite;
   transform-origin: center;

@@ -1,4 +1,4 @@
-/* Container principal do spinner */
+/* Main spinner container */
 .spinnerContainer {
   position: relative;
   width: 120px;
@@ -6,7 +6,7 @@
   margin: 0 auto;
 }
 
-/* Spinner principal com múltiplos anéis */
+/* Main spinner with multiple rings */
 .spinner {
   position: absolute;
   top: 50%;
@@ -52,7 +52,7 @@
   animation-duration: 2.5s;
 }
 
-/* Pontos orbitais */
+/* Orbital dots */
 .orbitalDots {
   position: absolute;
   width: 120px;
@@ -97,7 +97,7 @@
   animation-delay: 3s;
 }
 
-/* Container da mensagem */
+/* Message container */
 .messageContainer {
   min-height: 24px;
   display: flex;
@@ -111,7 +111,7 @@
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* Barra de progresso */
+/* Progress bar */
 .progressContainer {
   width: 200px;
   margin: 0 auto;
@@ -135,7 +135,7 @@
   transform: translateX(-100%);
 }
 
-/* Pulsos de fundo */
+/* Background pulses */
 .backgroundPulses {
   position: absolute;
   top: 50%;
@@ -167,7 +167,7 @@
   animation-delay: 2s;
 }
 
-/* Animações */
+/* Animations */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -220,7 +220,7 @@
   }
 }
 
-/* Responsividade */
+/* Responsiveness */
 @media (max-width: 768px) {
   .spinnerContainer {
     width: 100px;

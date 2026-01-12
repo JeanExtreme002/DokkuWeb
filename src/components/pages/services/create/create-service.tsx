@@ -192,7 +192,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
 
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Formulário */}
+          {/* Form */}
           <Card
             style={{
               border: '1px solid var(--gray-6)',
@@ -201,7 +201,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
             }}
           >
             <Flex direction='column' gap='5'>
-              {/* Nome do Serviço */}
+              {/* Service Name */}
               <Flex direction='column' gap='2'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                   Nome do Serviço
@@ -210,7 +210,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                   placeholder='Digite o nome do serviço'
                   value={serviceName}
                   onChange={(e) => {
-                    // Permite letras (maiúsculas e minúsculas), números e "_"
+                    // Allow letters (uppercase and lowercase), numbers, and "_"
                     const value = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
                     setServiceName(value);
                   }}
@@ -232,7 +232,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                 </Text>
               </Flex>
 
-              {/* Seleção do Tipo de Banco de Dados */}
+              {/* Database Type Selection */}
               <Flex direction='column' gap='2'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                   Tipo de Serviço
@@ -245,7 +245,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                   </Box>
                 ) : (
                   <>
-                    {/* Grid para desktop */}
+                    {/* Grid for desktop */}
                     {!isMobile && (
                       <div className={styles.databaseGrid}>
                         {databases.map((database) => (
@@ -314,7 +314,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                       </div>
                     )}
 
-                    {/* Select para mobile */}
+                    {/* Select for mobile */}
                     {isMobile && (
                       <Select.Root
                         value={selectedDatabase}
@@ -349,7 +349,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                 )}
               </Flex>
 
-              {/* Mensagem de erro */}
+              {/* Error message */}
               {error && (
                 <Box
                   style={{
@@ -365,7 +365,7 @@ export function CreateServicePage(props: CreateServicePageProps) {
                 </Box>
               )}
 
-              {/* Botões de ação */}
+              {/* Action buttons */}
               <Flex justify='end' gap='3' className={styles.buttonsContainer}>
                 <Button
                   size='3'

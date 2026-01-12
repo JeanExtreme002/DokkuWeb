@@ -46,7 +46,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detecta se é uma tela pequena
+  // Detect if the screen is small
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -58,7 +58,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  // Carrega as redes disponíveis
+  // Load available networks
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -78,7 +78,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
     fetchNetworks();
   }, []);
 
-  // Adiciona uma nova variável de ambiente
+  // Add a new environment variable
   const addEnvironmentVariable = () => {
     if (!currentEnvKey.trim() || !currentEnvValue.trim()) return;
 
@@ -93,12 +93,12 @@ export function CreateAppPage(props: CreateAppPageProps) {
     setCurrentEnvValue('');
   };
 
-  // Remove uma variável de ambiente
+  // Remove an environment variable
   const removeEnvironmentVariable = (id: string) => {
     setEnvironmentVariables((prev) => prev.filter((variable) => variable.id !== id));
   };
 
-  // Valida o nome do app e retorna informações de validação
+  // Validate the app name and return validation info
   const validateAppName = (name: string) => {
     const trimmedName = name.trim();
     if (trimmedName.length === 0) return { isValid: false, message: '' };
@@ -126,23 +126,23 @@ export function CreateAppPage(props: CreateAppPageProps) {
     return { isValid: true, message: '' };
   };
 
-  // Valida se o formulário pode ser enviado
+  // Validate whether the form can be submitted
   const canSubmit = () => {
     return validateAppName(appName).isValid && !creating;
   };
 
-  // Cria o aplicativo
+  // Create the application
   const handleCreateApp = async () => {
     if (!canSubmit()) return;
 
     setCreating(true);
     setError(null);
 
-    // Pequeno delay para garantir que o estado seja atualizado antes das requisições
+    // Small delay to ensure state is updated before requests
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     try {
-      // 1. Cria o aplicativo
+      // 1. Create the application
       const createAppResponse = await api.post(
         `/api/apps/${appName.trim()}`,
         {},
@@ -153,20 +153,20 @@ export function CreateAppPage(props: CreateAppPageProps) {
         throw new Error(`Failed to create app: ${createAppResponse.status}`);
       }
 
-      // 2. Cria as requisições paralelas para config e network
+      // 2. Create parallel requests for config and network
       const promises: Promise<any>[] = [];
 
-      // Adiciona requisição de vinculação à rede (se uma foi selecionada)
+      // Add network link request (if one was selected)
       if (selectedNetwork && selectedNetwork !== 'none') {
         promises.push(
           api.post(`/api/networks/${selectedNetwork}/link/${appName.trim()}/`).catch((error) => {
             console.error('Error linking app to network:', error);
-            // Não falha o processo se network link der erro
+            // Do not fail the process if network link errors
           })
         );
       }
 
-      // Adiciona requisições de config para cada variável de ambiente
+      // Add config requests for each environment variable
       environmentVariables.forEach((envVar) => {
         promises.push(
           api
@@ -175,18 +175,18 @@ export function CreateAppPage(props: CreateAppPageProps) {
             })
             .catch((error) => {
               console.error(`Error setting config ${envVar.key}:`, error);
-              // Não falha o processo se config der erro
+              // Do not fail the process if config errors
             })
         );
       });
 
-      // Executa todas as requisições em paralelo
+      // Execute all requests in parallel
       await Promise.all(promises);
 
-      // Pequeno delay antes de redirecionar para mostrar sucesso
+      // Small delay before redirecting to show success
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Redireciona para a página de apps
+      // Redirect to the apps page
       router.push('/apps');
     } catch (error: any) {
       console.error('Error creating app:', error);
@@ -236,7 +236,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
 
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Formulário */}
+          {/* Form */}
           <Card
             style={{
               border: '1px solid var(--gray-6)',
@@ -245,7 +245,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
             }}
           >
             <Flex direction='column' gap='5'>
-              {/* Nome do App */}
+              {/* App Name */}
               <Flex direction='column' gap='2'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                   Nome do Aplicativo
@@ -254,7 +254,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                   placeholder='Digite o nome do aplicativo'
                   value={appName}
                   onChange={(e) => {
-                    // Permite letras (maiúsculas e minúsculas), números e "-"
+                    // Allow letters (uppercase and lowercase), numbers and "-"
                     const value = e.target.value.replace(/[^a-zA-Z0-9-]/g, '');
                     setAppName(value);
                   }}
@@ -272,7 +272,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                 </Text>
               </Flex>
 
-              {/* Seleção de Rede */}
+              {/* Network Selection */}
               <Flex direction='column' gap='2'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                   Rede (Opcional)
@@ -311,13 +311,13 @@ export function CreateAppPage(props: CreateAppPageProps) {
                 )}
               </Flex>
 
-              {/* Variáveis de Ambiente */}
+              {/* Environment Variables */}
               <Flex direction='column' gap='3'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
                   Variáveis de Ambiente
                 </Text>
 
-                {/* Inputs para nova variável */}
+                {/* Inputs for new variable */}
                 <Flex gap='2' align='end' className={styles.envInputsContainer}>
                   <Box style={{ width: '200px' }}>
                     <Text size='2' color='gray' style={{ marginBottom: '4px' }}>
@@ -327,7 +327,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                       placeholder='NOME_VARIAVEL'
                       value={currentEnvKey}
                       onChange={(e) => {
-                        // Remove apenas espaços, permite todos os outros caracteres
+                        // Remove only spaces, allow all other characters
                         const value = e.target.value.replace(/\s/g, '');
                         setCurrentEnvKey(value);
                       }}
@@ -381,7 +381,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                   </Box>
                 </Flex>
 
-                {/* Lista de variáveis adicionadas */}
+                {/* List of added variables */}
                 {environmentVariables.length > 0 && (
                   <Box
                     style={{
@@ -452,7 +452,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                 )}
               </Flex>
 
-              {/* Mensagem de erro */}
+              {/* Error message */}
               {error && (
                 <Box
                   style={{
@@ -468,7 +468,7 @@ export function CreateAppPage(props: CreateAppPageProps) {
                 </Box>
               )}
 
-              {/* Botão de criar */}
+              {/* Create button */}
               <Flex justify='end' gap='3' className={styles.buttonsContainer}>
                 <Button
                   size='3'

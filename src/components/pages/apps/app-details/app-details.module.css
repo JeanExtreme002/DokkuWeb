@@ -739,7 +739,7 @@ button.envExportButtonOrange {
   width: 100% !important;
 }
 
-/* Layout para telas muito pequenas (<=440px): pares de botões nas linhas */
+/* Layout for very small screens (<=440px): button pairs on rows */
 @media (max-width: 440px) {
   .appControlButtons {
     display: grid !important;
@@ -753,7 +753,7 @@ button.envExportButtonOrange {
     display: contents !important;
   }
 
-  /* Linha 1: Iniciar | Parar */
+  /* Row 1: Start | Stop */
   .buttonRow:first-child button:nth-child(1) {
     grid-column: 1 / 2 !important;
     grid-row: 1 / 2 !important;
@@ -764,7 +764,7 @@ button.envExportButtonOrange {
     grid-row: 1 / 2 !important;
   }
 
-  /* Linha 2: Reiniciar | Reconstruir */
+  /* Row 2: Restart | Rebuild */
   .buttonRow:first-child button:nth-child(3) {
     grid-column: 1 / 2 !important;
     grid-row: 2 / 3 !important;
@@ -775,14 +775,14 @@ button.envExportButtonOrange {
     grid-row: 2 / 3 !important;
   }
 
-  /* Linha 3: Configurar Builder (ocupando toda a largura) */
+  /* Row 3: Configure Builder (full width) */
   .buttonRow:last-child button:nth-child(2) {
     grid-column: 1 / 3 !important;
     grid-row: 3 / 4 !important;
   }
 }
 
-/* Layout para telas médias (441px-785px): duas linhas com botões esticados */
+/* Layout for medium screens (441px-785px): two rows with stretched buttons */
 @media (min-width: 441px) and (max-width: 785px) {
   .appControlButtons {
     display: flex !important;
@@ -797,7 +797,7 @@ button.envExportButtonOrange {
     gap: 12px !important;
   }
 
-  /* Forçar todos os botões a esticarem em ambas as linhas */
+  /* Force all buttons to stretch across both rows */
   .buttonRow button {
     flex: 1 1 0 !important;
     min-width: 0 !important;
@@ -805,7 +805,7 @@ button.envExportButtonOrange {
   }
 }
 
-/* Layout para telas grandes (>785px): uma linha só com "Configurar Builder" à direita */
+/* Layout for large screens (>785px): single row with "Configure Builder" on the right */
 @media (min-width: 786px) {
   .appControlButtons {
     display: flex !important;

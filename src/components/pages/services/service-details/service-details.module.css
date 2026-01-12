@@ -150,7 +150,7 @@
   --uri-dots: '••••••••••••••••••••••••••••••••••••••••••••';
 }
 
-/* Altura menor para o campo URI em telas MD e maiores */
+/* Smaller height for the URI field on MD screens and up */
 @media (min-width: 768px) {
   .uriTextArea {
     min-height: 38px !important;
@@ -273,7 +273,7 @@
   }
 }
 
-/* Layout para telas muito pequenas (<=440px): botões em coluna */
+/* Layout for very small screens (<=440px): buttons in a column */
 @media (max-width: 440px) {
   .serviceControlButtons {
     display: flex !important;
@@ -295,7 +295,7 @@
   }
 }
 
-/* Layout para telas médias (441px-785px): botões esticados na linha */
+/* Layout for medium screens (441px-785px): stretched buttons in a row */
 @media (min-width: 441px) and (max-width: 785px) {
   .serviceControlButtons {
     display: flex !important;
@@ -310,7 +310,7 @@
     gap: 12px !important;
   }
 
-  /* Forçar todos os botões a esticarem */
+  /* Force all buttons to stretch */
   .buttonRow button {
     flex: 1 1 0 !important;
     min-width: 0 !important;
@@ -318,7 +318,7 @@
   }
 }
 
-/* Layout para telas grandes (>785px): uma linha só */
+/* Layout for large screens (>785px): single row */
 @media (min-width: 786px) {
   .serviceControlButtons {
     display: flex !important;
@@ -372,7 +372,7 @@
     padding: 16px;
   }
 
-  /* Ajustes para o header em telas MD */
+  /* Header adjustments on MD screens */
   .serviceName {
     font-size: 28px !important;
     line-height: 1.1 !important;
@@ -435,7 +435,7 @@
     font-size: 14px;
   }
 
-  /* Ajustes para o header em telas SM */
+  /* Header adjustments on SM screens */
   .serviceName {
     font-size: 24px !important;
     line-height: 1.1 !important;
@@ -454,7 +454,7 @@
     font-size: 11px !important;
   }
 
-  /* Ajustes para cards de aplicações conectadas em telas pequenas */
+  /* Adjustments for connected applications cards on small screens */
   .connectedAppCard {
     margin-bottom: 8px;
   }
@@ -478,7 +478,7 @@
     height: 18px !important;
   }
 
-  /* Ajustes para o texto de aviso da URI em telas SM */
+  /* Adjustments for the URI warning text on SM screens */
   .uriWarningText {
     font-size: 13px !important;
     line-height: 1.3 !important;
@@ -489,7 +489,7 @@
     --uri-dots: '•••••••••••••••••••••••••••••••••••••';
   }
 
-  /* Ajustes para textos da visão geral em telas SM */
+  /* Adjustments for overview texts on SM screens */
   .overviewLabel {
     font-size: 13px !important;
   }
@@ -498,7 +498,7 @@
     font-size: 13px !important;
   }
 
-  /* Ajustes para botões da URI em telas SM */
+  /* Adjustments for URI buttons on SM screens */
   .uriButtons {
     flex-direction: column !important;
   }
@@ -528,7 +528,7 @@
     font-size: 13px;
   }
 
-  /* Ajustes para o header em telas XS */
+  /* Header adjustments on XS screens */
   .serviceName {
     font-size: 20px !important;
     line-height: 1 !important;
@@ -547,7 +547,7 @@
     font-size: 10px !important;
   }
 
-  /* Ajustes específicos para telas extra pequenas */
+  /* Specific adjustments for extra small screens */
   .connectedAppCard {
     margin-bottom: 6px;
   }
@@ -571,7 +571,7 @@
     height: 16px !important;
   }
 
-  /* Ajustes para o texto de aviso da URI em telas XS */
+  /* Adjustments for the URI warning text on XS screens */
   .uriWarningText {
     font-size: 12px !important;
     line-height: 1.2 !important;
@@ -582,7 +582,7 @@
     --uri-dots: '••••••••••••••••••••••••••';
   }
 
-  /* Ajustes para textos da visão geral em telas XS */
+  /* Adjustments for overview texts on XS screens */
   .overviewLabel {
     font-size: 12px !important;
   }
@@ -591,7 +591,7 @@
     font-size: 12px !important;
   }
 
-  /* Ajustes para botões da URI em telas XS */
+  /* Adjustments for URI buttons on XS screens */
   .uriButtons {
     flex-direction: column !important;
     gap: 5px !important;

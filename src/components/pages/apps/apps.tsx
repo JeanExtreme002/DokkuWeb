@@ -107,10 +107,10 @@ export function AppsPage(props: AppsPageProps) {
           }));
 
           setAppsList(initialAppsList);
-          setHasInitialList(true); // Marca que já temos a lista inicial
+          setHasInitialList(true); // Mark that we already have the initial list
 
-          // Carrega informações dos apps
-          // A sincronização será feita automaticamente para itens que vieram do cache
+          // Load apps information
+          // Synchronization will be done automatically for items that came from cache
           await fetchAppsInfo(appNames);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -131,19 +131,19 @@ export function AppsPage(props: AppsPageProps) {
     const fetchAppsInfo = async (appNames: string[]) => {
       const cachedApps: string[] = [];
 
-      // Carrega informações de cada app de forma assíncrona
+      // Load each app's information asynchronously
       const promises = appNames.map(async (appName) => {
         try {
           const response = await api.post(`/api/apps/${appName}/info/`);
 
           if (response.status === 200 && response.data.success) {
-            // Verifica se esta requisição individual veio do cache
+            // Check if this individual request came from the cache
             const cacheStatus = response.headers['x-cache'];
             if (cacheStatus === 'HIT') {
               cachedApps.push(appName);
             }
 
-            // Atualiza o estado do app específico
+            // Update state for this specific app
             setAppsList((prevList) =>
               prevList.map((app) =>
                 app.name === appName ? { ...app, info: response.data.result, loading: false } : app
@@ -154,7 +154,7 @@ export function AppsPage(props: AppsPageProps) {
           }
         } catch (error) {
           console.error(`Error fetching info for app ${appName}:`, error);
-          // Atualiza o estado com erro para este app específico
+          // Update error state for this specific app
           setAppsList((prevList) =>
             prevList.map((app) =>
               app.name === appName
@@ -165,10 +165,10 @@ export function AppsPage(props: AppsPageProps) {
         }
       });
 
-      // Aguarda todas as requisições terminarem
+      // Wait for all requests to finish
       await Promise.allSettled(promises);
 
-      // Se houver apps que vieram do cache, atualiza eles em background
+      // If there are apps that came from cache, refresh them in the background
       if (cachedApps.length > 0) {
         fetchFreshAppsInfo(cachedApps);
       }
@@ -178,7 +178,7 @@ export function AppsPage(props: AppsPageProps) {
       try {
         setIsUpdatingFromServer(true);
 
-        // Carrega informações de cada app de forma assíncrona sem cache
+        // Load each app's information asynchronously without cache
         const promises = appNames.map(async (appName) => {
           try {
             const response = await api.post(
@@ -190,7 +190,7 @@ export function AppsPage(props: AppsPageProps) {
             );
 
             if (response.status === 200 && response.data.success) {
-              // Atualiza o estado do app específico
+              // Update state for this specific app
               setAppsList((prevList) =>
                 prevList.map((app) =>
                   app.name === appName
@@ -204,10 +204,10 @@ export function AppsPage(props: AppsPageProps) {
           }
         });
 
-        // Aguarda todas as requisições terminarem
+        // Wait for all requests to finish
         await Promise.allSettled(promises);
       } catch (error) {
-        // Ignora erros na atualização em background
+        // Ignore errors during background refresh
         console.warn('Failed to fetch fresh apps data:', error);
       } finally {
         setIsUpdatingFromServer(false);
@@ -251,7 +251,7 @@ export function AppsPage(props: AppsPageProps) {
     if (appInfo.info_origin === 'report') {
       const reportData = appInfo.data as AppReportData;
       return {
-        processType: 'web', // Padrão para report
+        processType: 'web', // Default for report
         processCount: parseInt(reportData.processes) || 0,
       };
     } else {
@@ -293,7 +293,7 @@ export function AppsPage(props: AppsPageProps) {
   };
 
   const formatAppName = (appName: string) => {
-    // Remove prefixos numéricos como "1-" se existirem
+    // Remove numeric prefixes like "1-" if present
     return appName.replace(/^\d+-/, '');
   };
 
@@ -342,7 +342,7 @@ export function AppsPage(props: AppsPageProps) {
         }
       >
         <Flex className={styles.appCardContent} style={{ alignItems: 'flex-start' }}>
-          {/* Ícone do app */}
+          {/* App icon */}
           <Avatar
             size='6'
             fallback={
@@ -540,7 +540,7 @@ export function AppsPage(props: AppsPageProps) {
             }}
           />
 
-          {/* Informações principais */}
+          {/* Main information */}
           <Flex direction='column' className={styles.appInfo}>
             <Flex align='center' gap='2'>
               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
@@ -595,7 +595,7 @@ export function AppsPage(props: AppsPageProps) {
             </Flex>
           </Flex>
 
-          {/* Data e botão skeleton */}
+          {/* Date and button skeleton */}
           <Flex direction='column' className={styles.appActions}>
             <div
               className={styles.skeletonElement}
@@ -632,7 +632,7 @@ export function AppsPage(props: AppsPageProps) {
     } else if (proxyPortEnv) {
       return proxyPortEnv.split('=')[1];
     }
-    return null; // Retorna null se não encontrar porta
+    return null; // Return null if no port is found
   };
 
   return (
@@ -686,10 +686,10 @@ export function AppsPage(props: AppsPageProps) {
             </Button>
           </Flex>
 
-          {/* Separador */}
+          {/* Separator */}
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Indicador de atualização do servidor */}
+          {/* Server update indicator */}
           {isUpdatingFromServer && (
             <Flex align='center' gap='3'>
               <div
@@ -708,7 +708,7 @@ export function AppsPage(props: AppsPageProps) {
             </Flex>
           )}
 
-          {/* Estado de carregamento inicial - só mostra se não temos a lista ainda */}
+          {/* Initial loading state — only shows if we don't have the list yet */}
           {!hasInitialList && loading && (
             <LoadingSpinner
               title='Carregando Aplicativos'
@@ -720,7 +720,7 @@ export function AppsPage(props: AppsPageProps) {
             />
           )}
 
-          {/* Estado de erro */}
+          {/* Error state */}
           {error && (
             <Card
               style={{
@@ -740,7 +740,7 @@ export function AppsPage(props: AppsPageProps) {
             </Card>
           )}
 
-          {/* Lista de aplicativos - mostra assim que temos a lista inicial */}
+          {/* Applications list — shows as soon as we have the initial list */}
           {hasInitialList && !error && (
             <>
               {appsList.length === 0 ? (
@@ -759,7 +759,7 @@ export function AppsPage(props: AppsPageProps) {
               ) : (
                 <Flex direction='column' gap='4'>
                   {appsList.map((appItem) => {
-                    // Se ainda está carregando ou houve erro, mostra skeleton
+                    // If still loading or errored, show skeleton
                     if (appItem.loading || appItem.error || !appItem.info) {
                       return <AppCardSkeleton key={appItem.name} appName={appItem.name} />;
                     }
@@ -805,7 +805,7 @@ export function AppsPage(props: AppsPageProps) {
                           className={styles.appCardContent}
                           style={{ alignItems: 'flex-start' }}
                         >
-                          {/* Ícone do app */}
+                          {/* App icon */}
                           <Avatar
                             size='6'
                             fallback={
@@ -1038,7 +1038,7 @@ export function AppsPage(props: AppsPageProps) {
                             }}
                           />
 
-                          {/* Informações principais */}
+                          {/* Main information */}
                           <Flex direction='column' className={styles.appInfo}>
                             <Flex align='center' gap='2'>
                               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
@@ -1054,7 +1054,7 @@ export function AppsPage(props: AppsPageProps) {
                               )}
                             </Flex>
 
-                            {/* Status com círculo colorido */}
+                            {/* Status with colored circle */}
                             <Flex align='center' gap='2'>
                               <Box
                                 style={{
@@ -1068,7 +1068,7 @@ export function AppsPage(props: AppsPageProps) {
                                 {statusInfo.text}
                               </Text>
 
-                              {/* Uptime - só mostra para apps inspecionados e ativos */}
+                              {/* Uptime — only shows for inspected and active apps */}
                               {containerInfo?.State.StartedAt && statusInfo.text === 'Ativo' && (
                                 <Text size='2' style={{ color: 'var(--gray-9)' }}>
                                   • {getUptime(containerInfo.State.StartedAt)}
@@ -1076,7 +1076,7 @@ export function AppsPage(props: AppsPageProps) {
                               )}
                             </Flex>
 
-                            {/* Informações técnicas - só para apps inspecionados */}
+                            {/* Technical information — only for inspected apps */}
                             {containerInfo?.NetworkSettings?.Networks?.bridge?.IPAddress && (
                               <Flex align='center' gap='2'>
                                 <Text
@@ -1117,7 +1117,7 @@ export function AppsPage(props: AppsPageProps) {
                             )}
                           </Flex>
 
-                          {/* Data de inicialização e botão */}
+                          {/* Startup date and button */}
                           <Flex direction='column' className={styles.appActions}>
                             <Text
                               size='2'

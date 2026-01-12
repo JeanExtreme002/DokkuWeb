@@ -92,10 +92,10 @@ export function ServicesPage(props: ServicesPageProps) {
           });
 
           setServicesList(initialServicesList);
-          setHasInitialList(true); // Marca que já temos a lista inicial
+          setHasInitialList(true); // Mark that we already have the initial list
 
-          // Carrega informações dos serviços
-          // A sincronização será feita automaticamente para itens que vieram do cache
+          // Load services information
+          // Synchronization will be done automatically for items that came from cache
           await fetchServicesInfo(initialServicesList);
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -116,7 +116,7 @@ export function ServicesPage(props: ServicesPageProps) {
     const fetchServicesInfo = async (servicesList: ServiceListItem[]) => {
       const cachedServices: ServiceListItem[] = [];
 
-      // Carrega informações de cada serviço de forma assíncrona
+      // Load each service's information asynchronously
       const promises = servicesList.map(async (serviceItem) => {
         try {
           const response = await api.post(
@@ -124,13 +124,13 @@ export function ServicesPage(props: ServicesPageProps) {
           );
 
           if (response.status === 200 && response.data.success) {
-            // Verifica se esta requisição individual veio do cache
+            // Check if this individual request came from the cache
             const cacheStatus = response.headers['x-cache'];
             if (cacheStatus === 'HIT') {
               cachedServices.push(serviceItem);
             }
 
-            // Atualiza o estado do serviço específico
+            // Update state for this specific service
             setServicesList((prevList) =>
               prevList.map((service) =>
                 service.pluginType === serviceItem.pluginType &&
@@ -151,7 +151,7 @@ export function ServicesPage(props: ServicesPageProps) {
             `Error fetching info for service ${serviceItem.pluginType}/${serviceItem.serviceName}:`,
             error
           );
-          // Atualiza o estado com erro para este serviço específico
+          // Update error state for this specific service
           setServicesList((prevList) =>
             prevList.map((service) =>
               service.pluginType === serviceItem.pluginType &&
@@ -163,10 +163,10 @@ export function ServicesPage(props: ServicesPageProps) {
         }
       });
 
-      // Aguarda todas as requisições terminarem
+      // Wait for all requests to finish
       await Promise.allSettled(promises);
 
-      // Se houver serviços que vieram do cache, atualiza eles em background
+      // If there are services that came from cache, refresh them in the background
       if (cachedServices.length > 0) {
         fetchFreshServicesInfo(cachedServices);
       }
@@ -176,7 +176,7 @@ export function ServicesPage(props: ServicesPageProps) {
       try {
         setIsUpdatingFromServer(true);
 
-        // Carrega informações de cada serviço de forma assíncrona sem cache
+        // Load each service's information asynchronously without cache
         const promises = servicesList.map(async (serviceItem) => {
           try {
             const response = await api.post(
@@ -188,7 +188,7 @@ export function ServicesPage(props: ServicesPageProps) {
             );
 
             if (response.status === 200 && response.data.success) {
-              // Atualiza o estado do serviço específico
+              // Update state for this specific service
               setServicesList((prevList) =>
                 prevList.map((service) =>
                   service.pluginType === serviceItem.pluginType &&
@@ -213,10 +213,10 @@ export function ServicesPage(props: ServicesPageProps) {
           }
         });
 
-        // Aguarda todas as requisições terminarem
+        // Wait for all requests to finish
         await Promise.allSettled(promises);
       } catch (error) {
-        // Ignora erros na atualização em background
+        // Ignore errors during background refresh
         console.warn('Failed to fetch fresh services data:', error);
       } finally {
         setIsUpdatingFromServer(false);
@@ -242,13 +242,13 @@ export function ServicesPage(props: ServicesPageProps) {
   };
 
   const formatServiceName = (serviceName: string) => {
-    // Remove prefixos numéricos como "1_" se existirem
+    // Remove numeric prefixes like "1_" if present
     return serviceName.replace(/^\d+_/, '');
   };
 
   const formatVersion = (version: string) => {
     if (!version) return '';
-    // Extrai apenas a versão do formato "mysql:8.1.0"
+    // Extract only the version from the format "mysql:8.1.0"
     const versionMatch = version.match(/:(.+)$/);
     return versionMatch ? versionMatch[1] : version;
   };
@@ -268,7 +268,7 @@ export function ServicesPage(props: ServicesPageProps) {
     return typeMap[pluginName] || pluginName.charAt(0).toUpperCase() + pluginName.slice(1);
   };
 
-  // Componente skeleton para cards de serviços
+  // Skeleton component for service cards
   const ServiceCardSkeleton = ({
     pluginType,
     serviceName,
@@ -311,7 +311,7 @@ export function ServicesPage(props: ServicesPageProps) {
         }
       >
         <Flex className={styles.serviceCardContent}>
-          {/* Header com imagem e info principal */}
+          {/* Header with image and main info */}
           <Flex className={styles.serviceHeader}>
             <Image
               src={getServiceImage(pluginType)}
@@ -324,7 +324,7 @@ export function ServicesPage(props: ServicesPageProps) {
               }}
             />
 
-            {/* Informações principais */}
+            {/* Main information */}
             <Flex direction='column' className={styles.serviceInfo}>
               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
                 {displayName}
@@ -360,7 +360,7 @@ export function ServicesPage(props: ServicesPageProps) {
             </Flex>
           </Flex>
 
-          {/* Informações técnicas skeleton */}
+          {/* Technical information skeleton */}
           <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
             <Flex align='center' gap='2'>
               <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
@@ -377,7 +377,7 @@ export function ServicesPage(props: ServicesPageProps) {
             </Flex>
           </Flex>
 
-          {/* Botão de ação */}
+          {/* Action button */}
           <Flex className={styles.serviceActions}>
             <Button
               size='3'
@@ -446,10 +446,10 @@ export function ServicesPage(props: ServicesPageProps) {
             </Button>
           </Flex>
 
-          {/* Separador */}
+          {/* Separator */}
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Indicador de atualização do servidor */}
+          {/* Server update indicator */}
           {isUpdatingFromServer && (
             <Flex align='center' gap='3'>
               <div
@@ -468,7 +468,7 @@ export function ServicesPage(props: ServicesPageProps) {
             </Flex>
           )}
 
-          {/* Estado de carregamento inicial - só mostra se não temos a lista ainda */}
+          {/* Initial loading state — only shows if we don't have the list yet */}
           {!hasInitialList && loading && (
             <LoadingSpinner
               title='Carregando Serviços'
@@ -480,7 +480,7 @@ export function ServicesPage(props: ServicesPageProps) {
             />
           )}
 
-          {/* Estado de erro */}
+          {/* Error state */}
           {error && (
             <Card
               style={{
@@ -500,7 +500,7 @@ export function ServicesPage(props: ServicesPageProps) {
             </Card>
           )}
 
-          {/* Lista de serviços - mostra assim que temos a lista inicial */}
+          {/* Services list — shows as soon as we have the initial list */}
           {hasInitialList && !error && (
             <>
               {servicesList.length === 0 ? (
@@ -519,7 +519,7 @@ export function ServicesPage(props: ServicesPageProps) {
               ) : (
                 <div className={styles.servicesGrid}>
                   {servicesList.map((serviceItem) => {
-                    // Se ainda está carregando ou houve erro, mostra skeleton
+                    // If still loading or errored, show skeleton
                     if (serviceItem.loading || serviceItem.error || !serviceItem.serviceData) {
                       return (
                         <ServiceCardSkeleton
@@ -568,7 +568,7 @@ export function ServicesPage(props: ServicesPageProps) {
                         }
                       >
                         <Flex className={styles.serviceCardContent}>
-                          {/* Header com imagem e info principal */}
+                          {/* Header with image and main info */}
                           <Flex className={styles.serviceHeader}>
                             <Image
                               src={getServiceImage(serviceItem.pluginType)}
@@ -577,12 +577,12 @@ export function ServicesPage(props: ServicesPageProps) {
                               height={48}
                               className={styles.serviceImage}
                               onError={(e) => {
-                                // Fallback para um ícone genérico de banco de dados se a imagem falhar
+                                // Fallback to a generic database icon if the image fails
                                 e.currentTarget.src = '/images/database-logos/generic.svg';
                               }}
                             />
 
-                            {/* Informações principais */}
+                            {/* Main information */}
                             <Flex direction='column' className={styles.serviceInfo}>
                               <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
                                 {displayName}
@@ -593,7 +593,7 @@ export function ServicesPage(props: ServicesPageProps) {
                                   `v${formatVersion(serviceItem.serviceData.version)}`}
                               </Text>
 
-                              {/* Status com círculo colorido */}
+                              {/* Status with colored circle */}
                               <Flex align='center' gap='2' style={{ marginTop: '4px' }}>
                                 <Box
                                   style={{
@@ -610,7 +610,7 @@ export function ServicesPage(props: ServicesPageProps) {
                             </Flex>
                           </Flex>
 
-                          {/* Informações técnicas */}
+                          {/* Technical information */}
                           <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
                             <Flex align='center' gap='2'>
                               <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
@@ -641,7 +641,7 @@ export function ServicesPage(props: ServicesPageProps) {
                             )}
                           </Flex>
 
-                          {/* Botão de ação */}
+                          {/* Action button */}
                           <Flex className={styles.serviceActions}>
                             <Button
                               size='3'

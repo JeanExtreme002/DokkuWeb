@@ -65,7 +65,7 @@ const googleButtonStyle: React.CSSProperties = { width: '100%', maxWidth: '400px
 
 function buildGoogleLabel(isSmallScreen: boolean, domains: string[]) {
   if (domains.length == 1) {
-    return isSmallScreen ? `Entrar com ${domains[0]}` : `Entre com seu email ${domains[0]}`;
+    return isSmallScreen ? `Entrar com @${domains[0]}` : `Entre com seu email @${domains[0]}`;
   }
   return 'Entre com seu email';
 }
