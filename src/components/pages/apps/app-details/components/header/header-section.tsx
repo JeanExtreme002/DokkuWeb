@@ -3,6 +3,8 @@ import { Avatar, Box, Button, DropdownMenu, Flex, Heading, Text } from '@radix-u
 import type { Session } from 'next-auth';
 import React, { useMemo } from 'react';
 
+import { LinkIcon } from '@/components/shared';
+
 import styles from '../../app-details.module.css';
 import type { AppContainer, AppInfo } from '../../types';
 
@@ -88,19 +90,7 @@ export function HeaderSection(props: HeaderSectionProps) {
                 } as React.CSSProperties
               }
             >
-              <svg
-                width='16'
-                height='16'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              >
-                <path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' />
-                <path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' />
-              </svg>
+              <LinkIcon />
               Visitar Website
             </Button>
           )}
@@ -148,19 +138,7 @@ export function HeaderSection(props: HeaderSectionProps) {
               } as React.CSSProperties
             }
           >
-            <svg
-              width='16'
-              height='16'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            >
-              <path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' />
-              <path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' />
-            </svg>
+            <LinkIcon />
             Visitar Website
           </Button>
         )}

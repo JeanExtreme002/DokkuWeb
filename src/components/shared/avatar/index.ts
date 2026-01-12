@@ -1,0 +1,1 @@
+export { AppAvatar } from './app';

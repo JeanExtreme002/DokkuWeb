@@ -1,9 +1,10 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { AppAvatar } from '@/components/shared';
+import { formatAppName } from '@/lib';
+
 import styles from '../../app-list.module.css';
-import { formatAppName } from '../../utils';
-import { AppAvatar } from '../app-avatar';
 
 export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobile: boolean }) {
   const displayName = formatAppName(appName);
@@ -37,7 +38,7 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
     >
       <Flex className={styles.appCardContent} style={{ alignItems: 'flex-start' }}>
         {/* App icon */}
-        <AppAvatar />
+        <AppAvatar size='6' />
 
         {/* Main information */}
         <Flex direction='column' className={styles.appInfo}>

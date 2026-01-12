@@ -1,29 +1,6 @@
+import { processAnsiCodes } from '@/lib';
+
 import type { AppContainer, AppInfo } from './types';
-
-export const formatDatabaseType = (pluginName: string) => {
-  const typeMap: Record<string, string> = {
-    postgres: 'PostgreSQL',
-    mysql: 'MySQL',
-    mongodb: 'MongoDB',
-    redis: 'Redis',
-    mariadb: 'MariaDB',
-    couchdb: 'CouchDB',
-    cassandra: 'Cassandra',
-    elasticsearch: 'Elasticsearch',
-    influxdb: 'InfluxDB',
-  };
-  return typeMap[pluginName] || pluginName.charAt(0).toUpperCase() + pluginName.slice(1);
-};
-
-export const formatServiceName = (serviceName: string) => {
-  // Remove numeric prefixes like "1_" if present
-  return serviceName.replace(/^\d+_/, '');
-};
-
-// ANSI cleanup for terminal outputs
-export const processAnsiCodes = (text: string) => {
-  return text.replace(/\u001b\[[0-9;]*m/g, '');
-};
 
 // Directory listing parsing
 export type DirEntry = {
@@ -39,7 +16,7 @@ export type DirEntry = {
 
 export const parseLsOutput = (text: string): DirEntry[] => {
   const clean = processAnsiCodes(text);
-  const lines = clean.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  const lines = clean.split(/\r?\n/).filter((l: string) => l.trim().length > 0);
   const out: DirEntry[] = [];
   for (const line of lines) {
     if (/^total\s+\d+/.test(line)) continue;
@@ -202,33 +179,12 @@ export const sanitizeEnvKeys = (vars: Record<string, string>): Record<string, st
   return out;
 };
 
-// Download helper
-export const downloadFile = (filename: string, content: string, mimeType: string) => {
-  try {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-  }
-};
-
 export const getWorkingDir = (appInfo: AppInfo | null): string => {
   if (appInfo && appInfo.info_origin === 'inspect') {
     const containers = appInfo.data as AppContainer[];
     return containers?.[0]?.Config?.WorkingDir || '';
   }
   return '';
-};
-
-export const formatAppName = (name: string) => {
-  return name.replace(/^\d+-/, '');
 };
 
 export const getPrompt = (appInfo: AppInfo | null, appName: string): string => {

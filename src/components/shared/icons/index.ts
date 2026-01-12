@@ -1,11 +1,18 @@
-export {
-  AppIcon,
-  ChevronDownIcon,
-  DashboardIcon,
-  DotIcon,
-  EyeIcon,
-  LinkIcon,
-  NetworkIcon,
-  ServiceIcon,
-  TrashIcon,
-} from './icons';
+export * from './app-icon';
+export * from './bind-icon';
+export * from './chevron-down-icon';
+export * from './console-icon';
+export * from './dashboard-icon';
+export * from './directory-icon';
+export * from './dot-icon';
+export * from './exclamation-icon';
+export * from './eye-icon';
+export * from './left-arrow-icon';
+export * from './link-icon';
+export * from './network-icon';
+export * from './pad-lock-icon';
+export * from './parent-directory-icon';
+export * from './service-icon';
+export * from './stop-icon';
+export * from './takeover-icon';
+export * from './trash-icon';

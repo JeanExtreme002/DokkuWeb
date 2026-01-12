@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Image as CustomImage } from '@/components';
 import { LoadingSpinner, NavBar } from '@/components/shared';
-import { api, config as websiteConfig } from '@/lib';
+import { api, config as websiteConfig, downloadFile, formatAppName, processAnsiCodes } from '@/lib';
 
 import styles from './app-details.module.css';
 import {
@@ -33,8 +33,6 @@ import {
 } from './components';
 import type { DirEntry } from './helpers';
 import {
-  downloadFile,
-  formatAppName,
   formatSize,
   getIsDeployed,
   getIsRunning,
@@ -47,7 +45,6 @@ import {
   parseLsOutput,
   parseYmlSimple,
   pathJoin,
-  processAnsiCodes,
   sanitizeEnvKeys,
 } from './helpers';
 import type { AppContainer, AppInfo, BuilderData, DeployInfoData } from './types';

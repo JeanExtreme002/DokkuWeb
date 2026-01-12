@@ -12,6 +12,8 @@ import {
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
 
+import { PadLockIcon } from '@/components/shared';
+
 import styles from '../../settings.module.css';
 
 interface ProfileCardProps {
@@ -62,31 +64,7 @@ export function ProfileCard({
                 aria-label='Acessar o painel de administrador'
                 title='Acessar o painel de administrador'
               >
-                <svg
-                  width='14'
-                  height='14'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <rect
-                    x='3'
-                    y='10'
-                    width='18'
-                    height='11'
-                    rx='2'
-                    ry='2'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    fill='none'
-                  />
-                  <path
-                    d='M7 10V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V10'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    fill='none'
-                  />
-                </svg>
+                <PadLockIcon />
                 <span className={styles.adminButtonLabel}>Painel do Admin</span>
               </Button>
             </Tooltip>
@@ -166,43 +144,7 @@ export function ProfileCard({
               }}
               title={showToken ? 'Ocultar token' : 'Mostrar token'}
             >
-              <svg
-                width='16'
-                height='16'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                {showToken ? (
-                  <path
-                    d='M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8M6 10H18M6 10V18C6 19.1046 6.89543 20 8 20H16C17.1046 20 18 19.1046 18 18V10'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                  />
-                ) : (
-                  <>
-                    <rect
-                      x='3'
-                      y='11'
-                      width='18'
-                      height='11'
-                      rx='2'
-                      ry='2'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      fill='none'
-                    />
-                    <path
-                      d='M7 11V7C7 4.79086 8.79086 3 11 3H13C15.2091 3 17 4.79086 17 7V11'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      fill='none'
-                    />
-                  </>
-                )}
-              </svg>
+              <PadLockIcon isUnlocked={showToken} />
             </Button>
             <Button
               size='2'

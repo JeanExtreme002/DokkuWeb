@@ -26,7 +26,7 @@ export default function Document() {
                   document.documentElement.style.setProperty('--mui-palette-divider', '#e5e7eb');
                 }
               } catch (e) {
-                // Em caso de erro, aplicar tema light
+                // In case of error, apply light theme
                 document.documentElement.setAttribute('data-theme', 'light');
               }
             `,

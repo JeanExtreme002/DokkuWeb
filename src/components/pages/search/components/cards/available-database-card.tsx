@@ -1,9 +1,8 @@
 import { Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { getDatabaseDescription, getServiceImage } from '@/lib';
+import { formatDatabaseType, getDatabaseDescription, getServiceImage } from '@/lib';
 
 import searchStyles from '../../search.module.css';
-import { formatDatabaseType } from '../../utils';
 import { ServiceLogo } from '../shared';
 
 interface AvailableDatabaseCardProps {

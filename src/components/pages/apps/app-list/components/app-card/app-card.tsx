@@ -1,10 +1,12 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { AppAvatar } from '@/components/shared';
+import { formatAppName } from '@/lib';
+
 import styles from '../../app-list.module.css';
 import { AppListItem } from '../../types';
 import {
-  formatAppName,
   formatStartedAt,
   getContainerInfo,
   getPortInfo,
@@ -12,7 +14,6 @@ import {
   getStatusInfo,
   getUptime,
 } from '../../utils';
-import { AppAvatar } from '../app-avatar';
 
 export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile: boolean }) {
   const statusInfo = appItem.info ? getStatusInfo(appItem.info) : null;
@@ -52,7 +53,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
     >
       <Flex className={styles.appCardContent} style={{ alignItems: 'flex-start' }}>
         {/* App icon */}
-        <AppAvatar />
+        <AppAvatar size='6' />
 
         {/* Main information */}
         <Flex direction='column' className={styles.appInfo}>

@@ -1,7 +1,12 @@
 import { Flex, Text } from '@radix-ui/themes';
 
-export function ServerUpdateIndicator({ visible }: { visible: boolean }) {
+export interface ServerUpdateIndicatorProps {
+  visible: boolean;
+}
+
+export function ServerUpdateIndicator({ visible }: ServerUpdateIndicatorProps) {
   if (!visible) return null;
+
   return (
     <Flex align='center' gap='3'>
       <div

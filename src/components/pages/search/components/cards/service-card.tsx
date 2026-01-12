@@ -1,11 +1,10 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { getServiceImage } from '@/lib';
+import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import searchStyles from '../../search.module.css';
 import type { ServiceData } from '../../types';
-import { formatDatabaseType, formatServiceName } from '../../utils';
 import { ServiceLogo } from '../shared';
 
 interface ServiceCardProps {

@@ -1,11 +1,25 @@
 import { PlusIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
-import styles from '../../app-list.module.css';
+export interface ListHeaderProps {
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+  onCreate: () => void;
+  containerClassName?: string;
+  buttonClassName?: string;
+}
 
-export function HeaderSection() {
+export function ListHeader({
+  title,
+  subtitle,
+  buttonLabel,
+  onCreate,
+  containerClassName,
+  buttonClassName,
+}: ListHeaderProps) {
   return (
-    <Flex className={styles.headerSection}>
+    <Flex className={containerClassName}>
       <Box>
         <Heading
           size='7'
@@ -15,17 +29,17 @@ export function HeaderSection() {
             marginBottom: '4px',
           }}
         >
-          Meus Aplicativos
+          {title}
         </Heading>
         <Text size='3' color='gray'>
-          Gerencie seus aplicativos Dokku implantados
+          {subtitle}
         </Text>
       </Box>
 
       <Button
         size='3'
-        onClick={() => (window.location.href = '/apps/create')}
-        className={styles.createButton}
+        onClick={onCreate}
+        className={buttonClassName}
         style={{
           background: 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
           border: 'none',
@@ -47,7 +61,7 @@ export function HeaderSection() {
         }}
       >
         <PlusIcon />
-        Nova Aplicação
+        {buttonLabel}
       </Button>
     </Flex>
   );

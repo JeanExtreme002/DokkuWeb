@@ -1,15 +1,13 @@
 import { Box, Card, Flex, Text } from '@radix-ui/themes';
-import React from 'react';
 
 import { DotIcon } from '@/components/shared/icons';
 
-interface ErrorCardProps {
-  error: string | null;
+export interface ErrorCardProps {
+  error?: string | null;
 }
 
 export function ErrorCard({ error }: ErrorCardProps) {
   if (!error) return null;
-
   return (
     <Card
       style={{

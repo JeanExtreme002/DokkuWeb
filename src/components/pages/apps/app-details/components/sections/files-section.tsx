@@ -2,6 +2,13 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import {
+  DirectoryIcon,
+  ExclamationIcon,
+  LeftArrowIcon,
+  ParentDirectoryIcon,
+} from '@/components/shared';
+
 import styles from '../../app-details.module.css';
 import type { DirEntry } from '../../helpers';
 
@@ -61,18 +68,7 @@ export function FilesSection(props: FilesSectionProps) {
               onClick={props.onNavigateParent}
               disabled={props.dirLoading || props.isAtRoot()}
             >
-              <svg
-                width='16'
-                height='16'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              >
-                <path d='M19 12 H5 M12 19 L5 12 L12 5' />
-              </svg>
+              <LeftArrowIcon />
             </Button>
             {/* Clickable path segments (inline) */}
             <Flex align='center' gap='2' style={{ flexWrap: 'wrap' }}>
@@ -128,21 +124,7 @@ export function FilesSection(props: FilesSectionProps) {
                 padding: '8px',
               }}
             >
-              <svg
-                width='16'
-                height='16'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                style={{ color: 'var(--red-10)' }}
-              >
-                <circle cx='12' cy='12' r='10' />
-                <line x1='12' y1='8' x2='12' y2='12' />
-                <circle cx='12' cy='16' r='1' />
-              </svg>
+              <ExclamationIcon />
               <Text size='3' style={{ marginLeft: '12px', color: 'var(--red-11)' }}>
                 {props.dirError}
               </Text>
@@ -173,47 +155,7 @@ export function FilesSection(props: FilesSectionProps) {
                     >
                       <Flex align='center' gap='3' style={{ overflow: 'hidden' }}>
                         {/* Icon */}
-                        {entry.name === '..' ? (
-                          <svg
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          >
-                            <path d='M19 14l-7-7-7 7' />
-                          </svg>
-                        ) : entry.type === 'dir' ? (
-                          <svg
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          >
-                            <path d='M3 7h5l2 2h11v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z' />
-                          </svg>
-                        ) : (
-                          <svg
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          >
-                            <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' />
-                            <path d='M14 2v6h6' />
-                          </svg>
-                        )}
+                        {entry.name === '..' ? <ParentDirectoryIcon /> : <DirectoryIcon />}
                         {/* Name */}
                         {entry.type === 'dir' || entry.name === '..' ? (
                           <Button

@@ -1,11 +1,6 @@
-import { formatDate } from '@/lib';
+import { extractPortFromEnv, formatDate } from '@/lib';
 
 import { AppContainer, AppInfo, AppReportData } from './types';
-
-export const formatAppName = (appName: string) => {
-  // Remove numeric prefixes like "1-" if present
-  return appName.replace(/^\d+-/, '');
-};
 
 export const formatStartedAt = (startedAt: string) => {
   try {
@@ -99,13 +94,5 @@ export const getContainerInfo = (appInfo: AppInfo) => {
 export const getPortInfo = (container: AppContainer | null) => {
   if (!container) return null;
   const envVars = container.Config.Env || [];
-  const portEnv = envVars.find((env) => env.startsWith('PORT='));
-  const proxyPortEnv = envVars.find((env) => env.startsWith('DOKKU_PROXY_PORT='));
-
-  if (portEnv) {
-    return portEnv.split('=')[1];
-  } else if (proxyPortEnv) {
-    return proxyPortEnv.split('=')[1];
-  }
-  return null;
+  return extractPortFromEnv(envVars);
 };

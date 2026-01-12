@@ -1,15 +1,20 @@
 import { Avatar } from '@radix-ui/themes';
 
-import styles from '../../app-list.module.css';
+interface AppAvatarProps {
+  size: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+  cpuSize?: string;
+}
 
-export function AppAvatar() {
+export function AppAvatar(props: AppAvatarProps) {
+  const cpuSize = props.cpuSize || '48';
+
   return (
     <Avatar
-      size='6'
+      size={props.size}
       fallback={
         <svg
-          width='48'
-          height='48'
+          width={cpuSize}
+          height={cpuSize}
           viewBox='0 0 24 24'
           fill='none'
           xmlns='http://www.w3.org/2000/svg'
@@ -61,7 +66,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='8' cy='4.5' r='0.4' fill='#ba68c8' />
           <line
@@ -72,7 +76,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='12' cy='4.5' r='0.4' fill='#ba68c8' />
           <line
@@ -83,7 +86,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='16' cy='4.5' r='0.4' fill='#ba68c8' />
           {/* CPU Pins - Bottom */}
@@ -95,7 +97,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='8' cy='19.5' r='0.4' fill='#ba68c8' />
           <line
@@ -106,7 +107,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='12' cy='19.5' r='0.4' fill='#ba68c8' />
           <line
@@ -117,7 +117,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='16' cy='19.5' r='0.4' fill='#ba68c8' />
           {/* CPU Pins - Left */}
@@ -129,7 +128,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='4.5' cy='8' r='0.4' fill='#ba68c8' />
           <line
@@ -140,7 +138,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='4.5' cy='12' r='0.4' fill='#ba68c8' />
           <line
@@ -151,7 +148,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='4.5' cy='16' r='0.4' fill='#ba68c8' />
           {/* CPU Pins - Right */}
@@ -163,7 +159,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='19.5' cy='8' r='0.4' fill='#ba68c8' />
           <line
@@ -174,7 +169,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='19.5' cy='12' r='0.4' fill='#ba68c8' />
           <line
@@ -185,7 +179,6 @@ export function AppAvatar() {
             stroke='#ce93d8'
             strokeWidth='2'
             strokeLinecap='round'
-            className={styles.energyLine}
           />
           <circle cx='19.5' cy='16' r='0.4' fill='#ba68c8' />
         </svg>

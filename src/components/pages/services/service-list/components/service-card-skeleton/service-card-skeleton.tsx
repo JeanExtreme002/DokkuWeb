@@ -3,10 +3,9 @@ import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
-import { getServiceImage } from '@/lib';
+import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import styles from '../../service-list.module.css';
-import { formatDatabaseType, formatServiceName } from '../../utils';
 
 interface ServiceCardSkeletonProps {
   pluginType: string;

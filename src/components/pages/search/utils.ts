@@ -1,22 +1,6 @@
+import { extractPortFromEnv } from '@/lib';
+
 import type { AppContainer, AppReportData, SearchAppItem } from './types';
-
-export const formatAppName = (name: string) => name.replace(/^\d+-/, '');
-export const formatServiceName = (name: string) => name.replace(/^\d+_/, '');
-
-export const formatDatabaseType = (pluginName: string) => {
-  const map: Record<string, string> = {
-    postgres: 'PostgreSQL',
-    mysql: 'MySQL',
-    mongodb: 'MongoDB',
-    redis: 'Redis',
-    mariadb: 'MariaDB',
-    couchdb: 'CouchDB',
-    cassandra: 'Cassandra',
-    elasticsearch: 'Elasticsearch',
-    influxdb: 'InfluxDB',
-  };
-  return map[pluginName] || pluginName.charAt(0).toUpperCase() + pluginName.slice(1);
-};
 
 export const getAppStatusInfo = (app: SearchAppItem) => {
   if (app.info_origin === 'report') {
@@ -62,9 +46,5 @@ export const getAppPort = (app: SearchAppItem) => {
   const arr = app.data as AppContainer[];
   const first = arr[0];
   const env = first?.Config?.Env || [];
-  const portEnv = env.find((e) => e.startsWith('PORT='));
-  const proxyPortEnv = env.find((e) => e.startsWith('DOKKU_PROXY_PORT='));
-  if (portEnv) return portEnv.split('=')[1];
-  if (proxyPortEnv) return proxyPortEnv.split('=')[1];
-  return null;
+  return extractPortFromEnv(env);
 };

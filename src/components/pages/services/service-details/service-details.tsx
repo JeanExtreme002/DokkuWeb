@@ -6,7 +6,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Image as CustomImage, NavBar } from '@/components';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
-import { api, getServiceImage } from '@/lib';
+import {
+  api,
+  copyToClipboard,
+  downloadTextFile,
+  formatDatabaseType,
+  formatServiceName,
+  getServiceImage,
+  processAnsiCodes,
+} from '@/lib';
 
 import {
   ConnectedAppsSection,
@@ -21,15 +29,7 @@ import {
   StopConfirmModal,
   UnlinkAppModal,
 } from './components';
-import {
-  copyToClipboard,
-  downloadTextFile,
-  formatDatabaseType,
-  formatServiceName,
-  formatVersion,
-  getStatusInfo,
-  processAnsiCodes,
-} from './helpers';
+import { formatVersion, getStatusInfo } from './helpers';
 import styles from './service-details.module.css';
 import { ServiceData } from './types';
 

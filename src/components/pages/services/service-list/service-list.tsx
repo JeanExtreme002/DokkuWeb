@@ -3,16 +3,11 @@ import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
+import { ErrorCard, ListHeader, ServerUpdateIndicator } from '@/components/shared';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { api } from '@/lib';
 
-import {
-  EmptyCard,
-  ErrorCard,
-  HeaderSection,
-  ServerUpdateIndicator,
-  ServicesGrid,
-} from './components';
+import { EmptyCard, ServicesGrid } from './components';
 import styles from './service-list.module.css';
 import { ServiceListItem } from './types';
 
@@ -213,7 +208,14 @@ export function ServiceListPage(props: ServiceListPageProps) {
 
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
-          <HeaderSection onCreate={() => (window.location.href = './create')} />
+          <ListHeader
+            title='Meus Serviços'
+            subtitle='Gerencie seus serviços de banco de dados no Dokku'
+            buttonLabel='Novo Serviço'
+            onCreate={() => (window.location.href = './create')}
+            containerClassName={styles.headerSection}
+            buttonClassName={styles.createButton}
+          />
 
           {/* Separator */}
           <Separator size='4' style={{ margin: '10px 0' }} />

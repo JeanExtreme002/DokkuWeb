@@ -3,11 +3,12 @@ import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
+import { ErrorCard, ListHeader, ServerUpdateIndicator } from '@/components/shared';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { api } from '@/lib';
 
 import styles from './app-list.module.css';
-import { AppsList, ErrorCard, HeaderSection, ServerUpdateIndicator } from './components';
+import { AppsList } from './components';
 import { AppListItem } from './types';
 
 export interface AppListPageProps {
@@ -166,7 +167,14 @@ export function AppListPage(props: AppListPageProps) {
 
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
-          <HeaderSection />
+          <ListHeader
+            title='Meus Aplicativos'
+            subtitle='Gerencie seus aplicativos Dokku implantados'
+            buttonLabel='Nova Aplicação'
+            onCreate={() => (window.location.href = '/apps/create')}
+            containerClassName={styles.headerSection}
+            buttonClassName={styles.createButton}
+          />
 
           <Separator size='4' style={{ margin: '10px 0' }} />
 

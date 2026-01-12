@@ -3,9 +3,9 @@ import { Box, Heading, Text } from '@radix-ui/themes';
 
 import {
   AppIcon,
+  BindIcon,
   ChevronDownIcon,
   EyeIcon,
-  LinkIcon,
   NetworkIcon,
   TrashIcon,
 } from '@/components/shared/icons';
@@ -115,7 +115,7 @@ export function NetworksAccordion({
                     onClick={() => onLinkApp(networkName)}
                     disabled={!newAppName[networkName]?.trim() || actionLoading[networkName]}
                   >
-                    <LinkIcon />
+                    <BindIcon />
                     Vincular
                   </button>
                 </div>

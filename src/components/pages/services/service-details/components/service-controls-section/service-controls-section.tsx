@@ -1,6 +1,8 @@
 import { Link1Icon, PlayIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Button, Flex } from '@radix-ui/themes';
 
+import { StopIcon } from '@/components/shared';
+
 import styles from '../../service-details.module.css';
 
 interface ServiceControlsSectionProps {
@@ -67,20 +69,7 @@ export function ServiceControlsSection({
               onClick={onStopClick}
               disabled={stopDisabled}
             >
-              {stopLoading ? (
-                <ReloadIcon className={styles.buttonSpinner} />
-              ) : (
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 16 16'
-                  fill='currentColor'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <rect x='4' y='2' width='2' height='12' rx='1' />
-                  <rect x='10' y='2' width='2' height='12' rx='1' />
-                </svg>
-              )}
+              {stopLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <StopIcon />}
               Parar
             </Button>
 
@@ -131,20 +120,7 @@ export function ServiceControlsSection({
               onClick={onStopClick}
               disabled={stopDisabled}
             >
-              {stopLoading ? (
-                <ReloadIcon className={styles.buttonSpinner} />
-              ) : (
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 16 16'
-                  fill='currentColor'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <rect x='4' y='2' width='2' height='12' rx='1' />
-                  <rect x='10' y='2' width='2' height='12' rx='1' />
-                </svg>
-              )}
+              {stopLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <StopIcon />}
               Parar
             </Button>
 
