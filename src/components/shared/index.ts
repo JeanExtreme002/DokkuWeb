@@ -1,6 +1,5 @@
 export * from './avatar';
 export * from './error-card';
-export * from './icon';
 export * from './icons';
 export * from './image';
 export * from './list-header';

@@ -1,6 +1,5 @@
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Separator, Tabs, Text } from '@radix-ui/themes';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -575,8 +574,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   // Download a file from the container given its full path
   const downloadAppFile = async (fullPath: string, filename?: string) => {
     try {
-      const response = await axios.post(
-        `/api/proxy/api/apps/${props.appName}/download/`,
+      const response = await api.post(
+        `/api/apps/${props.appName}/download/`,
         {},
         {
           params: { filename: fullPath },

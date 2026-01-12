@@ -7,6 +7,7 @@ export * from './directory-icon';
 export * from './dot-icon';
 export * from './exclamation-icon';
 export * from './eye-icon';
+export * from './file-icon';
 export * from './left-arrow-icon';
 export * from './link-icon';
 export * from './network-icon';

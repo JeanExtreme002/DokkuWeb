@@ -8,6 +8,7 @@ interface ApiRequestOptions {
   data?: any;
   params?: Record<string, string | number | boolean>;
   headers?: Record<string, string>;
+  responseType?: string;
 }
 
 /**
@@ -16,12 +17,13 @@ interface ApiRequestOptions {
  * @returns Promise with the API response
  */
 export async function apiRequest<T = any>(options: ApiRequestOptions): Promise<AxiosResponse<T>> {
-  const { endpoint, method = 'POST', data, params, headers } = options;
+  const { endpoint, method = 'POST', data, params, headers, responseType } = options;
 
   const fullEndpoint = `/api/proxy${endpoint}`;
 
   const config: AxiosRequestConfig = {
     method,
+    responseType,
     url: fullEndpoint,
     ...(data && { data }),
     ...(params && { params }),
@@ -48,8 +50,9 @@ export const api = {
   get: <T = any>(
     endpoint: string,
     params?: Record<string, string | number | boolean>,
-    headers?: Record<string, string>
-  ) => apiRequest<T>({ endpoint, method: 'GET', params, headers }),
+    headers?: Record<string, string>,
+    responseType?: string
+  ) => apiRequest<T>({ endpoint, method: 'GET', params, headers, responseType }),
 
   post: <T = any>(
     endpoint: string,
@@ -57,6 +60,7 @@ export const api = {
     options?: {
       params?: Record<string, string | number | boolean>;
       headers?: Record<string, string>;
+      responseType?: string;
     }
   ) =>
     apiRequest<T>({
@@ -65,6 +69,7 @@ export const api = {
       data,
       params: options?.params,
       headers: options?.headers,
+      responseType: options?.responseType,
     }),
 
   put: <T = any>(
@@ -73,6 +78,7 @@ export const api = {
     options?: {
       params?: Record<string, string | number | boolean>;
       headers?: Record<string, string>;
+      responseType?: string;
     }
   ) =>
     apiRequest<T>({
@@ -81,11 +87,13 @@ export const api = {
       data,
       params: options?.params,
       headers: options?.headers,
+      responseType: options?.responseType,
     }),
 
   delete: <T = any>(
     endpoint: string,
     params?: Record<string, string | number | boolean>,
-    headers?: Record<string, string>
-  ) => apiRequest<T>({ endpoint, method: 'DELETE', params, headers }),
+    headers?: Record<string, string>,
+    responseType?: string
+  ) => apiRequest<T>({ endpoint, method: 'DELETE', params, headers, responseType }),
 };

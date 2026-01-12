@@ -5,6 +5,7 @@ import React from 'react';
 import {
   DirectoryIcon,
   ExclamationIcon,
+  FileIcon,
   LeftArrowIcon,
   ParentDirectoryIcon,
 } from '@/components/shared';
@@ -156,7 +157,13 @@ export function FilesSection(props: FilesSectionProps) {
                     >
                       <Flex align='center' gap='3' style={{ overflow: 'hidden' }}>
                         {/* Icon */}
-                        {entry.name === '..' ? <ParentDirectoryIcon /> : <DirectoryIcon />}
+                        {entry.type !== 'dir' ? (
+                          <FileIcon />
+                        ) : entry.name === '..' ? (
+                          <ParentDirectoryIcon />
+                        ) : (
+                          <DirectoryIcon />
+                        )}
                         {/* Name */}
                         {entry.type === 'dir' || entry.name === '..' ? (
                           <Button
