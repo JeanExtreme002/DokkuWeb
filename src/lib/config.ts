@@ -1,12 +1,12 @@
 export const config = {
   website: {
     title: 'DokkuWeb',
-    subtitle: 'Hospedagem de aplicações na rede IC',
-    emailDomain: process.env.EMAIL_DOMAIN || 'gmail.com',
+    subtitle: 'Application hosting on Dokku',
+    emailDomain: process.env.EMAIL_DOMAIN || 'email-domain.com',
   },
   support: {
-    name: process.env.SUPPORT_NAME || 'SuporteIC',
-    url: process.env.SUPPORT_URL || 'https://suporteic.ufba.br/',
+    name: process.env.SUPPORT_NAME || 'Support-Name',
+    url: process.env.SUPPORT_URL || 'https://support-name.domain.com/',
   },
   server: {
     domain: process.env.SERVER_DOMAIN || 'domain.com',

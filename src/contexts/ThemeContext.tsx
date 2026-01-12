@@ -23,10 +23,9 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
-// Função para detectar o tema inicial antes da hidratação
 const getInitialTheme = (): ThemeMode => {
   if (typeof window === 'undefined') {
-    return 'light'; // SSR default
+    return 'light';
   }
 
   try {
@@ -35,7 +34,7 @@ const getInitialTheme = (): ThemeMode => {
       return savedTheme;
     }
   } catch {
-    // Em caso de erro (como em abas anônimas), usar light mode
+    return 'light';
   }
 
   return 'light';
@@ -45,10 +44,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Carregar tema do localStorage ao inicializar
+  // Load theme from localStorage
   useEffect(() => {
     try {
-      // Verificar se localStorage está disponível (pode não estar em modo privado/anônimo)
       const isLocalStorageAvailable = typeof Storage !== 'undefined' && window.localStorage;
 
       if (isLocalStorageAvailable) {
@@ -56,40 +54,31 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
           setMode(savedTheme);
         } else {
-          // Se não há tema salvo, usar light mode
           setMode('light');
         }
       } else {
-        // Se localStorage não está disponível, sempre usar light mode
         setMode('light');
       }
     } catch {
-      // Em caso de erro (como em abas anônimas), sempre usar light mode
       setMode('light');
     }
-
-    // Marcar como carregado após definir o tema
     setIsLoading(false);
   }, []);
 
-  // Salvar tema no localStorage quando mudado
+  // Save theme to localStorage when changed
   useEffect(() => {
-    if (isLoading) return; // Não aplicar mudanças durante o loading inicial
+    if (isLoading) return;
 
     try {
-      // Só tentar salvar se localStorage estiver disponível
       if (typeof Storage !== 'undefined' && window.localStorage) {
         localStorage.setItem('theme', mode);
       }
     } catch {
-      // Ignorar erros de localStorage (comum em modo privado/anônimo)
       console.warn('Could not save theme preference to localStorage');
     }
 
-    // Aplicar classe no documento para CSS global
     document.documentElement.setAttribute('data-theme', mode);
 
-    // Aplicar estilos CSS customizados para Material UI components sem interferir no layout
     const root = document.documentElement;
     if (mode === 'dark') {
       root.style.setProperty('--mui-palette-background-paper', '#1a1a1a');
@@ -110,7 +99,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
   };
 
-  // Não renderizar nada até que o tema seja carregado
+  // Do not render anything until the theme is loaded
   if (isLoading) {
     return (
       <div
@@ -122,7 +111,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           justifyContent: 'center',
         }}
       >
-        {/* Loading spinner simples */}
+        {/* Simple loading spinner */}
         <div
           style={{
             width: '32px',
@@ -147,7 +136,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     );
   }
 
-  // Não usamos Material UI ThemeProvider para evitar interferências
+  // We do not use the Material UI ThemeProvider to avoid interference
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme, isLoading }}>
       <RadixTheme

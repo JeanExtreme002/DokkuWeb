@@ -48,7 +48,6 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
         }}
         role='presentation'
       >
-        {/* Header com logo */}
         <ListItem
           key={'logo'}
           disablePadding
@@ -62,7 +61,6 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
           </div>
         </ListItem>
 
-        {/* Menu de navegação */}
         <Box sx={{ flex: 1 }} onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
           <List>
             {drawerItems.map((item, index) => (
@@ -79,7 +77,6 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
           </List>
         </Box>
 
-        {/* Switch de tema na parte inferior */}
         <ThemeToggle />
       </Box>
     </Drawer>

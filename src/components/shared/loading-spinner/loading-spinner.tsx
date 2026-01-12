@@ -34,7 +34,7 @@ export function LoadingSpinner({
 
   const content = (
     <Flex direction='column' align='center' gap='6'>
-      {/* Spinner principal */}
+      {/* Main spinner */}
       <div className={styles.spinnerContainer}>
         <div className={styles.spinner}>
           <div className={styles.spinnerRing}></div>
@@ -42,7 +42,7 @@ export function LoadingSpinner({
           <div className={styles.spinnerRing}></div>
         </div>
 
-        {/* Pontos orbitais */}
+        {/* Orbital points */}
         <div className={styles.orbitalDots}>
           <div className={styles.dot}></div>
           <div className={styles.dot}></div>
@@ -51,7 +51,7 @@ export function LoadingSpinner({
         </div>
       </div>
 
-      {/* Título */}
+      {/* Title */}
       <Box>
         <Text
           size='5'
@@ -69,7 +69,7 @@ export function LoadingSpinner({
         </Text>
       </Box>
 
-      {/* Mensagem animada */}
+      {/* Animated message */}
       <Box className={styles.messageContainer}>
         <Text
           size='3'
@@ -83,14 +83,14 @@ export function LoadingSpinner({
         </Text>
       </Box>
 
-      {/* Barra de progresso animada */}
+      {/* Animated progress bar */}
       <Box className={styles.progressContainer}>
         <div className={styles.progressBar}>
           <div className={styles.progressFill}></div>
         </div>
       </Box>
 
-      {/* Pulsos de fundo */}
+      {/* Background pulses */}
       <div className={styles.backgroundPulses}>
         <div className={styles.pulse}></div>
         <div className={styles.pulse}></div>

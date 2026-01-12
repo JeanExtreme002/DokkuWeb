@@ -10,7 +10,6 @@ export function ThemeToggle() {
   const getTextColor = () => (mode === 'light' ? '#4b5563' : '#d1d5db');
   const getBorderColor = () => (mode === 'light' ? '#e5e7eb' : '#374151');
 
-  // Não renderizar o toggle durante o loading
   if (isLoading) {
     return (
       <Box
@@ -22,7 +21,7 @@ export function ThemeToggle() {
           borderTop: `1px solid ${getBorderColor()}`,
           marginTop: 'auto',
           backgroundColor: mode === 'light' ? '#ffffff' : '#1a1a1a',
-          height: '72px', // Manter a altura consistente
+          height: '72px',
         }}
       >
         <div

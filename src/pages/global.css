@@ -249,13 +249,13 @@ body {
     color 0.2s ease;
 }
 
-/* Prevenir flash inicial - aplicar tema padrão imediatamente */
+/* Prevent initial flash - apply default theme immediately */
 html {
   background-color: #ffffff;
   color: #111827;
 }
 
-/* Sobrescrever com dark mode se aplicável */
+/* Override with dark mode if applicable */
 [data-theme='dark'] html,
 [data-theme='dark'] body {
   background-color: #0f0f0f;
