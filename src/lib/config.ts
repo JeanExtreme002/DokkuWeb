@@ -5,8 +5,8 @@ const emailDomains = (process.env.EMAIL_DOMAINS || 'email-domain.com')
 
 export const config = {
   website: {
-    title: 'DokkuWeb',
-    subtitle: 'Application hosting on Dokku',
+    title: process.env.WEBSITE_TITLE || 'DokkuWeb',
+    subtitle: process.env.WEBSITE_SUBTITLE || 'Application hosting on Dokku',
     emailDomains,
   },
   support: {
