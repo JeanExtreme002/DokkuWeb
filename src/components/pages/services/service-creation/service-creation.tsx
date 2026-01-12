@@ -17,9 +17,9 @@ import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/shared';
 import { api } from '@/lib';
 
-import styles from './create-service.module.css';
+import styles from './service-creation.module.css';
 
-interface CreateServicePageProps {
+interface ServiceCreationPageProps {
   session: Session;
 }
 
@@ -29,7 +29,7 @@ interface DatabaseType {
   icon: string;
 }
 
-export function CreateServicePage(props: CreateServicePageProps) {
+export function ServiceCreationPage(props: ServiceCreationPageProps) {
   const router = useRouter();
   const [serviceName, setServiceName] = useState('');
   const [selectedDatabase, setSelectedDatabase] = useState<string>('');

@@ -9,9 +9,9 @@ import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { api, getServiceImage } from '@/lib';
 
-import styles from './services.module.css';
+import styles from './service-list.module.css';
 
-interface ServicesPageProps {
+interface ServiceListPageProps {
   session: Session;
 }
 
@@ -41,7 +41,7 @@ interface ServiceListItem {
   error: string | null;
 }
 
-export function ServicesPage(props: ServicesPageProps) {
+export function ServiceListPage(props: ServiceListPageProps) {
   const [servicesList, setServicesList] = useState<ServiceListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

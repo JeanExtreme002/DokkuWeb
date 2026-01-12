@@ -17,9 +17,9 @@ import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/shared';
 import { api } from '@/lib';
 
-import styles from './create-app.module.css';
+import styles from './app-creation.module.css';
 
-interface CreateAppPageProps {
+interface AppCreationPageProps {
   session: Session;
 }
 
@@ -33,7 +33,7 @@ interface EnvironmentVariable {
   id: string;
 }
 
-export function CreateAppPage(props: CreateAppPageProps) {
+export function AppCreationPage(props: AppCreationPageProps) {
   const router = useRouter();
   const [appName, setAppName] = useState('');
   const [selectedNetwork, setSelectedNetwork] = useState('none');

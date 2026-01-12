@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
-import { CreateAppPage } from '@/components/pages/apps/create';
+import { AppCreationPage } from '@/components';
 
 import Header from '../header';
 
@@ -9,7 +9,7 @@ export default function CreateApp(props: any) {
   return (
     <>
       <Header />
-      <CreateAppPage session={props?.session} />
+      <AppCreationPage session={props?.session} />
     </>
   );
 }

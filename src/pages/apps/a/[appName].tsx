@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
-import { AppDetailsPage } from '@/components/pages/apps';
+import { AppDetailsPage } from '@/components';
 import Header from '@/pages/header';
 
 interface AppDetailsPageProps {

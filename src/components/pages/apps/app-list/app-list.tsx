@@ -8,9 +8,9 @@ import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { api, formatDate } from '@/lib';
 
-import styles from './apps.module.css';
+import styles from './app-list.module.css';
 
-interface AppsPageProps {
+interface AppListPageProps {
   session: Session;
 }
 
@@ -64,7 +64,7 @@ interface AppListItem {
   error: string | null;
 }
 
-export function AppsPage(props: AppsPageProps) {
+export function AppListPage(props: AppListPageProps) {
   const [appsList, setAppsList] = useState<AppListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

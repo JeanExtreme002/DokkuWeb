@@ -1,3 +1,3 @@
-export { AppDetailsPage } from './app-details';
-export { AppsPage } from './apps';
-export { CreateAppPage } from './create';
+export * from './app-creation';
+export * from './app-details';
+export * from './app-list';

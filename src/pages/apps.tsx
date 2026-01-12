@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
-import { AppsPage } from '@/components';
+import { AppListPage } from '@/components';
 
 import Header from './header';
 
@@ -9,7 +9,7 @@ export default function Apps(props: any) {
   return (
     <>
       <Header />
-      <AppsPage session={props?.session} />
+      <AppListPage session={props?.session} />
     </>
   );
 }
