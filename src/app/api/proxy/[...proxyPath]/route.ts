@@ -299,6 +299,21 @@ async function proxyHandler(request: NextRequest) {
       signal: AbortSignal.timeout(10 * 60 * 1000),
     });
 
+    // If upstream returns a file (octet-stream), forward it as-is (no JSON parsing)
+    const upstreamContentType = (res.headers.get('content-type') || '').toLowerCase();
+    if (upstreamContentType.includes('application/octet-stream')) {
+      const fileBuf = await res.arrayBuffer();
+      const passThroughHeaders = new Headers(res.headers);
+      passThroughHeaders.delete('content-encoding');
+      passThroughHeaders.delete('content-length');
+      passThroughHeaders.set('x-cache', 'MISS');
+
+      return new Response(fileBuf, {
+        status: res.status,
+        headers: passThroughHeaders,
+      });
+    }
+
     const buf = await res.arrayBuffer();
     const text = new TextDecoder('utf-8').decode(buf);
 

@@ -404,7 +404,19 @@
 .fileLinkButton:hover,
 .fileLinkButton:focus {
   background: transparent !important;
-  color: var(--purple-11) !important;
+  color: var(--purple-8) !important;
+}
+
+/* Clickable file name hover (Files tab) */
+.fileName {
+  transition: color 0.15s ease;
+  color: var(--gray-12);
+  cursor: pointer;
+}
+.fileName:hover,
+.fileName:focus {
+  color: var(--gray-11) !important;
+  text-decoration: underline;
 }
 
 /* Back button hover/focus keeps purple color */

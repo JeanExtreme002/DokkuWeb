@@ -28,6 +28,7 @@ interface FilesSectionProps {
   onEntryClick: (entry: DirEntry) => void;
   formatSize: (bytes: number) => string;
   pathJoin: (base: string, sub: string) => string;
+  onDownloadFile: (fullPath: string, filename: string) => void;
 }
 
 export function FilesSection(props: FilesSectionProps) {
@@ -175,7 +176,16 @@ export function FilesSection(props: FilesSectionProps) {
                           <Text
                             size='2'
                             className={styles.fileName}
-                            style={{ color: 'var(--gray-12)' }}
+                            onClick={() => {
+                              const fullPath = props.pathJoin(props.currentDir, entry.name);
+                              const isSmall =
+                                typeof window !== 'undefined' && window.innerWidth <= 600;
+                              if (isSmall) {
+                                const confirmMsg = `Você realmente deseja baixar o arquivo "${entry.name} [${props.formatSize(entry.size)}]"?`;
+                                if (!window.confirm(confirmMsg)) return;
+                              }
+                              props.onDownloadFile(fullPath, entry.name);
+                            }}
                           >
                             {props.isTinyScreen && entry.name.length > 20
                               ? `${entry.name.slice(0, 17)}...`
