@@ -63,8 +63,11 @@ const helpLinkSx = {
 
 const googleButtonStyle: React.CSSProperties = { width: '100%', maxWidth: '400px' };
 
-function buildGoogleLabel(isSmallScreen: boolean, domain: string) {
-  return `${isSmallScreen ? 'Entrar com @' : 'Entre com seu email @'}${domain}`;
+function buildGoogleLabel(isSmallScreen: boolean, domains: string[]) {
+  if (domains.length == 1) {
+    return isSmallScreen ? `Entrar com ${domains[0]}` : `Entre com seu email ${domains[0]}`;
+  }
+  return 'Entre com seu email';
 }
 
 export function LoginPage() {
@@ -122,7 +125,7 @@ export function LoginPage() {
 
           <GoogleButton
             style={googleButtonStyle}
-            label={buildGoogleLabel(isSmallScreen, config.website.emailDomain)}
+            label={buildGoogleLabel(isSmallScreen, config.website.emailDomains)}
             onClick={() => login()}
           />
 

@@ -9,12 +9,8 @@ export function useIsLoggedIn(): boolean | undefined {
     return undefined;
   }
 
-  return !!(
-    session &&
-    session.user &&
-    session.user.email &&
-    session.user.email.endsWith(`@${config.website.emailDomain}`)
-  );
+  const email = session?.user?.email;
+  return !!(email && config.website.emailDomains.some((d) => email.endsWith(`@${d}`)));
 }
 
 export async function login(callbackUrl: string = '/') {

@@ -13,7 +13,8 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ profile }) {
-      return profile?.email?.endsWith(`@${config.website.emailDomain}`) ?? false;
+      const email = profile?.email;
+      return email ? config.website.emailDomains.some((d) => email.endsWith(`@${d}`)) : false;
     },
     async jwt({ token, account, trigger, session }) {
       if (account) {

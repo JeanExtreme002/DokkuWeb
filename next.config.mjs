@@ -9,7 +9,7 @@ const nextConfig = {
     SUPPORT_NAME: process.env.SUPPORT_NAME,
     SUPPORT_URL: process.env.SUPPORT_URL,
     SERVER_DOMAIN: process.env.SERVER_DOMAIN,
-    EMAIL_DOMAIN: process.env.EMAIL_DOMAIN,
+    EMAIL_DOMAINS: process.env.EMAIL_DOMAINS,
   },
 };
 
