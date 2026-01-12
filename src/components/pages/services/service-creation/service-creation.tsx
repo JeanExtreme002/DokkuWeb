@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Select,
-  Separator,
-  Text,
-  TextField,
-} from '@radix-ui/themes';
-import Image from 'next/image';
+import { Card, Flex, Separator } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import React, { useEffect, useState } from 'react';
@@ -17,16 +6,18 @@ import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/shared';
 import { api } from '@/lib';
 
+import {
+  ActionButtons,
+  DatabaseSelection,
+  DatabaseType,
+  ErrorMessage,
+  Header,
+  ServiceNameField,
+} from './components';
 import styles from './service-creation.module.css';
 
 interface ServiceCreationPageProps {
   session: Session;
-}
-
-interface DatabaseType {
-  name: string;
-  displayName: string;
-  icon: string;
 }
 
 export function ServiceCreationPage(props: ServiceCreationPageProps) {
@@ -173,26 +164,10 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
 
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
-          {/* Header */}
-          <Box>
-            <Heading
-              size='7'
-              weight='medium'
-              style={{
-                color: 'var(--gray-12)',
-                marginBottom: '4px',
-              }}
-            >
-              Criar novo serviço
-            </Heading>
-            <Text size='3' color='gray'>
-              Configure seu novo serviço no Dokku
-            </Text>
-          </Box>
+          <Header />
 
           <Separator size='4' style={{ margin: '10px 0' }} />
 
-          {/* Form */}
           <Card
             style={{
               border: '1px solid var(--gray-6)',
@@ -201,217 +176,36 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
             }}
           >
             <Flex direction='column' gap='5'>
-              {/* Service Name */}
+              <ServiceNameField
+                serviceName={serviceName}
+                onChange={setServiceName}
+                creating={creating}
+                validateServiceName={validateServiceName}
+              />
+
               <Flex direction='column' gap='2'>
-                <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                  Nome do Serviço
-                </Text>
-                <TextField.Root
-                  placeholder='Digite o nome do serviço'
-                  value={serviceName}
-                  onChange={(e) => {
-                    // Allow letters (uppercase and lowercase), numbers, and "_"
-                    const value = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
-                    setServiceName(value);
-                  }}
-                  disabled={creating}
-                  style={{
-                    fontSize: '14px',
-                    maxWidth: '400px',
-                  }}
+                <DatabaseSelection
+                  databases={databases}
+                  databasesLoading={databasesLoading}
+                  selectedDatabase={selectedDatabase}
+                  creating={creating}
+                  isMobile={isMobile}
+                  onSelect={setSelectedDatabase}
+                  gridClassName={styles.databaseGrid}
+                  cardClassName={styles.databaseCard}
                 />
-                <Text
-                  size='2'
-                  color={
-                    !validateServiceName(serviceName).isValid && serviceName.length > 0
-                      ? 'red'
-                      : 'gray'
-                  }
-                >
-                  {serviceName.length}/50 caracteres {validateServiceName(serviceName).message}
-                </Text>
               </Flex>
 
-              {/* Database Type Selection */}
-              <Flex direction='column' gap='2'>
-                <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                  Tipo de Serviço
-                </Text>
-                {databasesLoading ? (
-                  <Box style={{ padding: '12px' }}>
-                    <Text size='2' color='gray' style={{ fontStyle: 'italic' }}>
-                      Carregando serviços...
-                    </Text>
-                  </Box>
-                ) : (
-                  <>
-                    {/* Grid for desktop */}
-                    {!isMobile && (
-                      <div className={styles.databaseGrid}>
-                        {databases.map((database) => (
-                          <Card
-                            key={database.name}
-                            style={{
-                              border: `2px solid ${
-                                selectedDatabase === database.name
-                                  ? 'var(--green-8)'
-                                  : 'var(--gray-6)'
-                              }`,
-                              backgroundColor:
-                                selectedDatabase === database.name
-                                  ? 'var(--green-2)'
-                                  : 'var(--color-surface)',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              padding: '8px',
-                            }}
-                            className={styles.databaseCard}
-                            onClick={() => setSelectedDatabase(database.name)}
-                            onMouseEnter={(e) => {
-                              if (selectedDatabase !== database.name) {
-                                e.currentTarget.style.borderColor = 'var(--gray-8)';
-                                e.currentTarget.style.transform = 'translateY(-2px)';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (selectedDatabase !== database.name) {
-                                e.currentTarget.style.borderColor = 'var(--gray-6)';
-                                e.currentTarget.style.transform = 'translateY(0)';
-                              }
-                            }}
-                          >
-                            <Flex direction='column' align='center' gap='1'>
-                              <Image
-                                src={database.icon}
-                                alt={`${database.displayName} logo`}
-                                width={28}
-                                height={28}
-                                style={{
-                                  filter:
-                                    selectedDatabase === database.name ? 'none' : 'grayscale(0.3)',
-                                  transition: 'filter 0.2s ease',
-                                }}
-                                onError={(e) => {
-                                  e.currentTarget.src = '/images/database-logos/generic.svg';
-                                }}
-                              />
-                              <Text
-                                size='2'
-                                weight='medium'
-                                style={{
-                                  color:
-                                    selectedDatabase === database.name
-                                      ? 'var(--green-11)'
-                                      : 'var(--gray-11)',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                {database.displayName}
-                              </Text>
-                            </Flex>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
+              <ErrorMessage error={error} />
 
-                    {/* Select for mobile */}
-                    {isMobile && (
-                      <Select.Root
-                        value={selectedDatabase}
-                        onValueChange={setSelectedDatabase}
-                        disabled={creating}
-                      >
-                        <Select.Trigger
-                          placeholder='Selecione o tipo de banco de dados'
-                          style={{ maxWidth: '100%' }}
-                        />
-                        <Select.Content>
-                          {databases.map((database) => (
-                            <Select.Item key={database.name} value={database.name}>
-                              <Flex align='center' gap='2'>
-                                <Image
-                                  src={database.icon}
-                                  alt={`${database.displayName} logo`}
-                                  width={16}
-                                  height={16}
-                                  onError={(e) => {
-                                    e.currentTarget.src = '/images/database-logos/generic.svg';
-                                  }}
-                                />
-                                {database.displayName}
-                              </Flex>
-                            </Select.Item>
-                          ))}
-                        </Select.Content>
-                      </Select.Root>
-                    )}
-                  </>
-                )}
-              </Flex>
-
-              {/* Error message */}
-              {error && (
-                <Box
-                  style={{
-                    padding: '12px',
-                    backgroundColor: 'var(--red-2)',
-                    borderRadius: '8px',
-                    border: '1px solid var(--red-6)',
-                  }}
-                >
-                  <Text size='3' style={{ color: 'var(--red-11)' }}>
-                    {error}
-                  </Text>
-                </Box>
-              )}
-
-              {/* Action buttons */}
-              <Flex justify='end' gap='3' className={styles.buttonsContainer}>
-                <Button
-                  size='3'
-                  color='gray'
-                  variant='outline'
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => router.push('/services')}
-                  disabled={creating}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  size='3'
-                  onClick={handleCreateService}
-                  disabled={!canSubmit()}
-                  style={{
-                    background: canSubmit()
-                      ? 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)'
-                      : 'var(--gray-5)',
-                    border: 'none',
-                    color: 'white',
-                    cursor: canSubmit() ? 'pointer' : 'not-allowed',
-                    fontWeight: '500',
-                    padding: '12px 24px',
-                    minWidth: '180px',
-                  }}
-                >
-                  {creating ? (
-                    <Flex align='center' gap='2'>
-                      <Box
-                        className={styles.spinner}
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          border: '2px solid transparent',
-                          borderTop: '2px solid white',
-                          borderRadius: '50%',
-                        }}
-                      />
-                      <Text>Criando...</Text>
-                    </Flex>
-                  ) : (
-                    'Criar novo serviço'
-                  )}
-                </Button>
-              </Flex>
+              <ActionButtons
+                canSubmit={canSubmit()}
+                creating={creating}
+                onCancel={() => router.push('/services')}
+                onCreate={handleCreateService}
+                spinnerClassName={styles.spinner}
+                buttonsContainerClassName={styles.buttonsContainer}
+              />
             </Flex>
           </Card>
         </Flex>
