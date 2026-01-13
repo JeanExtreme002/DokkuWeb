@@ -40,7 +40,7 @@ export function Search() {
         marginLeft: 0,
         width: '100%',
         [theme.breakpoints.up('sm')]: {
-          marginLeft: 5,
+          marginLeft: 3,
           width: '50%',
         },
       }}

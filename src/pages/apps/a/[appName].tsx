@@ -2,6 +2,8 @@ import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
 import { AppDetailsPage } from '@/components';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 import Header from '@/pages/header';
 
 interface AppDetailsPageProps {
@@ -10,10 +12,12 @@ interface AppDetailsPageProps {
 
 export default function AppDetails(props: AppDetailsPageProps) {
   return (
-    <>
-      <Header />
-      <AppDetailsPage appName={props.appName} />
-    </>
+    <I18nNamespaceBoundary ns='apps.a'>
+      <PageI18nProvider ns='apps.a'>
+        <Header />
+        <AppDetailsPage appName={props.appName} />
+      </PageI18nProvider>
+    </I18nNamespaceBoundary>
   );
 }
 

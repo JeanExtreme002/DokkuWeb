@@ -1,6 +1,8 @@
 import { getServerSession, Session } from 'next-auth';
 
 import { HomePage } from '@/components';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import Header from './header';
@@ -8,8 +10,12 @@ import Header from './header';
 export default function IndexPage(props: { session: Session }) {
   return (
     <>
-      <Header />
-      <HomePage session={props?.session} />
+      <I18nNamespaceBoundary ns='index'>
+        <PageI18nProvider ns='index'>
+          <Header />
+          <HomePage session={props?.session} />
+        </PageI18nProvider>
+      </I18nNamespaceBoundary>
     </>
   );
 }

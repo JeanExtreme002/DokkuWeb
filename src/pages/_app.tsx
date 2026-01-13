@@ -1,3 +1,4 @@
+import '@/i18n';
 import '@radix-ui/themes/styles.css';
 import './global.css';
 

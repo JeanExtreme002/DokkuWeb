@@ -1,16 +1,20 @@
 import { getServerSession, Session } from 'next-auth';
 
 import { SettingsPage } from '@/components';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import Header from './header';
 
 export default function Settings(props: { session: Session }) {
   return (
-    <>
-      <Header />
-      <SettingsPage session={props?.session} />
-    </>
+    <I18nNamespaceBoundary ns='settings'>
+      <PageI18nProvider ns='settings'>
+        <Header />
+        <SettingsPage session={props?.session} />
+      </PageI18nProvider>
+    </I18nNamespaceBoundary>
   );
 }
 

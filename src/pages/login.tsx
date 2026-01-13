@@ -1,16 +1,20 @@
 import { getServerSession } from 'next-auth';
 
 import { LoginPage } from '@/components';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import Header from './header';
 
 export default function NotFoundErrorPage() {
   return (
-    <>
-      <Header />
-      <LoginPage />
-    </>
+    <I18nNamespaceBoundary ns='login'>
+      <PageI18nProvider ns='login'>
+        <Header />
+        <LoginPage />
+      </PageI18nProvider>
+    </I18nNamespaceBoundary>
   );
 }
 

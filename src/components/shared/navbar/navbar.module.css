@@ -3,3 +3,9 @@
     display: none;
   }
 }
+
+@media (max-width: 1100px) {
+  .languageButtonTrigger {
+    display: none;
+  }
+}

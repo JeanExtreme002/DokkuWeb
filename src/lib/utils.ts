@@ -110,3 +110,9 @@ export function formatTimestamp(timestamp: string | number): string {
     return 'Invalid Date';
   }
 }
+
+// Map of language codes to display names
+export const LANGUAGE_NAMES: Record<string, string> = {
+  pt: 'Português',
+  en: 'English',
+};

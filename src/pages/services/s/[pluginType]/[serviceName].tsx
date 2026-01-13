@@ -2,6 +2,8 @@ import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
 import { ServiceDetailsPage } from '@/components/pages/services';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 import Header from '@/pages/header';
 
 interface ServiceDetailsPageProps {
@@ -11,10 +13,12 @@ interface ServiceDetailsPageProps {
 
 export default function ServiceDetails(props: ServiceDetailsPageProps) {
   return (
-    <>
-      <Header />
-      <ServiceDetailsPage pluginType={props.pluginType} serviceName={props.serviceName} />
-    </>
+    <I18nNamespaceBoundary ns='services.s'>
+      <PageI18nProvider ns='services.s'>
+        <Header />
+        <ServiceDetailsPage pluginType={props.pluginType} serviceName={props.serviceName} />
+      </PageI18nProvider>
+    </I18nNamespaceBoundary>
   );
 }
 

@@ -1,6 +1,8 @@
 import { CubeIcon, GlobeIcon, PlusIcon } from '@radix-ui/react-icons';
 import { Avatar, Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../home.module.css';
 
 interface WelcomeSectionProps {
@@ -13,6 +15,7 @@ interface WelcomeSectionProps {
 
 export function WelcomeSection(props: WelcomeSectionProps) {
   const { userName, userImage, onCreateApp, onCreateService, onCreateNetwork } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Box className={styles.welcomeSection}>
@@ -27,7 +30,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
           />
           <Box>
             <Heading size='8' weight='bold' className={styles.welcomeTitle}>
-              Bem-vindo de volta, {userName.split(' ')[0]}!
+              {t('welcome.title', { name: userName.split(' ')[0] })}
             </Heading>
             <Text size='4' className={styles.welcomeSubtitle}>
               Aqui está um resumo dos seus recursos no Dokku

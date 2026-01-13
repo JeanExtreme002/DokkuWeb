@@ -7,14 +7,16 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { ChevronDownIcon, PlusIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, GlobeIcon, PlusIcon } from '@radix-ui/react-icons';
 import { Button, DropdownMenu } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import * as React from 'react';
 
 import { AppIcon, NetworkIcon, Search, ServiceIcon, SideBar, WebsiteLogo } from '@/components';
+import i18n from '@/i18n';
 import { logout } from '@/lib';
+import { LANGUAGE_NAMES } from '@/lib/utils';
 
 import styles from './navbar.module.css';
 
@@ -111,7 +113,7 @@ export function NavBar(props: NavBarProps) {
                   color='purple'
                   style={{
                     cursor: 'pointer',
-                    backgroundColor: 'var(--gray-2)',
+                    backgroundColor: 'var(--purple-2)',
                     marginRight: '12px',
                   }}
                   className={styles.createButtonTrigger}
@@ -147,6 +149,38 @@ export function NavBar(props: NavBarProps) {
                   <NetworkIcon />
                   Nova Rede
                 </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button
+                  variant='surface'
+                  size='2'
+                  color='purple'
+                  style={{
+                    cursor: 'pointer',
+                    color: 'var(--purple-1)',
+                    backgroundColor: 'var(--purple-7)',
+                    marginRight: '12px',
+                  }}
+                  className={styles.languageButtonTrigger}
+                >
+                  <GlobeIcon width={20} height={20} />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {Object.entries(LANGUAGE_NAMES).map(([code, name], index, entries) => (
+                  <React.Fragment key={code}>
+                    <DropdownMenu.Item
+                      color='gray'
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => i18n.changeLanguage(code)}
+                    >
+                      {name}
+                    </DropdownMenu.Item>
+                    {index < entries.length - 1 ? <DropdownMenu.Separator /> : null}
+                  </React.Fragment>
+                ))}
               </DropdownMenu.Content>
             </DropdownMenu.Root>
             <Typography

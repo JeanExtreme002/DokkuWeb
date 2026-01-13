@@ -2,15 +2,19 @@ import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
 import { AppCreationPage } from '@/components';
+import { I18nNamespaceBoundary } from '@/i18n/I18nNamespaceBoundary';
+import { PageI18nProvider } from '@/i18n/PageI18nProvider';
 
 import Header from '../header';
 
 export default function CreateApp(props: any) {
   return (
-    <>
-      <Header />
-      <AppCreationPage session={props?.session} />
-    </>
+    <I18nNamespaceBoundary ns='apps.create'>
+      <PageI18nProvider ns='apps.create'>
+        <Header />
+        <AppCreationPage session={props?.session} />
+      </PageI18nProvider>
+    </I18nNamespaceBoundary>
   );
 }
 

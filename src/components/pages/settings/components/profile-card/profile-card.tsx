@@ -5,14 +5,18 @@ import {
   Card,
   Flex,
   Heading,
+  Select,
   Separator,
   Text,
   TextField,
   Tooltip,
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
+import * as React from 'react';
 
 import { PadLockIcon } from '@/components/shared';
+import i18n from '@/i18n';
+import { LANGUAGE_NAMES } from '@/lib/utils';
 
 import styles from '../../settings.module.css';
 
@@ -40,6 +44,17 @@ export function ProfileCard({
     ? session?.user?.image
     : undefined;
   const userEmail = session?.user?.email || '';
+  const [language, setLanguage] = React.useState<string>(
+    i18n.resolvedLanguage || i18n.language || 'en'
+  );
+
+  React.useEffect(() => {
+    const handler = (lng: string) => setLanguage(lng);
+    i18n.on('languageChanged', handler);
+    return () => {
+      i18n.off('languageChanged', handler);
+    };
+  }, []);
 
   return (
     <Card
@@ -98,6 +113,33 @@ export function ProfileCard({
         </Flex>
 
         <Separator size='4' style={{ margin: '8px 0' }} />
+
+        <Flex direction='column' gap='2'>
+          <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+            Idioma
+            <Tooltip content='Idioma da plataforma'>
+              <InfoCircledIcon
+                style={{
+                  color: 'var(--gray-9)',
+                  cursor: 'help',
+                  width: '14px',
+                  height: '14px',
+                  marginLeft: '8px',
+                }}
+              />
+            </Tooltip>
+          </Text>
+          <Select.Root value={language} onValueChange={(code: string) => i18n.changeLanguage(code)}>
+            <Select.Trigger placeholder='Selecione o idioma' style={{ maxWidth: '200px' }} />
+            <Select.Content>
+              {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+                <Select.Item key={code} value={code}>
+                  {name}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        </Flex>
 
         <Flex direction='column' gap='2'>
           <Flex align='center' gap='2'>
