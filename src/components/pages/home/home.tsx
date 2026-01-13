@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import {
@@ -40,6 +41,7 @@ interface DashboardStats {
 
 export function HomePage(props: HomePageProps) {
   const router = useRouter();
+  const { t } = usePageTranslation();
   const [stats, setStats] = useState<DashboardStats>({
     apps: { total: undefined },
     networks: { total: undefined },
@@ -189,7 +191,7 @@ export function HomePage(props: HomePageProps) {
     }
   };
 
-  const userName = props.session?.user?.name || 'Usuário';
+  const userName = props.session?.user?.name || t('user.fallbackName');
   const userImage = !userName.toLowerCase().startsWith('takeover')
     ? (props.session?.user?.image ?? undefined)
     : undefined;

@@ -2,6 +2,8 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon, DashboardIcon, GearIcon, InfoCircledIcon } from '@radix-ui/react-icons';
 import { Badge, Box, Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../home.module.css';
 
 interface SystemInfo {
@@ -16,6 +18,7 @@ interface PlatformInfoAccordionProps {
 
 export function PlatformInfoAccordion(props: PlatformInfoAccordionProps) {
   const { systemInfo } = props;
+  const { t } = usePageTranslation();
   if (!systemInfo) return null;
 
   return (
@@ -31,7 +34,7 @@ export function PlatformInfoAccordion(props: PlatformInfoAccordionProps) {
                 className={styles.accordionHeaderIcon}
               />
               <Text size='4' weight='bold' className={styles.accordionHeaderText}>
-                Informações da Plataforma
+                {t('platform.info.title')}
               </Text>
             </Flex>
             <ChevronDownIcon

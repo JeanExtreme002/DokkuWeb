@@ -33,7 +33,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
               {t('welcome.title', { name: userName.split(' ')[0] })}
             </Heading>
             <Text size='4' className={styles.welcomeSubtitle}>
-              Aqui está um resumo dos seus recursos no Dokku
+              {t('welcome.subtitle')}
             </Text>
           </Box>
         </Flex>
@@ -41,7 +41,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
         <Flex gap='2' className={styles.quickActionsInline}>
           <Button size='3' className={styles.quickActionButtonGreen} onClick={onCreateApp}>
             <PlusIcon />
-            Novo App
+            {t('welcome.actions.newApp')}
           </Button>
           <Button
             size='3'
@@ -50,7 +50,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
             onClick={onCreateService}
           >
             <CubeIcon />
-            Novo Serviço
+            {t('welcome.actions.newService')}
           </Button>
           <Button
             size='3'
@@ -59,7 +59,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
             onClick={onCreateNetwork}
           >
             <GlobeIcon />
-            Criar Rede
+            {t('welcome.actions.createNetwork')}
           </Button>
         </Flex>
       </Flex>

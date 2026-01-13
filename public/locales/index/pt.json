@@ -1,3 +1,39 @@
 {
-  "welcome.title": "Bem-vindo de volta, {{name}}!"
+  "welcome.title": "Bem-vindo de volta, {{name}}!",
+  "welcome.subtitle": "Aqui está um resumo dos seus recursos no Dokku",
+  "welcome.actions.newApp": "Novo App",
+  "welcome.actions.newService": "Novo Serviço",
+  "welcome.actions.createNetwork": "Criar Rede",
+
+  "user.fallbackName": "Usuário",
+
+  "resources.overview.title": "Recursos da Plataforma",
+  "resources.apps.title": "Aplicativos",
+  "resources.services.title": "Serviços",
+  "resources.networks.title": "Redes",
+
+  "stats.overview.title": "Visão Geral dos Recursos",
+  "stats.apps.title": "Aplicativos",
+  "stats.apps.subtitle": "Aplicativos criados",
+  "stats.services.title": "Serviços",
+  "stats.services.subtitle": "Serviços ativos",
+  "stats.networks.title": "Redes",
+  "stats.networks.subtitle": "Redes configuradas",
+  "stats.quota.usage": "Uso da cota",
+
+  "system.status.sectionTitle": "Status do Sistema",
+  "system.status.checking": "Verificando...",
+  "system.status.operationalLong": "Sistema Operacional",
+  "system.status.unavailable": "Sistema Indisponível",
+  "system.status.syncing": "Sincronizando dados do sistema...",
+  "system.status.operationalShort": "Operacional",
+  "system.status.offline": "Offline",
+
+  "platform.info.title": "Informações da Plataforma",
+
+  "resourceCard.empty.apps": "Nenhum aplicativo criado ainda",
+  "resourceCard.empty.services": "Nenhum serviço criado ainda",
+  "resourceCard.empty.networks": "Nenhuma rede criada ainda",
+  "resourceCard.more": "+{{count}} mais",
+  "resourceCard.total": "{{count}} total"
 }

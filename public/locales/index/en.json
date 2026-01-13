@@ -1,3 +1,39 @@
 {
-  "welcome.title": "Welcome back, {{name}}!"
+  "welcome.title": "Welcome back, {{name}}!",
+  "welcome.subtitle": "Here's a summary of your Dokku resources",
+  "welcome.actions.newApp": "New App",
+  "welcome.actions.newService": "New Service",
+  "welcome.actions.createNetwork": "Create Network",
+
+  "user.fallbackName": "User",
+
+  "resources.overview.title": "Platform Resources",
+  "resources.apps.title": "Applications",
+  "resources.services.title": "Services",
+  "resources.networks.title": "Networks",
+
+  "stats.overview.title": "Resources Overview",
+  "stats.apps.title": "Applications",
+  "stats.apps.subtitle": "Applications created",
+  "stats.services.title": "Services",
+  "stats.services.subtitle": "Active services",
+  "stats.networks.title": "Networks",
+  "stats.networks.subtitle": "Configured networks",
+  "stats.quota.usage": "Quota usage",
+
+  "system.status.sectionTitle": "System Status",
+  "system.status.checking": "Checking...",
+  "system.status.operationalLong": "System Operational",
+  "system.status.unavailable": "System Unavailable",
+  "system.status.syncing": "Syncing system data...",
+  "system.status.operationalShort": "Operational",
+  "system.status.offline": "Offline",
+
+  "platform.info.title": "Platform Information",
+
+  "resourceCard.empty.apps": "No applications created yet",
+  "resourceCard.empty.services": "No services created yet",
+  "resourceCard.empty.networks": "No networks created yet",
+  "resourceCard.more": "+{{count}} more",
+  "resourceCard.total": "{{count}} total"
 }

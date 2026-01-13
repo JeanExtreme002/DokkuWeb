@@ -1,6 +1,8 @@
 import { ArrowRightIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 import { Badge, Box, Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../../home.module.css';
 
 type ResourceType = 'apps' | 'services' | 'networks';
@@ -22,13 +24,14 @@ interface ResourceCardProps {
 
 export function ResourceCard(props: ResourceCardProps) {
   const { type, title, count, icon, detailIcon, items, onClick } = props;
+  const { t } = usePageTranslation();
 
   const emptyMessage =
     type === 'apps'
-      ? 'Nenhum aplicativo criado ainda'
+      ? t('resourceCard.empty.apps')
       : type === 'services'
-        ? 'Nenhum serviço criado ainda'
-        : 'Nenhuma rede criada ainda';
+        ? t('resourceCard.empty.services')
+        : t('resourceCard.empty.networks');
 
   return (
     <Box className={styles.resourceCard} onClick={onClick}>
@@ -46,7 +49,7 @@ export function ResourceCard(props: ResourceCardProps) {
             <Flex align='center' gap='2'>
               {detailIcon}
               <Text size='1' className={styles.resourceCount}>
-                {count} total
+                {t('resourceCard.total', { count })}
               </Text>
             </Flex>
           </Box>
@@ -72,7 +75,7 @@ export function ResourceCard(props: ResourceCardProps) {
             ))}
             {items.length > 3 && (
               <Text size='1' className={styles.moreItems}>
-                +{items.length - 3} mais
+                {t('resourceCard.more', { count: items.length - 3 })}
               </Text>
             )}
           </>

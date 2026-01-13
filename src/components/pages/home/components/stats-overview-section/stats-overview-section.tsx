@@ -1,6 +1,8 @@
 import { ArrowRightIcon, CubeIcon, GlobeIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Box, Flex, Grid, Heading, Progress, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../home.module.css';
 import type { LoadingStateSubset, QuotaInfo } from '../../types';
 import { getResourceUsagePercentage, getUsageColor } from '../../utils';
@@ -19,11 +21,12 @@ interface StatsOverviewSectionProps {
 
 export function StatsOverviewSection(props: StatsOverviewSectionProps) {
   const { appsTotal, networksTotal, servicesTotal, quota, loading } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Box>
       <Heading size='5' weight='medium' mb='3' style={{ color: 'var(--gray-12)' }}>
-        Visão Geral dos Recursos
+        {t('stats.overview.title')}
       </Heading>
       <Grid columns={{ initial: '1', sm: '3' }} gap='4' className={styles.statsGrid}>
         {/* Apps Stats */}
@@ -37,7 +40,7 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               </div>
               <Box>
                 <Text size='3' weight='medium' color='gray'>
-                  Aplicativos
+                  {t('stats.apps.title')}
                 </Text>
                 <Heading size='6' weight='bold'>
                   {appsTotal}
@@ -46,13 +49,13 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               <ArrowRightIcon className={styles.arrowIcon} />
             </Flex>
             <Text size='2' color='gray' mb='2'>
-              Aplicativos criados
+              {t('stats.apps.subtitle')}
             </Text>
             {quota && (
               <Box>
                 <Flex justify='between' mb='1'>
                   <Text size='1' color='gray'>
-                    Uso da cota
+                    {t('stats.quota.usage')}
                   </Text>
                   <Text size='1' color='gray'>
                     {appsTotal}/{quota.apps_quota}
@@ -78,7 +81,7 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               </div>
               <Box>
                 <Text size='3' weight='medium' color='gray'>
-                  Serviços
+                  {t('stats.services.title')}
                 </Text>
                 <Heading size='6' weight='bold'>
                   {servicesTotal}
@@ -87,13 +90,13 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               <ArrowRightIcon className={styles.arrowIcon} />
             </Flex>
             <Text size='2' color='gray' mb='2'>
-              Serviços ativos
+              {t('stats.services.subtitle')}
             </Text>
             {quota && (
               <Box>
                 <Flex justify='between' mb='1'>
                   <Text size='1' color='gray'>
-                    Uso da cota
+                    {t('stats.quota.usage')}
                   </Text>
                   <Text size='1' color='gray'>
                     {servicesTotal}/{quota.services_quota}
@@ -121,7 +124,7 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               </div>
               <Box>
                 <Text size='3' weight='medium' color='gray'>
-                  Redes
+                  {t('stats.networks.title')}
                 </Text>
                 <Heading size='6' weight='bold'>
                   {networksTotal}
@@ -130,13 +133,13 @@ export function StatsOverviewSection(props: StatsOverviewSectionProps) {
               <ArrowRightIcon className={styles.arrowIcon} />
             </Flex>
             <Text size='2' color='gray' mb='2'>
-              Redes configuradas
+              {t('stats.networks.subtitle')}
             </Text>
             {quota && (
               <Box>
                 <Flex justify='between' mb='1'>
                   <Text size='1' color='gray'>
-                    Uso da cota
+                    {t('stats.quota.usage')}
                   </Text>
                   <Text size='1' color='gray'>
                     {networksTotal}/{quota.networks_quota}

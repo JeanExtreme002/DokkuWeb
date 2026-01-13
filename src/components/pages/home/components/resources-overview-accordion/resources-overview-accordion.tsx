@@ -10,6 +10,8 @@ import {
 } from '@radix-ui/react-icons';
 import { Flex, Grid, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../home.module.css';
 import type { DetailedResourcesData, LoadingStateSubset } from '../../types';
 import { SkeletonResourceCard } from '../skeleton';
@@ -28,6 +30,7 @@ interface ResourcesOverviewAccordionProps {
 
 export function ResourcesOverviewAccordion(props: ResourcesOverviewAccordionProps) {
   const { loading, appsTotal, servicesTotal, networksTotal, detailed } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Accordion.Root type='single' collapsible defaultValue='resources'>
@@ -42,7 +45,7 @@ export function ResourcesOverviewAccordion(props: ResourcesOverviewAccordionProp
                 className={styles.accordionHeaderIcon}
               />
               <Text size='4' weight='bold' className={styles.accordionHeaderText}>
-                Recursos da Plataforma
+                {t('resources.overview.title')}
               </Text>
             </Flex>
             <ChevronDownIcon
@@ -61,7 +64,7 @@ export function ResourcesOverviewAccordion(props: ResourcesOverviewAccordionProp
             ) : (
               <ResourceCard
                 type='apps'
-                title='Aplicativos'
+                title={t('resources.apps.title')}
                 count={detailed.apps.length}
                 icon={<RocketIcon width='18' height='18' />}
                 detailIcon={
@@ -80,7 +83,7 @@ export function ResourcesOverviewAccordion(props: ResourcesOverviewAccordionProp
             ) : (
               <ResourceCard
                 type='services'
-                title='Serviços'
+                title={t('resources.services.title')}
                 count={detailed.services.length}
                 icon={<GearIcon width='18' height='18' />}
                 detailIcon={
@@ -103,7 +106,7 @@ export function ResourcesOverviewAccordion(props: ResourcesOverviewAccordionProp
             ) : (
               <ResourceCard
                 type='networks'
-                title='Redes'
+                title={t('resources.networks.title')}
                 count={detailed.networks.length}
                 icon={<GlobeIcon width='18' height='18' />}
                 detailIcon={

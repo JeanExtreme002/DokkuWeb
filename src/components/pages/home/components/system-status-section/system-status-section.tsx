@@ -7,6 +7,8 @@ import {
 } from '@radix-ui/react-icons';
 import { Badge, Box, Flex, Separator, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../home.module.css';
 import type { DetailedResourcesData, LoadingState, SystemInfo } from '../../types';
 import { PlatformInfoAccordion } from '../platform-info-accordion';
@@ -26,6 +28,7 @@ interface SystemStatusSectionProps {
 
 export function SystemStatusSection(props: SystemStatusSectionProps) {
   const { systemInfo, loading } = props;
+  const { t } = usePageTranslation();
 
   if (!(loading.system || systemInfo)) {
     return null;
@@ -43,7 +46,7 @@ export function SystemStatusSection(props: SystemStatusSectionProps) {
             style={{ color: 'var(--gray-12)' }}
             className={styles.mainSystemTitle}
           >
-            <DashboardIcon style={{ marginRight: '8px' }} /> Status do Sistema
+            <DashboardIcon style={{ marginRight: '8px' }} /> {t('system.status.sectionTitle')}
           </Text>
           <Badge
             color={
@@ -54,10 +57,10 @@ export function SystemStatusSection(props: SystemStatusSectionProps) {
             className={styles.systemStatusBadge}
           >
             {loading.system
-              ? 'Verificando...'
+              ? t('system.status.checking')
               : systemInfo && systemInfo.dokkuStatus
-                ? 'Sistema Operacional'
-                : 'Sistema Indisponível'}
+                ? t('system.status.operationalLong')
+                : t('system.status.unavailable')}
           </Badge>
         </Flex>
 
@@ -66,7 +69,7 @@ export function SystemStatusSection(props: SystemStatusSectionProps) {
             <Flex align='center' justify='center' direction='column' gap='4'>
               <div className={styles.modernSpinner} />
               <Text size='3' weight='medium' color='gray'>
-                Sincronizando dados do sistema...
+                {t('system.status.syncing')}
               </Text>
             </Flex>
           </Box>
@@ -94,7 +97,7 @@ export function SystemStatusSection(props: SystemStatusSectionProps) {
                         className={styles.systemTitleIcon}
                       />
                       <Text size='5' weight='bold' className={styles.systemTitle}>
-                        Status do Sistema
+                        {t('system.status.sectionTitle')}
                       </Text>
                     </Flex>
                     <Flex align='center' gap='2'>
@@ -122,7 +125,9 @@ export function SystemStatusSection(props: SystemStatusSectionProps) {
                     ) : (
                       <CrossCircledIcon width='12' height='12' />
                     )}
-                    {systemInfo.dokkuStatus ? 'Operacional' : 'Offline'}
+                    {systemInfo.dokkuStatus
+                      ? t('system.status.operationalShort')
+                      : t('system.status.offline')}
                   </Flex>
                 </Badge>
               </Flex>
