@@ -28,5 +28,5 @@
   "resources.apps": "Aplicativos",
   "resources.services": "Serviços",
   "resources.networks": "Redes",
-  "resources.supportLink": "Precisa aumentar o limite? Acesse o {{name}}."
+  "resources.supportLink": "Precisa aumentar o limite? Acesse {{name}}."
 }

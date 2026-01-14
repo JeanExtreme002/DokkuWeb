@@ -1,1 +1,7 @@
-{}
+{
+  "loginWith": "Sign in with:",
+  "google.label.single.small": "Sign in with @{{domain}}",
+  "google.label.single.large": "Sign in with your @{{domain}} email",
+  "google.label.multiple": "Sign in with your email",
+  "helpLink": "Need help? Visit {{supportName}}."
+}

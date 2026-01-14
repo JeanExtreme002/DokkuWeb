@@ -1,9 +1,14 @@
 import { Box, Divider, Link, Typography, useMediaQuery } from '@mui/material';
+import { ChevronUpIcon, GlobeIcon } from '@radix-ui/react-icons';
+import { Button, DropdownMenu } from '@radix-ui/themes';
 import React from 'react';
 import GoogleButton from 'react-google-button';
 
 import { WebsiteLogo } from '@/components';
+import i18n from '@/i18n';
+import { usePageTranslation } from '@/i18n/utils';
 import { config, login } from '@/lib';
+import { LANGUAGE_NAMES } from '@/lib/utils';
 
 const BACKGROUND_IMAGE_URL = '/images/backgrounds/login-background.png';
 
@@ -63,18 +68,59 @@ const helpLinkSx = {
 
 const googleButtonStyle: React.CSSProperties = { width: '100%', maxWidth: '400px' };
 
-function buildGoogleLabel(isSmallScreen: boolean, domains: string[]) {
-  if (domains.length == 1) {
-    return isSmallScreen ? `Entrar com @${domains[0]}` : `Entre com seu email @${domains[0]}`;
+function buildGoogleLabel(
+  isSmallScreen: boolean,
+  domains: string[],
+  t: (key: string, options?: Record<string, any>) => string
+) {
+  if (domains.length === 1) {
+    return isSmallScreen
+      ? t('google.label.single.small', { domain: domains[0] })
+      : t('google.label.single.large', { domain: domains[0] });
   }
-  return 'Entre com seu email';
+  return t('google.label.multiple');
 }
 
 export function LoginPage() {
   const isSmallScreen = useMediaQuery('(max-width:430px)');
+  const isUnder440 = useMediaQuery('(max-width:440px)');
+  const { t } = usePageTranslation();
 
   return (
     <Box display='flex' height='100vh' sx={rootContainerSx}>
+      <Box position='fixed' bottom={32} left={32} zIndex={1000}>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button
+              variant='surface'
+              size='2'
+              color='blue'
+              style={{
+                cursor: 'pointer',
+                color: 'var(--gray-1)',
+                backgroundColor: 'var(--gray-12)',
+              }}
+            >
+              <GlobeIcon width={18} height={18} />
+              <ChevronUpIcon />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content style={{ backgroundColor: 'white' }}>
+            {Object.entries(LANGUAGE_NAMES).map(([code, name], index, entries) => (
+              <React.Fragment key={code}>
+                <DropdownMenu.Item
+                  color='sky'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => i18n.changeLanguage(code)}
+                >
+                  {name}
+                </DropdownMenu.Item>
+                {index < entries.length - 1 ? <DropdownMenu.Separator /> : null}
+              </React.Fragment>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </Box>
       {/* Left side with background image - desktop only */}
       <Box flex={1} sx={leftSideSx} />
 
@@ -118,19 +164,19 @@ export function LoginPage() {
           width='100%'
         >
           <Typography variant='h6' gutterBottom sx={loginTypographySx}>
-            Entrar com:
+            {t('loginWith')}
           </Typography>
 
           <Divider sx={dividerSx} />
 
           <GoogleButton
-            style={googleButtonStyle}
-            label={buildGoogleLabel(isSmallScreen, config.website.emailDomains)}
+            style={{ ...googleButtonStyle, fontSize: isUnder440 ? 14 : 16 }}
+            label={buildGoogleLabel(isSmallScreen, config.website.emailDomains, t)}
             onClick={() => login()}
           />
 
           <Link href={config.support.url} underline='hover' sx={helpLinkSx}>
-            Precisa de ajuda? Acesse o {config.support.name}.
+            {t('helpLink', { supportName: config.support.name })}
           </Link>
         </Box>
 
