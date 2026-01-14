@@ -1,6 +1,8 @@
 import { Flex, Text, TextField } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface ValidationResult {
   isValid: boolean;
   message: string;
@@ -15,14 +17,15 @@ interface ServiceNameFieldProps {
 
 export function ServiceNameField(props: ServiceNameFieldProps) {
   const { serviceName, onChange, creating, validateServiceName } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Flex direction='column' gap='2'>
       <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        Nome do Serviço
+        {t('services.create.serviceName.label')}
       </Text>
       <TextField.Root
-        placeholder='Digite o nome do serviço'
+        placeholder={t('services.create.serviceName.placeholder')}
         value={serviceName}
         onChange={(e) => {
           // Allow letters (uppercase and lowercase), numbers, and "_"
@@ -39,7 +42,8 @@ export function ServiceNameField(props: ServiceNameFieldProps) {
         size='2'
         color={!validateServiceName(serviceName).isValid && serviceName.length > 0 ? 'red' : 'gray'}
       >
-        {serviceName.length}/50 caracteres {validateServiceName(serviceName).message}
+        {serviceName.length}/50 {t('services.create.serviceName.charactersSuffix')}{' '}
+        {validateServiceName(serviceName).message}
       </Text>
     </Flex>
   );

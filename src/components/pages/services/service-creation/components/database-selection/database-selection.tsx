@@ -2,6 +2,8 @@ import { Box, Card, Flex, Select, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export interface DatabaseType {
   name: string;
   displayName: string;
@@ -30,16 +32,17 @@ export function DatabaseSelection(props: DatabaseSelectionProps) {
     gridClassName,
     cardClassName,
   } = props;
+  const { t } = usePageTranslation();
 
   return (
     <>
       <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        Tipo de Serviço
+        {t('services.create.serviceType.label')}
       </Text>
       {databasesLoading ? (
         <Box style={{ padding: '12px' }}>
           <Text size='2' color='gray' style={{ fontStyle: 'italic' }}>
-            Carregando serviços...
+            {t('services.create.serviceType.loading')}
           </Text>
         </Box>
       ) : (
@@ -112,7 +115,7 @@ export function DatabaseSelection(props: DatabaseSelectionProps) {
           {isMobile && (
             <Select.Root value={selectedDatabase} onValueChange={onSelect} disabled={creating}>
               <Select.Trigger
-                placeholder='Selecione o tipo de banco de dados'
+                placeholder={t('services.create.serviceType.selectPlaceholder')}
                 style={{ maxWidth: '100%' }}
               />
               <Select.Content>

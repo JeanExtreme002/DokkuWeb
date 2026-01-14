@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import React, { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import {
@@ -22,6 +23,7 @@ interface ServiceCreationPageProps {
 
 export function ServiceCreationPage(props: ServiceCreationPageProps) {
   const router = useRouter();
+  const { t } = usePageTranslation();
   const [serviceName, setServiceName] = useState('');
   const [selectedDatabase, setSelectedDatabase] = useState<string>('');
   const [databases, setDatabases] = useState<DatabaseType[]>([]);
@@ -77,13 +79,14 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
         }
       } catch (error) {
         console.error('Error fetching databases:', error);
-        setError('Erro ao carregar tipos de serviços');
+        setError(t('services.create.errors.loadServiceTypes'));
       } finally {
         setDatabasesLoading(false);
       }
     };
 
     fetchDatabases();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const validateServiceName = (name: string) => {
@@ -95,19 +98,19 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
     const letterCount = (trimmedName.match(/[a-zA-Z]/g) || []).length;
 
     if (trimmedName.length < 3) {
-      return { isValid: false, message: '(mínimo 3 caracteres)' };
+      return { isValid: false, message: t('services.create.validation.minChars') };
     }
     if (!startsWithLetter) {
-      return { isValid: false, message: '(deve começar com uma letra)' };
+      return { isValid: false, message: t('services.create.validation.startsWithLetter') };
     }
     if (!endsWithLetterOrNumber) {
-      return { isValid: false, message: '(deve terminar com letra ou número)' };
+      return { isValid: false, message: t('services.create.validation.endsWithLetterOrNumber') };
     }
     if (letterCount < 3) {
-      return { isValid: false, message: '(mínimo 3 letras)' };
+      return { isValid: false, message: t('services.create.validation.minLetters') };
     }
     if (trimmedName.length > 50) {
-      return { isValid: false, message: '(máximo 50 caracteres)' };
+      return { isValid: false, message: t('services.create.validation.maxChars') };
     }
 
     return { isValid: true, message: '' };
@@ -142,16 +145,16 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
 
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
-          setError('Você já utilizou toda sua cota disponível de serviços!');
+          setError(t('services.create.errors.quotaExceeded'));
         } else if (error.response?.data?.detail === 'Database already exists') {
-          setError(`O serviço "${serviceName.trim()}" já existe.`);
+          setError(t('services.create.errors.serviceExists', { name: serviceName.trim() }));
         } else if (error.response?.data?.detail === 'Database name already in use') {
-          setError(`O nome de serviço "${serviceName.trim()}" já está em uso.`);
+          setError(t('services.create.errors.serviceNameInUse', { name: serviceName.trim() }));
         } else {
-          setError('Acesso negado. Verifique suas permissões.');
+          setError(t('services.create.errors.forbidden'));
         }
       } else {
-        setError('Ocorreu um erro ao criar o serviço. Tente novamente.');
+        setError(t('services.create.errors.createFailed'));
       }
     } finally {
       setCreating(false);

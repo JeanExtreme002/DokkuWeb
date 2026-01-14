@@ -1,1 +1,29 @@
-{}
+{
+  "services.create.header.title": "Criar novo serviço",
+  "services.create.header.subtitle": "Configure seu novo serviço no Dokku",
+
+  "services.create.serviceName.label": "Nome do Serviço",
+  "services.create.serviceName.placeholder": "Digite o nome do serviço",
+  "services.create.serviceName.charactersSuffix": "caracteres",
+
+  "services.create.validation.minChars": "(mínimo 3 caracteres)",
+  "services.create.validation.startsWithLetter": "(deve começar com uma letra)",
+  "services.create.validation.endsWithLetterOrNumber": "(deve terminar com letra ou número)",
+  "services.create.validation.minLetters": "(mínimo 3 letras)",
+  "services.create.validation.maxChars": "(máximo 50 caracteres)",
+
+  "services.create.serviceType.label": "Tipo de Serviço",
+  "services.create.serviceType.loading": "Carregando serviços...",
+  "services.create.serviceType.selectPlaceholder": "Selecione o tipo de banco de dados",
+
+  "services.create.actions.cancel": "Cancelar",
+  "services.create.actions.creating": "Criando...",
+  "services.create.actions.create": "Criar novo serviço",
+
+  "services.create.errors.loadServiceTypes": "Erro ao carregar tipos de serviços",
+  "services.create.errors.quotaExceeded": "Você já utilizou toda sua cota disponível de serviços!",
+  "services.create.errors.serviceExists": "O serviço \"{{name}}\" já existe.",
+  "services.create.errors.serviceNameInUse": "O nome de serviço \"{{name}}\" já está em uso.",
+  "services.create.errors.forbidden": "Acesso negado. Verifique suas permissões.",
+  "services.create.errors.createFailed": "Ocorreu um erro ao criar o serviço. Tente novamente."
+}

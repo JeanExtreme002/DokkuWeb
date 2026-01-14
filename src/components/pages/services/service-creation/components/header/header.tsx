@@ -1,7 +1,10 @@
 import { Box, Heading, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export function Header() {
+  const { t } = usePageTranslation();
   return (
     <Box>
       <Heading
@@ -12,10 +15,10 @@ export function Header() {
           marginBottom: '4px',
         }}
       >
-        Criar novo serviço
+        {t('services.create.header.title')}
       </Heading>
       <Text size='3' color='gray'>
-        Configure seu novo serviço no Dokku
+        {t('services.create.header.subtitle')}
       </Text>
     </Box>
   );

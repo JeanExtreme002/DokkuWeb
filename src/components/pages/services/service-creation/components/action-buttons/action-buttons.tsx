@@ -1,6 +1,8 @@
 import { Box, Button, Flex, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface ActionButtonsProps {
   canSubmit: boolean;
   creating: boolean;
@@ -13,6 +15,7 @@ interface ActionButtonsProps {
 export function ActionButtons(props: ActionButtonsProps) {
   const { canSubmit, creating, onCancel, onCreate, spinnerClassName, buttonsContainerClassName } =
     props;
+  const { t } = usePageTranslation();
 
   return (
     <Flex justify='end' gap='3' className={buttonsContainerClassName}>
@@ -24,7 +27,7 @@ export function ActionButtons(props: ActionButtonsProps) {
         onClick={onCancel}
         disabled={creating}
       >
-        Cancelar
+        {t('services.create.actions.cancel')}
       </Button>
       <Button
         size='3'
@@ -54,10 +57,10 @@ export function ActionButtons(props: ActionButtonsProps) {
                 borderRadius: '50%',
               }}
             />
-            <Text>Criando...</Text>
+            <Text>{t('services.create.actions.creating')}</Text>
           </Flex>
         ) : (
-          'Criar novo serviço'
+          t('services.create.actions.create')
         )}
       </Button>
     </Flex>

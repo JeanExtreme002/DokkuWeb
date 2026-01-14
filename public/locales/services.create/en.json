@@ -1,1 +1,29 @@
-{}
+{
+  "services.create.header.title": "Create new service",
+  "services.create.header.subtitle": "Set up your new service on Dokku",
+
+  "services.create.serviceName.label": "Service Name",
+  "services.create.serviceName.placeholder": "Enter the service name",
+  "services.create.serviceName.charactersSuffix": "characters",
+
+  "services.create.validation.minChars": "(minimum 3 characters)",
+  "services.create.validation.startsWithLetter": "(must start with a letter)",
+  "services.create.validation.endsWithLetterOrNumber": "(must end with a letter or number)",
+  "services.create.validation.minLetters": "(minimum 3 letters)",
+  "services.create.validation.maxChars": "(maximum 50 characters)",
+
+  "services.create.serviceType.label": "Service Type",
+  "services.create.serviceType.loading": "Loading services...",
+  "services.create.serviceType.selectPlaceholder": "Select the database type",
+
+  "services.create.actions.cancel": "Cancel",
+  "services.create.actions.creating": "Creating...",
+  "services.create.actions.create": "Create new service",
+
+  "services.create.errors.loadServiceTypes": "Error loading service types",
+  "services.create.errors.quotaExceeded": "You have used all your available service quota!",
+  "services.create.errors.serviceExists": "The service \"{{name}}\" already exists.",
+  "services.create.errors.serviceNameInUse": "The service name \"{{name}}\" is already in use.",
+  "services.create.errors.forbidden": "Access denied. Check your permissions.",
+  "services.create.errors.createFailed": "An error occurred while creating the service. Please try again."
+}
