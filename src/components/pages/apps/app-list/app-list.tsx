@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '@/components';
 import { ErrorCard, ListHeader, ServerUpdateIndicator } from '@/components/shared';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import styles from './app-list.module.css';
@@ -16,6 +17,7 @@ export interface AppListPageProps {
 }
 
 export function AppListPage(props: AppListPageProps) {
+  const { t } = usePageTranslation();
   const [appsList, setAppsList] = useState<AppListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export function AppListPage(props: AppListPageProps) {
         }
       } catch (error) {
         console.error('Error fetching apps list:', error);
-        setError('Erro ao carregar lista de aplicativos');
+        setError(t('errors.listFetch'));
       }
 
       const elapsedTime = Date.now() - startTime;
@@ -104,9 +106,7 @@ export function AppListPage(props: AppListPageProps) {
           // Update error state for this specific app
           setAppsList((prevList) =>
             prevList.map((app) =>
-              app.name === appName
-                ? { ...app, loading: false, error: 'Erro ao carregar informações' }
-                : app
+              app.name === appName ? { ...app, loading: false, error: t('errors.infoFetch') } : app
             )
           );
         }
@@ -159,6 +159,7 @@ export function AppListPage(props: AppListPageProps) {
     };
 
     fetchAppsList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -168,9 +169,9 @@ export function AppListPage(props: AppListPageProps) {
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
           <ListHeader
-            title='Meus Aplicativos'
-            subtitle='Gerencie seus aplicativos Dokku implantados'
-            buttonLabel='Nova Aplicação'
+            title={t('list.header.title')}
+            subtitle={t('list.header.subtitle')}
+            buttonLabel={t('list.header.createButton')}
             onCreate={() => (window.location.href = '/apps/create')}
             containerClassName={styles.headerSection}
             buttonClassName={styles.createButton}
@@ -182,11 +183,11 @@ export function AppListPage(props: AppListPageProps) {
 
           {!hasInitialList && loading && (
             <LoadingSpinner
-              title='Carregando Aplicativos'
+              title={t('list.loading.title')}
               messages={[
-                'Conectando ao Dokku...',
-                'Buscando aplicativos...',
-                'Preparando listagem...',
+                t('list.loading.messages.connecting'),
+                t('list.loading.messages.fetchingApps'),
+                t('list.loading.messages.preparingList'),
               ]}
             />
           )}
@@ -205,7 +206,7 @@ export function AppListPage(props: AppListPageProps) {
                   }}
                 >
                   <Text size='3' color='gray'>
-                    Nenhum aplicativo criado ainda.
+                    {t('list.empty.noApps')}
                   </Text>
                 </Card>
               ) : (

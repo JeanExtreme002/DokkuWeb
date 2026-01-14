@@ -1,6 +1,8 @@
 import { TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface EnvironmentVariable {
   key: string;
   value: string;
@@ -14,6 +16,7 @@ interface EnvListProps {
 }
 
 export function EnvList({ variables, onRemove, disabled }: EnvListProps) {
+  const { t } = usePageTranslation();
   if (variables.length === 0) return null;
 
   return (
@@ -26,7 +29,7 @@ export function EnvList({ variables, onRemove, disabled }: EnvListProps) {
       }}
     >
       <Text size='2' color='gray' weight='medium' style={{ marginBottom: '12px' }}>
-        Variáveis Configuradas:
+        {t('env.list.title')}
       </Text>
       <Flex direction='column' gap='2'>
         {variables.map((envVar) => (

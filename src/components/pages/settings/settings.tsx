@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import { ProfileCard, ResourcesCard } from './components';
@@ -20,6 +21,7 @@ interface AdminCheckResponse {
 }
 
 export function SettingsPage(props: SettingsPageProps) {
+  const { t } = usePageTranslation();
   const { data: sessionData } = useSession();
   const router = useRouter();
   const [quota, setQuota] = useState<QuotaInfo | null>(null);
@@ -43,7 +45,7 @@ export function SettingsPage(props: SettingsPageProps) {
         }
       } catch (error) {
         console.error('Error fetching quota:', error);
-        setError('Erro ao carregar informações de quota');
+        setError(t('errors.quotaFetch'));
       } finally {
         setLoading(false);
       }
@@ -69,6 +71,7 @@ export function SettingsPage(props: SettingsPageProps) {
 
     fetchQuota();
     checkAdminStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.session?.user?.email]);
 
   const copyToken = async () => {
@@ -99,10 +102,10 @@ export function SettingsPage(props: SettingsPageProps) {
                 marginBottom: '4px',
               }}
             >
-              Configurações
+              {t('header.title')}
             </Heading>
             <Text size='3' color='gray'>
-              Gerencie suas informações pessoais e limites de recursos
+              {t('header.subtitle')}
             </Text>
           </Box>
           <ProfileCard

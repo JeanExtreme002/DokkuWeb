@@ -1,6 +1,8 @@
 import { Box, Flex, Heading, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import type {
   AppContainer,
   AppInfo,
@@ -20,6 +22,7 @@ export default function OverviewSection({
   deployInfo,
   builderInfo,
 }: OverviewSectionProps) {
+  const { t } = usePageTranslation();
   if (!appInfo) return null;
 
   const renderRow = (label: string, value: React.ReactNode) => (
@@ -43,7 +46,7 @@ export default function OverviewSection({
   return (
     <Box>
       <Heading size='5' style={{ marginBottom: '20px' }}>
-        Informações do Aplicativo
+        {t('overview.title')}
       </Heading>
 
       {appInfo.info_origin === 'inspect'
@@ -52,31 +55,46 @@ export default function OverviewSection({
             const c = containers[0];
             return (
               <Flex direction='column' gap='4'>
-                {renderRow('Container ID', c?.Id?.substring(0, 12) || 'N/A')}
-                {renderRow('Imagem', c?.Config?.Image || 'N/A')}
-                {renderRow('Status', c?.State?.Status || 'N/A')}
-                {renderRow('IP Address', c?.NetworkSettings?.Networks?.bridge?.IPAddress || 'N/A')}
-                {renderRow('Gateway', c?.NetworkSettings?.Networks?.bridge?.Gateway || 'N/A')}
+                {renderRow(t('overview.labels.containerId'), c?.Id?.substring(0, 12) || 'N/A')}
+                {renderRow(t('overview.labels.image'), c?.Config?.Image || 'N/A')}
+                {renderRow(t('overview.labels.status'), c?.State?.Status || 'N/A')}
                 {renderRow(
-                  'MAC Address',
+                  t('overview.labels.ipAddress'),
+                  c?.NetworkSettings?.Networks?.bridge?.IPAddress || 'N/A'
+                )}
+                {renderRow(
+                  t('overview.labels.gateway'),
+                  c?.NetworkSettings?.Networks?.bridge?.Gateway || 'N/A'
+                )}
+                {renderRow(
+                  t('overview.labels.macAddress'),
                   c?.NetworkSettings?.Networks?.bridge?.MacAddress || 'N/A'
                 )}
-                {renderRow('PID', c?.State?.Pid ?? 'N/A')}
+                {renderRow(t('overview.labels.pid'), c?.State?.Pid ?? 'N/A')}
 
                 {/* Deploy info (compact) */}
                 {deployInfo && (
                   <>
-                    {renderRow('Git Branch', deployInfo['Git deploy branch'] || 'N/A')}
-                    {renderRow('Git SHA', deployInfo['Git sha'] || 'N/A')}
+                    {renderRow(
+                      t('overview.labels.gitBranch'),
+                      deployInfo['Git deploy branch'] || 'N/A'
+                    )}
+                    {renderRow(t('overview.labels.gitSha'), deployInfo['Git sha'] || 'N/A')}
                   </>
                 )}
 
                 {/* Builder info (compact) */}
                 {builderInfo && (
                   <>
-                    {renderRow('Builder', builderInfo.builder_computed_selected || 'Padrão')}
+                    {renderRow(
+                      t('overview.labels.builder'),
+                      builderInfo.builder_computed_selected || t('overview.values.default')
+                    )}
                     {builderInfo.builder_computed_build_dir &&
-                      renderRow('Build Directory', builderInfo.builder_computed_build_dir)}
+                      renderRow(
+                        t('overview.labels.buildDirectory'),
+                        builderInfo.builder_computed_build_dir
+                      )}
                   </>
                 )}
               </Flex>
@@ -86,12 +104,23 @@ export default function OverviewSection({
             const report = appInfo.data as AppReportData;
             return (
               <Flex direction='column' gap='4'>
-                {renderRow('Implantado', report.deployed === 'true' ? 'Sim' : 'Não')}
-                {renderRow('Processos', report.processes)}
-                {renderRow('Em execução', report.running === 'true' ? 'Sim' : 'Não')}
-                {renderRow('Política de Restart', report.ps_restart_policy)}
-                {renderRow('Pode Escalar', report.ps_can_scale === 'true' ? 'Sim' : 'Não')}
-                {renderRow('Procfile Path', report.ps_procfile_path || 'N/A')}
+                {renderRow(
+                  t('overview.labels.deployed'),
+                  report.deployed === 'true' ? t('overview.values.yes') : t('overview.values.no')
+                )}
+                {renderRow(t('overview.labels.processes'), report.processes)}
+                {renderRow(
+                  t('overview.labels.running'),
+                  report.running === 'true' ? t('overview.values.yes') : t('overview.values.no')
+                )}
+                {renderRow(t('overview.labels.restartPolicy'), report.ps_restart_policy)}
+                {renderRow(
+                  t('overview.labels.canScale'),
+                  report.ps_can_scale === 'true'
+                    ? t('overview.values.yes')
+                    : t('overview.values.no')
+                )}
+                {renderRow(t('overview.labels.procfilePath'), report.ps_procfile_path || 'N/A')}
               </Flex>
             );
           })()}

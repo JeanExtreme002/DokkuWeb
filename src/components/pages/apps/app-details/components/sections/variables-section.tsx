@@ -10,6 +10,8 @@ import {
 import { Box, Button, Card, DropdownMenu, Flex, Heading, Text, TextField } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface VariablesSectionProps {
@@ -38,6 +40,7 @@ interface VariablesSectionProps {
 }
 
 export function VariablesSection(props: VariablesSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Box>
       <Flex
@@ -46,7 +49,7 @@ export function VariablesSection(props: VariablesSectionProps) {
         className={styles.envHeader}
         style={{ marginBottom: '20px' }}
       >
-        <Heading size='5'>Variáveis de Ambiente</Heading>
+        <Heading size='5'>{t('envSection.title')}</Heading>
         <Flex align='center' gap='2' className={styles.envActions}>
           <Button
             className={styles.envExportButton}
@@ -54,10 +57,10 @@ export function VariablesSection(props: VariablesSectionProps) {
             style={{ cursor: 'pointer' }}
             onClick={props.onOpenImport}
             disabled={props.envImportLoading}
-            title='Importar variáveis de um arquivo (.env, .json, .yml)'
+            title={t('envSection.importTooltip')}
           >
             <UploadIcon />
-            Importar
+            {t('envSection.import')}
           </Button>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger className={styles.envExportTrigger}>
@@ -65,15 +68,15 @@ export function VariablesSection(props: VariablesSectionProps) {
                 className={`${styles.envExportButton} ${styles.envExportButtonOrange}`}
                 variant='outline'
                 disabled={props.configLoading}
-                title='Exportar variáveis de ambiente'
+                title={t('envSection.exportTooltip')}
               >
                 <DownloadIcon />
-                Exportar
+                {t('envSection.export')}
                 <ChevronDownIcon />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
-              <DropdownMenu.Label>Exportar como:</DropdownMenu.Label>
+              <DropdownMenu.Label>{t('envSection.exportAs')}</DropdownMenu.Label>
               <DropdownMenu.Separator />
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.exportEnvAsENV}>
                 .ENV
@@ -92,7 +95,7 @@ export function VariablesSection(props: VariablesSectionProps) {
       {props.configLoading ? (
         <Box className={styles.loadingSpinner}>
           <Box className={styles.spinner}></Box>
-          <Text style={{ marginLeft: '12px' }}>Carregando variáveis...</Text>
+          <Text style={{ marginLeft: '12px' }}>{t('envSection.loading')}</Text>
         </Box>
       ) : props.errorsConfig ? (
         <Box className={styles.errorMessage}>
@@ -104,10 +107,10 @@ export function VariablesSection(props: VariablesSectionProps) {
           <Box className={styles.envVarForm}>
             <Box style={{ flex: 1 }}>
               <Text size='2' style={{ marginBottom: '4px' }}>
-                Chave
+                {t('envSection.keyLabel')}
               </Text>
               <TextField.Root
-                placeholder='NOME_VARIAVEL'
+                placeholder={t('envSection.keyPlaceholder')}
                 value={props.newEnvKey}
                 onChange={(e) => props.setNewEnvKey(e.target.value.replace(/\s/g, ''))}
                 disabled={props.envSubmitting}
@@ -116,10 +119,10 @@ export function VariablesSection(props: VariablesSectionProps) {
 
             <Box style={{ flex: 1 }}>
               <Text size='2' style={{ marginBottom: '4px' }}>
-                Valor
+                {t('envSection.valueLabel')}
               </Text>
               <TextField.Root
-                placeholder='valor_da_variavel'
+                placeholder={t('envSection.valuePlaceholder')}
                 value={props.newEnvValue}
                 onChange={(e) => props.setNewEnvValue(e.target.value)}
                 disabled={props.envSubmitting}
@@ -137,7 +140,7 @@ export function VariablesSection(props: VariablesSectionProps) {
                 style={{ background: 'var(--green-9)', border: 'none', color: 'white' }}
               >
                 <PlusIcon />
-                {props.envSubmitting ? 'Adicionando...' : 'Adicionar'}
+                {props.envSubmitting ? t('envSection.adding') : t('envSection.add')}
               </Button>
             </Box>
           </Box>
@@ -145,7 +148,7 @@ export function VariablesSection(props: VariablesSectionProps) {
           {/* Environment Variables List */}
           <Box>
             {Object.keys(props.config).length === 0 ? (
-              <Text color='gray'>Nenhuma variável de ambiente configurada.</Text>
+              <Text color='gray'>{t('envSection.empty')}</Text>
             ) : (
               Object.entries(props.config).map(([key, value]) => (
                 <Card key={key} className={styles.envVarCard}>
@@ -166,10 +169,10 @@ export function VariablesSection(props: VariablesSectionProps) {
                         }}
                         onClick={() => props.startEditEnvVar(key, String(value))}
                         disabled={props.savingEnv && props.editingEnvKey === key}
-                        aria-label={`Editar variável ${key}`}
+                        aria-label={t('envSection.editAria', { key })}
                       >
                         <Pencil1Icon />
-                        <span className={styles.editText}>editar</span>
+                        <span className={styles.editText}>{t('envSection.edit')}</span>
                       </Button>
                     </Flex>
 
@@ -194,7 +197,7 @@ export function VariablesSection(props: VariablesSectionProps) {
                             onClick={props.cancelEditEnvVar}
                             disabled={props.savingEnv}
                           >
-                            Cancelar
+                            {t('envSection.cancel')}
                           </Button>
                           <Button
                             onClick={props.saveEditedEnvironmentVariable}
@@ -209,7 +212,7 @@ export function VariablesSection(props: VariablesSectionProps) {
                             {props.savingEnv ? (
                               <ReloadIcon className={styles.buttonSpinner} />
                             ) : (
-                              'Salvar'
+                              t('envSection.save')
                             )}
                           </Button>
                         </Flex>

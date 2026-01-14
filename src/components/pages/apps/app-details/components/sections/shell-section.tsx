@@ -2,6 +2,8 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Flex, Heading } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface ShellSectionProps {
@@ -17,6 +19,7 @@ interface ShellSectionProps {
 }
 
 export default function ShellSection(props: ShellSectionProps) {
+  const { t } = usePageTranslation();
   const {
     terminalBusy,
     terminalOutputs,
@@ -33,7 +36,7 @@ export default function ShellSection(props: ShellSectionProps) {
     <>
       <Flex align='center' justify='between' style={{ marginBottom: '12px' }}>
         <Heading size='5' style={{ color: 'var(--gray-12)' }}>
-          Shell
+          {t('shell.sectionTitle')}
         </Heading>
         {terminalBusy && (
           <ReloadIcon className={styles.buttonSpinner} style={{ color: 'var(--gray-10)' }} />
@@ -69,7 +72,7 @@ export default function ShellSection(props: ShellSectionProps) {
         }}
       >
         {terminalOutputs.length === 0 ? (
-          <div style={{ color: 'var(--gray-11)' }}>Digite um comando e pressione Enter.</div>
+          <div style={{ color: 'var(--gray-11)' }}>{t('shell.hint')}</div>
         ) : (
           terminalOutputs.map((line, idx) => {
             const promptPrefix = `${getPrompt()} `;

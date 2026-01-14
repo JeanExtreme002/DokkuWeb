@@ -3,6 +3,7 @@ import { Button, Flex } from '@radix-ui/themes';
 import React from 'react';
 
 import { StopIcon } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 
@@ -23,8 +24,8 @@ interface AppControlButtonsProps {
   onOpenBuilder: () => void;
 }
 
-// Renders the group of app control buttons, preserving visuals
 export function AppControlButtons(props: AppControlButtonsProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex direction='column' gap='3'>
       <Flex
@@ -50,7 +51,7 @@ export function AppControlButtons(props: AppControlButtonsProps) {
             }
           >
             {props.startLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <PlayIcon />}
-            Iniciar
+            {t('controls.start')}
           </Button>
 
           <Button
@@ -68,7 +69,7 @@ export function AppControlButtons(props: AppControlButtonsProps) {
             }
           >
             {props.stopLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <StopIcon />}
-            Parar
+            {t('controls.stop')}
           </Button>
 
           <Button
@@ -90,7 +91,7 @@ export function AppControlButtons(props: AppControlButtonsProps) {
             ) : (
               <ReloadIcon />
             )}
-            Reiniciar
+            {t('controls.restart')}
           </Button>
         </Flex>
 
@@ -114,7 +115,7 @@ export function AppControlButtons(props: AppControlButtonsProps) {
             ) : (
               <RocketIcon />
             )}
-            Reconstruir
+            {t('controls.rebuild')}
           </Button>
 
           <Button
@@ -133,7 +134,7 @@ export function AppControlButtons(props: AppControlButtonsProps) {
             }
           >
             <GearIcon />
-            Configurar Builder
+            {t('controls.builderConfig')}
           </Button>
         </Flex>
       </Flex>

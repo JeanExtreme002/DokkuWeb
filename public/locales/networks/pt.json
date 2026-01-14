@@ -1,1 +1,48 @@
-{}
+{
+  "header.title": "Minhas Redes",
+  "header.subtitle": "Gerencie suas redes de aplicações no Dokku",
+  "actions.createNetwork": "Criar Rede",
+
+  "loading.title": "Carregando Redes",
+  "loading.messages.connecting": "Conectando ao Dokku...",
+  "loading.messages.listingNetworks": "Listando redes Docker...",
+  "loading.messages.loadingLinkedApps": "Carregando aplicativos vinculados...",
+  "loading.messages.processingConnectivity": "Processando dados de conectividade...",
+  "loading.messages.preparingView": "Preparando visualização...",
+  "updatingIndicator": "Sincronizando informações com o servidor...",
+
+  "empty.noNetworks": "Nenhuma rede criada ainda.",
+
+  "errors.listFetch": "Erro ao carregar redes",
+  "errors.quotaExceeded": "Você já utilizou toda sua cota disponível de redes!",
+  "errors.networkExists": "A rede \"{{name}}\" já existe.",
+  "errors.accessDenied": "Acesso negado. Verifique suas permissões.",
+  "errors.createFailed": "Ocorreu um erro ao criar a rede. Tente novamente.",
+
+  "accordion.appsCount_one": "1 app vinculado",
+  "accordion.appsCount_other": "{{count}} apps vinculados",
+  "accordion.link.title": "Vincular Aplicativo",
+  "accordion.link.description": "Aplicativos vinculados à mesma rede podem se comunicar entre si.",
+  "accordion.link.inputPlaceholder": "Nome do aplicativo",
+  "accordion.link.button": "Vincular",
+  "accordion.list.title": "Apps Vinculados ({{count}})",
+  "accordion.list.empty": "Nenhum aplicativo vinculado",
+  "accordion.list.viewTitle": "Ver aplicativo",
+  "accordion.list.unlinkTitle": "Desvincular aplicativo",
+  "accordion.list.unlink": "Desvincular",
+  "accordion.danger.title": "Zona de Perigo",
+  "accordion.danger.deleteTitle": "Excluir rede",
+  "accordion.danger.deleteButton": "Excluir Rede",
+
+  "modals.common.cancel": "Cancelar",
+  "modals.delete.title": "Excluir Rede",
+  "modals.delete.description": "Tem certeza que deseja excluir a rede <strong>{{name}}</strong>? Esta ação não pode ser desfeita.",
+  "modals.delete.confirm": "Excluir",
+  "modals.unlink.title": "Desvincular Aplicativo",
+  "modals.unlink.description": "Tem certeza que deseja desvincular o aplicativo <strong>{{app}}</strong> da rede <strong>{{network}}</strong>?",
+  "modals.unlink.confirm": "Desvincular",
+  "modals.create.title": "Criar Nova Rede",
+  "modals.create.description": "Digite um nome para a nova rede que será criada.",
+  "modals.create.placeholder": "Nome da rede",
+  "modals.create.confirm": "Criar Rede"
+}

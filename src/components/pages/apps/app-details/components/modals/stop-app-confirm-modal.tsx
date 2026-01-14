@@ -1,6 +1,8 @@
 import { Button, Dialog, Flex } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface StopAppConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -10,16 +12,17 @@ interface StopAppConfirmModalProps {
 
 export default function StopAppConfirmModal(props: StopAppConfirmModalProps) {
   const { open, onOpenChange, stopLoading, onConfirm } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content maxWidth='450px' style={{ padding: '24px' }}>
-        <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Ação</Dialog.Title>
+        <Dialog.Title style={{ marginBottom: '12px' }}>{t('modals.stopApp.title')}</Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Tem certeza que deseja parar o aplicativo?
+          {t('modals.stopApp.description')}
           <br />
           <br />
-          Esta ação interromperá todos os processos e conexões ativas desse aplicativo.
+          {t('modals.stopApp.warning')}
         </Dialog.Description>
 
         <Flex gap='3' mt='4' justify='end'>
@@ -30,7 +33,7 @@ export default function StopAppConfirmModal(props: StopAppConfirmModalProps) {
               style={{ cursor: 'pointer' }}
               disabled={stopLoading}
             >
-              Cancelar
+              {t('modals.common.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -39,7 +42,7 @@ export default function StopAppConfirmModal(props: StopAppConfirmModalProps) {
             disabled={stopLoading}
             style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
           >
-            {stopLoading ? 'Parando...' : 'Parar Aplicativo'}
+            {stopLoading ? t('modals.stopApp.stopping') : t('modals.stopApp.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

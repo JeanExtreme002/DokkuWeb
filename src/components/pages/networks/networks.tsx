@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { LoadingSpinner, NavBar } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 
 import {
   ConfirmDeleteModal,
@@ -34,6 +35,7 @@ interface NetworksData {
 
 export function NetworksPage(props: NetworksPageProps) {
   const router = useRouter();
+  const { t } = usePageTranslation();
   const [networks, setNetworks] = useState<NetworksData>({});
   const [linkedApps, setLinkedApps] = useState<Record<string, string[]>>({});
   const [expandedNetwork, setExpandedNetwork] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export function NetworksPage(props: NetworksPageProps) {
         }
       } catch (error) {
         console.error('Error fetching networks and apps:', error);
-        setError('Erro ao carregar redes');
+        setError(t('errors.listFetch'));
       } finally {
         setLoading(false);
       }
@@ -134,6 +136,7 @@ export function NetworksPage(props: NetworksPageProps) {
     };
 
     fetchNetworksAndApps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchLinkedApps = async (networkName: string) => {
@@ -212,14 +215,14 @@ export function NetworksPage(props: NetworksPageProps) {
 
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
-          setCreateNetworkError('Você já utilizou toda sua cota disponível de redes!');
+          setCreateNetworkError(t('errors.quotaExceeded'));
         } else if (error.response?.data?.detail === 'Network already exists') {
-          setCreateNetworkError(`A rede "${newNetworkName.trim()}" já existe.`);
+          setCreateNetworkError(t('errors.networkExists', { name: newNetworkName.trim() }));
         } else {
-          setCreateNetworkError('Acesso negado. Verifique suas permissões.');
+          setCreateNetworkError(t('errors.accessDenied'));
         }
       } else {
-        setCreateNetworkError('Ocorreu um erro ao criar a rede. Tente novamente.');
+        setCreateNetworkError(t('errors.createFailed'));
       }
     } finally {
       setCreatingNetwork(false);
@@ -265,13 +268,13 @@ export function NetworksPage(props: NetworksPageProps) {
           {/* Loading state */}
           {loading && (
             <LoadingSpinner
-              title='Carregando Redes'
+              title={t('loading.title')}
               messages={[
-                'Conectando ao Dokku...',
-                'Listando redes Docker...',
-                'Carregando aplicativos vinculados...',
-                'Processando dados de conectividade...',
-                'Preparando visualização...',
+                t('loading.messages.connecting'),
+                t('loading.messages.listingNetworks'),
+                t('loading.messages.loadingLinkedApps'),
+                t('loading.messages.processingConnectivity'),
+                t('loading.messages.preparingView'),
               ]}
             />
           )}
@@ -292,7 +295,7 @@ export function NetworksPage(props: NetworksPageProps) {
                   }}
                 >
                   <Text size='3' color='gray'>
-                    Nenhuma rede criada ainda.
+                    {t('empty.noNetworks')}
                   </Text>
                 </Card>
               ) : (

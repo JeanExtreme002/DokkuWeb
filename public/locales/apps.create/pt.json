@@ -1,1 +1,36 @@
-{}
+{
+  "header.title": "Criar novo aplicativo",
+  "header.subtitle": "Configure seu novo aplicativo Dokku",
+
+  "name.label": "Nome do Aplicativo",
+  "name.placeholder": "Digite o nome do aplicativo",
+  "name.counter": "{{count}}/50 caracteres",
+  "name.validation.minLength": "(mínimo 3 caracteres)",
+  "name.validation.startsWithLetter": "(deve começar com uma letra)",
+  "name.validation.endsWithAlnum": "(deve terminar com letra ou número)",
+  "name.validation.minLetters": "(mínimo 3 letras)",
+  "name.validation.maxLength": "(máximo 50 caracteres)",
+
+  "network.label": "Rede (Opcional)",
+  "network.loading": "Carregando redes...",
+  "network.placeholder": "Selecione uma rede (opcional)",
+  "network.none": "Nenhum",
+
+  "env.title": "Variáveis de Ambiente",
+  "env.inputs.keyLabel": "Chave",
+  "env.inputs.keyPlaceholder": "NOME_VARIAVEL",
+  "env.inputs.valueLabel": "Valor",
+  "env.inputs.valuePlaceholder": "valor_da_variavel",
+  "env.inputs.addVariable": "Adicionar Variável",
+  "env.list.title": "Variáveis Configuradas:",
+
+  "actions.cancel": "Cancelar",
+  "actions.creating": "Criando...",
+  "actions.createApp": "Criar novo aplicativo",
+
+  "errors.quotaExceeded": "Você já utilizou toda sua cota disponível de aplicativos!",
+  "errors.appExists": "O aplicativo \"{{name}}\" já existe.",
+  "errors.appNameInUse": "O nome de aplicativo \"{{name}}\" já está em uso.",
+  "errors.accessDenied": "Acesso negado. Verifique suas permissões.",
+  "errors.createFailed": "Ocorreu um erro ao criar o aplicativo. Tente novamente."
+}

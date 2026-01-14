@@ -2,6 +2,7 @@ import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { AppAvatar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
 import styles from '../../app-list.module.css';
@@ -11,12 +12,13 @@ import {
   getContainerInfo,
   getPortInfo,
   getProcessInfo,
-  getStatusInfo,
   getUptime,
+  useStatusInfo,
 } from '../../utils';
 
 export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile: boolean }) {
-  const statusInfo = appItem.info ? getStatusInfo(appItem.info) : null;
+  const { t } = usePageTranslation();
+  const statusInfo = useStatusInfo(appItem?.info);
   const displayName = formatAppName(appItem.name);
   const processInfo = appItem.info
     ? getProcessInfo(appItem.info)
@@ -64,11 +66,6 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
             <Text size='2' style={{ color: 'var(--gray-9)' }}>
               • {processInfo.processType}
             </Text>
-            {processInfo.processCount > 1 && (
-              <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                ({processInfo.processCount} processos)
-              </Text>
-            )}
           </Flex>
 
           {/* Status with colored circle */}
@@ -87,9 +84,13 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
               </Text>
 
               {/* Uptime — only shows for inspected and active apps */}
-              {containerInfo?.State.StartedAt && statusInfo.text === 'Ativo' && (
+              {containerInfo?.State.StartedAt && statusInfo.text === t('status.active') && (
                 <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                  • {getUptime(containerInfo.State.StartedAt)}
+                  {(() => {
+                    const uptime = getUptime(containerInfo.State.StartedAt);
+                    const text = uptime === 'N/A' ? t('card.na') : uptime;
+                    return `• ${text}`;
+                  })()}
                 </Text>
               )}
             </Flex>
@@ -99,7 +100,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
           {containerInfo?.NetworkSettings?.Networks?.bridge?.IPAddress && (
             <Flex align='center' gap='2'>
               <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
-                IP:
+                {t('card.ipLabel')}
               </Text>
               <Text size='2' style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}>
                 {containerInfo.NetworkSettings?.Networks?.bridge?.IPAddress}
@@ -110,7 +111,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
                     •
                   </Text>
                   <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
-                    Porta:
+                    {t('card.portLabel')}
                   </Text>
                   <Text size='2' style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}>
                     {getPortInfo(containerInfo)}
@@ -133,8 +134,11 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
             className={styles.dateText}
           >
             {containerInfo?.State.StartedAt
-              ? `Iniciado em ${formatStartedAt(containerInfo.State.StartedAt)}`
-              : 'Não inicializado'}
+              ? (() => {
+                  const formatted = formatStartedAt(containerInfo.State.StartedAt);
+                  return t('card.startedAt', { date: formatted });
+                })()
+              : t('card.notStarted')}
           </Text>
 
           <Button
@@ -145,7 +149,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
             onClick={() => (window.location.href = `/apps/a/${displayName}`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('card.viewDetails')}
           </Button>
         </Flex>
       </Flex>

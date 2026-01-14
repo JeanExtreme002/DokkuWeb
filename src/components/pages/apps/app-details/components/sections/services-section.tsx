@@ -2,6 +2,7 @@ import { Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
 import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import styles from '../../app-details.module.css';
@@ -15,17 +16,18 @@ interface ServicesSectionProps {
 
 export default function ServicesSection(props: ServicesSectionProps) {
   const { servicesLoading, errorServices, databases, onOpenService } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Flex direction='column' gap='4'>
       <Heading size='5' style={{ color: 'var(--gray-12)' }}>
-        Serviços Conectados
+        {t('servicesSection.title')}
       </Heading>
 
       {servicesLoading ? (
         <Box className={styles.loadingSpinner}>
           <Box className={styles.spinner}></Box>
-          <Text style={{ marginLeft: '12px' }}>Carregando serviços...</Text>
+          <Text style={{ marginLeft: '12px' }}>{t('servicesSection.loading')}</Text>
         </Box>
       ) : errorServices ? (
         <Card
@@ -49,7 +51,7 @@ export default function ServicesSection(props: ServicesSectionProps) {
               }}
             >
               <Text size='3' color='gray'>
-                Nenhum serviço conectado a este aplicativo.
+                {t('servicesSection.empty')}
               </Text>
             </Card>
           ) : (
@@ -113,7 +115,7 @@ export default function ServicesSection(props: ServicesSectionProps) {
                               }}
                             />
                             <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                              Vinculado
+                              {t('servicesSection.linked')}
                             </Text>
                           </Flex>
                         </Flex>

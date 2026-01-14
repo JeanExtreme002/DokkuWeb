@@ -1,5 +1,7 @@
 import { Box, Button, Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-creation.module.css';
 
 interface ActionButtonsProps {
@@ -10,6 +12,7 @@ interface ActionButtonsProps {
 }
 
 export function ActionButtons({ creating, canSubmit, onCancel, onCreate }: ActionButtonsProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex justify='end' gap='3' className={styles.buttonsContainer}>
       <Button
@@ -20,7 +23,7 @@ export function ActionButtons({ creating, canSubmit, onCancel, onCreate }: Actio
         onClick={onCancel}
         disabled={creating}
       >
-        Cancelar
+        {t('actions.cancel')}
       </Button>
       <Button
         size='3'
@@ -50,10 +53,10 @@ export function ActionButtons({ creating, canSubmit, onCancel, onCreate }: Actio
                 borderRadius: '50%',
               }}
             />
-            <Text>Criando...</Text>
+            <Text>{t('actions.creating')}</Text>
           </Flex>
         ) : (
-          'Criar novo aplicativo'
+          t('actions.createApp')
         )}
       </Button>
     </Flex>

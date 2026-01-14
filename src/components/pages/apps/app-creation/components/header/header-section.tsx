@@ -1,6 +1,9 @@
 import { Box, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export function HeaderSection() {
+  const { t } = usePageTranslation();
   return (
     <Box>
       <Heading
@@ -11,10 +14,10 @@ export function HeaderSection() {
           marginBottom: '4px',
         }}
       >
-        Criar novo aplicativo
+        {t('header.title')}
       </Heading>
       <Text size='3' color='gray'>
-        Configure seu novo aplicativo Dokku
+        {t('header.subtitle')}
       </Text>
     </Box>
   );

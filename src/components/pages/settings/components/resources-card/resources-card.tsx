@@ -2,6 +2,7 @@ import { Link } from '@mui/material';
 import { Badge, Box, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 
 import { AppIcon, DotIcon, NetworkIcon, ServiceIcon } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 import { config } from '@/lib';
 
 import { QuotaInfo } from '../../types';
@@ -13,6 +14,7 @@ interface ResourcesCardProps {
 }
 
 export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card
       style={{
@@ -24,7 +26,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
       <Flex direction='column' gap='4' style={{ padding: '8px' }}>
         <Flex align='center' gap='3'>
           <Heading size='5' weight='bold' style={{ color: 'var(--gray-12)' }}>
-            Limites de Recursos
+            {t('resources.title')}
           </Heading>
         </Flex>
 
@@ -39,7 +41,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
                 fontStyle: 'italic',
               }}
             >
-              Carregando informações de recursos...
+              {t('resources.loading')}
             </Text>
           </Flex>
         )}
@@ -94,7 +96,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
                     <AppIcon />
                   </Box>
                   <Text size='4' weight='medium' style={{ color: 'var(--blue-12)' }}>
-                    Aplicativos
+                    {t('resources.apps')}
                   </Text>
                 </Flex>
                 <Badge
@@ -133,7 +135,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
                     <ServiceIcon />
                   </Box>
                   <Text size='4' weight='medium' style={{ color: 'var(--purple-12)' }}>
-                    Serviços
+                    {t('resources.services')}
                   </Text>
                 </Flex>
                 <Badge
@@ -172,7 +174,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
                     <NetworkIcon />
                   </Box>
                   <Text size='4' weight='medium' style={{ color: 'var(--green-12)' }}>
-                    Redes
+                    {t('resources.networks')}
                   </Text>
                 </Flex>
                 <Badge
@@ -198,7 +200,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
             underline='hover'
             sx={{ fontSize: '14px', color: 'var(--gray-11)' }}
           >
-            Precisa aumentar o limite? Acesse o {config.support.name}.
+            {t('resources.supportLink', { name: config.support.name })}
           </Link>
         </Box>
       </Flex>

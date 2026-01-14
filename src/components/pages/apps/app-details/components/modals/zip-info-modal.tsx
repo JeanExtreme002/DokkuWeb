@@ -1,5 +1,8 @@
 import { Box, Button, Dialog, Flex, Text } from '@radix-ui/themes';
 import React from 'react';
+import { Trans } from 'react-i18next';
+
+import { usePageTranslation } from '@/i18n/utils';
 
 interface ZipInfoModalProps {
   open: boolean;
@@ -9,13 +12,14 @@ interface ZipInfoModalProps {
 
 export default function ZipInfoModal(props: ZipInfoModalProps) {
   const { open, onOpenChange, handleZipFileSelection } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: '500px' }}>
-        <Dialog.Title>Deploy via Arquivo ZIP</Dialog.Title>
+        <Dialog.Title>{t('modals.zipInfo.title')}</Dialog.Title>
         <Dialog.Description style={{ marginBottom: '16px' }}>
-          Para fazer deploy via arquivo ZIP, o arquivo deve conter:
+          {t('modals.zipInfo.description')}
         </Dialog.Description>
 
         <Box
@@ -29,14 +33,14 @@ export default function ZipInfoModal(props: ZipInfoModalProps) {
         >
           <Flex direction='column' gap='3'>
             <Text size='3' weight='medium' style={{ color: 'var(--blue-12)' }}>
-              📁 Estrutura necessária:
+              {t('modals.zipInfo.structure.title')}
             </Text>
             <Box style={{ fontFamily: 'monospace', fontSize: '14px' }}>
-              <div>📦 seu-projeto.zip</div>
-              <div>├── 📄 .deployment_token</div>
-              <div>├── 📄 app.py (ou seus arquivos)</div>
-              <div>├── 📄 requirements.txt</div>
-              <div>└── 📁 ... (outros arquivos)</div>
+              <div>{t('modals.zipInfo.structure.root')}</div>
+              <div>{t('modals.zipInfo.structure.deploymentToken')}</div>
+              <div>{t('modals.zipInfo.structure.appPy')}</div>
+              <div>{t('modals.zipInfo.structure.requirements')}</div>
+              <div>{t('modals.zipInfo.structure.other')}</div>
             </Box>
           </Flex>
         </Box>
@@ -54,12 +58,14 @@ export default function ZipInfoModal(props: ZipInfoModalProps) {
             <Text style={{ fontSize: '16px' }}>⚠️</Text>
             <Box>
               <Text size='3' weight='medium' style={{ color: 'var(--amber-11)' }}>
-                Importante:{' '}
+                {t('modals.zipInfo.important.title')}{' '}
               </Text>
               <Text size='2' style={{ color: 'var(--amber-11)', marginTop: '4px' }}>
-                O arquivo <strong>.deployment_token</strong> deve conter exatamente o token da
-                aplicação (pode ser encontrado na aba &quot;Segurança&quot;), sem espaços ou quebras
-                de linha adicionais.
+                <Trans
+                  t={t}
+                  i18nKey='modals.zipInfo.important.body'
+                  components={{ strong: <strong /> }}
+                />
               </Text>
             </Box>
           </Flex>
@@ -68,11 +74,11 @@ export default function ZipInfoModal(props: ZipInfoModalProps) {
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>
             <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
-              Cancelar
+              {t('modals.common.cancel')}
             </Button>
           </Dialog.Close>
           <Button style={{ cursor: 'pointer' }} onClick={handleZipFileSelection}>
-            Escolher arquivo ZIP
+            {t('modals.zipInfo.chooseZip')}
           </Button>
         </Flex>
       </Dialog.Content>

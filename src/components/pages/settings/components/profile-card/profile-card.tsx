@@ -16,6 +16,7 @@ import * as React from 'react';
 
 import { PadLockIcon } from '@/components/shared';
 import i18n from '@/i18n';
+import { usePageTranslation } from '@/i18n/utils';
 import { LANGUAGE_NAMES } from '@/lib/utils';
 
 import styles from '../../settings.module.css';
@@ -39,7 +40,8 @@ export function ProfileCard({
   onToggleShowToken,
   onCopyToken,
 }: ProfileCardProps) {
-  const userName = session?.user?.name || 'Usuário';
+  const { t } = usePageTranslation();
+  const userName = session?.user?.name || t('user.fallbackName');
   const userImage = !userName.toLowerCase().startsWith('takeover')
     ? session?.user?.image
     : undefined;
@@ -66,21 +68,21 @@ export function ProfileCard({
       <Flex direction='column' gap='3' style={{ padding: '4px' }}>
         <Flex justify='between' align='center'>
           <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-            Perfil do Usuário
+            {t('profile.title')}
           </Heading>
           {!adminLoading && isAdmin && (
-            <Tooltip content='Acessar o painel de administrador'>
+            <Tooltip content={t('profile.admin.tooltip')}>
               <Button
                 size='2'
                 color='orange'
                 variant='outline'
                 onClick={onAdminClick}
                 className={styles.adminButton}
-                aria-label='Acessar o painel de administrador'
-                title='Acessar o painel de administrador'
+                aria-label={t('profile.admin.ariaLabel')}
+                title={t('profile.admin.titleAttr')}
               >
                 <PadLockIcon />
-                <span className={styles.adminButtonLabel}>Painel do Admin</span>
+                <span className={styles.adminButtonLabel}>{t('profile.admin.button')}</span>
               </Button>
             </Tooltip>
           )}
@@ -116,8 +118,8 @@ export function ProfileCard({
 
         <Flex direction='column' gap='2'>
           <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-            Idioma
-            <Tooltip content='Idioma da plataforma'>
+            {t('profile.language.label')}
+            <Tooltip content={t('profile.language.tooltip')}>
               <InfoCircledIcon
                 style={{
                   color: 'var(--gray-9)',
@@ -130,7 +132,10 @@ export function ProfileCard({
             </Tooltip>
           </Text>
           <Select.Root value={language} onValueChange={(code: string) => i18n.changeLanguage(code)}>
-            <Select.Trigger placeholder='Selecione o idioma' style={{ maxWidth: '200px' }} />
+            <Select.Trigger
+              placeholder={t('profile.language.placeholder')}
+              style={{ maxWidth: '200px' }}
+            />
             <Select.Content>
               {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
                 <Select.Item key={code} value={code}>
@@ -144,9 +149,9 @@ export function ProfileCard({
         <Flex direction='column' gap='2'>
           <Flex align='center' gap='2'>
             <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Token de Acesso
+              {t('profile.token.label')}
             </Text>
-            <Tooltip content='Token de autenticação para requisições via API'>
+            <Tooltip content={t('profile.token.tooltip')}>
               <InfoCircledIcon
                 style={{
                   color: 'var(--gray-9)',
@@ -168,7 +173,7 @@ export function ProfileCard({
                 filter: showToken ? 'none' : 'blur(4px)',
                 transition: 'filter 0.2s ease',
               }}
-              placeholder='Token não disponível'
+              placeholder={t('profile.token.placeholder')}
             />
             <Button
               size='2'
@@ -184,7 +189,7 @@ export function ProfileCard({
                 justifyContent: 'center',
                 cursor: 'pointer',
               }}
-              title={showToken ? 'Ocultar token' : 'Mostrar token'}
+              title={showToken ? t('profile.token.toggle.hide') : t('profile.token.toggle.show')}
             >
               <PadLockIcon isUnlocked={showToken} />
             </Button>
@@ -194,7 +199,7 @@ export function ProfileCard({
               disabled={!session?.accessToken}
               style={{ minWidth: '70px', cursor: 'pointer' }}
             >
-              Copiar
+              {t('profile.token.copy')}
             </Button>
           </Flex>
         </Flex>

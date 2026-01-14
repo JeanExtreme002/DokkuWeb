@@ -1,1 +1,32 @@
-{}
+{
+  "header.title": "Settings",
+  "header.subtitle": "Manage your personal information and resource limits",
+
+  "errors.quotaFetch": "Error loading quota information",
+
+  "user.fallbackName": "User",
+
+  "profile.title": "User Profile",
+  "profile.admin.tooltip": "Open the admin dashboard",
+  "profile.admin.ariaLabel": "Open the admin dashboard",
+  "profile.admin.titleAttr": "Open the admin dashboard",
+  "profile.admin.button": "Admin Panel",
+
+  "profile.language.label": "Language",
+  "profile.language.tooltip": "Platform language",
+  "profile.language.placeholder": "Select a language",
+
+  "profile.token.label": "Access Token",
+  "profile.token.tooltip": "Authentication token for API requests",
+  "profile.token.placeholder": "Token not available",
+  "profile.token.toggle.show": "Show token",
+  "profile.token.toggle.hide": "Hide token",
+  "profile.token.copy": "Copy",
+
+  "resources.title": "Resource Limits",
+  "resources.loading": "Loading resource information...",
+  "resources.apps": "Applications",
+  "resources.services": "Services",
+  "resources.networks": "Networks",
+  "resources.supportLink": "Need higher limits? Visit {{name}}."
+}

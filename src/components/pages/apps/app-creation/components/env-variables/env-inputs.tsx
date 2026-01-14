@@ -2,6 +2,8 @@ import { PlusIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Text, TextField } from '@radix-ui/themes';
 import React, { useState } from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-creation.module.css';
 
 interface EnvInputsProps {
@@ -11,6 +13,7 @@ interface EnvInputsProps {
 }
 
 export function EnvInputs({ onAdd, disabled, isMobile }: EnvInputsProps) {
+  const { t } = usePageTranslation();
   const [currentEnvKey, setCurrentEnvKey] = useState('');
   const [currentEnvValue, setCurrentEnvValue] = useState('');
 
@@ -25,10 +28,10 @@ export function EnvInputs({ onAdd, disabled, isMobile }: EnvInputsProps) {
     <Flex gap='2' align='end' className={styles.envInputsContainer}>
       <Box style={{ width: '200px' }}>
         <Text size='2' color='gray' style={{ marginBottom: '4px' }}>
-          Chave
+          {t('env.inputs.keyLabel')}
         </Text>
         <TextField.Root
-          placeholder='NOME_VARIAVEL'
+          placeholder={t('env.inputs.keyPlaceholder')}
           value={currentEnvKey}
           onChange={(e) => {
             const value = e.target.value.replace(/\s/g, '');
@@ -44,10 +47,10 @@ export function EnvInputs({ onAdd, disabled, isMobile }: EnvInputsProps) {
       </Box>
       <Box style={{ width: '250px' }}>
         <Text size='2' color='gray' style={{ marginBottom: '4px' }}>
-          Valor
+          {t('env.inputs.valueLabel')}
         </Text>
         <TextField.Root
-          placeholder='valor_da_variavel'
+          placeholder={t('env.inputs.valuePlaceholder')}
           value={currentEnvValue}
           onChange={(e) => setCurrentEnvValue(e.target.value)}
           disabled={disabled}
@@ -75,7 +78,7 @@ export function EnvInputs({ onAdd, disabled, isMobile }: EnvInputsProps) {
           {isMobile ? (
             <Flex align='center' gap='2'>
               <PlusIcon />
-              <Text size='2'>Adicionar Variável</Text>
+              <Text size='2'>{t('env.inputs.addVariable')}</Text>
             </Flex>
           ) : (
             <PlusIcon />

@@ -4,6 +4,7 @@ import type { Session } from 'next-auth';
 import React, { useMemo } from 'react';
 
 import { LinkIcon } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 import type { AppContainer, AppInfo } from '../../types';
@@ -25,8 +26,8 @@ interface HeaderSectionProps {
   onVisitWebsite: () => void;
 }
 
-// Renders the header: title, status badge, and action buttons
 export function HeaderSection(props: HeaderSectionProps) {
+  const { t } = usePageTranslation();
   const processType = useMemo(() => {
     if (props.appInfo?.info_origin === 'inspect') {
       const containers = props.appInfo.data as AppContainer[];
@@ -91,7 +92,7 @@ export function HeaderSection(props: HeaderSectionProps) {
               }
             >
               <LinkIcon />
-              Visitar Website
+              {t('header.visitWebsite')}
             </Button>
           )}
 
@@ -100,20 +101,20 @@ export function HeaderSection(props: HeaderSectionProps) {
             <DropdownMenu.Trigger>
               <Button variant='solid' style={{ cursor: 'pointer' }}>
                 <CodeIcon />
-                Deploy
+                {t('header.deploy')}
                 <ChevronDownIcon />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
-              <DropdownMenu.Label>Deploy via:</DropdownMenu.Label>
+              <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
               <DropdownMenu.Separator />
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenDeployModal}>
                 <GitHubLogoIcon />
-                Repositório público
+                {t('header.publicRepo')}
               </DropdownMenu.Item>
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenZipInfoModal}>
                 <UploadIcon />
-                Arquivo .zip
+                {t('header.zipFile')}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
@@ -139,7 +140,7 @@ export function HeaderSection(props: HeaderSectionProps) {
             }
           >
             <LinkIcon />
-            Visitar Website
+            {t('header.visitWebsite')}
           </Button>
         )}
 
@@ -148,20 +149,20 @@ export function HeaderSection(props: HeaderSectionProps) {
           <DropdownMenu.Trigger>
             <Button variant='solid' className={styles.urlButton}>
               <CodeIcon />
-              Deploy
+              {t('header.deploy')}
               <ChevronDownIcon />
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
-            <DropdownMenu.Label>Deploy via:</DropdownMenu.Label>
+            <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
             <DropdownMenu.Separator />
             <DropdownMenu.Item onClick={props.onOpenDeployModal}>
               <GitHubLogoIcon />
-              Repositório público
+              {t('header.publicRepo')}
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={props.onOpenZipInfoModal}>
               <UploadIcon />
-              Arquivo .zip
+              {t('header.zipFile')}
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>

@@ -5,8 +5,10 @@ import InputBase from '@mui/material/InputBase';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function Search() {
+  const { t } = useTranslation('shared');
   const theme = useTheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -83,7 +85,7 @@ export function Search() {
             cursor: 'pointer',
             backgroundColor: 'transparent',
           }}
-          aria-label='Limpar'
+          aria-label={t('search.clearLabel')}
         >
           <ClearIcon />
         </Box>
@@ -94,8 +96,8 @@ export function Search() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder='Pesquise por apps, serviços e outros...'
-        inputProps={{ 'aria-label': 'search' }}
+        placeholder={t('search.placeholder')}
+        inputProps={{ 'aria-label': t('search.inputLabel') }}
         inputRef={inputRef}
         sx={{
           color: 'inherit',

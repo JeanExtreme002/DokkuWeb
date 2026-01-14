@@ -9,6 +9,7 @@ import {
   NetworkIcon,
   TrashIcon,
 } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../networks.module.css';
 
@@ -39,6 +40,7 @@ export function NetworksAccordion({
   onOpenUnlink,
   onOpenDelete,
 }: NetworksAccordionProps) {
+  const { t } = usePageTranslation();
   return (
     <Accordion.Root
       type='single'
@@ -71,7 +73,7 @@ export function NetworksAccordion({
                   className={styles.networkAppsCount}
                   style={{ color: 'var(--gray-10)' }}
                 >
-                  {apps.length} {apps.length === 1 ? 'app vinculado' : 'apps vinculados'}
+                  {t('accordion.appsCount', { count: apps.length })}
                 </Text>
               </div>
 
@@ -84,18 +86,18 @@ export function NetworksAccordion({
               {/* Link application section */}
               <div className={styles.linkAppSection}>
                 <Heading size='3' style={{ marginBottom: '8px', color: 'var(--gray-12)' }}>
-                  Vincular Aplicativo
+                  {t('accordion.link.title')}
                 </Heading>
                 <Text
                   size='2'
                   style={{ marginBottom: '16px', color: 'var(--gray-10)', lineHeight: '1.4' }}
                 >
-                  Aplicativos vinculados à mesma rede podem se comunicar entre si.
+                  {t('accordion.link.description')}
                 </Text>
                 <div className={styles.linkAppForm}>
                   <input
                     type='text'
-                    placeholder='Nome do aplicativo'
+                    placeholder={t('accordion.link.inputPlaceholder')}
                     value={newAppName[networkName] || ''}
                     onChange={(e) =>
                       setNewAppName((prev) => ({
@@ -116,7 +118,7 @@ export function NetworksAccordion({
                     disabled={!newAppName[networkName]?.trim() || actionLoading[networkName]}
                   >
                     <BindIcon />
-                    Vincular
+                    {t('accordion.link.button')}
                   </button>
                 </div>
               </div>
@@ -124,12 +126,12 @@ export function NetworksAccordion({
               {/* Linked apps list */}
               <div>
                 <Heading size='3' style={{ marginBottom: '12px', color: 'var(--gray-12)' }}>
-                  Apps Vinculados ({apps.length})
+                  {t('accordion.list.title', { count: apps.length })}
                 </Heading>
 
                 {apps.length === 0 ? (
                   <Text size='2' color='gray' style={{ fontStyle: 'italic' }}>
-                    Nenhum aplicativo vinculado
+                    {t('accordion.list.empty')}
                   </Text>
                 ) : (
                   <div className={styles.linkedAppsList}>
@@ -144,17 +146,17 @@ export function NetworksAccordion({
                         <button
                           className={styles.viewButton}
                           onClick={() => onViewApp(appName)}
-                          title='Ver aplicativo'
+                          title={t('accordion.list.viewTitle')}
                         >
                           <EyeIcon />
                         </button>
                         <button
                           className={styles.unlinkButton}
                           onClick={() => onOpenUnlink(networkName, appName)}
-                          title='Desvincular aplicativo'
+                          title={t('accordion.list.unlinkTitle')}
                         >
                           <TrashIcon />
-                          <span>Desvincular</span>
+                          <span>{t('accordion.list.unlink')}</span>
                         </button>
                       </div>
                     ))}
@@ -165,15 +167,15 @@ export function NetworksAccordion({
               {/* Danger zone */}
               <div className={styles.deleteNetworkSection}>
                 <Heading size='3' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
-                  Zona de Perigo
+                  {t('accordion.danger.title')}
                 </Heading>
                 <button
                   className={styles.deleteNetworkButton}
                   onClick={() => onOpenDelete(networkName)}
-                  title='Excluir rede'
+                  title={t('accordion.danger.deleteTitle')}
                 >
                   <TrashIcon />
-                  Excluir Rede
+                  {t('accordion.danger.deleteButton')}
                 </button>
               </div>
             </Accordion.Content>

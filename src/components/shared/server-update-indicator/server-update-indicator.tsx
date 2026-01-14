@@ -1,10 +1,12 @@
 import { Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 export interface ServerUpdateIndicatorProps {
   visible: boolean;
 }
 
 export function ServerUpdateIndicator({ visible }: ServerUpdateIndicatorProps) {
+  const { t } = useTranslation('shared');
   if (!visible) return null;
 
   return (
@@ -20,7 +22,7 @@ export function ServerUpdateIndicator({ visible }: ServerUpdateIndicatorProps) {
         }}
       />
       <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
-        Sincronizando informações com o servidor...
+        {t('updatingIndicator')}
       </Text>
     </Flex>
   );

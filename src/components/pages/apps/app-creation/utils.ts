@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -17,7 +19,8 @@ export function useIsMobile() {
   return isMobile;
 }
 
-export const validateAppName = (name: string) => {
+export const useAppNameValidation = (name: string) => {
+  const { t } = usePageTranslation();
   const trimmedName = name.trim();
   if (trimmedName.length === 0) return { isValid: false, message: '' };
 
@@ -26,19 +29,19 @@ export const validateAppName = (name: string) => {
   const letterCount = (trimmedName.match(/[a-zA-Z]/g) || []).length;
 
   if (trimmedName.length < 3) {
-    return { isValid: false, message: '(mínimo 3 caracteres)' };
+    return { isValid: false, message: t('name.validation.minLength') };
   }
   if (!startsWithLetter) {
-    return { isValid: false, message: '(deve começar com uma letra)' };
+    return { isValid: false, message: t('name.validation.startsWithLetter') };
   }
   if (!endsWithLetterOrNumber) {
-    return { isValid: false, message: '(deve terminar com letra ou número)' };
+    return { isValid: false, message: t('name.validation.endsWithAlnum') };
   }
   if (letterCount < 3) {
-    return { isValid: false, message: '(mínimo 3 letras)' };
+    return { isValid: false, message: t('name.validation.minLetters') };
   }
   if (trimmedName.length > 50) {
-    return { isValid: false, message: '(máximo 50 caracteres)' };
+    return { isValid: false, message: t('name.validation.maxLength') };
   }
 
   return { isValid: true, message: '' };

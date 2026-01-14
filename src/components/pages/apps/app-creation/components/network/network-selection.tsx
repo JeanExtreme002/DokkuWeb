@@ -1,6 +1,7 @@
 import { Box, Select, Text } from '@radix-ui/themes';
 import { useEffect, useState } from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 interface NetworksData {
@@ -14,6 +15,7 @@ interface NetworkSelectionProps {
 }
 
 export function NetworkSelection({ value, onChange, disabled }: NetworkSelectionProps) {
+  const { t } = usePageTranslation();
   const [networks, setNetworks] = useState<NetworksData>({});
   const [networksLoading, setNetworksLoading] = useState(true);
 
@@ -40,23 +42,23 @@ export function NetworkSelection({ value, onChange, disabled }: NetworkSelection
   return (
     <>
       <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        Rede (Opcional)
+        {t('network.label')}
       </Text>
       {networksLoading ? (
         <Box style={{ padding: '12px' }}>
           <Text size='2' color='gray' style={{ fontStyle: 'italic' }}>
-            Carregando redes...
+            {t('network.loading')}
           </Text>
         </Box>
       ) : (
         <Select.Root value={value} onValueChange={onChange} disabled={disabled}>
           <Select.Trigger
-            placeholder='Selecione uma rede (opcional)'
+            placeholder={t('network.placeholder')}
             style={{ maxWidth: '300px', cursor: 'pointer' }}
           />
           <Select.Content>
             <Select.Item value='none' style={{ cursor: 'pointer' }}>
-              Nenhum
+              {t('network.none')}
             </Select.Item>
             {networksList.map((networkName) => (
               <Select.Item key={networkName} value={networkName} style={{ cursor: 'pointer' }}>

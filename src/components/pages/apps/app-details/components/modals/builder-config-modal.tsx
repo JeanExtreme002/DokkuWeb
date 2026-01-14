@@ -2,6 +2,8 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface BuilderConfigModalProps {
@@ -25,12 +27,14 @@ export default function BuilderConfigModal(props: BuilderConfigModalProps) {
     configureBuilder,
   } = props;
 
+  const { t } = usePageTranslation();
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: '450px' }}>
-        <Dialog.Title>Configurar Builder</Dialog.Title>
+        <Dialog.Title>{t('modals.builderConfig.title')}</Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Selecione o builder que será usado para construir e implantar seu aplicativo.
+          {t('modals.builderConfig.description')}
         </Dialog.Description>
 
         {errorBuilder && (
@@ -79,7 +83,7 @@ export default function BuilderConfigModal(props: BuilderConfigModalProps) {
               style={{ cursor: 'pointer' }}
               disabled={builderConfigLoading}
             >
-              Cancelar
+              {t('modals.common.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -95,10 +99,10 @@ export default function BuilderConfigModal(props: BuilderConfigModalProps) {
             {builderConfigLoading ? (
               <>
                 <ReloadIcon className={styles.buttonSpinner} />
-                Configurando...
+                {t('modals.builderConfig.configuring')}
               </>
             ) : (
-              'Configurar'
+              t('modals.builderConfig.confirm')
             )}
           </Button>
         </Flex>

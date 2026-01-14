@@ -1,11 +1,13 @@
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { Box, FormControlLabel, Switch } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/contexts/ThemeContext';
 
 export function ThemeToggle() {
   const { mode, toggleTheme, isLoading } = useTheme();
+  const { t } = useTranslation('shared');
 
   const getTextColor = () => (mode === 'light' ? '#4b5563' : '#d1d5db');
   const getBorderColor = () => (mode === 'light' ? '#e5e7eb' : '#374151');
@@ -56,6 +58,7 @@ export function ThemeToggle() {
             checked={mode === 'dark'}
             onChange={toggleTheme}
             color='primary'
+            inputProps={{ 'aria-label': t('themeToggle.switchLabel') }}
             sx={{
               '& .MuiSwitch-track': {
                 backgroundColor: mode === 'light' ? '#e5e7eb' : '#374151',
@@ -80,7 +83,7 @@ export function ThemeToggle() {
                 fontWeight: 500,
               }}
             >
-              {mode === 'light' ? 'Modo Claro' : 'Modo Escuro'}
+              {mode === 'light' ? t('themeToggle.light') : t('themeToggle.dark')}
             </span>
           </Box>
         }

@@ -3,6 +3,7 @@ import { Box, Button, Card, Flex, Heading, Text, TextField, Tooltip } from '@rad
 import React from 'react';
 
 import { PadLockIcon } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 
@@ -15,6 +16,7 @@ interface SecuritySectionProps {
 }
 
 export default function SecuritySection(props: SecuritySectionProps) {
+  const { t } = usePageTranslation();
   const {
     deploymentToken,
     showDeploymentToken,
@@ -26,7 +28,7 @@ export default function SecuritySection(props: SecuritySectionProps) {
   return (
     <>
       <Heading size='5' style={{ marginBottom: '20px' }}>
-        Tokens
+        {t('security.title')}
       </Heading>
 
       {/* Deployment Token Section */}
@@ -40,9 +42,9 @@ export default function SecuritySection(props: SecuritySectionProps) {
         <Flex direction='column' gap='1'>
           <Flex align='center' gap='2'>
             <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Token da Aplicação
+              {t('security.deploymentToken.label')}
             </Text>
-            <Tooltip content='Use este token para fazer deployments via arquivo .ZIP ou programáticos CI/CD via API'>
+            <Tooltip content={t('security.deploymentToken.tooltip')}>
               <InfoCircledIcon
                 style={{
                   color: 'var(--gray-9)',
@@ -65,7 +67,11 @@ export default function SecuritySection(props: SecuritySectionProps) {
                 filter: showDeploymentToken ? 'none' : 'blur(4px)',
                 transition: 'filter 0.2s ease',
               }}
-              placeholder={deploymentToken ? 'Token de deployment' : 'Carregando token...'}
+              placeholder={
+                deploymentToken
+                  ? t('security.deploymentToken.placeholder')
+                  : t('security.deploymentToken.loading')
+              }
             />
             <Button
               size='2'
@@ -84,7 +90,11 @@ export default function SecuritySection(props: SecuritySectionProps) {
                 color: 'var(--purple-11)',
                 cursor: 'pointer',
               }}
-              title={showDeploymentToken ? 'Ocultar token' : 'Mostrar token'}
+              title={
+                showDeploymentToken
+                  ? t('security.deploymentToken.hide')
+                  : t('security.deploymentToken.show')
+              }
             >
               <PadLockIcon isUnlocked={showDeploymentToken} />
             </Button>
@@ -100,7 +110,7 @@ export default function SecuritySection(props: SecuritySectionProps) {
                 cursor: 'pointer',
               }}
             >
-              Copiar
+              {t('security.deploymentToken.copy')}
             </Button>
           </Flex>
         </Flex>
@@ -109,7 +119,7 @@ export default function SecuritySection(props: SecuritySectionProps) {
       {/* Delete Application Section */}
       <Box style={{ marginTop: '45px' }}>
         <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
-          Zona de Perigo
+          {t('security.danger.title')}
         </Heading>
         <Card
           style={{
@@ -122,10 +132,10 @@ export default function SecuritySection(props: SecuritySectionProps) {
           <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
             <Flex direction='column' gap='1'>
               <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
-                Deletar essa aplicação
+                {t('security.danger.deleteTitle')}
               </Text>
               <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
-                Uma vez que você exclui uma aplicação, não há como voltar atrás.
+                {t('security.danger.deleteDescription')}
               </Text>
             </Flex>
             <Button
@@ -140,7 +150,7 @@ export default function SecuritySection(props: SecuritySectionProps) {
               }}
             >
               <TrashIcon />
-              Deletar Aplicação
+              {t('security.danger.deleteButton')}
             </Button>
           </Flex>
         </Card>

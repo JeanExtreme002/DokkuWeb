@@ -2,11 +2,13 @@ import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { AppAvatar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
 import styles from '../../app-list.module.css';
 
 export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobile: boolean }) {
+  const { t } = usePageTranslation();
   const displayName = formatAppName(appName);
 
   return (
@@ -70,7 +72,7 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
               }}
             />
             <Text size='2' weight='medium' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
-              Carregando status...
+              {t('card.loadingStatus')}
             </Text>
           </Flex>
 
@@ -114,7 +116,7 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
             onClick={() => (window.location.href = `/apps/a/${displayName}`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('card.viewDetails')}
           </Button>
         </Flex>
       </Flex>

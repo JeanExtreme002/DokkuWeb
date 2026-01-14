@@ -1,1 +1,32 @@
-{}
+{
+  "header.title": "Configurações",
+  "header.subtitle": "Gerencie suas informações pessoais e limites de recursos",
+
+  "errors.quotaFetch": "Erro ao carregar informações de quota",
+
+  "user.fallbackName": "Usuário",
+
+  "profile.title": "Perfil do Usuário",
+  "profile.admin.tooltip": "Acessar o painel de administrador",
+  "profile.admin.ariaLabel": "Acessar o painel de administrador",
+  "profile.admin.titleAttr": "Acessar o painel de administrador",
+  "profile.admin.button": "Painel do Admin",
+
+  "profile.language.label": "Idioma",
+  "profile.language.tooltip": "Idioma da plataforma",
+  "profile.language.placeholder": "Selecione o idioma",
+
+  "profile.token.label": "Token de Acesso",
+  "profile.token.tooltip": "Token de autenticação para requisições via API",
+  "profile.token.placeholder": "Token não disponível",
+  "profile.token.toggle.show": "Mostrar token",
+  "profile.token.toggle.hide": "Ocultar token",
+  "profile.token.copy": "Copiar",
+
+  "resources.title": "Limites de Recursos",
+  "resources.loading": "Carregando informações de recursos...",
+  "resources.apps": "Aplicativos",
+  "resources.services": "Serviços",
+  "resources.networks": "Redes",
+  "resources.supportLink": "Precisa aumentar o limite? Acesse o {{name}}."
+}

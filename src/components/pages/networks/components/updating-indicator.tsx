@@ -1,6 +1,9 @@
 import { Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export function UpdatingIndicator() {
+  const { t } = usePageTranslation();
   return (
     <Flex align='center' gap='3'>
       <div
@@ -14,7 +17,7 @@ export function UpdatingIndicator() {
         }}
       />
       <Text size='3' style={{ color: 'var(--gray-11)', fontWeight: '500' }}>
-        Sincronizando informações com o servidor...
+        {t('updatingIndicator')}
       </Text>
     </Flex>
   );

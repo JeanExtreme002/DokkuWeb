@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { processAnsiCodes } from '@/lib';
 
 import type { AppContainer, AppInfo } from './types';
@@ -224,7 +225,12 @@ export const getIsRunning = (appInfo: AppInfo | null): boolean => {
 export const getStatusInfo = (
   appInfo: AppInfo | null
 ): { color: string; text: string; bgColor: string } => {
-  if (!appInfo) return { color: 'var(--gray-9)', text: 'Carregando...', bgColor: 'var(--gray-3)' };
+  if (!appInfo)
+    return {
+      color: 'var(--gray-9)',
+      text: i18n.t('card.loadingStatus', { ns: 'apps.a' }),
+      bgColor: 'var(--gray-3)',
+    };
 
   if (appInfo.info_origin === 'report') {
     const reportData = appInfo.data as any;
@@ -233,24 +239,52 @@ export const getStatusInfo = (
     const processCount = parseInt(reportData.processes) || 0;
 
     if (!isDeployed) {
-      return { color: 'var(--gray-9)', text: 'Não implantado', bgColor: 'var(--gray-3)' };
+      return {
+        color: 'var(--gray-9)',
+        text: i18n.t('status.notDeployed', { ns: 'apps.a' }),
+        bgColor: 'var(--gray-3)',
+      };
     } else if (!isRunning || processCount === 0) {
-      return { color: 'var(--red-9)', text: 'Parado', bgColor: 'var(--red-3)' };
+      return {
+        color: 'var(--red-9)',
+        text: i18n.t('status.stopped', { ns: 'apps.a' }),
+        bgColor: 'var(--red-3)',
+      };
     } else {
-      return { color: 'var(--green-9)', text: 'Ativo', bgColor: 'var(--green-3)' };
+      return {
+        color: 'var(--green-9)',
+        text: i18n.t('status.active', { ns: 'apps.a' }),
+        bgColor: 'var(--green-3)',
+      };
     }
   } else {
     const containers = appInfo.data as AppContainer[];
     const runningContainers = containers.filter((container) => container.State.Running);
 
     if (containers.length === 0) {
-      return { color: 'var(--red-9)', text: 'Erro', bgColor: 'var(--red-3)' };
+      return {
+        color: 'var(--red-9)',
+        text: i18n.t('status.error', { ns: 'apps.a' }),
+        bgColor: 'var(--red-3)',
+      };
     } else if (runningContainers.length === 0) {
-      return { color: 'var(--red-9)', text: 'Parado', bgColor: 'var(--red-3)' };
+      return {
+        color: 'var(--red-9)',
+        text: i18n.t('status.stopped', { ns: 'apps.a' }),
+        bgColor: 'var(--red-3)',
+      };
     } else if (runningContainers.length < containers.length) {
-      return { color: 'var(--amber-9)', text: 'Parcial', bgColor: 'var(--amber-3)' };
+      return {
+        color: 'var(--amber-9)',
+        text: i18n.t('status.partial', { ns: 'apps.a' }),
+        bgColor: 'var(--amber-3)',
+      };
     } else {
-      return { color: 'var(--green-9)', text: 'Ativo', bgColor: 'var(--green-3)' };
+      return {
+        color: 'var(--green-9)',
+        text: i18n.t('status.active', { ns: 'apps.a' }),
+        bgColor: 'var(--green-3)',
+      };
     }
   }
 };

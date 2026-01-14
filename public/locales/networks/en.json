@@ -1,1 +1,48 @@
-{}
+{
+  "header.title": "My Networks",
+  "header.subtitle": "Manage your application networks on Dokku",
+  "actions.createNetwork": "Create Network",
+
+  "loading.title": "Loading Networks",
+  "loading.messages.connecting": "Connecting to Dokku...",
+  "loading.messages.listingNetworks": "Listing Docker networks...",
+  "loading.messages.loadingLinkedApps": "Loading linked applications...",
+  "loading.messages.processingConnectivity": "Processing connectivity data...",
+  "loading.messages.preparingView": "Preparing view...",
+  "updatingIndicator": "Syncing with the server...",
+
+  "empty.noNetworks": "No networks created yet.",
+
+  "errors.listFetch": "Error loading networks",
+  "errors.quotaExceeded": "You have used your available network quota!",
+  "errors.networkExists": "The network \"{{name}}\" already exists.",
+  "errors.accessDenied": "Access denied. Check your permissions.",
+  "errors.createFailed": "An error occurred while creating the network. Please try again.",
+
+  "accordion.appsCount_one": "1 linked app",
+  "accordion.appsCount_other": "{{count}} linked apps",
+  "accordion.link.title": "Link Application",
+  "accordion.link.description": "Applications linked to the same network can communicate with each other.",
+  "accordion.link.inputPlaceholder": "Application name",
+  "accordion.link.button": "Link",
+  "accordion.list.title": "Linked Apps ({{count}})",
+  "accordion.list.empty": "No linked applications",
+  "accordion.list.viewTitle": "View application",
+  "accordion.list.unlinkTitle": "Unlink application",
+  "accordion.list.unlink": "Unlink",
+  "accordion.danger.title": "Danger Zone",
+  "accordion.danger.deleteTitle": "Delete network",
+  "accordion.danger.deleteButton": "Delete Network",
+
+  "modals.common.cancel": "Cancel",
+  "modals.delete.title": "Delete Network",
+  "modals.delete.description": "Are you sure you want to delete the network <strong>{{name}}</strong>? This action cannot be undone.",
+  "modals.delete.confirm": "Delete",
+  "modals.unlink.title": "Unlink Application",
+  "modals.unlink.description": "Are you sure you want to unlink the application <strong>{{app}}</strong> from the network <strong>{{network}}</strong>?",
+  "modals.unlink.confirm": "Unlink",
+  "modals.create.title": "Create New Network",
+  "modals.create.description": "Enter a name for the new network to be created.",
+  "modals.create.placeholder": "Network name",
+  "modals.create.confirm": "Create Network"
+}

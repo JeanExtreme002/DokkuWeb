@@ -1,1 +1,28 @@
-{}
+{
+  "list.header.title": "Meus Aplicativos",
+  "list.header.subtitle": "Gerencie seus aplicativos Dokku implantados",
+  "list.header.createButton": "Nova Aplicação",
+
+  "list.loading.title": "Carregando Aplicativos",
+  "list.loading.messages.connecting": "Conectando ao Dokku...",
+  "list.loading.messages.fetchingApps": "Buscando aplicativos...",
+  "list.loading.messages.preparingList": "Preparando listagem...",
+
+  "list.empty.noApps": "Nenhum aplicativo criado ainda.",
+
+  "errors.listFetch": "Erro ao carregar lista de aplicativos",
+  "errors.infoFetch": "Erro ao carregar informações",
+  "card.ipLabel": "IP:",
+  "card.portLabel": "Porta:",
+  "card.startedAt": "Iniciado em {{date}}",
+  "card.notStarted": "Não inicializado",
+  "card.viewDetails": "Ver detalhes",
+  "card.loadingStatus": "Carregando status...",
+  "card.na": "N/D",
+  "status.active": "Ativo",
+  "status.stopped": "Parado",
+  "status.notDeployed": "Não implantado",
+  "status.error": "Erro",
+  "status.terminated": "Terminado",
+  "status.partial": "Parcial"
+}

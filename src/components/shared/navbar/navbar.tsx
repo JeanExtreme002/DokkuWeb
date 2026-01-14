@@ -12,6 +12,7 @@ import { Button, DropdownMenu } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AppIcon, NetworkIcon, Search, ServiceIcon, SideBar, WebsiteLogo } from '@/components';
 import i18n from '@/i18n';
@@ -34,6 +35,7 @@ interface NavBarProps {
 const ProfileMenu = (props: ProfileMenuProps) => {
   const { anchorEl, menuId, isMenuOpen, handleMenuClose } = props;
   const router = useRouter();
+  const { t } = useTranslation('shared');
 
   const handleRedirect = (path: string) => {
     handleMenuClose(null);
@@ -53,8 +55,8 @@ const ProfileMenu = (props: ProfileMenuProps) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={() => handleRedirect('/settings')}>Configurações</MenuItem>
-      <MenuItem onClick={() => logout()}>Sair</MenuItem>
+      <MenuItem onClick={() => handleRedirect('/settings')}>{t('navbar.settings')}</MenuItem>
+      <MenuItem onClick={() => logout()}>{t('navbar.logout')}</MenuItem>
     </Menu>
   );
 };
@@ -62,6 +64,7 @@ const ProfileMenu = (props: ProfileMenuProps) => {
 export function NavBar(props: NavBarProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
+  const { t } = useTranslation('shared');
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -129,7 +132,7 @@ export function NavBar(props: NavBarProps) {
                   onClick={() => handleCreateRedirect('/apps/create/')}
                 >
                   <AppIcon />
-                  Novo Aplicativo
+                  {t('navbar.createApp')}
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
@@ -138,7 +141,7 @@ export function NavBar(props: NavBarProps) {
                   onClick={() => handleCreateRedirect('/services/create/')}
                 >
                   <ServiceIcon />
-                  Novo Serviço
+                  {t('navbar.createService')}
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Item
@@ -147,7 +150,7 @@ export function NavBar(props: NavBarProps) {
                   onClick={() => handleCreateRedirect('/networks/')}
                 >
                   <NetworkIcon />
-                  Nova Rede
+                  {t('navbar.createNetwork')}
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>
@@ -165,7 +168,7 @@ export function NavBar(props: NavBarProps) {
                   }}
                   className={styles.languageButtonTrigger}
                 >
-                  <GlobeIcon width={20} height={20} />
+                  <GlobeIcon width={18} height={18} />
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
@@ -188,7 +191,10 @@ export function NavBar(props: NavBarProps) {
               marginInline={1}
               fontWeight={'light'}
             >
-              Olá, {props.session.user?.name?.split(' ')[0]}!
+              {(() => {
+                const firstName = props.session.user?.name?.split(' ')[0] ?? '';
+                return t('navbar.greeting', { name: firstName });
+              })()}
             </Typography>
             <IconButton
               size='large'

@@ -1,5 +1,6 @@
 import { Box, Card, Flex, Text } from '@radix-ui/themes';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './loading-spinner.module.css';
 
@@ -9,28 +10,28 @@ interface LoadingSpinnerProps {
   asCard?: boolean;
 }
 
-const defaultMessages = [
-  'Carregando dados...',
-  'Conectando ao servidor...',
-  'Processando informações...',
-  'Quase pronto...',
-  'Finalizando...',
-];
-
-export function LoadingSpinner({
-  messages = defaultMessages,
-  title = 'Carregando',
-  asCard = true,
-}: LoadingSpinnerProps) {
+export function LoadingSpinner({ messages, title, asCard = true }: LoadingSpinnerProps) {
+  const { t } = useTranslation('shared');
+  const effectiveMessages =
+    messages && messages.length
+      ? messages
+      : [
+          t('loading.messages.loadingData'),
+          t('loading.messages.connecting'),
+          t('loading.messages.processing'),
+          t('loading.messages.almostThere'),
+          t('loading.messages.finishing'),
+        ];
+  const effectiveTitle = title ?? t('loading.title');
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
+      setCurrentMessageIndex((prev) => (prev + 1) % effectiveMessages.length);
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [messages.length]);
+  }, [effectiveMessages.length]);
 
   const content = (
     <Flex direction='column' align='center' gap='6'>
@@ -65,7 +66,7 @@ export function LoadingSpinner({
             backgroundClip: 'text',
           }}
         >
-          {title}
+          {effectiveTitle}
         </Text>
       </Box>
 
@@ -79,7 +80,7 @@ export function LoadingSpinner({
             minHeight: '20px',
           }}
         >
-          {messages[currentMessageIndex]}
+          {effectiveMessages[currentMessageIndex]}
         </Text>
       </Box>
 

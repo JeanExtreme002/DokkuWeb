@@ -9,6 +9,7 @@ import {
   LeftArrowIcon,
   ParentDirectoryIcon,
 } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 import type { DirEntry } from '../../helpers';
@@ -33,6 +34,7 @@ interface FilesSectionProps {
 }
 
 export function FilesSection(props: FilesSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Box>
       <Flex
@@ -42,7 +44,7 @@ export function FilesSection(props: FilesSectionProps) {
         style={{ marginBottom: '20px' }}
       >
         <Heading size='5' className={styles.filesHeaderTitle}>
-          Árvore de Diretórios
+          {t('filesSection.title')}
         </Heading>
         <Button
           onClick={props.onRefresh}
@@ -51,13 +53,13 @@ export function FilesSection(props: FilesSectionProps) {
           className={styles.filesRefreshButton}
         >
           <ReloadIcon className={props.dirLoading ? styles.buttonSpinner : ''} />
-          {props.dirLoading ? 'Atualizando...' : 'Atualizar'}
+          {props.dirLoading ? t('filesSection.refreshing') : t('filesSection.refresh')}
         </Button>
       </Flex>
 
       {!props.isInspectAvailable ? (
         <Text size='3' style={{ color: 'var(--gray-11)' }}>
-          Árvore de diretórios indisponível no momento.
+          {t('filesSection.unavailable')}
         </Text>
       ) : (
         <Flex direction='column' gap='3'>
@@ -136,7 +138,7 @@ export function FilesSection(props: FilesSectionProps) {
           {props.dirLoading ? (
             <Box className={styles.loadingSpinner}>
               <Box className={styles.spinner}></Box>
-              <Text style={{ marginLeft: '12px' }}>Carregando informações do diretório...</Text>
+              <Text style={{ marginLeft: '12px' }}>{t('filesSection.loading')}</Text>
             </Box>
           ) : (
             !props.dirError && (
@@ -188,7 +190,10 @@ export function FilesSection(props: FilesSectionProps) {
                               const isSmall =
                                 typeof window !== 'undefined' && window.innerWidth <= 600;
                               if (isSmall) {
-                                const confirmMsg = `Você realmente deseja baixar o arquivo "${entry.name} [${props.formatSize(entry.size)}]"?`;
+                                const confirmMsg = t('filesSection.confirmDownload', {
+                                  file: entry.name,
+                                  size: props.formatSize(entry.size),
+                                });
                                 if (!window.confirm(confirmMsg)) return;
                               }
                               props.onDownloadFile(fullPath, entry.name);
@@ -233,7 +238,7 @@ export function FilesSection(props: FilesSectionProps) {
                   ))}
                   {props.dirEntries.length === 0 && !props.dirError && (
                     <Text size='3' style={{ color: 'var(--gray-11)' }}>
-                      Diretório vazio.
+                      {t('filesSection.empty')}
                     </Text>
                   )}
                 </Flex>

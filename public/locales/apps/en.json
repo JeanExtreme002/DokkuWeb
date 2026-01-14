@@ -1,1 +1,28 @@
-{}
+{
+  "list.header.title": "My Applications",
+  "list.header.subtitle": "Manage your deployed Dokku applications",
+  "list.header.createButton": "New Application",
+
+  "list.loading.title": "Loading Applications",
+  "list.loading.messages.connecting": "Connecting to Dokku...",
+  "list.loading.messages.fetchingApps": "Fetching applications...",
+  "list.loading.messages.preparingList": "Preparing list...",
+
+  "list.empty.noApps": "No applications created yet.",
+
+  "errors.listFetch": "Error loading application list",
+  "errors.infoFetch": "Error loading information",
+  "card.ipLabel": "IP:",
+  "card.portLabel": "Port:",
+  "card.startedAt": "Started at {{date}}",
+  "card.notStarted": "Not started",
+  "card.viewDetails": "View details",
+  "card.loadingStatus": "Loading status...",
+  "card.na": "N/A",
+  "status.active": "Active",
+  "status.stopped": "Stopped",
+  "status.notDeployed": "Not deployed",
+  "status.error": "Error",
+  "status.terminated": "Terminated",
+  "status.partial": "Partial"
+}

@@ -12,6 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import {
   AppIcon,
@@ -35,6 +36,7 @@ interface SideBarProps {
 }
 
 export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
+  const { t } = useTranslation('shared');
   const toggleDrawer = (open: boolean) => () => {
     setIsOpen(open);
   };
@@ -43,10 +45,10 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   const secondaryColor = theme.palette.secondary.main;
 
   const drawerItems = [
-    { label: 'VISÃO GERAL', href: '/', icon: <DashboardIcon /> },
-    { label: 'APLICATIVOS', href: '/apps', icon: <AppIcon /> },
-    { label: 'SERVIÇOS', href: '/services', icon: <ServiceIcon /> },
-    { label: 'REDES', href: '/networks', icon: <NetworkIcon /> },
+    { label: t('sidebar.overview'), href: '/', icon: <DashboardIcon /> },
+    { label: t('sidebar.apps'), href: '/apps', icon: <AppIcon /> },
+    { label: t('sidebar.services'), href: '/services', icon: <ServiceIcon /> },
+    { label: t('sidebar.networks'), href: '/networks', icon: <NetworkIcon /> },
   ];
 
   return (
@@ -92,7 +94,7 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
         <Box
           sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, my: 3 }}
         >
-          <Tooltip title='Source code on GitHub'>
+          <Tooltip title={t('github.tooltip')}>
             <IconButton
               component='a'
               href={credits.github.projectLink}
@@ -141,7 +143,7 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
                 '&:hover': { color: 'var(--gray-11)' },
               }}
             >
-              Explore the full source code
+              {t('github.exploreSource')}
             </Typography>
           </Box>
         </Box>

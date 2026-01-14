@@ -1,4 +1,5 @@
 import { Box, Card, Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 import { DotIcon } from '@/components/shared/icons';
 
@@ -7,6 +8,7 @@ export interface ErrorCardProps {
 }
 
 export function ErrorCard({ error }: ErrorCardProps) {
+  const { t } = useTranslation('shared');
   if (!error) return null;
   return (
     <Card
@@ -21,7 +23,7 @@ export function ErrorCard({ error }: ErrorCardProps) {
           <DotIcon />
         </Box>
         <Text size='3' style={{ color: 'var(--red-11)' }}>
-          {error}
+          {t('errorCard.prefix')} {error}
         </Text>
       </Flex>
     </Card>

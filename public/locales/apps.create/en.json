@@ -1,1 +1,36 @@
-{}
+{
+  "header.title": "Create new application",
+  "header.subtitle": "Set up your new Dokku application",
+
+  "name.label": "Application Name",
+  "name.placeholder": "Enter the application name",
+  "name.counter": "{{count}}/50 characters",
+  "name.validation.minLength": "(minimum 3 characters)",
+  "name.validation.startsWithLetter": "(must start with a letter)",
+  "name.validation.endsWithAlnum": "(must end with a letter or number)",
+  "name.validation.minLetters": "(minimum 3 letters)",
+  "name.validation.maxLength": "(maximum 50 characters)",
+
+  "network.label": "Network (Optional)",
+  "network.loading": "Loading networks...",
+  "network.placeholder": "Select a network (optional)",
+  "network.none": "None",
+
+  "env.title": "Environment Variables",
+  "env.inputs.keyLabel": "Key",
+  "env.inputs.keyPlaceholder": "VARIABLE_NAME",
+  "env.inputs.valueLabel": "Value",
+  "env.inputs.valuePlaceholder": "variable_value",
+  "env.inputs.addVariable": "Add Variable",
+  "env.list.title": "Configured Variables:",
+
+  "actions.cancel": "Cancel",
+  "actions.creating": "Creating...",
+  "actions.createApp": "Create new application",
+
+  "errors.quotaExceeded": "You have used your available application quota!",
+  "errors.appExists": "The application \"{{name}}\" already exists.",
+  "errors.appNameInUse": "The application name \"{{name}}\" is already in use.",
+  "errors.accessDenied": "Access denied. Check your permissions.",
+  "errors.createFailed": "An error occurred while creating the application. Please try again."
+}

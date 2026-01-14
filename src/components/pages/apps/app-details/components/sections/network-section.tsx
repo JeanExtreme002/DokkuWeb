@@ -2,6 +2,8 @@ import { GlobeIcon, ReloadIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Select, Text, TextField } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface NetworkPortMapping {
@@ -53,16 +55,17 @@ export default function NetworkSection(props: NetworkSectionProps) {
     deletingPort,
   } = props;
 
+  const { t } = usePageTranslation();
   return (
     <Flex direction='column' gap='4'>
       <Heading size='5' style={{ color: 'var(--gray-12)' }}>
-        Rede
+        {t('networkSection.title')}
       </Heading>
 
       {networkLoading ? (
         <Box className={styles.loadingSpinner}>
           <Box className={styles.spinner}></Box>
-          <Text style={{ marginLeft: '12px' }}>Obtendo dados de rede...</Text>
+          <Text style={{ marginLeft: '12px' }}>{t('networkSection.loadingNetwork')}</Text>
         </Box>
       ) : errorNetwork ? (
         <Card
@@ -118,7 +121,7 @@ export default function NetworkSection(props: NetworkSectionProps) {
                     border: '1px solid var(--gray-6)',
                   }}
                 >
-                  {networkData.network || 'Rede padrão do Dokku'}
+                  {networkData.network || t('networkSection.defaultNetwork')}
                 </Text>
                 <Flex align='center' gap='2'>
                   <Box
@@ -130,7 +133,9 @@ export default function NetworkSection(props: NetworkSectionProps) {
                     }}
                   />
                   <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                    {networkData.network ? 'Rede vinculada' : 'Padrão'}
+                    {networkData.network
+                      ? t('networkSection.linkedNetwork')
+                      : t('networkSection.defaultLabel')}
                   </Text>
                 </Flex>
               </Flex>
@@ -139,14 +144,14 @@ export default function NetworkSection(props: NetworkSectionProps) {
 
           {/* Port Mapping Section */}
           <Heading size='4' style={{ marginBottom: '16px' }}>
-            Mapeamento de Portas
+            {t('networkSection.portMappingTitle')}
           </Heading>
 
           {/* Add Port Mapping Form */}
           <Box className={styles.portMappingForm}>
             <Box className={styles.portInput}>
               <Text size='2' style={{ marginBottom: '4px' }}>
-                Protocolo:
+                {t('networkSection.protocolLabel')}
               </Text>
               <Select.Root value={protocol} onValueChange={onSetProtocol}>
                 <Select.Trigger style={{ width: '100px', cursor: 'pointer' }} />
@@ -169,7 +174,7 @@ export default function NetworkSection(props: NetworkSectionProps) {
             <Box className={styles.ports}>
               <Box className={styles.portInput}>
                 <Text size='2' style={{ marginBottom: '4px' }}>
-                  Mapear:
+                  {t('networkSection.mapLabel')}
                 </Text>
                 <TextField.Root
                   type='number'
@@ -182,7 +187,7 @@ export default function NetworkSection(props: NetworkSectionProps) {
 
               <Box className={styles.portInput}>
                 <Text size='2' style={{ marginBottom: '4px' }}>
-                  para:
+                  {t('networkSection.toLabel')}
                 </Text>
                 <TextField.Root
                   type='number'
@@ -207,7 +212,7 @@ export default function NetworkSection(props: NetworkSectionProps) {
                   cursor: 'pointer',
                 }}
               >
-                {portSubmitting ? 'Salvando...' : 'Mapear porta'}
+                {portSubmitting ? t('networkSection.saving') : t('networkSection.mapPort')}
               </Button>
             </Box>
           </Box>
@@ -217,7 +222,9 @@ export default function NetworkSection(props: NetworkSectionProps) {
             {portMappingsLoading ? (
               <Box className={styles.loadingSpinner}>
                 <Box className={styles.spinner}></Box>
-                <Text style={{ marginLeft: '12px' }}>Carregando mapeamentos de porta...</Text>
+                <Text style={{ marginLeft: '12px' }}>
+                  {t('networkSection.loadingPortMappings')}
+                </Text>
               </Box>
             ) : errorPortMappings ? (
               <Card
@@ -239,7 +246,7 @@ export default function NetworkSection(props: NetworkSectionProps) {
                 }}
               >
                 <Text size='3' color='gray' className={styles.emptyPortMessage}>
-                  Nenhum mapeamento de porta configurado ainda.
+                  {t('networkSection.emptyPortMappings')}
                 </Text>
               </Card>
             ) : (

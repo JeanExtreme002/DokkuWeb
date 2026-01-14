@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Image as CustomImage } from '@/components';
 import { LoadingSpinner, NavBar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { api, config as websiteConfig, downloadFile, formatAppName, processAnsiCodes } from '@/lib';
 
 import styles from './app-details.module.css';
@@ -74,6 +75,7 @@ interface ConfigData {
 export function AppDetailsPage(props: AppDetailsPageProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = usePageTranslation();
 
   // Stable session reference to prevent unnecessary re-renders
   const stableSession = useMemo(() => {
@@ -245,7 +247,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           retries++;
           if (retries >= maxRetries) {
             console.error('Max retries reached:', error);
-            setError('Erro ao carregar dados. Verifique sua conexão.');
+            setError(t('errors.loadData'));
             throw error;
           }
           console.warn(`Retry ${retries}/${maxRetries}:`, error);
@@ -258,6 +260,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
       return attemptFetch();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -525,14 +528,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         if (response?.data?.success) {
           setDirEntries(parseLsOutput(output));
         } else {
-          setDirError('Falha ao listar diretório.');
+          setDirError(t('files.errors.listDir'));
         }
       } catch (err: any) {
-        setDirError(err?.response?.data?.message || 'Erro ao carregar as informações de diretório');
+        setDirError(err?.response?.data?.message || t('files.errors.loadDirInfo'));
       } finally {
         setDirLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [appInfo, props.appName]
   );
 
@@ -593,8 +597,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       a.remove();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Erro ao baixar arquivo:', error);
-      setDirError('Falha ao baixar arquivo.');
+      console.error('Error downloading file:', error);
+      setDirError(t('files.errors.downloadFailed'));
       setTimeout(() => setDirError(null), 3000);
     }
   };
@@ -619,7 +623,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error deleting app:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao deletar aplicativo',
+        main: error.response?.data?.message || t('errors.delete'),
       }));
     } finally {
       setDeleteAppLoading(false);
@@ -689,7 +693,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error starting app:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao iniciar aplicativo',
+        main: error.response?.data?.message || t('errors.start'),
       }));
     } finally {
       setStartLoading(false);
@@ -706,7 +710,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error stopping app:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao parar aplicativo',
+        main: error.response?.data?.message || t('errors.stop'),
       }));
     } finally {
       setStopLoading(false);
@@ -723,7 +727,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error restarting app:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao reiniciar aplicativo',
+        main: error.response?.data?.message || t('errors.restart'),
       }));
     } finally {
       setRestartLoading(false);
@@ -740,7 +744,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error rebuilding app:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao reconstruir aplicativo',
+        main: error.response?.data?.message || t('errors.rebuild'),
       }));
     } finally {
       setRebuildLoading(false);
@@ -766,7 +770,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error configuring builder:', error);
       setErrors((prev) => ({
         ...prev,
-        builder: error.response?.data?.message || 'Erro ao configurar builder',
+        builder: error.response?.data?.message || t('errors.builderConfig'),
       }));
     } finally {
       setBuilderConfigLoading(false);
@@ -814,16 +818,18 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       if (response?.data?.success) {
         setTerminalOutputs((prev) => [...prev, cleaned, '']);
       } else {
+        const errorTag = t('shell.errorTag');
         setTerminalOutputs((prev) => [
           ...prev,
-          `[Error] Comando não pôde ser executado. \n${cleaned}`,
+          `${errorTag} ${t('shell.couldNotExecute')} \n${cleaned}`,
           '',
         ]);
       }
     } catch (err: any) {
+      const errorTag = t('shell.errorTag');
       setTerminalOutputs((prev) => [
         ...prev,
-        `[Error] ${err?.response?.data?.message || 'Falha ao executar comando'}`,
+        `${errorTag} ${err?.response?.data?.message || t('shell.executeFailed')}`,
         '',
       ]);
     } finally {
@@ -916,13 +922,14 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     if (currentTab === 'files') {
       const wd = getWorkingDir(appInfo);
       if (!wd) {
-        setDirError('WorkingDir indisponível para este aplicativo.');
+        setDirError(t('files.errors.workingDirUnavailable'));
         return;
       }
       if (!currentDir) {
         setCurrentDir(wd);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab, appInfo, currentDir]);
 
   // Fetch listing when currentDir changes on Files tab
@@ -971,7 +978,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error deploying from repository:', error);
       setErrors((prev) => ({
         ...prev,
-        deploy: error.response?.data?.message || 'Erro ao fazer deploy do repositório',
+        deploy: error.response?.data?.message || t('deploy.errors.repo'),
       }));
     } finally {
       setDeployLoading(false);
@@ -1002,7 +1009,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       console.error('Error deploying from file:', error);
       setErrors((prev) => ({
         ...prev,
-        deploy: error.response?.data?.message || 'Erro ao fazer deploy do arquivo',
+        deploy: error.response?.data?.message || t('deploy.errors.file'),
       }));
     } finally {
       setFileDeployLoading(false);
@@ -1016,7 +1023,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } else {
       setErrors((prev) => ({
         ...prev,
-        deploy: 'Por favor, selecione um arquivo .zip válido',
+        deploy: t('deploy.errors.invalidZip'),
       }));
     }
     // Reset input
@@ -1112,7 +1119,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const importEnvVariables = async (vars: Record<string, string>) => {
     const entries = Object.entries(vars);
     if (entries.length === 0) {
-      setErrors((prev) => ({ ...prev, config: 'Nenhuma variável válida encontrada no arquivo.' }));
+      setErrors((prev) => ({ ...prev, config: t('env.errors.noneValid') }));
       return;
     }
     setEnvImportLoading(true);
@@ -1145,7 +1152,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await importEnvVariables(sanitized);
     } catch (err) {
       console.error('Error importing variables:', err);
-      setErrors((prev) => ({ ...prev, config: 'Erro ao importar variáveis do arquivo.' }));
+      setErrors((prev) => ({ ...prev, config: t('env.errors.importFailed') }));
     }
   };
 
@@ -1206,13 +1213,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {mainLoading || appUrlLoading || builderLoading || deployInfoLoading ? (
           <LoadingSpinner
             asCard={false}
-            title='Carregando Aplicativo'
+            title={t('loading.title')}
             messages={[
-              'Conectando ao Dokku...',
-              'Obtendo informações do aplicativo...',
-              'Carregando informações do builder...',
-              'Verificando status...',
-              'Quase pronto...',
+              t('loading.connectingDokku'),
+              t('loading.fetchingAppInfo'),
+              t('loading.loadingBuilderInfo'),
+              t('loading.checkingStatus'),
+              t('loading.almostThere'),
             ]}
           />
         ) : errors.main || errors.builder || errors.deployInfo ? (
@@ -1236,7 +1243,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               onClick={() => window.location.reload()}
               style={{ marginTop: '16px', cursor: 'pointer' }}
             >
-              <ReloadIcon /> Recarregar Página
+              <ReloadIcon /> {t('errorView.reloadPage')}
             </Button>
           </Flex>
         ) : (
@@ -1284,28 +1291,28 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             <Tabs.Root value={currentTab} onValueChange={setCurrentTab} className={styles.tabsRoot}>
               <Tabs.List className={styles.tabsList}>
                 <Tabs.Trigger value='overview' className={styles.tabsTrigger}>
-                  Visão Geral
+                  {t('tabs.overview')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='services' className={styles.tabsTrigger}>
-                  Serviços
+                  {t('tabs.services')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='network' className={styles.tabsTrigger}>
-                  Rede
+                  {t('tabs.network')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='logs' className={styles.tabsTrigger}>
-                  Logs
+                  {t('tabs.logs')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='shell' className={styles.tabsTrigger}>
-                  Shell
+                  {t('tabs.shell')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
-                  Variáveis
+                  {t('tabs.variables')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='files' className={styles.tabsTrigger}>
-                  Arquivos
+                  {t('tabs.files')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='security' className={styles.tabsTrigger}>
-                  Segurança
+                  {t('tabs.security')}
                 </Tabs.Trigger>
               </Tabs.List>
 
@@ -1496,7 +1503,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         >
           <Card style={{ padding: '24px', textAlign: 'center' }}>
             <ReloadIcon className={styles.buttonSpinner} style={{ marginBottom: '12px' }} />
-            <Text size='3'>Fazendo upload e deploy do arquivo...</Text>
+            <Text size='3'>{t('deploy.uploadingFile')}</Text>
           </Card>
         </Box>
       )}

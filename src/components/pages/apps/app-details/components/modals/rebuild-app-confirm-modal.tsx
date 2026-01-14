@@ -1,6 +1,8 @@
 import { Button, Dialog, Flex } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface RebuildAppConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -10,16 +12,17 @@ interface RebuildAppConfirmModalProps {
 
 export default function RebuildAppConfirmModal(props: RebuildAppConfirmModalProps) {
   const { open, onOpenChange, rebuildLoading, onConfirm } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content maxWidth='450px' style={{ padding: '24px' }}>
-        <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Ação</Dialog.Title>
+        <Dialog.Title style={{ marginBottom: '12px' }}>{t('modals.rebuildApp.title')}</Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Tem certeza que deseja reconstruir o aplicativo?
+          {t('modals.rebuildApp.descriptionTop')}
           <br />
           <br />
-          Esta ação irá reconstruir do zero a imagem do aplicativo, podendo levar alguns minutos.
+          {t('modals.rebuildApp.descriptionBottom')}
         </Dialog.Description>
 
         <Flex gap='3' mt='4' justify='end'>
@@ -30,7 +33,7 @@ export default function RebuildAppConfirmModal(props: RebuildAppConfirmModalProp
               style={{ cursor: 'pointer' }}
               disabled={rebuildLoading}
             >
-              Cancelar
+              {t('modals.common.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -38,7 +41,7 @@ export default function RebuildAppConfirmModal(props: RebuildAppConfirmModalProp
             disabled={rebuildLoading}
             style={{ backgroundColor: 'var(--violet-9)', color: 'white', cursor: 'pointer' }}
           >
-            {rebuildLoading ? 'Reconstruindo...' : 'Reconstruir Aplicativo'}
+            {rebuildLoading ? t('modals.rebuildApp.rebuilding') : t('modals.rebuildApp.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

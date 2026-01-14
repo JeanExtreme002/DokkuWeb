@@ -2,6 +2,8 @@ import { DownloadIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Select, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface LogsSectionProps {
@@ -16,6 +18,7 @@ interface LogsSectionProps {
 }
 
 export function LogsSection(props: LogsSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <>
       {/* Desktop Layout - Inline (> 720px) */}
@@ -26,10 +29,10 @@ export function LogsSection(props: LogsSectionProps) {
         style={{ marginBottom: '16px' }}
       >
         <Flex align='center' gap='3'>
-          <Heading size='5'>Logs do Aplicativo</Heading>
+          <Heading size='5'>{t('logs.title')}</Heading>
           <Flex align='center' gap='2'>
             <Text size='2' style={{ color: 'var(--gray-11)' }}>
-              Linhas:
+              {t('logs.linesLabel')}
             </Text>
             <Select.Root
               value={props.logLinesLimit.toString()}
@@ -64,7 +67,7 @@ export function LogsSection(props: LogsSectionProps) {
             style={{ cursor: 'pointer' }}
           >
             <ReloadIcon className={props.logsLoading ? styles.buttonSpinner : ''} />
-            {props.logsLoading ? 'Atualizando...' : 'Atualizar'}
+            {props.logsLoading ? t('logs.refreshing') : t('logs.refresh')}
           </Button>
           {!props.logsLoading && !props.error && props.logs && (
             <Button
@@ -77,7 +80,7 @@ export function LogsSection(props: LogsSectionProps) {
               }}
             >
               <DownloadIcon />
-              Baixar arquivo de logs
+              {t('logs.download')}
             </Button>
           )}
         </Flex>
@@ -86,12 +89,12 @@ export function LogsSection(props: LogsSectionProps) {
       {/* Mobile/Tablet Layout - Stacked (≤ 720px) */}
       <Box style={{ marginBottom: '16px' }} className={styles.mobileLogsHeader}>
         <Heading size='5' style={{ marginBottom: '12px' }}>
-          Logs do Aplicativo
+          {t('logs.title')}
         </Heading>
         <Flex direction='column' gap='3'>
           <Flex align='center' gap='2'>
             <Text size='2' style={{ color: 'var(--gray-11)' }}>
-              Linhas:
+              {t('logs.linesLabel')}
             </Text>
             <Select.Root
               value={props.logLinesLimit.toString()}
@@ -115,7 +118,7 @@ export function LogsSection(props: LogsSectionProps) {
               style={{ width: '100%' }}
             >
               <ReloadIcon className={props.logsLoading ? styles.buttonSpinner : ''} />
-              {props.logsLoading ? 'Atualizando...' : 'Atualizar'}
+              {props.logsLoading ? t('logs.refreshing') : t('logs.refresh')}
             </Button>
             {!props.logsLoading && !props.error && props.logs && (
               <Button
@@ -128,7 +131,7 @@ export function LogsSection(props: LogsSectionProps) {
                 }}
               >
                 <DownloadIcon />
-                Baixar arquivo de logs
+                {t('logs.download')}
               </Button>
             )}
           </Flex>
@@ -138,7 +141,7 @@ export function LogsSection(props: LogsSectionProps) {
       {props.logsLoading ? (
         <Box className={styles.loadingSpinner}>
           <Box className={styles.spinner}></Box>
-          <Text style={{ marginLeft: '12px' }}>Carregando logs...</Text>
+          <Text style={{ marginLeft: '12px' }}>{t('logs.loading')}</Text>
         </Box>
       ) : props.error ? (
         <Box className={styles.errorMessage}>
@@ -146,7 +149,7 @@ export function LogsSection(props: LogsSectionProps) {
         </Box>
       ) : (
         <Box className={styles.logsContainer}>
-          {props.logs ? props.processAnsiCodes(props.logs) : 'Nenhum log disponível.'}
+          {props.logs ? props.processAnsiCodes(props.logs) : t('logs.empty')}
         </Box>
       )}
     </>

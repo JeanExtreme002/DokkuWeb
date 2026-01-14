@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import React, { useState } from 'react';
 
 import { NavBar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import styles from './app-creation.module.css';
@@ -16,7 +17,7 @@ import {
   HeaderSection,
   NetworkSelection,
 } from './components';
-import { useIsMobile, validateAppName } from './utils';
+import { useAppNameValidation, useIsMobile } from './utils';
 
 interface AppCreationPageProps {
   session: Session;
@@ -30,12 +31,15 @@ interface EnvironmentVariable {
 
 export function AppCreationPage(props: AppCreationPageProps) {
   const router = useRouter();
+  const { t } = usePageTranslation();
   const [appName, setAppName] = useState('');
   const [selectedNetwork, setSelectedNetwork] = useState('none');
   const [environmentVariables, setEnvironmentVariables] = useState<EnvironmentVariable[]>([]);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
+  const { isValid } = useAppNameValidation(appName);
+  const canSubmit = isValid && !creating;
 
   const addEnvironmentVariable = (key: string, value: string) => {
     const newVariable: EnvironmentVariable = {
@@ -50,12 +54,8 @@ export function AppCreationPage(props: AppCreationPageProps) {
     setEnvironmentVariables((prev) => prev.filter((variable) => variable.id !== id));
   };
 
-  const canSubmit = () => {
-    return validateAppName(appName).isValid && !creating;
-  };
-
-  const handleCreateApp = async () => {
-    if (!canSubmit()) return;
+  const useCreateAppHandler = async () => {
+    if (!canSubmit) return;
 
     setCreating(true);
     setError(null);
@@ -103,16 +103,16 @@ export function AppCreationPage(props: AppCreationPageProps) {
 
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
-          setError('Você já utilizou toda sua cota disponível de aplicativos!');
+          setError(t('errors.quotaExceeded'));
         } else if (error.response?.data?.detail === 'App already exists') {
-          setError(`O aplicativo "${appName.trim()}" já existe.`);
+          setError(t('errors.appExists', { name: appName.trim() }));
         } else if (error.response?.data?.detail == 'App name already in use') {
-          setError(`O nome de aplicativo "${appName.trim()}" já está em uso.`);
+          setError(t('errors.appNameInUse', { name: appName.trim() }));
         } else {
-          setError('Acesso negado. Verifique suas permissões.');
+          setError(t('errors.accessDenied'));
         }
       } else {
-        setError('Ocorreu um erro ao criar o aplicativo. Tente novamente.');
+        setError(t('errors.createFailed'));
       }
     } finally {
       setCreating(false);
@@ -149,7 +149,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
 
               <Flex direction='column' gap='3'>
                 <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                  Variáveis de Ambiente
+                  {t('env.title')}
                 </Text>
                 <EnvInputs onAdd={addEnvironmentVariable} disabled={creating} isMobile={isMobile} />
                 <EnvList
@@ -163,9 +163,9 @@ export function AppCreationPage(props: AppCreationPageProps) {
 
               <ActionButtons
                 creating={creating}
-                canSubmit={canSubmit()}
+                canSubmit={canSubmit}
                 onCancel={() => router.push('/apps')}
-                onCreate={handleCreateApp}
+                onCreate={useCreateAppHandler}
               />
             </Flex>
           </Card>

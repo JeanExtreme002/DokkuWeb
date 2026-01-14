@@ -2,6 +2,8 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Dialog, Flex, Text, TextField } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../app-details.module.css';
 
 interface DeployRepoModalProps {
@@ -29,13 +31,12 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
     deployFromRepo,
   } = props;
 
+  const { t } = usePageTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: '500px' }}>
-        <Dialog.Title>Deploy via Repositório</Dialog.Title>
-        <Dialog.Description>
-          Insira a URL do repositório público e a branch para fazer o deploy.
-        </Dialog.Description>
+        <Dialog.Title>{t('modals.deployRepo.title')}</Dialog.Title>
+        <Dialog.Description>{t('modals.deployRepo.description')}</Dialog.Description>
 
         {errorDeploy && (
           <Box
@@ -56,10 +57,10 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
         <Flex direction='column' gap='4' style={{ marginTop: '20px' }}>
           <Box>
             <Text size='2' weight='medium' style={{ marginBottom: '8px' }}>
-              URL do Repositório
+              {t('modals.deployRepo.repoUrlLabel')}
             </Text>
             <TextField.Root
-              placeholder='https://github.com/usuario/repositorio'
+              placeholder={t('modals.deployRepo.repoUrlPlaceholder')}
               value={repoUrl}
               onChange={(e) => onSetRepoUrl(e.target.value)}
               disabled={deployLoading}
@@ -68,10 +69,10 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
 
           <Box>
             <Text size='2' weight='medium' style={{ marginBottom: '8px' }}>
-              Branch
+              {t('modals.deployRepo.branchLabel')}
             </Text>
             <TextField.Root
-              placeholder='main'
+              placeholder={t('modals.deployRepo.branchPlaceholder')}
               value={branch}
               onChange={(e) => onSetBranch(e.target.value)}
               disabled={deployLoading}
@@ -87,7 +88,7 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
               style={{ cursor: 'pointer' }}
               disabled={deployLoading}
             >
-              Cancelar
+              {t('modals.common.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -103,10 +104,10 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
             {deployLoading ? (
               <>
                 <ReloadIcon className={styles.buttonSpinner} />
-                Fazendo Deploy...
+                {t('modals.deployRepo.deploying')}
               </>
             ) : (
-              'Confirmar Deploy'
+              t('modals.deployRepo.confirm')
             )}
           </Button>
         </Flex>

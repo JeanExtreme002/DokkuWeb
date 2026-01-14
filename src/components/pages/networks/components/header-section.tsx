@@ -1,6 +1,8 @@
 import { PlusIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../networks.module.css';
 
 interface HeaderSectionProps {
@@ -8,6 +10,7 @@ interface HeaderSectionProps {
 }
 
 export function HeaderSection({ onOpenCreateModal }: HeaderSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex className={styles.headerSection}>
       <Box>
@@ -19,10 +22,10 @@ export function HeaderSection({ onOpenCreateModal }: HeaderSectionProps) {
             marginBottom: '4px',
           }}
         >
-          Minhas Redes
+          {t('header.title')}
         </Heading>
         <Text size='3' color='gray'>
-          Gerencie suas redes de aplicações no Dokku
+          {t('header.subtitle')}
         </Text>
       </Box>
 
@@ -51,7 +54,7 @@ export function HeaderSection({ onOpenCreateModal }: HeaderSectionProps) {
         }}
       >
         <PlusIcon />
-        Criar Rede
+        {t('actions.createNetwork')}
       </Button>
     </Flex>
   );
