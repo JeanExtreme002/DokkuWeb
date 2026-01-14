@@ -1,1 +1,7 @@
-{}
+{
+  "imageAlt": "Error Image",
+  "code": "404",
+  "heading": "Page not found",
+  "description": "The content you are looking for is unavailable or was removed.",
+  "goHome": "GO TO HOME PAGE"
+}

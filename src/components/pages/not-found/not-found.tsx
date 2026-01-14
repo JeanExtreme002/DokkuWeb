@@ -3,10 +3,12 @@ import { Button } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 
 import { Image } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from './not-found.module.css';
 
 export function NotFoundPage() {
+  const { t } = usePageTranslation();
   const router = useRouter();
 
   const goBackHome = (event: Event) => {
@@ -24,15 +26,15 @@ export function NotFoundPage() {
         flexDirection={'column'}
         justifyContent={'center'}
       >
-        <Image alt={'Error Image'} src='/images/dokku/logo-error.png' className={styles.logo} />
+        <Image alt={t('imageAlt')} src='/images/dokku/logo-error.png' className={styles.logo} />
         <Typography marginTop={2} variant={'h2'}>
-          404
+          {t('code')}
         </Typography>
         <Typography margin={5} variant={'h5'}>
-          Página não encontrada
+          {t('heading')}
         </Typography>
         <Typography marginInline={5} align='center'>
-          O conteúdo que você buscou está indisponível ou foi removido.
+          {t('description')}
         </Typography>
         <Button
           color='blue'
@@ -40,7 +42,7 @@ export function NotFoundPage() {
           onClick={goBackHome as any}
           style={{ cursor: 'pointer', marginTop: '5vh' }}
         >
-          IR PARA A PÁGINA INICIAL
+          {t('goHome')}
         </Button>
       </Box>
     </>

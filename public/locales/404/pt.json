@@ -1,1 +1,7 @@
-{}
+{
+  "imageAlt": "Imagem de erro",
+  "code": "404",
+  "heading": "Página não encontrada",
+  "description": "O conteúdo que você está buscando está indisponível ou foi removido.",
+  "goHome": "IR PARA A PÁGINA INICIAL"
+}

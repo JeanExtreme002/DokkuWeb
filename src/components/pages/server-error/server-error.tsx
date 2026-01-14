@@ -3,10 +3,12 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import { Image } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from './server-error.module.css';
 
 export function ServerErrorPage() {
+  const { t } = usePageTranslation();
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export function ServerErrorPage() {
         flexDirection={'column'}
         justifyContent={'center'}
       >
-        <Image alt={'Error Image'} src='/images/dokku/logo-error.png' className={styles.logo} />
+        <Image alt={t('imageAlt')} src='/images/dokku/logo-error.png' className={styles.logo} />
         <Typography
           margin={5}
           variant={'h5'}
@@ -36,10 +38,10 @@ export function ServerErrorPage() {
             },
           }}
         >
-          [500] Internal Server Error
+          {t('heading')}
         </Typography>
         <Typography marginInline={5} align='center'>
-          Ocorreu um erro em nosso serviço, estamos corrigindo o problema. Tente novamente em breve.
+          {t('description')}
         </Typography>
       </Box>
     </>

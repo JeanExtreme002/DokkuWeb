@@ -1,1 +1,5 @@
-{}
+{
+  "imageAlt": "Error Image",
+  "heading": "[500] Internal Server Error",
+  "description": "An error occurred in our service. We are fixing the issue. Please try again shortly."
+}
