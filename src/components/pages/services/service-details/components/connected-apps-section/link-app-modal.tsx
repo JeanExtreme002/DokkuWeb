@@ -1,6 +1,8 @@
 import { Link1Icon, ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../service-details.module.css';
 
 interface LinkAppModalProps {
@@ -26,23 +28,24 @@ export function LinkAppModal({
   onCancel,
   onConfirm,
 }: LinkAppModalProps) {
+  const { t } = usePageTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 450 }}>
-        <Dialog.Title>Vincular Aplicativo</Dialog.Title>
+        <Dialog.Title>{t('services.s.linkModal.title')}</Dialog.Title>
         <Dialog.Description style={{ marginTop: '12px', marginBottom: '20px' }}>
-          Selecione uma aplicação para vincular a este serviço.
+          {t('services.s.linkModal.description')}
         </Dialog.Description>
 
         {appsListLoading ? (
           <Flex align='center' gap='3' style={{ padding: '20px 0' }}>
             <ReloadIcon className={styles.buttonSpinner} />
-            <Text>Carregando aplicações disponíveis...</Text>
+            <Text>{t('services.s.linkModal.loadingApps')}</Text>
           </Flex>
         ) : availableApps.length === 0 ? (
           <Box style={{ padding: '20px 0' }}>
             <Text size='3' color='gray'>
-              Não há aplicações disponíveis para vincular ou todas já estão vinculadas.
+              {t('services.s.linkModal.noApps')}
             </Text>
           </Box>
         ) : (
@@ -50,9 +53,11 @@ export function LinkAppModal({
             <Select.Root value={selectedApp} onValueChange={onSelectedAppChange}>
               <Select.Trigger
                 style={{ width: '100%', cursor: 'pointer' }}
-                placeholder='Selecione uma aplicação'
+                placeholder={t('services.s.linkModal.selectPlaceholder')}
               >
-                {selectedApp ? selectedApp.replace(/^\d+-/, '') : 'Selecione uma aplicação'}
+                {selectedApp
+                  ? selectedApp.replace(/^\d+-/, '')
+                  : t('services.s.linkModal.selectPlaceholder')}
               </Select.Trigger>
               <Select.Content>
                 {availableApps.map((appName) => (
@@ -68,7 +73,7 @@ export function LinkAppModal({
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>
             <Button variant='soft' color='gray' style={{ cursor: 'pointer' }} onClick={onCancel}>
-              Cancelar
+              {t('services.s.linkModal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -79,7 +84,7 @@ export function LinkAppModal({
             disabled={linkLoading || !selectedApp || availableApps.length === 0}
           >
             {linkLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <Link1Icon />}
-            {linkLoading ? 'Vinculando...' : 'Vincular'}
+            {linkLoading ? t('services.s.linkModal.confirming') : t('services.s.linkModal.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

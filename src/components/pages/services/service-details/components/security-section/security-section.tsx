@@ -2,6 +2,7 @@ import { CopyIcon, EyeClosedIcon, EyeOpenIcon, TrashIcon } from '@radix-ui/react
 import { Box, Button, Card, Flex, Heading, Text, TextArea } from '@radix-ui/themes';
 
 import { DotIcon } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../service-details.module.css';
 
@@ -26,10 +27,11 @@ export function SecuritySection({
   isSmScreen,
   openDeleteModal,
 }: SecuritySectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex direction='column' gap='4'>
       <Heading size='5' style={{ marginBottom: '20px' }}>
-        URI de Conexão
+        {t('services.s.security.uri.title')}
       </Heading>
 
       {errorMessage ? (
@@ -59,8 +61,7 @@ export function SecuritySection({
         >
           <Flex direction='column' gap='4'>
             <Text size='2' className={styles.uriWarningText} style={{ color: 'var(--amber-11)' }}>
-              Esta URI contém informações sensíveis como usuário e senha. Mantenha-a segura e não a
-              compartilhe.
+              {t('services.s.security.uri.warning')}
             </Text>
 
             <Flex gap='3' align='center'>
@@ -114,7 +115,7 @@ export function SecuritySection({
       {/* Danger Zone */}
       <Box style={{ marginTop: '45px' }}>
         <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
-          Zona de Perigo
+          {t('services.s.security.danger.title')}
         </Heading>
         <Card
           style={{
@@ -127,10 +128,10 @@ export function SecuritySection({
           <Flex align='center' justify='between' gap='4' className={styles.dangerZoneHeader}>
             <Flex direction='column' gap='1'>
               <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
-                Deletar esse serviço
+                {t('services.s.security.danger.deleteTitle')}
               </Text>
               <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
-                Uma vez que você exclui um serviço, não há como voltar atrás.
+                {t('services.s.security.danger.deleteDescription')}
               </Text>
             </Flex>
             <Button
@@ -144,7 +145,7 @@ export function SecuritySection({
               className={styles.dangerZoneButton}
             >
               <TrashIcon />
-              Deletar Serviço
+              {t('services.s.security.danger.deleteButton')}
             </Button>
           </Flex>
         </Card>

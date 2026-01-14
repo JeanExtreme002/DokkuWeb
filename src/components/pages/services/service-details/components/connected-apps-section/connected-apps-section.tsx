@@ -3,6 +3,7 @@ import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { AppAvatar } from '@/components/shared';
 import { DotIcon } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../service-details.module.css';
 
@@ -23,10 +24,11 @@ export function ConnectedAppsSection({
   isMdScreen,
   onUnlinkApp,
 }: ConnectedAppsSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex direction='column' gap='4'>
       <Heading size='5' style={{ marginBottom: '20px' }}>
-        Aplicações Conectadas
+        {t('services.s.connectedApps.title')}
       </Heading>
 
       {errorMessage ? (
@@ -56,7 +58,7 @@ export function ConnectedAppsSection({
           }}
         >
           <Text size='3' color='gray'>
-            Nenhuma aplicação vinculada a este serviço.
+            {t('services.s.connectedApps.empty')}
           </Text>
         </Card>
       ) : (
@@ -113,7 +115,7 @@ export function ConnectedAppsSection({
                         className={styles.appDescription}
                         style={{ color: 'var(--gray-9)' }}
                       >
-                        Aplicação vinculada
+                        {t('services.s.connectedApps.linkedLabel')}
                       </Text>
                     </Flex>
                   </Flex>
@@ -136,7 +138,7 @@ export function ConnectedAppsSection({
                         {/* Show text only on screens larger than MD (>768px) */}
                         {!isMdScreen && (
                           <Text size='1' style={{ marginLeft: '4px' }}>
-                            Desvincular
+                            {t('services.s.connectedApps.unlink')}
                           </Text>
                         )}
                       </Button>
@@ -182,7 +184,7 @@ export function ConnectedAppsSection({
                   >
                     <TrashIcon />
                     <Text size='2' style={{ marginLeft: '6px' }}>
-                      Desvincular
+                      {t('services.s.connectedApps.unlink')}
                     </Text>
                   </Button>
                 )}

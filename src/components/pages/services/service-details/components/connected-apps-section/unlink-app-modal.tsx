@@ -1,6 +1,8 @@
 import { ReloadIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Button, Dialog, Flex, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../service-details.module.css';
 
 interface UnlinkAppModalProps {
@@ -20,22 +22,23 @@ export function UnlinkAppModal({
   onCancel,
   onConfirm,
 }: UnlinkAppModalProps) {
+  const { t } = usePageTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 450 }}>
-        <Dialog.Title>Confirmar Desvinculação</Dialog.Title>
+        <Dialog.Title>{t('services.s.unlinkModal.title')}</Dialog.Title>
         <Dialog.Description style={{ marginTop: '12px', marginBottom: '20px' }}>
-          Tem certeza que deseja desvincular a aplicação{' '}
-          <Text weight='medium' style={{ color: 'var(--gray-12)' }}>
-            {appName?.replace(/^\d+-/, '')}
+          <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
+            {t('services.s.unlinkModal.description.prefix')}{' '}
+            <strong>{appName?.replace(/^\d+-/, '')}</strong>{' '}
+            {t('services.s.unlinkModal.description.suffix')}
           </Text>{' '}
-          deste serviço? Esta ação não pode ser desfeita.
         </Dialog.Description>
 
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>
             <Button variant='soft' color='gray' style={{ cursor: 'pointer' }} onClick={onCancel}>
-              Cancelar
+              {t('services.s.unlinkModal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -46,7 +49,9 @@ export function UnlinkAppModal({
             disabled={unlinkLoading}
           >
             {unlinkLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <TrashIcon />}
-            {unlinkLoading ? 'Desvinculando...' : 'Desvincular'}
+            {unlinkLoading
+              ? t('services.s.unlinkModal.confirming')
+              : t('services.s.unlinkModal.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

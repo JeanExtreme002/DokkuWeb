@@ -1,6 +1,8 @@
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Dialog, Flex, Text, TextField } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../service-details.module.css';
 
 interface DeleteServiceModalProps {
@@ -26,25 +28,30 @@ export function DeleteServiceModal({
   onCancel,
   onConfirm,
 }: DeleteServiceModalProps) {
+  const { t } = usePageTranslation();
+  const tokenPrefix = t('services.s.deleteModal.tokenPrefix');
+  const token = `${tokenPrefix}-${displayName}`;
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: '480px' }}>
-        <Dialog.Title>Confirmar Exclusão</Dialog.Title>
+        <Dialog.Title>{t('services.s.deleteModal.title')}</Dialog.Title>
         <Dialog.Description style={{ marginBottom: '16px', color: 'var(--gray-11)' }}>
-          Tem certeza que deseja prosseguir com a exclusão do serviço {serviceType} {'"'}
+          {t('services.s.deleteModal.description.prefix')} {serviceType} {'"'}
           <strong>{displayName}</strong>
-          {'"'}?
+          {'"'}
+          {t('services.s.deleteModal.description.suffix')}
           <br />
           <br />
-          Esta ação não pode ser desfeita.
+          {t('services.s.deleteModal.description.note')}
         </Dialog.Description>
 
         <Box style={{ marginTop: '8px' }}>
           <Text size='2' style={{ color: 'var(--gray-11)', marginBottom: '8px', display: 'block' }}>
-            Para confirmar, digite <strong>{`deletar-${displayName}`}</strong> abaixo:
+            {t('services.s.deleteModal.prompt.prefix')} <strong>{token}</strong>{' '}
+            {t('services.s.deleteModal.prompt.suffix')}
           </Text>
           <TextField.Root
-            placeholder={`deletar-${displayName}`}
+            placeholder={token}
             value={deleteConfirmText}
             onChange={(e) => onDeleteConfirmTextChange(e.target.value)}
           />
@@ -59,12 +66,12 @@ export function DeleteServiceModal({
               disabled={deleteLoading}
               onClick={onCancel}
             >
-              Cancelar
+              {t('services.s.deleteModal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
             onClick={onConfirm}
-            disabled={deleteLoading || deleteConfirmText.trim() !== `deletar-${displayName}`}
+            disabled={deleteLoading || deleteConfirmText.trim() !== token}
             style={{
               backgroundColor: 'var(--red-9)',
               color: 'white',
@@ -74,10 +81,11 @@ export function DeleteServiceModal({
           >
             {deleteLoading ? (
               <>
-                <ReloadIcon className={styles.buttonSpinner} /> Deletando...
+                <ReloadIcon className={styles.buttonSpinner} />{' '}
+                {t('services.s.deleteModal.confirming')}
               </>
             ) : (
-              'Confirmar Exclusão'
+              t('services.s.deleteModal.confirm')
             )}
           </Button>
         </Flex>

@@ -1,5 +1,7 @@
 import { Box, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../service-details.module.css';
 
 interface OverviewSectionProps {
@@ -17,10 +19,11 @@ interface OverviewSectionProps {
 }
 
 export function OverviewSection({ serviceData, statusText, formatVersion }: OverviewSectionProps) {
+  const { t } = usePageTranslation();
   return (
     <Flex direction='column' gap='4'>
       <Heading size='5' style={{ marginBottom: '20px' }}>
-        Informações do Serviço
+        {t('services.s.overview.title')}
       </Heading>
 
       <Flex direction='column' gap='4'>
@@ -37,7 +40,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              Status
+              {t('services.s.overview.labels.status')}
             </Text>
             <Text size='3' className={styles.overviewValue} style={{ color: 'var(--gray-12)' }}>
               {statusText}
@@ -58,7 +61,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              Versão
+              {t('services.s.overview.labels.version')}
             </Text>
             <Text
               size='3'
@@ -67,7 +70,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
             >
               {serviceData && serviceData.version
                 ? formatVersion(serviceData.version)
-                : 'Indisponível'}
+                : t('services.s.overview.fallbacks.unavailable')}
             </Text>
           </Flex>
         </Box>
@@ -85,14 +88,14 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              IP Interno
+              {t('services.s.overview.labels.internalIp')}
             </Text>
             <Text
               size='3'
               className={styles.overviewValue}
               style={{ fontFamily: 'monospace', color: 'var(--gray-12)' }}
             >
-              {serviceData?.internal_ip || 'Indisponível'}
+              {serviceData?.internal_ip || t('services.s.overview.fallbacks.unavailable')}
             </Text>
           </Flex>
         </Box>
@@ -110,7 +113,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              ID do Container
+              {t('services.s.overview.labels.containerId')}
             </Text>
             <Text
               size='3'
@@ -136,7 +139,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
                 className={styles.overviewLabel}
                 style={{ color: 'var(--gray-11)' }}
               >
-                Portas Expostas
+                {t('services.s.overview.labels.exposedPorts')}
               </Text>
               <Text
                 size='3'
@@ -162,7 +165,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              Diretório de Dados
+              {t('services.s.overview.labels.dataDir')}
             </Text>
             <Text
               size='3'
@@ -187,7 +190,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              Diretório de Configuração
+              {t('services.s.overview.labels.configDir')}
             </Text>
             <Text
               size='3'
@@ -212,7 +215,7 @@ export function OverviewSection({ serviceData, statusText, formatVersion }: Over
               className={styles.overviewLabel}
               style={{ color: 'var(--gray-11)' }}
             >
-              Diretório Raiz
+              {t('services.s.overview.labels.rootDir')}
             </Text>
             <Text
               size='3'

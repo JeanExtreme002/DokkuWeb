@@ -1,5 +1,7 @@
 import { Button, Dialog, Flex } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface StopConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -15,15 +17,13 @@ export function StopConfirmModal({
   onCancel,
   onConfirm,
 }: StopConfirmModalProps) {
+  const { t } = usePageTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 450 }}>
-        <Dialog.Title>Confirmar Ação</Dialog.Title>
+        <Dialog.Title>{t('services.s.stopModal.title')}</Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Tem certeza que deseja parar o serviço?
-          <br />
-          <br />
-          Esta ação definitivamente interromperá todas as conexões e processos deste serviço.
+          {t('services.s.stopModal.description')}
         </Dialog.Description>
 
         <Flex gap='3' mt='4' justify='end'>
@@ -35,7 +35,7 @@ export function StopConfirmModal({
               onClick={onCancel}
               disabled={stopLoading}
             >
-              Cancelar
+              {t('services.s.stopModal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -45,7 +45,7 @@ export function StopConfirmModal({
             onClick={onConfirm}
             disabled={stopLoading}
           >
-            {stopLoading ? 'Parando...' : 'Parar Serviço'}
+            {stopLoading ? t('services.s.stopModal.confirming') : t('services.s.stopModal.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

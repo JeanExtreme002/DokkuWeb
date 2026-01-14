@@ -120,7 +120,7 @@
   "logs.linesLabel": "Linhas:",
   "logs.refresh": "Atualizar",
   "logs.refreshing": "Atualizando...",
-  "logs.download": "Baixar",
+  "logs.download": "Baixar arquivo de logs",
   "logs.loading": "Carregando logs...",
   "logs.empty": "Nenhum log disponível.",
   "shell.sectionTitle": "Shell",

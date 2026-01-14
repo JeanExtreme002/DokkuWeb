@@ -2,6 +2,7 @@ import { Link1Icon, PlayIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Button, Flex } from '@radix-ui/themes';
 
 import { StopIcon } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../service-details.module.css';
 
@@ -26,6 +27,7 @@ export function ServiceControlsSection({
   restartLoading,
   serviceStatus,
 }: ServiceControlsSectionProps) {
+  const { t } = usePageTranslation();
   const startDisabled =
     startLoading || stopLoading || restartLoading || serviceStatus === 'running';
   const stopDisabled =
@@ -59,7 +61,7 @@ export function ServiceControlsSection({
               disabled={startDisabled}
             >
               {startLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <PlayIcon />}
-              Iniciar
+              {t('services.s.controls.start')}
             </Button>
 
             <Button
@@ -70,7 +72,7 @@ export function ServiceControlsSection({
               disabled={stopDisabled}
             >
               {stopLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <StopIcon />}
-              Parar
+              {t('services.s.controls.stop')}
             </Button>
 
             <Button
@@ -81,7 +83,7 @@ export function ServiceControlsSection({
               disabled={restartDisabled}
             >
               {restartLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <ReloadIcon />}
-              Reiniciar
+              {t('services.s.controls.restart')}
             </Button>
           </Flex>
 
@@ -95,7 +97,7 @@ export function ServiceControlsSection({
             disabled={restartDisabled}
           >
             <Link1Icon />
-            Vincular Aplicativo
+            {t('services.s.controls.linkApp')}
           </Button>
         </Flex>
 
@@ -110,7 +112,7 @@ export function ServiceControlsSection({
               disabled={startDisabled}
             >
               {startLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <PlayIcon />}
-              Iniciar
+              {t('services.s.controls.start')}
             </Button>
 
             <Button
@@ -121,7 +123,7 @@ export function ServiceControlsSection({
               disabled={stopDisabled}
             >
               {stopLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <StopIcon />}
-              Parar
+              {t('services.s.controls.stop')}
             </Button>
 
             <Button
@@ -132,7 +134,7 @@ export function ServiceControlsSection({
               disabled={restartDisabled}
             >
               {restartLoading ? <ReloadIcon className={styles.buttonSpinner} /> : <ReloadIcon />}
-              Reiniciar
+              {t('services.s.controls.restart')}
             </Button>
           </Flex>
 
@@ -146,7 +148,7 @@ export function ServiceControlsSection({
             style={{ width: '100%', cursor: 'pointer' }}
           >
             <Link1Icon />
-            Vincular Aplicativo
+            {t('services.s.controls.linkApp')}
           </Button>
         </Flex>
       </Flex>

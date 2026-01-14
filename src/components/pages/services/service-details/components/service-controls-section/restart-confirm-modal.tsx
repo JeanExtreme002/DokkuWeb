@@ -1,5 +1,7 @@
 import { Button, Dialog, Flex } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface RestartConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -15,15 +17,13 @@ export function RestartConfirmModal({
   onCancel,
   onConfirm,
 }: RestartConfirmModalProps) {
+  const { t } = usePageTranslation();
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 450 }}>
-        <Dialog.Title>Confirmar Ação</Dialog.Title>
+        <Dialog.Title>{t('services.s.restartModal.title')}</Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Tem certeza que deseja reiniciar o serviço?
-          <br />
-          <br />
-          Esta ação pode causar indisponibilidade temporária.
+          {t('services.s.restartModal.description')}
         </Dialog.Description>
 
         <Flex gap='3' mt='4' justify='end'>
@@ -35,7 +35,7 @@ export function RestartConfirmModal({
               onClick={onCancel}
               disabled={restartLoading}
             >
-              Cancelar
+              {t('services.s.restartModal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -45,7 +45,9 @@ export function RestartConfirmModal({
             onClick={onConfirm}
             disabled={restartLoading}
           >
-            {restartLoading ? 'Reiniciando...' : 'Reiniciar Serviço'}
+            {restartLoading
+              ? t('services.s.restartModal.confirming')
+              : t('services.s.restartModal.confirm')}
           </Button>
         </Flex>
       </Dialog.Content>

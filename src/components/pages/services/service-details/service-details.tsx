@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Image as CustomImage, NavBar } from '@/components';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { usePageTranslation } from '@/i18n/utils';
 import {
   api,
   copyToClipboard,
@@ -29,7 +30,7 @@ import {
   StopConfirmModal,
   UnlinkAppModal,
 } from './components';
-import { formatVersion, getStatusInfo } from './helpers';
+import { formatVersion, useStatusInfo } from './helpers';
 import styles from './service-details.module.css';
 import { ServiceData } from './types';
 
@@ -41,6 +42,7 @@ export interface ServiceDetailsPageProps {
 export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = usePageTranslation();
 
   // Stable session reference to prevent unnecessary re-renders
   const stableSession = useMemo(() => {
@@ -108,6 +110,10 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [deleteServiceLoading, setDeleteServiceLoading] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
+  const statusInfo = useStatusInfo(serviceData);
+  const displayName = formatServiceName(props.serviceName);
+  const serviceType = formatDatabaseType(props.pluginType);
+
   // Fetch functions with retry logic
   const fetchWithRetry = useCallback(
     async (
@@ -127,7 +133,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
           retries++;
           if (retries >= maxRetries) {
             console.error('Max retries reached:', error);
-            setError('Erro ao carregar dados. Verifique sua conexão.');
+            setError(t('services.s.errors.loadData'));
             throw error;
           }
           console.warn(`Retry ${retries}/${maxRetries}:`, error);
@@ -140,6 +146,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
       return attemptFetch();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -319,7 +326,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error starting service:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao iniciar serviço',
+        main: error.response?.data?.message || t('services.s.errors.startService'),
       }));
     } finally {
       setStartLoading(false);
@@ -337,7 +344,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error stopping service:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao parar serviço',
+        main: error.response?.data?.message || t('services.s.errors.stopService'),
       }));
     } finally {
       setStopLoading(false);
@@ -355,7 +362,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error restarting service:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao reiniciar serviço',
+        main: error.response?.data?.message || t('services.s.errors.restartService'),
       }));
     } finally {
       setRestartLoading(false);
@@ -372,7 +379,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error deleting service:', error);
       setErrors((prev) => ({
         ...prev,
-        main: error.response?.data?.message || 'Erro ao deletar serviço',
+        main: error.response?.data?.message || t('services.s.errors.deleteService'),
       }));
     } finally {
       setDeleteServiceLoading(false);
@@ -403,7 +410,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error unlinking app:', error);
       setErrors((prev) => ({
         ...prev,
-        linkedApps: error.response?.data?.message || 'Erro ao desvincular aplicação',
+        linkedApps: error.response?.data?.message || t('services.s.errors.unlinkApp'),
       }));
     } finally {
       setUnlinkLoading(false);
@@ -443,7 +450,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error fetching apps list:', error);
       setErrors((prev) => ({
         ...prev,
-        linkedApps: 'Erro ao carregar lista de aplicações',
+        linkedApps: t('services.s.errors.loadAppsList'),
       }));
       setShowLinkModal(false);
     } finally {
@@ -469,7 +476,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       console.error('Error linking app:', error);
       setErrors((prev) => ({
         ...prev,
-        linkedApps: error.response?.data?.message || 'Erro ao vincular aplicação',
+        linkedApps: error.response?.data?.message || t('services.s.errors.linkApp'),
       }));
     } finally {
       setLinkLoading(false);
@@ -486,10 +493,6 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
     return null;
   }
 
-  const statusInfo = getStatusInfo(serviceData);
-  const displayName = formatServiceName(props.serviceName);
-  const serviceType = formatDatabaseType(props.pluginType);
-
   return (
     <>
       <NavBar session={stableSession} />
@@ -498,13 +501,13 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
         {mainLoading || uriLoading || linkedAppsLoading ? (
           <LoadingSpinner
             asCard={false}
-            title='Carregando Serviço'
+            title={t('services.s.loading.title')}
             messages={[
-              'Conectando ao Dokku...',
-              'Obtendo informações do serviço...',
-              'Carregando aplicações conectadas...',
-              'Verificando status...',
-              'Quase pronto...',
+              t('services.s.loading.messages.connecting'),
+              t('services.s.loading.messages.fetchingServiceInfo'),
+              t('services.s.loading.messages.loadingLinkedApps'),
+              t('services.s.loading.messages.checkingStatus'),
+              t('services.s.loading.messages.almostThere'),
             ]}
           />
         ) : errors.main ? (
@@ -528,7 +531,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
               onClick={() => window.location.reload()}
               style={{ marginTop: '16px', cursor: 'pointer' }}
             >
-              <ReloadIcon /> Recarregar
+              <ReloadIcon /> {t('services.s.error.reloadButton')}
             </Button>
           </Flex>
         ) : (
@@ -560,16 +563,16 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
             <Tabs.Root value={currentTab} onValueChange={setCurrentTab} className={styles.tabsRoot}>
               <Tabs.List size='2' className={styles.tabsList}>
                 <Tabs.Trigger value='overview' className={styles.tabsTrigger}>
-                  Visão Geral
+                  {t('services.s.tabs.overview')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='connected-apps' className={styles.tabsTrigger}>
-                  Aplicações
+                  {t('services.s.tabs.connectedApps')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='logs' className={styles.tabsTrigger}>
-                  Logs
+                  {t('services.s.tabs.logs')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='security' className={styles.tabsTrigger}>
-                  Segurança
+                  {t('services.s.tabs.security')}
                 </Tabs.Trigger>
               </Tabs.List>
 
