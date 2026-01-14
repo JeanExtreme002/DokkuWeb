@@ -3,6 +3,7 @@ import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
 import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import styles from '../../service-list.module.css';
@@ -18,6 +19,7 @@ export function ServiceCardSkeleton({
   serviceName,
   isMobile,
 }: ServiceCardSkeletonProps) {
+  const { t } = usePageTranslation();
   const displayName = formatServiceName(serviceName);
   const serviceType = formatDatabaseType(pluginType);
 
@@ -96,7 +98,7 @@ export function ServiceCardSkeleton({
                 }}
               />
               <Text size='2' weight='medium' style={{ color: 'var(--gray-9)', opacity: 0.7 }}>
-                Carregando status...
+                {t('list.skeleton.status_loading')}
               </Text>
             </Flex>
           </Flex>
@@ -129,7 +131,7 @@ export function ServiceCardSkeleton({
             onClick={() => (window.location.href = `/services/s/${pluginType}/${serviceName}`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('list.card.actions.view_details')}
           </Button>
         </Flex>
       </Flex>

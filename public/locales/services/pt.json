@@ -1,1 +1,21 @@
-{}
+{
+  "list.header.title": "Meus Serviços",
+  "list.header.subtitle": "Gerencie seus serviços de banco de dados no Dokku",
+  "list.header.new_button": "Novo Serviço",
+  "list.loading.title": "Carregando Serviços",
+  "list.loading.messages.connecting": "Conectando ao Dokku...",
+  "list.loading.messages.listing": "Listando serviços de banco de dados...",
+  "list.loading.messages.preparing": "Preparando listagem...",
+  "list.error.list_load": "Erro ao carregar lista de serviços",
+  "list.error.service_info": "Erro ao carregar informações",
+  "list.empty.title": "Nenhum serviço criado ainda.",
+  "list.card.labels.ip": "IP",
+  "list.card.labels.ports": "Portas",
+  "list.card.labels.unavailable": "Indisponível",
+  "list.card.actions.view_details": "Ver detalhes",
+  "list.status.active": "Ativo",
+  "list.status.stopped": "Parado",
+  "list.status.starting": "Iniciando",
+  "list.status.unknown": "Desconhecido",
+  "list.skeleton.status_loading": "Carregando status..."
+}

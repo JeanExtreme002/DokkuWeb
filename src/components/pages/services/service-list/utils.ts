@@ -1,15 +1,23 @@
 export const getStatusInfo = (status: string) => {
   switch (status.toLowerCase()) {
     case 'running':
-      return { color: 'var(--green-9)', text: 'Ativo', bgColor: 'var(--green-3)' };
+      return { color: 'var(--green-9)', textKey: 'list.status.active', bgColor: 'var(--green-3)' };
     case 'stopped':
     case 'exited':
     case 'missing':
-      return { color: 'var(--red-9)', text: 'Parado', bgColor: 'var(--red-3)' };
+      return { color: 'var(--red-9)', textKey: 'list.status.stopped', bgColor: 'var(--red-3)' };
     case 'starting':
-      return { color: 'var(--amber-9)', text: 'Iniciando', bgColor: 'var(--amber-3)' };
+      return {
+        color: 'var(--amber-9)',
+        textKey: 'list.status.starting',
+        bgColor: 'var(--amber-3)',
+      };
     default:
-      return { color: 'var(--gray-9)', text: 'Desconhecido', bgColor: 'var(--gray-3)' };
+      return {
+        color: 'var(--gray-9)',
+        textKey: 'list.status.unknown',
+        bgColor: 'var(--gray-3)',
+      };
   }
 };
 

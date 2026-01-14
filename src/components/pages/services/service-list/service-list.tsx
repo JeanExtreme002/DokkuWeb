@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '@/components';
 import { ErrorCard, ListHeader, ServerUpdateIndicator } from '@/components/shared';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import { EmptyCard, ServicesGrid } from './components';
@@ -16,6 +17,7 @@ interface ServiceListPageProps {
 }
 
 export function ServiceListPage(props: ServiceListPageProps) {
+  const { t } = usePageTranslation();
   const [servicesList, setServicesList] = useState<ServiceListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export function ServiceListPage(props: ServiceListPageProps) {
         }
       } catch (error) {
         console.error('Error fetching services list:', error);
-        setError('Erro ao carregar lista de serviços');
+        setError(t('list.error.list_load'));
       }
 
       const elapsedTime = Date.now() - startTime;
@@ -130,7 +132,7 @@ export function ServiceListPage(props: ServiceListPageProps) {
             prevList.map((service) =>
               service.pluginType === serviceItem.pluginType &&
               service.serviceName === serviceItem.serviceName
-                ? { ...service, loading: false, error: 'Erro ao carregar informações' }
+                ? { ...service, loading: false, error: t('list.error.service_info') }
                 : service
             )
           );
@@ -198,6 +200,7 @@ export function ServiceListPage(props: ServiceListPageProps) {
     };
 
     fetchServicesList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Presentation components are split for maintainability and SOLID compliance
@@ -209,9 +212,9 @@ export function ServiceListPage(props: ServiceListPageProps) {
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
           <ListHeader
-            title='Meus Serviços'
-            subtitle='Gerencie seus serviços de banco de dados no Dokku'
-            buttonLabel='Novo Serviço'
+            title={t('list.header.title')}
+            subtitle={t('list.header.subtitle')}
+            buttonLabel={t('list.header.new_button')}
             onCreate={() => (window.location.href = './create')}
             containerClassName={styles.headerSection}
             buttonClassName={styles.createButton}
@@ -226,11 +229,11 @@ export function ServiceListPage(props: ServiceListPageProps) {
           {/* Initial loading state — only shows if we don't have the list yet */}
           {!hasInitialList && loading && (
             <LoadingSpinner
-              title='Carregando Serviços'
+              title={t('list.loading.title')}
               messages={[
-                'Conectando ao Dokku...',
-                'Listando serviços de banco de dados...',
-                'Preparando listagem...',
+                t('list.loading.messages.connecting'),
+                t('list.loading.messages.listing'),
+                t('list.loading.messages.preparing'),
               ]}
             />
           )}

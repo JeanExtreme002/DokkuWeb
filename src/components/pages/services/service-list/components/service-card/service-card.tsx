@@ -3,6 +3,7 @@ import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
 import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import styles from '../../service-list.module.css';
@@ -15,6 +16,7 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ item, isMobile }: ServiceCardProps) {
+  const { t } = usePageTranslation();
   const statusInfo = getStatusInfo(item.serviceData!.status);
   const displayName = formatServiceName(item.serviceName);
   const serviceType = formatDatabaseType(item.pluginType);
@@ -86,7 +88,7 @@ export function ServiceCard({ item, isMobile }: ServiceCardProps) {
                 }}
               />
               <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                {statusInfo.text}
+                {t(statusInfo.textKey)}
               </Text>
             </Flex>
           </Flex>
@@ -96,16 +98,16 @@ export function ServiceCard({ item, isMobile }: ServiceCardProps) {
         <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
           <Flex align='center' gap='2'>
             <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
-              IP:
+              {t('list.card.labels.ip')}:
             </Text>
             <Text size='2' style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}>
-              {item.serviceData!.internal_ip || 'Indisponível'}
+              {item.serviceData!.internal_ip || t('list.card.labels.unavailable')}
             </Text>
           </Flex>
           {item.serviceData!.exposed_ports !== '-' && (
             <Flex align='center' gap='2'>
               <Text size='2' style={{ color: 'var(--gray-9)', fontWeight: '500' }}>
-                Portas:
+                {t('list.card.labels.ports')}:
               </Text>
               <Text size='2' style={{ color: 'var(--gray-10)', fontFamily: 'monospace' }}>
                 {item.serviceData!.exposed_ports}
@@ -126,7 +128,7 @@ export function ServiceCard({ item, isMobile }: ServiceCardProps) {
             }
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('list.card.actions.view_details')}
           </Button>
         </Flex>
       </Flex>

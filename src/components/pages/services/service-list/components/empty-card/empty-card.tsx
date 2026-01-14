@@ -1,7 +1,10 @@
 import { Card, Text } from '@radix-ui/themes';
 import React from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 export function EmptyCard() {
+  const { t } = usePageTranslation();
   return (
     <Card
       style={{
@@ -12,7 +15,7 @@ export function EmptyCard() {
       }}
     >
       <Text size='3' color='gray'>
-        Nenhum serviço criado ainda.
+        {t('list.empty.title')}
       </Text>
     </Card>
   );
