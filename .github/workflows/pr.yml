@@ -29,11 +29,16 @@ jobs:
           scopes: |-
             assets
             core
+            i18n
+            tools
             github
             app
             components
             lib
             pages
             types
+            public
+            public-locales
+            public-images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

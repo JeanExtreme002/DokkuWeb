@@ -1,5 +1,19 @@
 function getScopes() {
-  return ['assets', 'core', 'github', 'app', 'components', 'lib', 'pages', 'types'];
+  return [
+    'assets',
+    'core',
+    'i18n',
+    'tools',
+    'github',
+    'app',
+    'components',
+    'lib',
+    'pages',
+    'types',
+    'public',
+    'public-images',
+    'public-locales',
+  ];
 }
 
 const scopes = getScopes();
