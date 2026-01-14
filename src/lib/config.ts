@@ -10,7 +10,7 @@ export const config = {
     emailDomains,
   },
   support: {
-    name: process.env.SUPPORT_NAME || 'Support-Name',
+    name: process.env.SUPPORT_NAME || '<Support Name>',
     url: process.env.SUPPORT_URL || 'https://supportWebsite.com/',
   },
   server: {
