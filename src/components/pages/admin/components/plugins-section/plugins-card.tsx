@@ -1,6 +1,8 @@
 import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Badge, Box, Button, Card, Flex, Heading, Text, Tooltip } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 
 interface PluginInfo {
@@ -17,6 +19,7 @@ interface PluginsCardProps {
 }
 
 export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card
       style={{
@@ -29,9 +32,9 @@ export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardP
         <Flex justify='between' align='center' className={styles.pluginsHeader}>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Plugins
+              {t('admin.plugins.title')}
             </Heading>
-            <Tooltip content='Lista de plugins instalados no Dokku'>
+            <Tooltip content={t('admin.plugins.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -42,7 +45,11 @@ export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardP
             style={{ cursor: 'pointer' }}
           >
             <ReloadIcon className={loading ? styles.buttonSpinner : ''} />
-            <span className={styles.refreshLabel}>{loading ? 'Atualizando...' : 'Atualizar'}</span>
+            <span className={styles.refreshLabel}>
+              {loading
+                ? t('admin.plugins.refresh.label_loading')
+                : t('admin.plugins.refresh.label')}
+            </span>
           </Button>
         </Flex>
         {error && (
@@ -54,7 +61,7 @@ export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardP
           <Flex align='center' gap='2' style={{ padding: '8px' }}>
             <Box className={styles.pluginsLoadingSpinner} aria-hidden='true' />
             <Text size='2' style={{ color: 'var(--gray-11)' }}>
-              Carregando plugins...
+              {t('admin.plugins.loading')}
             </Text>
           </Flex>
         ) : (
@@ -62,18 +69,18 @@ export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardP
             <table className={styles.pluginsTable}>
               <thead>
                 <tr>
-                  <th>Nome</th>
-                  <th>Versão</th>
-                  <th>Status</th>
-                  <th>Descrição</th>
+                  <th>{t('admin.plugins.table.columns.name')}</th>
+                  <th>{t('admin.plugins.table.columns.version')}</th>
+                  <th>{t('admin.plugins.table.columns.status')}</th>
+                  <th>{t('admin.plugins.table.columns.description')}</th>
                 </tr>
               </thead>
               <tbody>
                 {plugins.map((p) => (
                   <tr key={p.name}>
-                    <td data-label='Nome'>{p.name}</td>
-                    <td data-label='Versão'>{p.version}</td>
-                    <td data-label='Status'>
+                    <td data-label='name'>{p.name}</td>
+                    <td data-label='version'>{p.version}</td>
+                    <td data-label='status'>
                       <Badge
                         size='1'
                         className={
@@ -83,14 +90,14 @@ export function PluginsCard({ plugins, loading, error, onRefresh }: PluginsCardP
                         {p.status}
                       </Badge>
                     </td>
-                    <td data-label='Descrição'>{p.description}</td>
+                    <td data-label='description'>{p.description}</td>
                   </tr>
                 ))}
                 {plugins.length === 0 && !loading && !error && (
                   <tr>
                     <td colSpan={4}>
                       <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                        Nenhum plugin listado.
+                        {t('admin.plugins.table.empty')}
                       </Text>
                     </td>
                   </tr>

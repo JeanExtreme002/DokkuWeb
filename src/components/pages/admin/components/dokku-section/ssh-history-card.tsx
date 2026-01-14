@@ -2,6 +2,8 @@ import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, Tooltip } from '@radix-ui/themes';
 import { useEffect, useRef } from 'react';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 
 interface SshHistoryCardProps {
@@ -12,6 +14,7 @@ interface SshHistoryCardProps {
 }
 
 export function SshHistoryCard({ history, loading, error, onRefresh }: SshHistoryCardProps) {
+  const { t } = usePageTranslation();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -28,9 +31,9 @@ export function SshHistoryCard({ history, loading, error, onRefresh }: SshHistor
         <Flex justify='between' align='center' className={styles.sshHeader}>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Histórico SSH
+              {t('admin.dokku.ssh_history.title')}
             </Heading>
-            <Tooltip content='Últimos comandos executados via SSH'>
+            <Tooltip content={t('admin.dokku.ssh_history.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -41,7 +44,9 @@ export function SshHistoryCard({ history, loading, error, onRefresh }: SshHistor
             variant='outline'
           >
             <ReloadIcon className={loading ? styles.buttonSpinner : ''} />
-            {loading ? 'Atualizando...' : 'Atualizar'}
+            {loading
+              ? t('admin.dokku.ssh_history.refresh.loading')
+              : t('admin.dokku.ssh_history.refresh.label')}
           </Button>
         </Flex>
         {error && (
@@ -72,7 +77,9 @@ export function SshHistoryCard({ history, loading, error, onRefresh }: SshHistor
             </ul>
           ) : (
             <Text size='2' style={{ color: 'var(--gray-11)' }}>
-              {loading ? 'Carregando...' : 'Sem histórico disponível. Clique em Atualizar.'}
+              {loading
+                ? t('admin.dokku.ssh_history.empty.loading')
+                : t('admin.dokku.ssh_history.empty.no_history')}
             </Text>
           )}
         </Box>

@@ -1,6 +1,8 @@
 import { InfoCircledIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Button, Card, Flex, Heading, Text, Tooltip } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 
 interface AdminUsersCardProps {
@@ -16,6 +18,7 @@ export function AdminUsersCard({
   adminUsersError,
   onRemoveAdmin,
 }: AdminUsersCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card
       style={{
@@ -28,9 +31,9 @@ export function AdminUsersCard({
         <Flex justify='between' align='center'>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Usuários Administradores
+              {t('admin.users.admin_list.title')}
             </Heading>
-            <Tooltip content='Lista de usuários com privilégio de administrador'>
+            <Tooltip content={t('admin.users.admin_list.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -44,11 +47,11 @@ export function AdminUsersCard({
 
         {adminUsersLoading ? (
           <Text size='2' style={{ color: 'var(--gray-11)' }}>
-            Carregando usuários admin...
+            {t('admin.users.admin_list.loading')}
           </Text>
         ) : adminUsers.length === 0 ? (
           <Text size='2' style={{ color: 'var(--gray-11)' }}>
-            Nenhum administrador encontrado.
+            {t('admin.users.admin_list.empty')}
           </Text>
         ) : (
           <Flex direction='column' gap='2'>

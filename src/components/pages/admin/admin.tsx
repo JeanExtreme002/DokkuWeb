@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import styles from './admin.module.css';
@@ -40,6 +41,7 @@ interface UserQuotaInfo extends QuotaInfo {
 export function AdminPage(props: AdminPageProps) {
   const { data: sessionData, update: updateSession } = useSession();
   const router = useRouter();
+  const { t } = usePageTranslation();
 
   const [usersList, setUsersList] = useState<string[]>([]);
   const [usersListLoading, setUsersListLoading] = useState(false);
@@ -173,12 +175,13 @@ export function AdminPage(props: AdminPageProps) {
         setResourcesList(resp.data || []);
       } catch (error) {
         console.error('Error fetching resources:', error);
-        setResourcesError('Erro ao carregar recursos');
+        setResourcesError(t('admin.errors.resources.load_failed'));
         setResourcesList([]);
       } finally {
         setResourcesLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -233,6 +236,7 @@ export function AdminPage(props: AdminPageProps) {
     };
 
     run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionData, props.session, router]);
 
   const searchUserData = async () => {
@@ -252,7 +256,7 @@ export function AdminPage(props: AdminPageProps) {
       setSelectedUserIsAdmin(adminResp.data.result);
     } catch (error) {
       console.error('Error fetching user data:', error);
-      setUserQuotaError('Erro ao buscar informações do usuário');
+      setUserQuotaError(t('admin.errors.user.fetch_failed'));
       setUserQuota(null);
       setSelectedUserIsAdmin(null);
     } finally {
@@ -279,7 +283,7 @@ export function AdminPage(props: AdminPageProps) {
       setEditMode(false);
     } catch (error) {
       console.error('Error updating user quota:', error);
-      setUserQuotaError('Erro ao atualizar quota do usuário');
+      setUserQuotaError(t('admin.errors.user.quota_update_failed'));
     } finally {
       setUpdateLoading(false);
     }
@@ -324,7 +328,7 @@ export function AdminPage(props: AdminPageProps) {
       window.location.reload();
     } catch (error) {
       console.error('Error performing takeover:', error);
-      setUserQuotaError('Erro ao realizar takeover do usuário');
+      setUserQuotaError(t('admin.errors.user.takeover_failed'));
     } finally {
       setTakeoverLoading(false);
     }
@@ -347,7 +351,7 @@ export function AdminPage(props: AdminPageProps) {
       setCommandOutput(resp.data.message || '');
     } catch (error) {
       console.error('Error running dokku command:', error);
-      setCommandError('Erro ao executar comando Dokku');
+      setCommandError(t('admin.errors.dokku.command_failed'));
     } finally {
       setCommandLoading(false);
     }
@@ -367,11 +371,12 @@ export function AdminPage(props: AdminPageProps) {
       setPlugins(list);
     } catch (error) {
       console.error('Error fetching plugins list:', error);
-      setPluginsError('Erro ao carregar plugins');
+      setPluginsError(t('admin.errors.plugins.load_failed'));
       setPlugins([]);
     } finally {
       setPluginsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSecurityConfig = useCallback(async () => {
@@ -382,11 +387,12 @@ export function AdminPage(props: AdminPageProps) {
       setSecurityConfig(resp.data);
     } catch (error) {
       console.error('Error fetching security config:', error);
-      setSecurityConfigError('Erro ao carregar configurações');
+      setSecurityConfigError(t('admin.errors.security.load_failed'));
       setSecurityConfig(null);
     } finally {
       setSecurityConfigLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSshKeyInfo = useCallback(async () => {
@@ -397,11 +403,12 @@ export function AdminPage(props: AdminPageProps) {
       setSshKeyInfo(resp.data);
     } catch (error) {
       console.error('Error fetching SSH key info:', error);
-      setSshKeyError('Erro ao carregar informações da chave SSH');
+      setSshKeyError(t('admin.errors.security.ssh_key_load_failed'));
       setSshKeyInfo(null);
     } finally {
       setSshKeyLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSshHistory = async () => {
@@ -414,7 +421,7 @@ export function AdminPage(props: AdminPageProps) {
       setSshHistory(resp.data.history || []);
     } catch (error) {
       console.error('Error fetching SSH history:', error);
-      setSshHistoryError('Erro ao carregar histórico SSH');
+      setSshHistoryError(t('admin.errors.security.ssh_history_load_failed'));
       setSshHistory(null);
     } finally {
       setSshHistoryLoading(false);
@@ -433,7 +440,7 @@ export function AdminPage(props: AdminPageProps) {
       setAdminUsers(resp.data || []);
     } catch (error) {
       console.error('Error fetching admin users:', error);
-      setAdminUsersError('Erro ao carregar usuários administradores');
+      setAdminUsersError(t('admin.errors.users.admin_list_load_failed'));
       setAdminUsers([]);
     } finally {
       setAdminUsersLoading(false);
@@ -458,7 +465,7 @@ export function AdminPage(props: AdminPageProps) {
       setShutdownConfirmText('');
     } catch (error) {
       console.error('Error shutting down API:', error);
-      setShutdownError('Erro ao desligar a API');
+      setShutdownError(t('admin.errors.security.shutdown_failed'));
     } finally {
       setShutdownLoading(false);
     }
@@ -499,22 +506,22 @@ export function AdminPage(props: AdminPageProps) {
               weight='medium'
               style={{ color: 'var(--amber-12)', marginBottom: '4px' }}
             >
-              Painel de Administrador
+              {t('admin.header.title')}
             </Heading>
           </Box>
           <Tabs.Root value={activeTab} onValueChange={setActiveTab} defaultValue='users'>
             <Tabs.List color='orange' className={styles.tabsList}>
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='users'>
-                Usuários
+                {t('admin.tabs.users')}
               </Tabs.Trigger>
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='dokku'>
-                Dokku
+                {t('admin.tabs.dokku')}
               </Tabs.Trigger>
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='plugins'>
-                Plugins
+                {t('admin.tabs.plugins')}
               </Tabs.Trigger>
               <Tabs.Trigger style={{ cursor: 'pointer' }} value='security'>
-                Segurança
+                {t('admin.tabs.security')}
               </Tabs.Trigger>
             </Tabs.List>
 

@@ -1,5 +1,7 @@
 import { Box, Button, Dialog, Flex, TextField } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 interface ShutdownConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -19,14 +21,35 @@ export function ShutdownConfirmModal({
   onConfirm,
   loading,
 }: ShutdownConfirmModalProps) {
+  const { t } = usePageTranslation();
+  const description = t('admin.security.shutdown.modal.description', { keyword });
+  const descriptionParts = description.split('\n');
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content maxWidth='480px' style={{ padding: '24px' }}>
-        <Dialog.Title style={{ marginBottom: '12px' }}>Confirmar Desligamento da API</Dialog.Title>
+        <Dialog.Title style={{ marginBottom: '12px' }}>
+          {t('admin.security.shutdown.modal.title')}
+        </Dialog.Title>
         <Dialog.Description size='2' mb='4' style={{ color: 'var(--gray-11)' }}>
-          Esta ação irá desligar a API e interromper as funcionalidades do website.
-          <br />
-          Para confirmar, digite <strong>{keyword}</strong> abaixo.
+          {descriptionParts.map((part, idx) => {
+            if (keyword && part.includes(keyword)) {
+              const [before, after] = part.split(keyword);
+              return (
+                <span key={idx}>
+                  {before}
+                  <strong>{keyword}</strong>
+                  {after}
+                  {idx < descriptionParts.length - 1 ? <br /> : null}
+                </span>
+              );
+            }
+            return (
+              <span key={idx}>
+                {part}
+                {idx < descriptionParts.length - 1 ? <br /> : null}
+              </span>
+            );
+          })}
         </Dialog.Description>
 
         <Box style={{ marginTop: '8px' }}>
@@ -40,7 +63,7 @@ export function ShutdownConfirmModal({
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>
             <Button variant='soft' color='gray' style={{ cursor: 'pointer' }} disabled={loading}>
-              Cancelar
+              {t('admin.security.shutdown.modal.cancel')}
             </Button>
           </Dialog.Close>
           <Button
@@ -53,7 +76,11 @@ export function ShutdownConfirmModal({
               cursor: 'pointer',
             }}
           >
-            {loading ? <>Processando...</> : 'Confirmar Desligamento'}
+            {loading ? (
+              <>{t('admin.security.shutdown.modal.confirm_loading')}</>
+            ) : (
+              t('admin.security.shutdown.modal.confirm')
+            )}
           </Button>
         </Flex>
       </Dialog.Content>

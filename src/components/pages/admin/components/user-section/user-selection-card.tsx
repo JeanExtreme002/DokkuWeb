@@ -16,6 +16,7 @@ import {
 
 import { AppIcon, NetworkIcon, ServiceIcon } from '@/components';
 import { TakeoverIcon } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../admin.module.css';
 
@@ -73,14 +74,15 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
     onRequestAdminChange,
     onOpenTakeoverModal,
   } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Flex direction='column' gap='4' style={{ padding: '12px' }}>
       <Flex align='center' gap='3'>
         <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-          Seleção de Usuário
+          {t('admin.users.selection.title')}
         </Heading>
-        <Tooltip content='Selecione o usuário para gerenciar'>
+        <Tooltip content={t('admin.users.selection.tooltip')}>
           <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
         </Tooltip>
       </Flex>
@@ -92,7 +94,11 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
           disabled={usersListLoading}
         >
           <Select.Trigger
-            placeholder={usersListLoading ? 'Carregando usuários...' : 'Selecione um usuário'}
+            placeholder={
+              usersListLoading
+                ? t('admin.users.selection.select.placeholder_loading')
+                : t('admin.users.selection.select.placeholder')
+            }
             style={{ flex: 1, minWidth: 0, cursor: 'pointer' }}
           />
           <Select.Content>
@@ -110,7 +116,9 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
           onClick={onSearch}
           disabled={userQuotaLoading || !selectedUserEmail.trim()}
         >
-          {userQuotaLoading ? 'Buscando...' : 'Buscar'}
+          {userQuotaLoading
+            ? t('admin.users.selection.search.button_searching')
+            : t('admin.users.selection.search.button')}
         </Button>
       </Flex>
 
@@ -162,7 +170,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
               <Flex className={styles.userControls}>
                 <Flex align='center' gap='3' className={styles.adminSwitchRow}>
                   <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                    Admin?
+                    {t('admin.users.details.admin_label')}
                   </Text>
                   <Switch
                     style={{ cursor: 'pointer' }}
@@ -186,7 +194,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                   }}
                 >
                   <TakeoverIcon />
-                  Takeover
+                  {t('admin.users.details.takeover_button')}
                 </Button>
               </Flex>
             </Flex>
@@ -222,7 +230,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                     style={{ color: 'var(--blue-12)' }}
                     className={styles.quotaLabel}
                   >
-                    Aplicativos
+                    {t('admin.users.details.apps_label')}
                   </Text>
                 </Flex>
                 {editMode ? (
@@ -273,7 +281,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                     style={{ color: 'var(--purple-12)' }}
                     className={styles.quotaLabel}
                   >
-                    Serviços
+                    {t('admin.users.details.services_label')}
                   </Text>
                 </Flex>
                 {editMode ? (
@@ -324,7 +332,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                     style={{ color: 'var(--green-12)' }}
                     className={styles.quotaLabel}
                   >
-                    Redes
+                    {t('admin.users.details.networks_label')}
                   </Text>
                 </Flex>
                 {editMode ? (
@@ -357,7 +365,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                   style={{ cursor: 'pointer' }}
                   onClick={onStartEdit}
                 >
-                  Editar
+                  {t('admin.users.details.edit.button_edit')}
                 </Button>
               ) : (
                 <>
@@ -368,7 +376,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                     style={{ cursor: 'pointer' }}
                     onClick={onCancelEdit}
                   >
-                    Cancelar
+                    {t('admin.users.details.edit.button_cancel')}
                   </Button>
                   <Button
                     color='orange'
@@ -377,7 +385,9 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                     onClick={onSaveEdit}
                     disabled={updateLoading}
                   >
-                    {updateLoading ? 'Salvando...' : 'Salvar'}
+                    {updateLoading
+                      ? t('admin.users.details.edit.button_save_saving')
+                      : t('admin.users.details.edit.button_save')}
                   </Button>
                 </>
               )}

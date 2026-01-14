@@ -2,6 +2,7 @@ import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, TextField, Tooltip } from '@radix-ui/themes';
 
 import { ConsoleIcon } from '@/components/shared/icons';
+import { usePageTranslation } from '@/i18n/utils';
 
 interface DokkuCommandCardProps {
   commandInput: string;
@@ -20,21 +21,22 @@ export function DokkuCommandCard({
   commandError,
   commandOutput,
 }: DokkuCommandCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card style={{ border: '1px solid var(--amber-6)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       <Flex direction='column' gap='3' style={{ padding: '12px' }}>
         <Flex align='center' gap='3'>
           <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-            Rodar comando no Dokku
+            {t('admin.dokku.command.title')}
           </Heading>
-          <Tooltip content='Execute qualquer comando Dokku disponível'>
+          <Tooltip content={t('admin.dokku.command.tooltip')}>
             <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
           </Tooltip>
         </Flex>
         <Flex gap='2' align='center'>
           <TextField.Root
             color='orange'
-            placeholder='dokku apps'
+            placeholder={t('admin.dokku.command.input.placeholder')}
             value={commandInput}
             onChange={(e) => onCommandInputChange(e.target.value)}
             onKeyDown={(e) => {
@@ -49,11 +51,11 @@ export function DokkuCommandCard({
             disabled={commandLoading || !commandInput.trim()}
           >
             {commandLoading ? (
-              'Executando...'
+              t('admin.dokku.command.run.loading')
             ) : (
               <>
                 <ConsoleIcon />
-                Executar
+                {t('admin.dokku.command.run.label')}
               </>
             )}
           </Button>

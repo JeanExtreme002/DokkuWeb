@@ -1,6 +1,8 @@
 import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Badge, Box, Button, Card, Flex, Heading, Text, Tooltip } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 
 interface SshKeyInfo {
@@ -27,15 +29,16 @@ interface SshKeyCardProps {
 }
 
 export function SshKeyCard({ info, loading, error, onRefresh }: SshKeyCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card style={{ border: '1px solid var(--amber-6)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       <Flex direction='column' gap='3' style={{ padding: '12px' }}>
         <Flex justify='between' align='center'>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              SSH Key
+              {t('admin.security.ssh_key.title')}
             </Heading>
-            <Tooltip content='Informações e atualização da chave SSH usada nas operações'>
+            <Tooltip content={t('admin.security.ssh_key.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -46,7 +49,11 @@ export function SshKeyCard({ info, loading, error, onRefresh }: SshKeyCardProps)
             style={{ cursor: 'pointer' }}
           >
             <ReloadIcon className={loading ? styles.buttonSpinner : ''} />
-            <span className={styles.refreshLabel}>{loading ? 'Atualizando...' : 'Atualizar'}</span>
+            <span className={styles.refreshLabel}>
+              {loading
+                ? t('admin.security.refresh.label_loading')
+                : t('admin.security.refresh.label')}
+            </span>
           </Button>
         </Flex>
         {error && (

@@ -1,6 +1,8 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Button, Card, Flex, Heading, Select, Switch, Tabs, Text, Tooltip } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 import { ResourceItem, ResourcesTable } from './resources-table';
 
@@ -37,6 +39,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
     backDisabled,
     nextDisabled,
   } = props;
+  const { t } = usePageTranslation();
 
   return (
     <Card
@@ -49,9 +52,9 @@ export function ResourcesCard(props: ResourcesCardProps) {
         <Flex justify='between' align='center' className={styles.resourcesHeader}>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Recursos
+              {t('admin.resources.title')}
             </Heading>
-            <Tooltip content='Visualize todos os recursos ativos no sistema'>
+            <Tooltip content={t('admin.resources.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -62,7 +65,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
                 style={{ color: 'var(--gray-11)' }}
                 className={styles.resourcesLimitLabel}
               >
-                Limite:
+                {t('admin.resources.filters.limit_label')}
               </Text>
               <Select.Root
                 value={String(resourcesLimit)}
@@ -96,7 +99,9 @@ export function ResourcesCard(props: ResourcesCardProps) {
                   style={{ color: 'var(--gray-11)' }}
                   className={styles.resourcesOrderLabel}
                 >
-                  {resourcesAscCreatedAt ? 'Mais recente' : 'Mais antigo'}
+                  {resourcesAscCreatedAt
+                    ? t('admin.resources.filters.order.label_recent')
+                    : t('admin.resources.filters.order.label_oldest')}
                 </Text>
               </Flex>
             </Flex>
@@ -108,7 +113,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
                 style={{ cursor: 'pointer' }}
                 className={styles.resourcesNavButton}
               >
-                Back
+                {t('admin.resources.buttons.back')}
               </Button>
               <Button
                 variant='outline'
@@ -117,7 +122,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
                 style={{ cursor: 'pointer' }}
                 className={styles.resourcesNavButton}
               >
-                Next
+                {t('admin.resources.buttons.next')}
               </Button>
             </Flex>
           </Flex>
@@ -129,19 +134,19 @@ export function ResourcesCard(props: ResourcesCardProps) {
         >
           <Tabs.List color='orange' className={styles.tabsList}>
             <Tabs.Trigger style={{ cursor: 'pointer' }} value='apps'>
-              Aplicativos
+              {t('admin.resources.tabs.apps')}
             </Tabs.Trigger>
             <Tabs.Trigger style={{ cursor: 'pointer' }} value='services'>
-              Serviços
+              {t('admin.resources.tabs.services')}
             </Tabs.Trigger>
             <Tabs.Trigger style={{ cursor: 'pointer' }} value='networks'>
-              Redes
+              {t('admin.resources.tabs.networks')}
             </Tabs.Trigger>
           </Tabs.List>
 
           <Tabs.Content value='apps'>
             <ResourcesTable
-              typeLabel='Aplicativo'
+              typeLabel={t('admin.resources.type.application') as 'Aplicativo'}
               resources={resourcesList}
               loading={resourcesLoading}
               error={resourcesError}
@@ -150,7 +155,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
 
           <Tabs.Content value='services'>
             <ResourcesTable
-              typeLabel='Serviço'
+              typeLabel={t('admin.resources.type.service') as 'Serviço'}
               resources={resourcesList}
               loading={resourcesLoading}
               error={resourcesError}
@@ -159,7 +164,7 @@ export function ResourcesCard(props: ResourcesCardProps) {
 
           <Tabs.Content value='networks'>
             <ResourcesTable
-              typeLabel='Rede'
+              typeLabel={t('admin.resources.type.network') as 'Rede'}
               resources={resourcesList}
               loading={resourcesLoading}
               error={resourcesError}

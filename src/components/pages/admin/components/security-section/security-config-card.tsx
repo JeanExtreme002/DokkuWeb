@@ -1,6 +1,8 @@
 import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Badge, Box, Button, Card, Flex, Heading, Text, Tooltip } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import styles from '../../admin.module.css';
 
 interface SecurityConfig {
@@ -32,15 +34,16 @@ interface SecurityConfigCardProps {
 }
 
 export function SecurityConfigCard({ config, loading, error, onRefresh }: SecurityConfigCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card style={{ border: '1px solid var(--amber-6)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       <Flex direction='column' gap='3' style={{ padding: '12px' }}>
         <Flex justify='between' align='center'>
           <Flex align='center' gap='3'>
             <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              Configurações
+              {t('admin.security.config.title')}
             </Heading>
-            <Tooltip content='Informações de configuração da API e servidor'>
+            <Tooltip content={t('admin.security.config.tooltip')}>
               <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
             </Tooltip>
           </Flex>
@@ -51,7 +54,11 @@ export function SecurityConfigCard({ config, loading, error, onRefresh }: Securi
             style={{ cursor: 'pointer' }}
           >
             <ReloadIcon className={loading ? styles.buttonSpinner : ''} />
-            <span className={styles.refreshLabel}>{loading ? 'Atualizando...' : 'Atualizar'}</span>
+            <span className={styles.refreshLabel}>
+              {loading
+                ? t('admin.security.refresh.label_loading')
+                : t('admin.security.refresh.label')}
+            </span>
           </Button>
         </Flex>
         {error && (
@@ -70,7 +77,7 @@ export function SecurityConfigCard({ config, loading, error, onRefresh }: Securi
               }}
             >
               <Heading size='4' style={{ color: 'var(--gray-12)', marginBottom: 8 }}>
-                General
+                {t('admin.security.config.section.general')}
               </Heading>
               <Flex direction='column' gap='2'>
                 <Text size='2'>
@@ -136,7 +143,7 @@ export function SecurityConfigCard({ config, loading, error, onRefresh }: Securi
                 </Flex>
               ) : (
                 <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                  Sem informação de servidor SSH.
+                  {t('admin.security.ssh_server.no_info')}
                 </Text>
               )}
             </Box>
@@ -177,7 +184,7 @@ export function SecurityConfigCard({ config, loading, error, onRefresh }: Securi
                 </Flex>
               ) : (
                 <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                  Sem informação de banco de dados.
+                  {t('admin.security.database.no_info')}
                 </Text>
               )}
               {config.available_databases && config.available_databases.length > 0 && (
