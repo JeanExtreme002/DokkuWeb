@@ -1,4 +1,4 @@
-import i18n from '@/i18n';
+import { usePageTranslation } from '@/i18n/utils';
 import { processAnsiCodes } from '@/lib';
 
 import type { AppContainer, AppInfo } from './types';
@@ -222,13 +222,14 @@ export const getIsRunning = (appInfo: AppInfo | null): boolean => {
   return runningContainers.length > 0;
 };
 
-export const getStatusInfo = (
+export const useStatusInfo = (
   appInfo: AppInfo | null
 ): { color: string; text: string; bgColor: string } => {
+  const { t } = usePageTranslation();
   if (!appInfo)
     return {
       color: 'var(--gray-9)',
-      text: i18n.t('card.loadingStatus', { ns: 'apps.a' }),
+      text: t('card.loadingStatus'),
       bgColor: 'var(--gray-3)',
     };
 
@@ -241,19 +242,19 @@ export const getStatusInfo = (
     if (!isDeployed) {
       return {
         color: 'var(--gray-9)',
-        text: i18n.t('status.notDeployed', { ns: 'apps.a' }),
+        text: t('status.notDeployed'),
         bgColor: 'var(--gray-3)',
       };
     } else if (!isRunning || processCount === 0) {
       return {
         color: 'var(--red-9)',
-        text: i18n.t('status.stopped', { ns: 'apps.a' }),
+        text: t('status.stopped'),
         bgColor: 'var(--red-3)',
       };
     } else {
       return {
         color: 'var(--green-9)',
-        text: i18n.t('status.active', { ns: 'apps.a' }),
+        text: t('status.active'),
         bgColor: 'var(--green-3)',
       };
     }
@@ -264,25 +265,25 @@ export const getStatusInfo = (
     if (containers.length === 0) {
       return {
         color: 'var(--red-9)',
-        text: i18n.t('status.error', { ns: 'apps.a' }),
+        text: t('status.error'),
         bgColor: 'var(--red-3)',
       };
     } else if (runningContainers.length === 0) {
       return {
         color: 'var(--red-9)',
-        text: i18n.t('status.stopped', { ns: 'apps.a' }),
+        text: t('status.stopped'),
         bgColor: 'var(--red-3)',
       };
     } else if (runningContainers.length < containers.length) {
       return {
         color: 'var(--amber-9)',
-        text: i18n.t('status.partial', { ns: 'apps.a' }),
+        text: t('status.partial'),
         bgColor: 'var(--amber-3)',
       };
     } else {
       return {
         color: 'var(--green-9)',
-        text: i18n.t('status.active', { ns: 'apps.a' }),
+        text: t('status.active'),
         bgColor: 'var(--green-3)',
       };
     }

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NavBar } from '@/components';
 import { DotIcon } from '@/components/shared/icons';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
 import { AvailableServicesSection, HeaderSection, ResultsSection } from './components';
@@ -19,6 +20,7 @@ interface SearchPageProps {
 export function SearchPage(props: SearchPageProps) {
   const router = useRouter();
   const qParam = router.query.q;
+  const { t } = usePageTranslation();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +47,7 @@ export function SearchPage(props: SearchPageProps) {
         }
       } catch (err) {
         console.error('Error fetching search results:', err);
-        setError('Erro ao buscar resultados');
+        setError(t('search.error.fetch_failed'));
       } finally {
         setLoading(false);
       }
@@ -53,6 +55,7 @@ export function SearchPage(props: SearchPageProps) {
 
     const q = typeof qParam === 'string' ? qParam.trim() : '';
     fetchSearch(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qParam]);
 
   const items: UnifiedItem[] = useMemo(() => {
@@ -102,11 +105,11 @@ export function SearchPage(props: SearchPageProps) {
 
           {loading && (
             <LoadingSpinner
-              title='Carregando Resultados'
+              title={t('search.loading.title')}
               messages={[
-                'Conectando ao Dokku...',
-                'Processando consulta...',
-                'Preparando resultados...',
+                t('search.loading.messages.connecting_dokku'),
+                t('search.loading.messages.processing_query'),
+                t('search.loading.messages.preparing_results'),
               ]}
             />
           )}
@@ -140,7 +143,7 @@ export function SearchPage(props: SearchPageProps) {
               }}
             >
               <Text size='3' color='gray'>
-                Nenhum resultado encontrado.
+                {t('search.empty.no_results')}
               </Text>
             </Card>
           )}

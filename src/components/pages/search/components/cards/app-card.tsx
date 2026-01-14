@@ -2,6 +2,7 @@ import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { AppAvatar } from '@/components/shared';
+import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
 import searchStyles from '../../search.module.css';
@@ -20,6 +21,7 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
   const proc = getAppProcessInfo(app);
   const ipAddress = getAppIPAddress(app);
   const port = getAppPort(app);
+  const { t } = usePageTranslation();
 
   return (
     <Card
@@ -62,10 +64,12 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
           </Flex>
           <Flex align='center' gap='2'>
             <Text size='2' style={{ color: 'var(--gray-9)' }}>
-              {ipAddress ? `IP: ${ipAddress}` : 'IP: Indisponível'}
+              {ipAddress
+                ? `${t('search.app.card.ip_label')}: ${ipAddress}`
+                : `${t('search.app.card.ip_label')}: ${t('search.app.card.ip_unavailable')}`}
             </Text>
             <Text size='2' style={{ color: 'var(--gray-9)' }}>
-              {port ? ` · Porta ${port}` : ''}
+              {port ? ` · ${t('search.app.card.port_label')} ${port}` : ''}
             </Text>
           </Flex>
           <Flex align='center' gap='2'>
@@ -78,13 +82,13 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
               }}
             />
             <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-              {status.text}
+              {t(status.key || 'search.app.status.active')}
             </Text>
           </Flex>
         </Flex>
         <Flex direction='column' className={searchStyles.appActions}>
           <Text size='2' color='gray' className={searchStyles.dateText}>
-            Instância de Aplicativo
+            {t('search.app.card.instance_label')}
           </Text>
           <Button
             size='3'
@@ -94,7 +98,7 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
             onClick={() => (window.location.href = `/apps/a/${displayName}`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('search.shared.view_details')}
           </Button>
         </Flex>
       </Flex>

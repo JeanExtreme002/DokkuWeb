@@ -1,8 +1,10 @@
 import { Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { formatDatabaseType, getDatabaseDescription, getServiceImage } from '@/lib';
+import { usePageTranslation } from '@/i18n/utils';
+import { formatDatabaseType, getServiceImage } from '@/lib';
 
 import searchStyles from '../../search.module.css';
+import { useDatabaseDescription } from '../../utils';
 import { ServiceLogo } from '../shared';
 
 interface AvailableDatabaseCardProps {
@@ -12,6 +14,7 @@ interface AvailableDatabaseCardProps {
 
 export function AvailableDatabaseCard({ name, isMobile }: AvailableDatabaseCardProps) {
   const label = formatDatabaseType(name);
+  const { t } = usePageTranslation();
 
   return (
     <Card
@@ -52,11 +55,11 @@ export function AvailableDatabaseCard({ name, isMobile }: AvailableDatabaseCardP
           <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
             {label} ·{' '}
             <Text size='2' color='gray'>
-              Disponível
+              {t('search.available.card.available_label')}
             </Text>
           </Heading>
           <Text size='2' color='gray' className={searchStyles.dbDescription}>
-            {getDatabaseDescription(name)}
+            {useDatabaseDescription(name)}
           </Text>
         </Flex>
         <Flex direction='column' className={searchStyles.appActions}>
@@ -66,7 +69,7 @@ export function AvailableDatabaseCard({ name, isMobile }: AvailableDatabaseCardP
             style={{ color: 'white', cursor: 'pointer' }}
             onClick={() => (window.location.href = `/services/create/`)}
           >
-            + Criar serviço
+            {t('search.available.card.create_service')}
           </Button>
         </Flex>
       </Flex>

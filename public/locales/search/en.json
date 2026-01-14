@@ -1,1 +1,51 @@
-{}
+{
+  "search.header.title": "Search Results",
+  "search.header.subtitle.searching_for": "Searching for \"{{query}}\"",
+  "search.header.subtitle.one_item_found": "• 1 item found",
+  "search.header.subtitle.items_found": "• {{count}} items found",
+
+  "search.loading.title": "Loading Results",
+  "search.loading.messages.connecting_dokku": "Connecting to Dokku...",
+  "search.loading.messages.processing_query": "Processing query...",
+  "search.loading.messages.preparing_results": "Preparing results...",
+
+  "search.error.fetch_failed": "Error fetching search results",
+  "search.empty.no_results": "No results found.",
+
+  "search.available.title": "Services available to create",
+  "search.available.card.available_label": "Available",
+  "search.available.card.create_service": "+ Create service",
+  "search.available.descriptions.postgres": "Open-source relational DB with ACID compliance, robust transactions, advanced types (JSONB, arrays), and extensions like PostGIS; suitable for OLTP/OLAP workloads.",
+  "search.available.descriptions.mysql": "Widely used relational DB, good performance and replication, InnoDB engine by default; common in web apps.",
+  "search.available.descriptions.mariadb": "MySQL fork, compatible with performance optimizations and extra features (storage engines and advanced capabilities).",
+  "search.available.descriptions.mongodb": "Document-oriented NoSQL database (BSON) with flexible schema, horizontal scalability, and rich queries with indexes.",
+  "search.available.descriptions.redis": "In-memory key‑value store with data structures, ultra‑low latency, pub/sub, and optional persistence; ideal for cache, queues, and rate limiting.",
+  "search.available.descriptions.couchdb": "Document database with master‑master replication and offline sync, HTTP/JSON API, and revision-based conflict control.",
+  "search.available.descriptions.cassandra": "Distributed wide-column store, high availability and linear scalability, eventual consistency, optimized for writes.",
+  "search.available.descriptions.elasticsearch": "Distributed search and analytics engine based on Lucene; full‑text indexing, aggregations, and near real-time queries.",
+  "search.available.descriptions.influxdb": "Time-series database optimized for metrics and logs, with retention, downsampling, and query languages (Flux/InfluxQL).",
+  "search.available.descriptions.generic": "Generic database category; choose the type according to application requirements.",
+
+  "search.shared.view_details": "View details",
+
+  "search.app.card.instance_label": "Application Instance",
+  "search.app.card.ip_label": "IP",
+  "search.app.card.ip_unavailable": "Unavailable",
+  "search.app.card.port_label": "Port",
+
+  "search.app.status.not_deployed": "Not deployed",
+  "search.app.status.stopped": "Stopped",
+  "search.app.status.active": "Active",
+  "search.app.status.error": "Error",
+  "search.app.status.exited": "Terminated",
+  "search.app.status.partial": "Partial",
+
+  "search.service.card.instance_label": "Service Instance",
+  "search.service.status.active": "Active",
+  "search.service.status.stopped": "Stopped",
+  "search.service.status.starting": "Starting",
+  "search.service.status.unknown": "Unknown",
+
+  "search.network.card.description": "User custom network to connect applications on Dokku",
+  "search.network.card.instance_label": "Custom network"
+}

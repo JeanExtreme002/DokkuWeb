@@ -1,6 +1,7 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
 import { formatDatabaseType, formatServiceName, getServiceImage } from '@/lib';
 
 import searchStyles from '../../search.module.css';
@@ -16,19 +17,32 @@ interface ServiceCardProps {
 export function ServiceCard({ name, svc, isMobile }: ServiceCardProps) {
   const displayName = formatServiceName(name);
   const pluginLabel = formatDatabaseType(svc.plugin_name);
+  const { t } = usePageTranslation();
 
   const statusMap = (s: string) => {
     switch (s.toLowerCase()) {
       case 'running':
-        return { color: 'var(--green-9)', text: 'Ativo', bg: 'var(--green-3)' };
+        return {
+          color: 'var(--green-9)',
+          key: 'search.service.status.active',
+          bg: 'var(--green-3)',
+        };
       case 'stopped':
       case 'exited':
       case 'missing':
-        return { color: 'var(--red-9)', text: 'Parado', bg: 'var(--red-3)' };
+        return { color: 'var(--red-9)', key: 'search.service.status.stopped', bg: 'var(--red-3)' };
       case 'starting':
-        return { color: 'var(--amber-9)', text: 'Iniciando', bg: 'var(--amber-3)' };
+        return {
+          color: 'var(--amber-9)',
+          key: 'search.service.status.starting',
+          bg: 'var(--amber-3)',
+        };
       default:
-        return { color: 'var(--gray-9)', text: 'Desconhecido', bg: 'var(--gray-3)' };
+        return {
+          color: 'var(--gray-9)',
+          key: 'search.service.status.unknown',
+          bg: 'var(--gray-3)',
+        };
     }
   };
 
@@ -95,13 +109,13 @@ export function ServiceCard({ name, svc, isMobile }: ServiceCardProps) {
               }}
             />
             <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-              {status.text}
+              {t(status.key)}
             </Text>
           </Flex>
         </Flex>
         <Flex direction='column' className={searchStyles.appActions}>
           <Text size='2' color='gray' className={searchStyles.dateText}>
-            Instância de Serviço
+            {t('search.service.card.instance_label')}
           </Text>
           <Button
             size='3'
@@ -111,7 +125,7 @@ export function ServiceCard({ name, svc, isMobile }: ServiceCardProps) {
             onClick={() => (window.location.href = `/services/s/${svc.plugin_name}/${name}`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('search.shared.view_details')}
           </Button>
         </Flex>
       </Flex>

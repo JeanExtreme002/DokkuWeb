@@ -1,6 +1,8 @@
 import { EyeOpenIcon, GlobeIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
+import { usePageTranslation } from '@/i18n/utils';
+
 import searchStyles from '../../search.module.css';
 
 interface NetworkCardProps {
@@ -9,6 +11,7 @@ interface NetworkCardProps {
 }
 
 export function NetworkCard({ name, isMobile }: NetworkCardProps) {
+  const { t } = usePageTranslation();
   return (
     <Card
       key={`net-${name}`}
@@ -58,12 +61,12 @@ export function NetworkCard({ name, isMobile }: NetworkCardProps) {
             {name}
           </Heading>
           <Text size='2' color='gray'>
-            Rede customizada do usuário para conectar aplicações no Dokku
+            {t('search.network.card.description')}
           </Text>
         </Flex>
         <Flex direction='column' className={searchStyles.appActions}>
           <Text size='2' color='gray' className={searchStyles.dateText}>
-            Rede customizada
+            {t('search.network.card.instance_label')}
           </Text>
           <Button
             size='3'
@@ -73,7 +76,7 @@ export function NetworkCard({ name, isMobile }: NetworkCardProps) {
             onClick={() => (window.location.href = `/networks`)}
           >
             <EyeOpenIcon />
-            Ver detalhes
+            {t('search.shared.view_details')}
           </Button>
         </Flex>
       </Flex>

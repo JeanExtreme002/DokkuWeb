@@ -39,7 +39,6 @@ import {
   getIsRunning,
   getPrompt,
   getPromptLabel,
-  getStatusInfo,
   getWorkingDir,
   parseDotEnv,
   parseJsonEnv,
@@ -47,6 +46,7 @@ import {
   parseYmlSimple,
   pathJoin,
   sanitizeEnvKeys,
+  useStatusInfo,
 } from './helpers';
 import type { AppContainer, AppInfo, BuilderData, DeployInfoData } from './types';
 
@@ -227,6 +227,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     builder: null as string | null,
     deployInfo: null as string | null,
   });
+
+  const statusInfo = useStatusInfo(appInfo);
+  const displayName = formatAppName(props.appName);
 
   // Fetch functions with retry logic
   const fetchWithRetry = useCallback(
@@ -1186,9 +1189,6 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   if (!stableSession) {
     return null;
   }
-
-  const statusInfo = getStatusInfo(appInfo);
-  const displayName = formatAppName(props.appName);
 
   return (
     <>
