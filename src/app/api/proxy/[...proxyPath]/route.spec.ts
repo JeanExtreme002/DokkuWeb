@@ -27,7 +27,7 @@ describe('API Proxy Route', () => {
     (global.setInterval as jest.Mock)?.mockRestore?.();
   });
 
-  test('returns 401 when session is missing', async () => {
+  it('should return 401 when session is missing', async () => {
     getServerSessionMock.mockResolvedValue(null);
 
     const { GET } = await import('./route');
@@ -38,7 +38,7 @@ describe('API Proxy Route', () => {
     expect(res.status).toBe(401);
   });
 
-  test('returns 400 when proxy path is empty', async () => {
+  it('should return 400 when proxy path is empty', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-123' });
     const { GET } = await import('./route');
 
@@ -50,7 +50,7 @@ describe('API Proxy Route', () => {
     expect(text).toContain('Proxy path vazio');
   });
 
-  test('caches GET requests for cacheable endpoints', async () => {
+  it('should cache GET requests for cacheable endpoints', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-123' });
 
     // Mock global fetch to simulate upstream API
@@ -85,7 +85,7 @@ describe('API Proxy Route', () => {
     expect(json2).toEqual({ ok: true, source: 'upstream' });
   });
 
-  test('POST merges JSON body with access_token and caches', async () => {
+  it('should merge JSON body with access_token and caches on POST request', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-abc' });
 
     const fetchMock = jest.fn(async (input: any, init: any) => {
@@ -131,7 +131,7 @@ describe('API Proxy Route', () => {
     expect(payload2).toEqual({ ok: true, method: 'POST' });
   });
 
-  test('bypasses cache when x-cache=false header is present', async () => {
+  it('should bypass cache when x-cache=false header is present', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-123' });
 
     const fetchMock = jest
@@ -165,7 +165,7 @@ describe('API Proxy Route', () => {
     expect(json2).toEqual({ run: 2 });
   });
 
-  test('passes through application/octet-stream responses', async () => {
+  it('should pass through application/octet-stream responses', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-789' });
 
     const buf = new Uint8Array([1, 2, 3, 4]).buffer;
@@ -186,7 +186,7 @@ describe('API Proxy Route', () => {
     expect(new Uint8Array(arr)).toEqual(new Uint8Array(buf));
   });
 
-  test('returns 405 for unsupported HTTP methods with Allow header', async () => {
+  it('should return 405 for unsupported HTTP methods with Allow header', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-123' });
 
     const { POST } = await import('./route');
@@ -197,7 +197,7 @@ describe('API Proxy Route', () => {
     expect(res.headers.get('Allow')).toBe('GET, POST, PUT, DELETE');
   });
 
-  test('multipart/form-data upload forwards raw body and does not cache', async () => {
+  it('should upload multipart/form-data, forward raw body, and not cache', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-xyz' });
 
     const boundary = 'abc123';
@@ -234,7 +234,7 @@ describe('API Proxy Route', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  test('invalidates cache on upstream failure and recovers', async () => {
+  it('should invalidate cache on upstream failure and recovers', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-555' });
 
     const fetchMock = jest
@@ -287,7 +287,7 @@ describe('API Proxy Route', () => {
     expect(json3).toEqual({ ok: 'recovered' });
   });
 
-  test('caches dynamic endpoint /api/apps/:app_name/info/', async () => {
+  it('should cache dynamic endpoint /api/apps/:app_name/info/', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-111' });
 
     const fetchMock = jest.fn(
@@ -323,7 +323,7 @@ describe('API Proxy Route', () => {
     expect(json2).toEqual({ app: 'myapp', info: true });
   });
 
-  test('TTL expiry causes cache MISS after time advances', async () => {
+  it('should cause cache MISS after TTL expiry', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-222' });
     const now = 1_700_000_000_000; // arbitrary epoch
     const ttlMs = 30 * 60 * 1000; // default TTL
@@ -368,7 +368,7 @@ describe('API Proxy Route', () => {
     dateSpy.mockRestore();
   });
 
-  test('GET injects api_key and cleans headers', async () => {
+  it('should inject api_key and clean headers on GET request', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-333' });
 
     const fetchMock = jest.fn(
@@ -401,7 +401,7 @@ describe('API Proxy Route', () => {
     expect(calledUrl).toContain('api_key=test-key');
   });
 
-  test('background update runs after HIT', async () => {
+  it('should run update on background after HIT', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-555' });
 
     const fetchMock = jest
@@ -436,7 +436,7 @@ describe('API Proxy Route', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  test('passes through text/plain upstream responses', async () => {
+  it('should pass through text/plain upstream responses', async () => {
     getServerSessionMock.mockResolvedValue({ accessToken: 'token-666' });
     const fetchMock = jest.fn(
       async () =>

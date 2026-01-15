@@ -1,1 +1,1 @@
-export { AppAvatar } from './app';
+export { AppAvatar } from './app-avatar';

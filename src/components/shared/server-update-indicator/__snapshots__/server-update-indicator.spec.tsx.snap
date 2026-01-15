@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServerUpdateIndicator should render successfully 1`] = `
+<div>
+  <div
+    class="rt-Flex rt-r-ai-center rt-r-gap-3"
+  >
+    <div
+      style="width: 16px; height: 16px; border-radius: 50%; animation: spin 1s linear infinite;"
+    />
+    <span
+      class="rt-Text rt-r-size-3"
+      style="font-weight: 500;"
+    >
+      updatingIndicator
+    </span>
+  </div>
+</div>
+`;

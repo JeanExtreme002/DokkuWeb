@@ -27,6 +27,7 @@ export function ThemeToggle() {
         }}
       >
         <div
+          data-testid='loading-spinner'
           style={{
             width: '20px',
             height: '20px',

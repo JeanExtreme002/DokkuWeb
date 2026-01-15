@@ -216,6 +216,7 @@ export function NavBar(props: NavBarProps) {
         menuId={profileMenuId}
         isMenuOpen={isMenuOpen}
         handleMenuClose={handleMenuClose}
+        anchorEl={anchorEl || undefined}
       />
     </Box>
   );

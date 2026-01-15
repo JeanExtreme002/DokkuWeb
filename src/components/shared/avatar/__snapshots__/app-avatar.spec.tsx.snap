@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppAvatar should render successfully 1`] = `
+<div>
+  <span
+    class="rt-reset rt-AvatarRoot rt-r-size-5 rt-variant-soft"
+    data-accent-color=""
+    style="color: white; margin-right: 10px; border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 32px rgba(142, 36, 170, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);"
+  />
+</div>
+`;

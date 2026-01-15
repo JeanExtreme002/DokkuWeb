@@ -16,6 +16,9 @@ const config: Config = {
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   modulePaths: ['<rootDir>/src/'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };
 
 export default createJestConfig(config);

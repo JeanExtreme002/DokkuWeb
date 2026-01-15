@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 
-import { PageI18nProvider } from '../PageI18nProvider';
-import { usePageTranslation } from '../utils';
+import { PageI18nProvider } from './PageI18nProvider';
+import { usePageTranslation } from './utils';
 
 describe('i18n utils', () => {
   it('should provide translation hook with correct namespace', () => {

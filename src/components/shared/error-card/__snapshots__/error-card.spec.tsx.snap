@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorCard should render successfully 1`] = `
+<div>
+  <div
+    class="rt-reset rt-BaseCard rt-Card rt-r-size-1 rt-variant-surface"
+    style="padding: 20px;"
+  >
+    <div
+      class="rt-Flex rt-r-ai-center rt-r-gap-3"
+    >
+      <div
+        class="rt-Box"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="8"
+            cy="8"
+            fill="currentColor"
+            r="2"
+          />
+        </svg>
+      </div>
+      <span
+        class="rt-Text rt-r-size-3"
+      >
+        errorCard.prefix
+         
+        message
+      </span>
+    </div>
+  </div>
+</div>
+`;

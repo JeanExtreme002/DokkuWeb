@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingSpinner should render successfully 1`] = `
+<div>
+  <div
+    class="rt-reset rt-BaseCard rt-Card rt-r-size-1 rt-variant-surface"
+    style="box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); padding: 48px; padding-block: 100px; text-align: center;"
+  >
+    <div
+      class="rt-Flex rt-r-fd-column rt-r-ai-center rt-r-gap-6"
+    >
+      <div
+        class="spinnerContainer"
+      >
+        <div
+          class="spinner"
+        >
+          <div
+            class="spinnerRing"
+          />
+          <div
+            class="spinnerRing"
+          />
+          <div
+            class="spinnerRing"
+          />
+        </div>
+        <div
+          class="orbitalDots"
+        >
+          <div
+            class="dot"
+          />
+          <div
+            class="dot"
+          />
+          <div
+            class="dot"
+          />
+          <div
+            class="dot"
+          />
+        </div>
+      </div>
+      <div
+        class="rt-Box"
+      >
+        <span
+          class="rt-Text rt-r-size-5 rt-r-weight-medium"
+          style="margin-bottom: 8px; background-clip: text;"
+        >
+          custom-title
+        </span>
+      </div>
+      <div
+        class="rt-Box messageContainer"
+      >
+        <span
+          class="rt-Text rt-r-size-3 loadingMessage"
+          style="min-height: 20px;"
+        >
+          first-message
+        </span>
+      </div>
+      <div
+        class="rt-Box progressContainer"
+      >
+        <div
+          class="progressBar"
+        >
+          <div
+            class="progressFill"
+          />
+        </div>
+      </div>
+      <div
+        class="backgroundPulses"
+      >
+        <div
+          class="pulse"
+        />
+        <div
+          class="pulse"
+        />
+        <div
+          class="pulse"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
