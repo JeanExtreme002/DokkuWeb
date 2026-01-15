@@ -54,7 +54,7 @@ $ pnpm typecheck   # Run the typecheck
 ```
 
 Use the following command to open Cypress:
-```
+```1
 $ pnpm cypress
 ```
 
