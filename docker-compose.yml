@@ -16,6 +16,13 @@ services:
       - /app/node_modules
     command: sh -c 'pnpm lint'
 
+  typecheck:
+    build: .
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: sh -c 'pnpm typecheck'
+
   test:
     build: .
     volumes:

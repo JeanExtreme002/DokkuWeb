@@ -50,6 +50,7 @@ Run commands below to test the project:
 $ pnpm test        # Run the tests
 $ pnpm test:watch  # Run the tests in watch mode
 $ pnpm test:e2e    # Run the integration tests using Cypress
+$ pnpm typecheck   # Run the typecheck
 ```
 
 Use the following command to open Cypress:

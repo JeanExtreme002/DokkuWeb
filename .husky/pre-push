@@ -2,6 +2,7 @@ if [ -z "$IGNORE_PREPUSH_HOOK" ]; then
   export NODE_OPTIONS='--no-warnings'
 
   echo "> [husky/pre-push] Running tests..."
+  pnpm typecheck
   pnpm test
   
   TEST_STATUS=$?

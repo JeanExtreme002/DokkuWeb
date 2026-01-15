@@ -65,8 +65,9 @@ jobs:
         uses: ./.github/actions/setup
 
       # Tests
-      - name: Lint and Tests
+      - name: Lint, Typecheck and Tests
         if: ${{github.event_name != 'merge_group'}}
         run: |
           pnpm lint
+          pnpm typecheck
           pnpm test

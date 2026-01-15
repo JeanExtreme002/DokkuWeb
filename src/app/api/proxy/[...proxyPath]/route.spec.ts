@@ -397,7 +397,18 @@ describe('API Proxy Route', () => {
 
     // Verify api_key injected into upstream URL
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const calledUrl = String(fetchMock.mock.calls[0][0]);
+    function safeGetFirstArg(mock: { calls: unknown[][] }): string {
+      if (
+        Array.isArray(mock.calls) &&
+        mock.calls.length > 0 &&
+        Array.isArray(mock.calls[0]) &&
+        mock.calls[0].length > 0
+      ) {
+        return String(mock.calls[0][0]);
+      }
+      return '';
+    }
+    const calledUrl = safeGetFirstArg(fetchMock.mock);
     expect(calledUrl).toContain('api_key=test-key');
   });
 

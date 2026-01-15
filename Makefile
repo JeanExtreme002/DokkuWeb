@@ -21,6 +21,7 @@ lint-fix:  ## Run fixer for lint
 
 .PHONY: test
 test:  ## Run unit tests
+	@pnpm typecheck
 	@pnpm test
 
 .PHONY: cypress
