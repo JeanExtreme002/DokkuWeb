@@ -16,6 +16,14 @@
   "profile.language.tooltip": "Idioma da plataforma",
   "profile.language.placeholder": "Selecione o idioma",
 
+  "profile.ssh.label": "Chave SSH",
+  "profile.ssh.tooltip": "Registre sua chave SSH para acessar o Dokku",
+  "profile.ssh.button": "Selecionar chave pública SSH",
+  "profile.ssh.registering": "Registrando...",
+  "profile.ssh.registered": "Chave registrada com sucesso",
+  "profile.ssh.registerFailed": "Ocorreu um erro inesperado ao salvar a chave SSH",
+  "profile.ssh.registerNotAllowed": "Você não tem permissão para registrar chaves SSH",
+
   "profile.token.label": "Token de Acesso",
   "profile.token.tooltip": "Token de autenticação para requisições via API",
   "profile.token.placeholder": "Token não disponível",

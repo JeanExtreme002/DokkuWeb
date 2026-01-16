@@ -4,6 +4,19 @@
   background-color: var(--gray-1);
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.buttonSpinner {
+  animation: spin 1s linear infinite !important;
+}
+
 .userSearchContainer {
   display: flex;
   gap: 0.75rem;
@@ -26,8 +39,37 @@
   display: inline;
 }
 
+.userSettingsContainer {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 15px;
+  gap: 80px;
+  width: 100%;
+}
+
+.sshButton {
+  max-width: 400px;
+}
+
+.sshErrorMessage {
+  color: red;
+}
+
+@media (max-width: 700px) {
+  .userSettingsContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
 @media (max-width: 419px) {
   .adminButtonLabel {
     display: none;
+  }
+}
+
+@media (max-width: 350px) {
+  .sshButton {
+    font-size: 11px;
   }
 }

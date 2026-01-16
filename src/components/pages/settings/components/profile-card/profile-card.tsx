@@ -1,4 +1,4 @@
-import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { CheckIcon, InfoCircledIcon, ReloadIcon, UploadIcon } from '@radix-ui/react-icons';
 import {
   Avatar,
   Button,
@@ -29,6 +29,10 @@ interface ProfileCardProps {
   showToken: boolean;
   onToggleShowToken: () => void;
   onCopyToken: () => void | Promise<void>;
+  onOpenSaveSSHKey: () => void;
+  isSSHKeySaving: boolean;
+  isSSHKeyRegistered: boolean;
+  sshErrorMessage?: string | null;
 }
 
 export function ProfileCard({
@@ -39,6 +43,10 @@ export function ProfileCard({
   showToken,
   onToggleShowToken,
   onCopyToken,
+  onOpenSaveSSHKey,
+  isSSHKeySaving,
+  isSSHKeyRegistered,
+  sshErrorMessage,
 }: ProfileCardProps) {
   const { t } = usePageTranslation();
   const userName = session?.user?.name || t('user.fallbackName');
@@ -116,34 +124,81 @@ export function ProfileCard({
 
         <Separator size='4' style={{ margin: '8px 0' }} />
 
-        <Flex direction='column' gap='2'>
-          <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-            {t('profile.language.label')}
-            <Tooltip content={t('profile.language.tooltip')}>
-              <InfoCircledIcon
-                style={{
-                  color: 'var(--gray-9)',
-                  cursor: 'help',
-                  width: '14px',
-                  height: '14px',
-                  marginLeft: '8px',
-                }}
+        <Flex className={styles.userSettingsContainer}>
+          <Flex direction='column' gap='2'>
+            <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+              {t('profile.language.label')}
+              <Tooltip content={t('profile.language.tooltip')}>
+                <InfoCircledIcon
+                  style={{
+                    color: 'var(--gray-9)',
+                    cursor: 'help',
+                    width: '14px',
+                    height: '14px',
+                    marginLeft: '8px',
+                  }}
+                />
+              </Tooltip>
+            </Text>
+            <Select.Root
+              value={language}
+              onValueChange={(code: string) => i18n.changeLanguage(code)}
+            >
+              <Select.Trigger
+                placeholder={t('profile.language.placeholder')}
+                style={{ maxWidth: '200px' }}
               />
-            </Tooltip>
-          </Text>
-          <Select.Root value={language} onValueChange={(code: string) => i18n.changeLanguage(code)}>
-            <Select.Trigger
-              placeholder={t('profile.language.placeholder')}
-              style={{ maxWidth: '200px' }}
-            />
-            <Select.Content>
-              {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
-                <Select.Item key={code} value={code}>
-                  {name}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
+              <Select.Content>
+                {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+                  <Select.Item key={code} value={code}>
+                    {name}
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Root>
+          </Flex>
+          <Flex direction='column' gap='2'>
+            <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+              {t('profile.ssh.label')}
+              <Tooltip content={t('profile.ssh.tooltip')}>
+                <InfoCircledIcon
+                  style={{
+                    color: 'var(--gray-9)',
+                    cursor: 'help',
+                    width: '14px',
+                    height: '14px',
+                    marginLeft: '8px',
+                  }}
+                />
+              </Tooltip>
+            </Text>
+            <Button
+              className={styles.sshButton}
+              color='orange'
+              variant='outline'
+              style={{ cursor: 'pointer' }}
+              onClick={onOpenSaveSSHKey}
+              disabled={isSSHKeySaving || isSSHKeyRegistered}
+            >
+              {isSSHKeyRegistered ? (
+                <>
+                  <CheckIcon />
+                  {t('profile.ssh.registered')}
+                </>
+              ) : isSSHKeySaving ? (
+                <>
+                  <ReloadIcon className={styles.buttonSpinner} />
+                  {t('profile.ssh.registering')}
+                </>
+              ) : (
+                <>
+                  <UploadIcon />
+                  {t('profile.ssh.button')}
+                </>
+              )}
+            </Button>
+            {sshErrorMessage && <Text className={styles.sshErrorMessage}>{sshErrorMessage}</Text>}
+          </Flex>
         </Flex>
 
         <Flex direction='column' gap='2'>

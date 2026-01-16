@@ -32,6 +32,14 @@ export function SettingsPage(props: SettingsPageProps) {
   const [adminLoading, setAdminLoading] = useState(true);
   const [showToken, setShowToken] = useState(false);
 
+  const [isSSHKeySaving, setIsSSHKeySaving] = useState(false);
+  const [isSSHKeyRegistered, setIsSSHKeyRegistered] = useState(false);
+
+  // Error states
+  const [errors, setErrors] = useState({
+    ssh: null as string | null,
+  });
+
   useEffect(() => {
     const fetchQuota = async () => {
       try {
@@ -85,10 +93,58 @@ export function SettingsPage(props: SettingsPageProps) {
     }
   };
 
+  const registerSSHKey = async (ssh_key: string) => {
+    setIsSSHKeySaving(true);
+    setIsSSHKeyRegistered(false);
+    setErrors((prev) => ({ ...prev, ssh: null }));
+
+    try {
+      const response = await api.post(`/api/ssh/key`, undefined, {
+        params: { public_ssh_key: ssh_key },
+      });
+      if (response.status === 200) {
+        if (!response?.data?.success) {
+          throw new Error(response?.data?.message);
+        }
+        setIsSSHKeyRegistered(true);
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerNotAllowed') }));
+      } else {
+        setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerFailed') }));
+      }
+      console.error('Failed to register SSH key:', error);
+    } finally {
+      setIsSSHKeySaving(false);
+    }
+  };
+
+  const handleRegisterSSHKey = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      const content = btoa(await file.text());
+      await registerSSHKey(content);
+    } catch (err) {
+      console.error('Error registering ssh key:', err);
+      setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerFailed') }));
+    }
+  };
+
   const session = sessionData || props.session;
 
   return (
     <>
+      <input
+        id='ssh-file-upload'
+        type='file'
+        accept='.pub'
+        style={{ display: 'none' }}
+        onChange={handleRegisterSSHKey}
+      />
       <NavBar session={session} />
 
       <main className={styles.root}>
@@ -116,6 +172,10 @@ export function SettingsPage(props: SettingsPageProps) {
             showToken={showToken}
             onToggleShowToken={() => setShowToken(!showToken)}
             onCopyToken={copyToken}
+            onOpenSaveSSHKey={() => document.getElementById('ssh-file-upload')?.click()}
+            isSSHKeySaving={isSSHKeySaving}
+            isSSHKeyRegistered={isSSHKeyRegistered}
+            sshErrorMessage={errors.ssh}
           />
           <ResourcesCard quota={quota} loading={loading} error={error} />
         </Flex>
