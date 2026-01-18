@@ -97,6 +97,7 @@
   "shell.couldNotExecute": "Command could not be executed.",
   "shell.executeFailed": "Failed to execute command",
   "header.visitWebsite": "Visit Website",
+  "header.sharedBy": "Shared by",
   "header.deploy": "Deploy",
   "header.deployVia": "Deploy via:",
   "header.publicRepo": "Public repository",

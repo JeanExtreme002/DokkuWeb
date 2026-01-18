@@ -48,22 +48,42 @@ export function HeaderSection(props: HeaderSectionProps) {
     <Box className={styles.headerSection}>
       <Flex justify='between' align='center' style={{ width: '100%' }}>
         <Flex className={styles.appTitle}>
-          <Flex align='center' gap='3' style={{ alignItems: 'center' }}>
-            <Avatar
-              size='4'
-              src={showAvatar ? props.session?.user?.image || undefined : undefined}
-              fallback={avatarFallback}
-              radius='full'
-              style={{ flexShrink: 0 }}
-            />
-            <Heading
-              size='8'
-              weight='bold'
-              className={styles.appTitleText}
-              style={{ color: 'var(--gray-12)' }}
-            >
-              {props.displayName}
-            </Heading>
+          <Flex gap='4'>
+            {isSharedBy && (
+              <Avatar
+                size='5'
+                src={showAvatar ? props.session?.user?.image || undefined : undefined}
+                fallback={avatarFallback}
+                radius='full'
+                style={{ flexShrink: 0 }}
+              />
+            )}
+            <Flex direction={'column'}>
+              <Flex align='center' gap='3' style={{ alignItems: 'center' }}>
+                {!isSharedBy && (
+                  <Avatar
+                    size='5'
+                    src={showAvatar ? props.session?.user?.image || undefined : undefined}
+                    fallback={avatarFallback}
+                    radius='full'
+                    style={{ flexShrink: 0 }}
+                  />
+                )}
+                <Heading
+                  size='8'
+                  weight='bold'
+                  className={styles.appHeaderText}
+                  style={{ color: 'var(--gray-12)' }}
+                >
+                  {props.displayName}
+                </Heading>
+              </Flex>
+              {isSharedBy && (
+                <Text size='1' style={{ color: 'var(--gray-11)' }}>
+                  {t('header.sharedBy')} {props.sharedBy}
+                </Text>
+              )}
+            </Flex>
           </Flex>
           <Box style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
             <Box
