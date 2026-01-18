@@ -12,6 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { Share1Icon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -47,6 +48,7 @@ export function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   const drawerItems = [
     { label: t('sidebar.overview'), href: '/', icon: <DashboardIcon /> },
     { label: t('sidebar.apps'), href: '/apps', icon: <AppIcon /> },
+    { label: t('sidebar.sharedApps'), href: '/apps?shared=1', icon: <Share1Icon /> },
     { label: t('sidebar.services'), href: '/services', icon: <ServiceIcon /> },
     { label: t('sidebar.networks'), href: '/networks', icon: <NetworkIcon /> },
   ];

@@ -24,6 +24,7 @@ interface HeaderSectionProps {
   onOpenDeployModal: () => void;
   onOpenZipInfoModal: () => void;
   onVisitWebsite: () => void;
+  sharedBy?: string | null;
 }
 
 export function HeaderSection(props: HeaderSectionProps) {
@@ -36,8 +37,12 @@ export function HeaderSection(props: HeaderSectionProps) {
     return undefined;
   }, [props.appInfo]);
 
-  const showAvatar = !props.session?.user?.name?.toLowerCase().startsWith('takeover');
-  const avatarFallback = props.session?.user?.name?.charAt(0).toUpperCase() || 'U';
+  const isSharedBy = !!props.sharedBy;
+  const showAvatar =
+    !isSharedBy && !props.session?.user?.name?.toLowerCase().startsWith('takeover');
+  const avatarFallback = isSharedBy
+    ? props.sharedBy!.charAt(0).toUpperCase()
+    : props.session?.user?.name?.charAt(0).toUpperCase() || 'U';
 
   return (
     <Box className={styles.headerSection}>

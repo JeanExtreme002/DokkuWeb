@@ -38,6 +38,30 @@ export const getUptime = (startedAt: string) => {
   }
 };
 
+export const isSharedView = () => {
+  return typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('shared');
+};
+
+export const parseSharedName = (name: string) => {
+  const isShared = isSharedView();
+  if (isShared && name.includes(':')) {
+    const [sharedBy, pureName] = name.split(':', 2);
+    return { sharedBy, pureName } as { sharedBy?: string; pureName: string };
+  }
+  return { sharedBy: undefined, pureName: name } as { sharedBy?: string; pureName: string };
+};
+
+export const withSharedByParams = (
+  sharedBy?: string,
+  extraParams?: Record<string, any>
+): Record<string, any> => {
+  return sharedBy ? { ...(extraParams || {}), shared_by: sharedBy } : extraParams || {};
+};
+
+export const getAppsListEndpoint = () => {
+  return isSharedView() ? '/api/apps/list-shared-apps/' : '/api/apps/list/';
+};
+
 export const useStatusInfo = (appInfo: AppInfo | null) => {
   const { t } = usePageTranslation();
   if (!appInfo) {

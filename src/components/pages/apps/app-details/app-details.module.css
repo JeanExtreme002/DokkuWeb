@@ -742,6 +742,64 @@ button.envExportButtonOrange {
   border-color: var(--orange-9) !important;
 }
 
+/* Share button responsive behavior: hide text under 450px */
+.shareButton {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.shareButtonText {
+  margin-left: 6px;
+}
+
+/* Shared user row: stack button under email on small screens */
+.sharedUserRow {
+  /* default horizontal layout handled by Flex props */
+  --shared-user-row: 1; /* avoid empty ruleset */
+}
+
+.sharedUserRowButton {
+  /* keep default styles from component; allow alignment tweaks */
+}
+
+@media (max-width: 450px) {
+  .sharedUserRow {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  .sharedUserRowButton {
+    align-self: stretch !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 34px !important;
+    padding: 0 10px !important;
+    justify-content: center !important;
+  }
+  .unshareButtonText {
+    display: inline !important;
+    margin-left: 6px;
+  }
+}
+
+/* Default: hide unshare text to keep compact layout */
+.unshareButtonText {
+  display: none;
+}
+
+@media (max-width: 450px) {
+  .shareButtonText {
+    display: none !important;
+  }
+  .shareButton {
+    min-width: 34px !important;
+    width: 34px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+}
+
 /* App Control Buttons Layout */
 .appControlButtons {
   width: 100% !important;

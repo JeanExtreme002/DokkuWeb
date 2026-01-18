@@ -11,6 +11,7 @@ import { api } from '@/lib';
 import styles from './app-list.module.css';
 import { AppsList } from './components';
 import { AppListItem } from './types';
+import { getAppsListEndpoint, isSharedView, parseSharedName, withSharedByParams } from './utils';
 
 export interface AppListPageProps {
   session: Session;
@@ -40,8 +41,10 @@ export function AppListPage(props: AppListPageProps) {
       const startTime = Date.now();
       try {
         setLoading(true);
+        const listEndpoint = getAppsListEndpoint();
+
         const response = await api.post(
-          '/api/apps/list/',
+          listEndpoint,
           {},
           {
             headers: { 'x-cache': 'false' },
@@ -84,8 +87,13 @@ export function AppListPage(props: AppListPageProps) {
 
       // Load each app's information asynchronously
       const promises = appNames.map(async (appName) => {
+        const { sharedBy, pureName: parsedAppName } = parseSharedName(appName);
         try {
-          const response = await api.post(`/api/apps/${appName}/info/`);
+          const response = await api.post(
+            `/api/apps/${parsedAppName}/info/`,
+            {},
+            { params: withSharedByParams(sharedBy) }
+          );
 
           if (response.status === 200 && response.data.success) {
             const cacheStatus = response.headers['x-cache'];
@@ -125,12 +133,14 @@ export function AppListPage(props: AppListPageProps) {
 
         // Load each app's information asynchronously without cache
         const promises = appNames.map(async (appName) => {
+          const { sharedBy, pureName: parsedAppName } = parseSharedName(appName);
           try {
             const response = await api.post(
-              `/api/apps/${appName}/info/`,
+              `/api/apps/${parsedAppName}/info/`,
               {},
               {
                 headers: { 'x-cache': 'false' },
+                params: withSharedByParams(sharedBy),
               }
             );
 
@@ -162,6 +172,8 @@ export function AppListPage(props: AppListPageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isShared = isSharedView();
+
   return (
     <>
       <NavBar session={props.session} />
@@ -169,8 +181,8 @@ export function AppListPage(props: AppListPageProps) {
       <main className={styles.root}>
         <Flex direction='column' gap='5' className={styles.mainContainer}>
           <ListHeader
-            title={t('list.header.title')}
-            subtitle={t('list.header.subtitle')}
+            title={t(isShared ? 'list.header.titleShared' : 'list.header.title')}
+            subtitle={t(isShared ? 'list.header.subtitleShared' : 'list.header.subtitle')}
             buttonLabel={t('list.header.createButton')}
             onCreate={() => (window.location.href = '/apps/create')}
             containerClassName={styles.headerSection}
@@ -206,7 +218,7 @@ export function AppListPage(props: AppListPageProps) {
                   }}
                 >
                   <Text size='3' color='gray'>
-                    {t('list.empty.noApps')}
+                    {t(isShared ? 'list.empty.noSharedApps' : 'list.empty.noApps')}
                   </Text>
                 </Card>
               ) : (

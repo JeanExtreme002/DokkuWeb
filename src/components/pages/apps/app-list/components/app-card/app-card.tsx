@@ -13,6 +13,7 @@ import {
   getPortInfo,
   getProcessInfo,
   getUptime,
+  parseSharedName,
   useStatusInfo,
 } from '../../utils';
 
@@ -25,6 +26,12 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
     : { processType: 'web', processCount: 0 };
   const containerInfo = appItem.info ? getContainerInfo(appItem.info) : null;
 
+  const { sharedBy, pureName } = parseSharedName(appItem.name);
+  const appName = formatAppName(pureName);
+  const detailsUrl = sharedBy
+    ? `/apps/a/${appName}?shared_by=${encodeURIComponent(sharedBy)}`
+    : `/apps/a/${appName}`;
+
   return (
     <Card
       key={appItem.name}
@@ -35,7 +42,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
         cursor: isMobile ? 'default' : 'pointer',
       }}
       className={styles.appCard}
-      onClick={isMobile ? undefined : () => (window.location.href = `/apps/a/${displayName}`)}
+      onClick={isMobile ? undefined : () => (window.location.href = detailsUrl)}
       onMouseEnter={
         isMobile
           ? undefined
@@ -146,7 +153,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
             color='blue'
             variant='outline'
             style={{ cursor: 'pointer' }}
-            onClick={() => (window.location.href = `/apps/a/${displayName}`)}
+            onClick={() => (window.location.href = detailsUrl)}
           >
             <EyeOpenIcon />
             {t('card.viewDetails')}

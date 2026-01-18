@@ -1,4 +1,4 @@
-import { InfoCircledIcon, TrashIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon, Share1Icon, TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, TextField, Tooltip } from '@radix-ui/themes';
 import React from 'react';
 
@@ -13,6 +13,14 @@ interface SecuritySectionProps {
   onToggleShowToken: () => void;
   onCopyToken: () => void;
   onOpenDeleteModal: () => void;
+  shareEmail: string;
+  onSetShareEmail: (val: string) => void;
+  onRequestShare: (email: string) => void;
+  sharingList: string[];
+  sharingLoading: boolean;
+  sharingError: string | null;
+  sharingListLoaded: boolean;
+  onOpenUnshareConfirm: (email: string) => void;
 }
 
 export default function SecuritySection(props: SecuritySectionProps) {
@@ -23,6 +31,14 @@ export default function SecuritySection(props: SecuritySectionProps) {
     onToggleShowToken,
     onCopyToken,
     onOpenDeleteModal,
+    shareEmail,
+    onSetShareEmail,
+    onRequestShare,
+    sharingList,
+    sharingLoading,
+    sharingError,
+    sharingListLoaded,
+    onOpenUnshareConfirm,
   } = props;
 
   return (
@@ -115,6 +131,123 @@ export default function SecuritySection(props: SecuritySectionProps) {
           </Flex>
         </Flex>
       </Card>
+
+      {/* Sharing Section */}
+      <Box style={{ marginTop: '24px' }}>
+        <Heading size='5' style={{ marginBottom: '12px' }}>
+          {t('security.sharing.title')}
+        </Heading>
+        <Card
+          style={{
+            border: '1px solid var(--gray-6)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            padding: '16px',
+          }}
+        >
+          <Flex direction='column' gap='3'>
+            <Flex direction='column' gap='1'>
+              <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
+                {t('security.sharing.addCollaboratorTitle')}
+              </Text>
+              <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                {t('security.sharing.addCollaboratorDescription')}
+              </Text>
+            </Flex>
+            <Flex gap='2' align='center'>
+              <TextField.Root
+                placeholder={t('security.sharing.emailPlaceholder')}
+                value={shareEmail}
+                onChange={(e) => onSetShareEmail((e.target as HTMLInputElement).value)}
+                style={{ flex: 1 }}
+                type='email'
+              />
+              <Button
+                size='2'
+                onClick={() => onRequestShare(shareEmail)}
+                disabled={!shareEmail.trim() || sharingLoading}
+                color='orange'
+                variant='surface'
+                className={styles.shareButton}
+                style={{
+                  minWidth: '90px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <Share1Icon />
+                <span className={styles.shareButtonText}>{t('security.sharing.shareButton')}</span>
+              </Button>
+            </Flex>
+
+            {sharingError && (
+              <Text size='2' style={{ color: 'var(--red-10)' }}>
+                {sharingError}
+              </Text>
+            )}
+
+            <Box>
+              <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                {t('security.sharing.sharedWith')}
+              </Text>
+              <Box style={{ marginTop: '8px' }}>
+                {sharingLoading || !sharingListLoaded ? (
+                  <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                    {t('security.sharing.loading')}
+                  </Text>
+                ) : sharingList.length === 0 ? (
+                  <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                    {t('security.sharing.none')}
+                  </Text>
+                ) : (
+                  <Flex direction='column' gap='2'>
+                    {sharingList.map((email) => (
+                      <Card
+                        key={email}
+                        style={{
+                          border: '1px solid var(--gray-6)',
+                          padding: '8px 12px',
+                          background: 'var(--gray-2)',
+                        }}
+                      >
+                        <Flex align='center' justify='between' className={styles.sharedUserRow}>
+                          <Text size='2' style={{ color: 'var(--gray-12)' }}>
+                            {email}
+                          </Text>
+                          <Button
+                            size='2'
+                            variant='soft'
+                            onClick={() => onOpenUnshareConfirm(email)}
+                            title={t('security.sharing.unshare')}
+                            className={styles.sharedUserRowButton}
+                            style={{
+                              background: 'var(--red-3)',
+                              border: '1px solid var(--red-6)',
+                              color: 'var(--red-11)',
+                              cursor: 'pointer',
+                              minWidth: '34px',
+                              width: '34px',
+                              height: '34px',
+                              padding: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <TrashIcon />
+                            <span className={styles.unshareButtonText}>
+                              {t('security.sharing.unshare')}
+                            </span>
+                          </Button>
+                        </Flex>
+                      </Card>
+                    ))}
+                  </Flex>
+                )}
+              </Box>
+            </Box>
+          </Flex>
+        </Card>
+      </Box>
 
       {/* Delete Application Section */}
       <Box style={{ marginTop: '45px' }}>

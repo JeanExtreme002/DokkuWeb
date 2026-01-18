@@ -1,6 +1,8 @@
 {
   "list.header.title": "Meus Aplicativos",
   "list.header.subtitle": "Gerencie seus aplicativos Dokku implantados",
+  "list.header.titleShared": "Aplicativos Compartilhados",
+  "list.header.subtitleShared": "Aplicativos que outros usuários compartilharam com você",
   "list.header.createButton": "Nova Aplicação",
 
   "list.loading.title": "Carregando Aplicativos",
@@ -9,6 +11,7 @@
   "list.loading.messages.preparingList": "Preparando listagem...",
 
   "list.empty.noApps": "Nenhum aplicativo criado ainda.",
+  "list.empty.noSharedApps": "Nenhum aplicativo foi compartilhado ainda.",
 
   "errors.listFetch": "Erro ao carregar lista de aplicativos",
   "errors.infoFetch": "Erro ao carregar informações",

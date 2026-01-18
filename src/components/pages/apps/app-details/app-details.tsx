@@ -27,8 +27,10 @@ import {
   RestartAppConfirmModal,
   SecuritySection,
   ServicesSection,
+  ShareConfirmModal,
   ShellSection,
   StopAppConfirmModal,
+  UnshareConfirmModal,
   VariablesSection,
   ZipInfoModal,
 } from './components';
@@ -77,6 +79,31 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const router = useRouter();
   const { t } = usePageTranslation();
 
+  const windowSearch = typeof window !== 'undefined' ? window.location.search : undefined;
+  const routerSharedBy = router?.query?.shared_by;
+
+  const sharedBy = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      return url.searchParams.get('shared_by');
+    }
+    if (router && router.query && typeof router.query.shared_by === 'string') {
+      return router.query.shared_by;
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [windowSearch, routerSharedBy]);
+
+  const withSharedBy = useCallback(
+    (params?: Record<string, any>) => {
+      if (sharedBy) {
+        return { ...params, shared_by: sharedBy };
+      }
+      return params || {};
+    },
+    [sharedBy]
+  );
+
   // Stable session reference to prevent unnecessary re-renders
   const stableSession = useMemo(() => {
     return session?.user?.email ? session : null;
@@ -104,6 +131,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [configLoading, setConfigLoading] = useState(true);
   const [builderLoading, setBuilderLoading] = useState(true);
   const [deployInfoLoading, setDeployInfoLoading] = useState(true);
+
+  // Sharing states (Security tab)
+  const [shareEmail, setShareEmail] = useState('');
+  const [sharingList, setSharingList] = useState<string[]>([]);
+  const [sharingLoading, setSharingLoading] = useState(false);
+  const [sharingError, setSharingError] = useState<string | null>(null);
+  const [sharingListLoaded, setSharingListLoaded] = useState(false);
+  const [confirmShareOpen, setConfirmShareOpen] = useState(false);
+  const [pendingShareEmail, setPendingShareEmail] = useState<string | null>(null);
+  const [confirmUnshareOpen, setConfirmUnshareOpen] = useState(false);
+  const [pendingUnshareEmail, setPendingUnshareEmail] = useState<string | null>(null);
 
   // Form states
   const [originPort, setOriginPort] = useState('');
@@ -270,7 +308,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   // API fetch functions
   const fetchAppInfo = useCallback(async () => {
     try {
-      const response = await api.post(`/api/apps/${props.appName}/info/`);
+      const response = await api.post(
+        `/api/apps/${props.appName}/info/`,
+        {},
+        { params: withSharedBy() }
+      );
       if (response.data.success) {
         setAppInfo(response.data.result);
       }
@@ -282,80 +324,130 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       // Re-throw the error for the retry logic to handle
       throw error;
     }
-  }, [props.appName, router]);
+  }, [props.appName, router, withSharedBy]);
 
   const fetchDatabases = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/databases/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/databases/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setDatabases(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchNetwork = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/network/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/network/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setNetworkData(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchPortMappings = useCallback(async () => {
     const response = await api.post(
       `/api/apps/${props.appName}/ports/`,
       {},
-      { params: { use_proxy: false } }
+      { params: withSharedBy({ use_proxy: false }) }
     );
     if (response.data.success) {
       setPortMappings(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchLogs = useCallback(async () => {
     const response = await api.post(
       `/api/apps/${props.appName}/logs/`,
       {},
-      {
-        params: { n_lines: logLinesLimit },
-      }
+      { params: withSharedBy({ n_lines: logLinesLimit }) }
     );
     if (response.data.success) {
       setLogs(response.data.result);
     }
-  }, [props.appName, logLinesLimit]);
+  }, [props.appName, logLinesLimit, withSharedBy]);
 
   const fetchConfig = useCallback(async () => {
-    const response = await api.post(`/api/config/${props.appName}/`);
+    const response = await api.post(
+      `/api/config/${props.appName}/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setConfig(response.data.result);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.appName]);
 
   const fetchAppUrl = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/url/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/url/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setAppUrl(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchDeploymentToken = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/deployment-token/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/deployment-token/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setDeploymentToken(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchBuilderInfo = useCallback(async () => {
-    const response = await api.post(`/api/apps/${props.appName}/builder/`);
+    const response = await api.post(
+      `/api/apps/${props.appName}/builder/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setBuilderInfo(response.data.result);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const fetchDeployInfo = useCallback(async () => {
-    const response = await api.post(`/api/deploy/${props.appName}/info/`);
+    const response = await api.post(
+      `/api/deploy/${props.appName}/info/`,
+      {},
+      { params: withSharedBy() }
+    );
     if (response.data.success) {
       setDeployInfo(response.data.result);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.appName]);
+
+  const fetchSharingList = useCallback(async () => {
+    setSharingLoading(true);
+    setSharingError(null);
+    try {
+      const response = await api.post(
+        `/api/apps/${props.appName}/sharing/`,
+        {},
+        { params: withSharedBy() }
+      );
+      if (response.data && response.data.success && Array.isArray(response.data.result)) {
+        setSharingList(response.data.result);
+      } else {
+        setSharingError('Failed to load sharing list');
+      }
+    } catch (err: any) {
+      setSharingError(err?.message || 'Failed to load sharing list');
+    } finally {
+      setSharingLoading(false);
+      setSharingListLoaded(true);
+    }
+  }, [props.appName, withSharedBy]);
 
   // Silent refresh for overview data only - updates app info and URL every 10 seconds
   // This keeps the overview tab current without affecting loading states or other tabs
@@ -367,6 +459,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {},
         {
           headers: { 'x-cache': 'false' },
+          params: withSharedBy(),
         }
       );
       if (appInfoResponse.data.success) {
@@ -379,6 +472,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {},
         {
           headers: { 'x-cache': 'false' },
+          params: withSharedBy(),
         }
       );
       if (appUrlResponse.data.success) {
@@ -390,6 +484,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {},
         {
           headers: { 'x-cache': 'false' },
+          params: withSharedBy(),
         }
       );
       if (appBuilderResponse.data.success) {
@@ -402,6 +497,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {},
         {
           headers: { 'x-cache': 'false' },
+          params: withSharedBy(),
         }
       );
       if (appDeployInfoResponse.data.success) {
@@ -410,7 +506,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } catch (error) {
       console.warn('Silent overview refresh error (ignored):', error);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   // Refresh logs function that activates loading state
   const refreshLogs = useCallback(async () => {
@@ -426,7 +522,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     const loadAllData = async () => {
       try {
         // Critical data (required for page load) - fetch in parallel
-        await Promise.all([
+        const criticalPromises: Promise<any>[] = [
           fetchWithRetry(fetchAppInfo, setMainLoading, (error) =>
             setErrors((prev) => ({ ...prev, main: error }))
           ),
@@ -441,12 +537,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             setAppUrlLoading,
             () => {} // No separate error state needed
           ),
-          fetchWithRetry(
-            fetchDeploymentToken,
-            () => {}, // No separate loading state needed
-            () => {} // No separate error state needed
-          ),
-        ]);
+        ];
+
+        // Do not fetch deployment token when page is accessed via shared_by
+        if (!sharedBy) {
+          criticalPromises.push(
+            fetchWithRetry(
+              fetchDeploymentToken,
+              () => {}, // No separate loading state needed
+              () => {} // No separate error state needed
+            )
+          );
+        }
+
+        await Promise.all(criticalPromises);
 
         // All other data (parallel fetch - non-blocking)
         await Promise.allSettled([
@@ -467,6 +571,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           ),
         ]);
 
+        // Initial sharing list (skip when accessed via shared_by)
+        if (!sharedBy) {
+          await fetchSharingList();
+        }
+
         // Mark data as loaded to prevent re-fetching on tab change
         setDataLoaded(true);
       } catch (error) {
@@ -475,6 +584,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     };
 
     loadAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     stableSession, // Stable session reference
     props.appName,
@@ -490,6 +600,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     fetchDeploymentToken,
     fetchBuilderInfo,
     fetchDeployInfo,
+    sharedBy,
   ]);
 
   // Reset dataLoaded when appName changes
@@ -508,6 +619,70 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     return () => clearInterval(intervalId);
   }, [stableSession, props.appName, dataLoaded, silentRefreshOverview]);
 
+  const onRequestShare = (email: string) => {
+    const trimmed = (email || '').trim();
+    if (!trimmed) return;
+    setPendingShareEmail(trimmed);
+    setConfirmShareOpen(true);
+  };
+
+  const onConfirmShare = async () => {
+    if (!pendingShareEmail) return;
+    setSharingLoading(true);
+    setSharingError(null);
+    try {
+      await api.post(
+        `/api/apps/${props.appName}/share/${encodeURIComponent(pendingShareEmail)}/`,
+        {},
+        { params: withSharedBy() }
+      );
+      setShareEmail('');
+      await fetchSharingList();
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.response?.data?.detail || '';
+      if (err?.response?.status === 404) {
+        setSharingError(t('security.sharing.userNotFound'));
+      } else if (
+        err?.response?.status === 400 &&
+        typeof msg === 'string' &&
+        msg.includes('You cannot share the application with yourself')
+      ) {
+        setSharingError(t('security.sharing.cannotShareWithYourself'));
+      } else {
+        setSharingError(err?.response?.data?.message || 'Failed to share app');
+      }
+    } finally {
+      setConfirmShareOpen(false);
+      setPendingShareEmail(null);
+      setSharingLoading(false);
+    }
+  };
+
+  const onOpenUnshareConfirm = (email: string) => {
+    setPendingUnshareEmail(email);
+    setConfirmUnshareOpen(true);
+  };
+
+  const onConfirmUnshare = async () => {
+    if (!pendingUnshareEmail) return;
+    // reuse loading state for simplicity
+    setSharingLoading(true);
+    setSharingError(null);
+    try {
+      await api.delete(
+        `/api/apps/${props.appName}/share/${encodeURIComponent(pendingUnshareEmail)}/`,
+        withSharedBy()
+      );
+      await fetchSharingList();
+    } catch (err: any) {
+      setSharingError(err?.message || 'Failed to unshare app');
+    } finally {
+      setConfirmUnshareOpen(false);
+      setPendingUnshareEmail(null);
+      setSharingLoading(false);
+    }
+  };
+
   const isAtRoot = () => {
     const wd = getWorkingDir(appInfo);
     if (wd) return currentDir === wd;
@@ -524,8 +699,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           const containers = appInfo.data as AppContainer[];
           containerType = containers?.[0]?.Config?.Labels?.['com.dokku.process-type'];
         }
-        const params: Record<string, any> = { command: `ls ${dir} -a -l` };
+        let params: Record<string, any> = { command: `ls ${dir} -a -l` };
         if (containerType) params.container_type = containerType;
+        params = withSharedBy(params);
         const response = await api.post(`/api/apps/${props.appName}/exec/`, {}, { params });
         const output = String(response?.data?.result ?? '');
         if (response?.data?.success) {
@@ -540,7 +716,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appInfo, props.appName]
+    [appInfo, props.appName, withSharedBy]
   );
 
   const navigateToParent = () => {
@@ -585,7 +761,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         `/api/apps/${props.appName}/download/`,
         {},
         {
-          params: { filename: fullPath },
+          params: withSharedBy({ filename: fullPath }),
           responseType: 'blob',
         }
       );
@@ -620,7 +796,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const deleteApp = async () => {
     setDeleteAppLoading(true);
     try {
-      await api.delete(`/api/apps/${props.appName}`);
+      await api.delete(`/api/apps/${props.appName}`, withSharedBy());
       router.push('/apps');
     } catch (error: any) {
       console.error('Error deleting app:', error);
@@ -643,7 +819,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await api.post(
         `/api/apps/${props.appName}/ports/${protocol}/${originPort}/${destPort}/`,
         {},
-        { params: { use_proxy: false } }
+        { params: withSharedBy({ use_proxy: false }) }
       );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))
@@ -672,7 +848,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     try {
       await api.delete(
         `/api/apps/${props.appName}/ports/${portToDelete.protocol}/${portToDelete.origin}/${portToDelete.dest}/`,
-        { use_proxy: false }
+        withSharedBy({ use_proxy: false })
       );
       await fetchWithRetry(fetchPortMappings, setPortMappingsLoading, (error) =>
         setErrors((prev) => ({ ...prev, portMappings: error }))
@@ -689,7 +865,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const startApp = async () => {
     setStartLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/start/`);
+      await api.post(`/api/apps/${props.appName}/start/`, {}, { params: withSharedBy() });
       setDataLoaded(false);
       await fetchAppInfo();
     } catch (error: any) {
@@ -706,7 +882,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const stopApp = async () => {
     setStopLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/stop/`);
+      await api.post(`/api/apps/${props.appName}/stop/`, {}, { params: withSharedBy() });
       setDataLoaded(false);
       await fetchAppInfo();
     } catch (error: any) {
@@ -723,7 +899,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const restartApp = async () => {
     setRestartLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/restart/`);
+      await api.post(`/api/apps/${props.appName}/restart/`, {}, { params: withSharedBy() });
       setDataLoaded(false);
       await fetchAppInfo();
     } catch (error: any) {
@@ -740,7 +916,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const rebuildApp = async () => {
     setRebuildLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/rebuild/`);
+      await api.post(`/api/apps/${props.appName}/rebuild/`, {}, { params: withSharedBy() });
       setDataLoaded(false);
       await fetchAppInfo();
     } catch (error: any) {
@@ -766,7 +942,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
     setBuilderConfigLoading(true);
     try {
-      await api.post(`/api/apps/${props.appName}/builder/${selectedBuilder.toLowerCase()}/`);
+      await api.post(
+        `/api/apps/${props.appName}/builder/${selectedBuilder.toLowerCase()}/`,
+        {},
+        { params: withSharedBy() }
+      );
       await fetchBuilderInfo();
       setBuilderModalOpen(false);
     } catch (error: any) {
@@ -812,10 +992,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         const containers = appInfo.data as AppContainer[];
         containerType = containers?.[0]?.Config?.Labels?.['com.dokku.process-type'];
       }
-      const params: Record<string, any> = { command };
+      let params: Record<string, any> = { command };
       if (containerType) {
         params.container_type = containerType;
       }
+      params = withSharedBy(params);
       const response = await api.post(`/api/apps/${props.appName}/exec/`, {}, { params });
       const cleaned = processAnsiCodes(String(response.data.result ?? ''));
       if (response?.data?.success) {
@@ -920,6 +1101,14 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [currentTab]);
 
+  // Refresh sharing list when switching to Security tab
+  useEffect(() => {
+    if (currentTab === 'security' && dataLoaded && !sharedBy) {
+      fetchSharingList();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTab, sharedBy]);
+
   // Initialize Files tab working directory when tab opens
   useEffect(() => {
     if (currentTab === 'files') {
@@ -962,10 +1151,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         `/api/deploy/${props.appName}/`,
         {},
         {
-          params: {
+          params: withSharedBy({
             repo_url: repoUrl.trim(),
             branch: branch.trim(),
-          },
+          }),
         }
       );
 
@@ -997,9 +1186,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       formData.append('file', file);
 
       await api.put(`/api/deploy/`, formData, {
-        params: {
+        params: withSharedBy({
           wait: false,
-        },
+        }),
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -1045,7 +1234,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setEnvSubmitting(true);
     try {
       await api.put(`/api/config/${props.appName}/${newEnvKey.trim()}/`, undefined, {
-        params: { value: newEnvValue.trim() },
+        params: withSharedBy({ value: newEnvValue.trim() }),
       });
       await fetchConfig();
       setNewEnvKey('');
@@ -1069,7 +1258,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setShowDeleteEnvModal(false);
 
     try {
-      await api.delete(`/api/config/${props.appName}/${envToDelete}/`);
+      await api.delete(`/api/config/${props.appName}/${envToDelete}/`, withSharedBy());
       await fetchConfig();
     } catch (error) {
       console.error('Error removing environment variable:', error);
@@ -1130,7 +1319,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     for (const [key, value] of entries) {
       try {
         await api.put(`/api/config/${props.appName}/${key}/`, undefined, {
-          params: { value: String(value) },
+          params: withSharedBy({ value: String(value) }),
         });
       } catch (e) {
         console.error('Failed to import variable:', key, e);
@@ -1174,7 +1363,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setSavingEnv(true);
     try {
       await api.put(`/api/config/${props.appName}/${editingEnvKey}/`, undefined, {
-        params: { value: editingEnvValue.trim() },
+        params: withSharedBy({ value: editingEnvValue.trim() }),
       });
       await fetchConfig();
       setEditingEnvKey(null);
@@ -1258,6 +1447,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               onVisitWebsite={() => appUrl && window.open(appUrl, '_blank')}
               onOpenDeployModal={() => setDeployModalOpen(true)}
               onOpenZipInfoModal={() => setZipInfoModalOpen(true)}
+              sharedBy={sharedBy || null}
             />
 
             {/* Deploy Section */}
@@ -1311,9 +1501,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 <Tabs.Trigger value='files' className={styles.tabsTrigger}>
                   {t('tabs.files')}
                 </Tabs.Trigger>
-                <Tabs.Trigger value='security' className={styles.tabsTrigger}>
-                  {t('tabs.security')}
-                </Tabs.Trigger>
+                {!sharedBy && (
+                  <Tabs.Trigger value='security' className={styles.tabsTrigger}>
+                    {t('tabs.security')}
+                  </Tabs.Trigger>
+                )}
               </Tabs.List>
 
               {/* Overview Tab */}
@@ -1441,15 +1633,25 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               </Tabs.Content>
 
               {/* Security Tab */}
-              <Tabs.Content value='security' className={styles.tabsContent}>
-                <SecuritySection
-                  deploymentToken={deploymentToken}
-                  showDeploymentToken={showDeploymentToken}
-                  onToggleShowToken={() => setShowDeploymentToken(!showDeploymentToken)}
-                  onCopyToken={copyDeploymentToken}
-                  onOpenDeleteModal={() => setShowDeleteAppModal(true)}
-                />
-              </Tabs.Content>
+              {!sharedBy && (
+                <Tabs.Content value='security' className={styles.tabsContent}>
+                  <SecuritySection
+                    deploymentToken={deploymentToken}
+                    showDeploymentToken={showDeploymentToken}
+                    onToggleShowToken={() => setShowDeploymentToken(!showDeploymentToken)}
+                    onCopyToken={copyDeploymentToken}
+                    onOpenDeleteModal={() => setShowDeleteAppModal(true)}
+                    shareEmail={shareEmail}
+                    onSetShareEmail={(val: string) => setShareEmail(val)}
+                    onRequestShare={onRequestShare}
+                    sharingList={sharingList}
+                    sharingLoading={sharingLoading}
+                    sharingError={sharingError}
+                    sharingListLoaded={sharingListLoaded}
+                    onOpenUnshareConfirm={onOpenUnshareConfirm}
+                  />
+                </Tabs.Content>
+              )}
             </Tabs.Root>
           </Flex>
         )}
@@ -1524,6 +1726,24 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         portToDelete={portToDelete}
         deletingPort={deletingPort}
         removePortMapping={removePortMapping}
+      />
+
+      {/* Share Confirmation Modal */}
+      <ShareConfirmModal
+        open={confirmShareOpen}
+        onOpenChange={setConfirmShareOpen}
+        pendingShareEmail={pendingShareEmail}
+        sharingLoading={sharingLoading}
+        onConfirm={onConfirmShare}
+      />
+
+      {/* Unshare Confirmation Modal */}
+      <UnshareConfirmModal
+        open={confirmUnshareOpen}
+        onOpenChange={setConfirmUnshareOpen}
+        pendingUnshareEmail={pendingUnshareEmail}
+        unsharingLoading={sharingLoading}
+        onConfirm={onConfirmUnshare}
       />
 
       {/* Stop App Confirmation Modal */}

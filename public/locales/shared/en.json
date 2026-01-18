@@ -2,6 +2,7 @@
   "updatingIndicator": "Syncing with the server...",
   "sidebar.overview": "OVERVIEW",
   "sidebar.apps": "APPLICATIONS",
+  "sidebar.sharedApps": "SHARED",
   "sidebar.services": "SERVICES",
   "sidebar.networks": "NETWORKS",
   "github.tooltip": "Source code on GitHub",
