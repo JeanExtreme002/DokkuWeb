@@ -28,6 +28,7 @@
 
   "search.shared.view_details": "Ver detalhes",
 
+  "search.app.card.sharedBy": "Compartilhado por",
   "search.app.card.instance_label": "Instância de Aplicativo",
   "search.app.card.ip_label": "IP",
   "search.app.card.ip_unavailable": "Indisponível",

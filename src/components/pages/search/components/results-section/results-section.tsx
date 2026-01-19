@@ -20,7 +20,23 @@ export function ResultsSection({ items, isMobile }: ResultsSectionProps) {
       {mainItems.map((it) => {
         if (it.kind === 'app')
           return (
-            <AppCard key={`app-${it.name}`} name={it.name} app={it.value} isMobile={isMobile} />
+            <AppCard
+              key={`app-${it.name}`}
+              name={it.name}
+              app={it.value}
+              isMobile={isMobile}
+              isShared={false}
+            />
+          );
+        if (it.kind === 'shared_app')
+          return (
+            <AppCard
+              key={`app-${it.name}`}
+              name={it.name}
+              app={it.value}
+              isMobile={isMobile}
+              isShared={true}
+            />
           );
         if (it.kind === 'service')
           return (

@@ -69,6 +69,12 @@ export function SearchPage(props: SearchPageProps) {
       if (name && value) unified.push({ kind: 'app', name, value });
     }
 
+    // Shared Apps
+    for (const appObj of result.share_apps || []) {
+      const [name, value] = Object.entries(appObj)[0] || [];
+      if (name && value) unified.push({ kind: 'shared_app', name, value });
+    }
+
     // Services
     for (const svcObj of result.services || []) {
       const [name, value] = Object.entries(svcObj)[0] || [];

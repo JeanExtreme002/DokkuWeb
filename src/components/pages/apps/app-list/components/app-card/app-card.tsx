@@ -1,7 +1,7 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { AppAvatar } from '@/components/shared';
+import { AppAvatar, SharedAppAvatar } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
@@ -61,7 +61,7 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
     >
       <Flex className={styles.appCardContent} style={{ alignItems: 'flex-start' }}>
         {/* App icon */}
-        <AppAvatar size='6' />
+        {sharedBy ? <SharedAppAvatar size='6' /> : <AppAvatar size='6' />}
 
         {/* Main information */}
         <Flex direction='column' className={styles.appInfo}>

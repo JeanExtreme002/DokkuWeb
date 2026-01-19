@@ -1,7 +1,7 @@
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 
-import { AppAvatar } from '@/components/shared';
+import { AppAvatar, SharedAppAvatar } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
@@ -13,15 +13,22 @@ interface AppCardProps {
   name: string;
   app: SearchAppItem;
   isMobile: boolean;
+  isShared: boolean;
 }
 
-export function AppCard({ name, app, isMobile }: AppCardProps) {
-  const displayName = formatAppName(name);
+export function AppCard({ name, app, isMobile, isShared }: AppCardProps) {
+  const [sharedBy, pureName] = isShared ? name.split(':', 2) : [undefined, name];
+
+  const displayName = formatAppName(pureName);
   const status = getAppStatusInfo(app);
   const proc = getAppProcessInfo(app);
   const ipAddress = getAppIPAddress(app);
   const port = getAppPort(app);
   const { t } = usePageTranslation();
+
+  const detailsUrl = sharedBy
+    ? `/apps/a/${displayName}?shared_by=${encodeURIComponent(sharedBy)}`
+    : `/apps/a/${displayName}`;
 
   return (
     <Card
@@ -33,7 +40,7 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
         cursor: isMobile ? 'default' : 'pointer',
       }}
       className={searchStyles.appCard}
-      onClick={isMobile ? undefined : () => (window.location.href = `/apps/a/${displayName}`)}
+      onClick={isMobile ? undefined : () => (window.location.href = detailsUrl)}
       onMouseEnter={
         isMobile
           ? undefined
@@ -52,7 +59,7 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
       }
     >
       <Flex className={searchStyles.appCardContent} style={{ alignItems: 'flex-start' }}>
-        <AppAvatar size='6' />
+        {sharedBy ? <SharedAppAvatar size='6' /> : <AppAvatar size='6' />}
         <Flex direction='column' className={searchStyles.appInfo}>
           <Flex align='center' gap='2'>
             <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
@@ -62,6 +69,13 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
               {proc.type ? ` · ${proc.type}` : ''}
             </Text>
           </Flex>
+          {sharedBy && (
+            <Flex align='center'>
+              <Text size='1' style={{ color: 'var(--gray-10)' }}>
+                {t('search.app.card.sharedBy')} {sharedBy}
+              </Text>
+            </Flex>
+          )}
           <Flex align='center' gap='2'>
             <Text size='2' style={{ color: 'var(--gray-9)' }}>
               {ipAddress
@@ -95,7 +109,7 @@ export function AppCard({ name, app, isMobile }: AppCardProps) {
             color='blue'
             variant='outline'
             style={{ cursor: 'pointer' }}
-            onClick={() => (window.location.href = `/apps/a/${displayName}`)}
+            onClick={() => (window.location.href = detailsUrl)}
           >
             <EyeOpenIcon />
             {t('search.shared.view_details')}

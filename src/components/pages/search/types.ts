@@ -55,6 +55,7 @@ export interface SearchResponse {
   success: boolean;
   result: {
     apps: Array<Record<string, SearchAppItem>>;
+    share_apps?: Array<Record<string, SearchAppItem>>;
     services: Array<Record<string, ServiceData>>;
     networks: string[];
     available_databases: string[];
@@ -63,6 +64,7 @@ export interface SearchResponse {
 
 export type UnifiedItem =
   | { kind: 'app'; name: string; value: SearchAppItem }
+  | { kind: 'shared_app'; name: string; value: SearchAppItem }
   | { kind: 'service'; name: string; value: ServiceData }
   | { kind: 'network'; name: string }
   | { kind: 'available_database'; name: string };
