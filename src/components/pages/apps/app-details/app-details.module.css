@@ -112,9 +112,22 @@
   gap: 8px;
 }
 
+.deployHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .deployTitle {
   font-size: 14px;
   font-weight: 600;
+  color: var(--gray-12);
+}
+
+.deploySubtitle {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--gray-11);
 }
 
 .codeBlock {
@@ -644,6 +657,10 @@
 
   .emptyPortMessage {
     font-size: 12px !important;
+  }
+
+  .deploySubtitle {
+    font-size: 10px;
   }
 }
 

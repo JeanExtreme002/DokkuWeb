@@ -112,6 +112,7 @@
   "tabs.security": "Segurança",
   "errorView.reloadPage": "Recarregar Página",
   "deploySection.title": "Comandos de Deploy",
+  "deploySection.subtitle": "Configure uma chave SSH para habilitar o deploy via Git",
   "controls.start": "Iniciar",
   "controls.stop": "Parar",
   "controls.restart": "Reiniciar",

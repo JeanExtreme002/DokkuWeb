@@ -16,7 +16,10 @@ export function DeploySection({ appInfo, deployInfo, domain }: DeploySectionProp
   const { t } = usePageTranslation();
   return (
     <div className={styles.deploySection}>
-      <Text className={styles.deployTitle}>{t('deploySection.title')}</Text>
+      <Box className={styles.deployHeader}>
+        <Text className={styles.deployTitle}>{t('deploySection.title')}</Text>
+        <Text className={styles.deploySubtitle}>{t('deploySection.subtitle')}</Text>
+      </Box>
       <Box className={styles.codeBlock}>
         <div>
           <span className={styles.command}>$ git remote add dokku</span> dokku@
