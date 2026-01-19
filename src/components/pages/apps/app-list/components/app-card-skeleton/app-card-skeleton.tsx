@@ -6,10 +6,15 @@ import { usePageTranslation } from '@/i18n/utils';
 import { formatAppName } from '@/lib';
 
 import styles from '../../app-list.module.css';
+import { parseSharedName } from '../../utils';
 
 export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobile: boolean }) {
   const { t } = usePageTranslation();
-  const displayName = formatAppName(appName);
+  const { sharedBy, pureName } = parseSharedName(appName);
+  const displayName = formatAppName(pureName);
+  const detailsUrl = sharedBy
+    ? `/apps/a/${displayName}?shared_by=${encodeURIComponent(sharedBy)}`
+    : `/apps/a/${displayName}`;
 
   return (
     <Card
@@ -20,7 +25,7 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
         cursor: isMobile ? 'default' : 'pointer',
       }}
       className={`${styles.appCard} ${styles.skeleton}`}
-      onClick={isMobile ? undefined : () => (window.location.href = `/apps/a/${displayName}`)}
+      onClick={isMobile ? undefined : () => (window.location.href = detailsUrl)}
       onMouseEnter={
         isMobile
           ? undefined
@@ -60,6 +65,13 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
               }}
             />
           </Flex>
+          {sharedBy && (
+            <Flex align='center'>
+              <Text size='1' style={{ color: 'var(--gray-10)' }}>
+                {t('status.sharedBy')} {sharedBy}
+              </Text>
+            </Flex>
+          )}
 
           {/* Status skeleton */}
           <Flex align='center' gap='2'>
@@ -113,7 +125,7 @@ export function AppCardSkeleton({ appName, isMobile }: { appName: string; isMobi
             color='blue'
             variant='outline'
             style={{ cursor: 'pointer' }}
-            onClick={() => (window.location.href = `/apps/a/${displayName}`)}
+            onClick={() => (window.location.href = detailsUrl)}
           >
             <EyeOpenIcon />
             {t('card.viewDetails')}

@@ -20,7 +20,6 @@ import {
 export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile: boolean }) {
   const { t } = usePageTranslation();
   const statusInfo = useStatusInfo(appItem?.info);
-  const displayName = formatAppName(appItem.name);
   const processInfo = appItem.info
     ? getProcessInfo(appItem.info)
     : { processType: 'web', processCount: 0 };
@@ -68,12 +67,19 @@ export function AppCard({ appItem, isMobile }: { appItem: AppListItem; isMobile:
         <Flex direction='column' className={styles.appInfo}>
           <Flex align='center' gap='2'>
             <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
-              {displayName}
+              {appName}
             </Heading>
             <Text size='2' style={{ color: 'var(--gray-9)' }}>
               • {processInfo.processType}
             </Text>
           </Flex>
+          {sharedBy && (
+            <Flex align='center'>
+              <Text size='1' style={{ color: 'var(--gray-10)' }}>
+                {t('status.sharedBy')} {sharedBy}
+              </Text>
+            </Flex>
+          )}
 
           {/* Status with colored circle */}
           {statusInfo && (

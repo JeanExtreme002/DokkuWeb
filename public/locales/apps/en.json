@@ -22,6 +22,7 @@
   "card.viewDetails": "View details",
   "card.loadingStatus": "Loading status...",
   "card.na": "N/A",
+  "status.sharedBy": "Shared by",
   "status.active": "Active",
   "status.stopped": "Stopped",
   "status.notDeployed": "Not deployed",
