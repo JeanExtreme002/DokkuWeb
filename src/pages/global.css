@@ -7,7 +7,7 @@
 
 :root {
   /* Light theme variables */
-  --background-color: #ffffff;
+  --background-color: var(--gray-3);
   --surface-color: #ffffff;
   --text-primary: #111827;
   --text-secondary: #4b5563;
@@ -17,7 +17,7 @@
 
 [data-theme='dark'] {
   /* Dark theme variables */
-  --background-color: #0f0f0f;
+  --background-color: var(--gray-12);
   --surface-color: #1a1a1a;
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
@@ -241,7 +241,6 @@ body {
   width: 100%;
   overflow-x: hidden;
   padding: 0;
-  overscroll-behavior-y: none;
   background-color: var(--background-color);
   color: var(--text-primary);
   transition:
@@ -249,10 +248,11 @@ body {
     color 0.2s ease;
 }
 
-/* Prevent initial flash - apply default theme immediately */
-html {
-  background-color: #ffffff;
-  color: #111827;
+@media (min-width: 1100px) {
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
 }
 
 /* Override with dark mode if applicable */
