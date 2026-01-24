@@ -1,6 +1,7 @@
-import { AlertDialog, Button, Flex } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, Spinner } from '@radix-ui/themes';
 import { Trans } from 'react-i18next';
 
+import { TrashIcon } from '@/components/shared/icons';
 import { usePageTranslation } from '@/i18n/utils';
 
 interface UnlinkModalState {
@@ -12,9 +13,15 @@ interface ConfirmUnlinkModalProps {
   state: UnlinkModalState | null;
   onClose: () => void;
   onConfirm: () => void;
+  isUnlinking: boolean;
 }
 
-export function ConfirmUnlinkModal({ state, onClose, onConfirm }: ConfirmUnlinkModalProps) {
+export function ConfirmUnlinkModal({
+  state,
+  onClose,
+  onConfirm,
+  isUnlinking,
+}: ConfirmUnlinkModalProps) {
   const { t } = usePageTranslation();
   if (!state) return null;
 
@@ -38,8 +45,26 @@ export function ConfirmUnlinkModal({ state, onClose, onConfirm }: ConfirmUnlinkM
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
-            <Button variant='solid' color='red' style={{ cursor: 'pointer' }} onClick={onConfirm}>
-              {t('modals.unlink.confirm')}
+            <Button
+              variant='solid'
+              color='red'
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => {
+                e.preventDefault();
+                onConfirm();
+              }}
+            >
+              {isUnlinking ? (
+                <>
+                  <Spinner size='2' />
+                  {t('modals.unlink.unlinking')}
+                </>
+              ) : (
+                <>
+                  <TrashIcon />
+                  {t('modals.unlink.confirm')}
+                </>
+              )}
             </Button>
           </AlertDialog.Action>
         </Flex>

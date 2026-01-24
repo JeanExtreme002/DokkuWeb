@@ -1,15 +1,22 @@
-import { AlertDialog, Button, Flex } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, Spinner } from '@radix-ui/themes';
 import { Trans } from 'react-i18next';
 
+import { TrashIcon } from '@/components/shared/icons';
 import { usePageTranslation } from '@/i18n/utils';
 
 interface ConfirmDeleteModalProps {
   openName: string | null;
   onClose: () => void;
   onConfirm: () => void;
+  isDeleting: boolean;
 }
 
-export function ConfirmDeleteModal({ openName, onClose, onConfirm }: ConfirmDeleteModalProps) {
+export function ConfirmDeleteModal({
+  openName,
+  onClose,
+  onConfirm,
+  isDeleting,
+}: ConfirmDeleteModalProps) {
   const { t } = usePageTranslation();
   if (!openName) return null;
 
@@ -33,8 +40,26 @@ export function ConfirmDeleteModal({ openName, onClose, onConfirm }: ConfirmDele
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
-            <Button variant='solid' color='red' style={{ cursor: 'pointer' }} onClick={onConfirm}>
-              {t('modals.delete.confirm')}
+            <Button
+              variant='solid'
+              color='red'
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => {
+                e.preventDefault();
+                onConfirm();
+              }}
+            >
+              {isDeleting ? (
+                <>
+                  <Spinner size='2' />
+                  {t('modals.delete.deleting')}
+                </>
+              ) : (
+                <>
+                  <TrashIcon />
+                  {t('modals.delete.confirm')}
+                </>
+              )}
             </Button>
           </AlertDialog.Action>
         </Flex>

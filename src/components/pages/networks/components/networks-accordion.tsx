@@ -1,5 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion';
-import { Box, Heading, Text } from '@radix-ui/themes';
+import { Box, Heading, Spinner, Text } from '@radix-ui/themes';
 
 import {
   AppIcon,
@@ -73,7 +73,9 @@ export function NetworksAccordion({
                   className={styles.networkAppsCount}
                   style={{ color: 'var(--gray-10)' }}
                 >
-                  {t('accordion.appsCount', { count: apps.length })}
+                  {apps.length === 1
+                    ? t('accordion.appsCount_one')
+                    : t('accordion.appsCount_other', { count: apps.length })}
                 </Text>
               </div>
 
@@ -115,10 +117,19 @@ export function NetworksAccordion({
                   <button
                     className={styles.linkButton}
                     onClick={() => onLinkApp(networkName)}
-                    disabled={!newAppName[networkName]?.trim() || actionLoading[networkName]}
+                    disabled={actionLoading[networkName]}
                   >
-                    <BindIcon />
-                    {t('accordion.link.button')}
+                    {actionLoading[networkName] ? (
+                      <>
+                        <Spinner size='2' />
+                        {t('accordion.link.buttonLoading')}
+                      </>
+                    ) : (
+                      <>
+                        <BindIcon />
+                        {t('accordion.link.button')}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

@@ -48,6 +48,8 @@ export function NetworksPage(props: NetworksPageProps) {
     networkName: string;
     appName: string;
   } | null>(null);
+  const [isUnlinking, setIsUnlinking] = useState<boolean>(false);
+  const [isDeletingNetwork, setIsDeletingNetwork] = useState<boolean>(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newNetworkName, setNewNetworkName] = useState('');
   const [createNetworkError, setCreateNetworkError] = useState<string | null>(null);
@@ -172,6 +174,8 @@ export function NetworksPage(props: NetworksPageProps) {
   };
 
   const handleUnlinkApp = async (networkName: string, appName: string) => {
+    setIsUnlinking(true);
+
     try {
       const ok = await svcUnlinkApp(networkName, appName);
       if (ok) {
@@ -181,6 +185,7 @@ export function NetworksPage(props: NetworksPageProps) {
       console.error('Error unlinking app:', error);
     } finally {
       setUnlinkModalOpen(null);
+      setIsUnlinking(false);
     }
   };
 
@@ -201,10 +206,24 @@ export function NetworksPage(props: NetworksPageProps) {
     setCreatingNetwork(true);
 
     try {
-      const status = await svcCreateNetwork(newNetworkName.trim());
+      const createdName = newNetworkName.trim();
+      const status = await svcCreateNetwork(createdName);
+
       if (status === 200 || status === 201) {
-        const networksData = await svcListNetworks();
-        setNetworks(networksData);
+        let finalNetworksData: NetworksData = networks;
+        const count = Object.keys(networks).length;
+
+        for (let i = 0; i < 10; i++) {
+          const networksData = await svcListNetworks(true);
+          finalNetworksData = networksData;
+
+          if (count !== Object.keys(networksData).length) {
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        setNetworks(finalNetworksData);
 
         setCreateModalOpen(false);
         setNewNetworkName('');
@@ -230,6 +249,8 @@ export function NetworksPage(props: NetworksPageProps) {
   };
 
   const handleDeleteNetwork = async (networkName: string) => {
+    setIsDeletingNetwork(true);
+
     try {
       const ok = await svcDeleteNetwork(networkName);
       if (ok) {
@@ -249,6 +270,7 @@ export function NetworksPage(props: NetworksPageProps) {
       console.error('Error deleting network:', error);
     }
     setDeleteModalOpen(null);
+    setIsDeletingNetwork(false);
   };
 
   const networksList = Object.keys(networks);
@@ -323,6 +345,7 @@ export function NetworksPage(props: NetworksPageProps) {
             openName={deleteModalOpen}
             onClose={() => setDeleteModalOpen(null)}
             onConfirm={() => deleteModalOpen && handleDeleteNetwork(deleteModalOpen)}
+            isDeleting={isDeletingNetwork}
           />
 
           {/* Unlink confirmation modal */}
@@ -330,6 +353,7 @@ export function NetworksPage(props: NetworksPageProps) {
             state={unlinkModalOpen}
             onClose={() => setUnlinkModalOpen(null)}
             onConfirm={confirmUnlinkApp}
+            isUnlinking={isUnlinking}
           />
 
           {/* Create network modal */}
