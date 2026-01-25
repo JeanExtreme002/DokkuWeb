@@ -1,4 +1,6 @@
-import { Button, Dialog, Flex } from '@radix-ui/themes';
+import { Box, Button, Dialog, Flex, Text, TextField } from '@radix-ui/themes';
+import React, { useEffect, useState } from 'react';
+import { Trans } from 'react-i18next';
 
 import { usePageTranslation } from '@/i18n/utils';
 
@@ -21,6 +23,13 @@ export function TakeoverConfirmModal({
   const description = t('admin.users.takeover.modal.description', { email: targetEmail });
   const descriptionParts = description.split('\n');
   const boldPhrase = t('admin.users.takeover.modal.description.bold_phrase');
+
+  const [confirmText, setConfirmText] = useState('');
+  const expectedConfirm = 'takeover';
+
+  useEffect(() => {
+    if (!open) setConfirmText('');
+  }, [open]);
 
   const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -72,6 +81,23 @@ export function TakeoverConfirmModal({
           ))}
         </Dialog.Description>
 
+        <Box style={{ marginTop: '8px' }}>
+          <Text size='2' style={{ color: 'var(--gray-11)' }}>
+            <Trans
+              t={t}
+              size='1'
+              i18nKey='admin.users.takeover.modal.confirmInstruction'
+              values={{ email: expectedConfirm }}
+              components={{ strong: <strong /> }}
+            />
+          </Text>
+          <TextField.Root
+            placeholder={t('admin.users.takeover.modal.confirmInputPlaceholder')}
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+          />
+        </Box>
+
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>
             <Button variant='soft' color='gray' style={{ cursor: 'pointer' }}>
@@ -81,8 +107,8 @@ export function TakeoverConfirmModal({
           <Button
             color='red'
             onClick={onConfirm}
-            disabled={loading}
-            style={{ backgroundColor: 'var(--red-9)', color: 'white', cursor: 'pointer' }}
+            disabled={loading || confirmText.trim() !== expectedConfirm}
+            style={{ cursor: 'pointer' }}
           >
             {loading
               ? t('admin.users.takeover.modal.confirm_loading')

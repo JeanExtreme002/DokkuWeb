@@ -170,16 +170,31 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
               </Flex>
               <Separator size='4' className={styles.userControlsSeparator} />
               <Flex className={styles.userControls}>
-                <Flex align='center' gap='3' className={styles.adminSwitchRow}>
-                  <Text size='2' style={{ color: 'var(--gray-11)' }}>
-                    {t('admin.users.details.admin_label')}
-                  </Text>
-                  <Switch
-                    style={{ cursor: 'pointer' }}
-                    checked={!!selectedUserIsAdmin}
-                    onCheckedChange={(checked) => onRequestAdminChange(!!checked)}
-                    disabled={toggleAdminLoading || selectedUserIsAdmin === null}
-                  />
+                <Flex className={styles.criticalUserControls}>
+                  <Flex align='center' gap='3' className={styles.adminSwitchRow}>
+                    <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                      {t('admin.users.details.admin_label')}
+                    </Text>
+                    <Switch
+                      style={{ cursor: 'pointer' }}
+                      checked={!!selectedUserIsAdmin}
+                      onCheckedChange={(checked) => onRequestAdminChange(!!checked)}
+                      disabled={toggleAdminLoading || selectedUserIsAdmin === null}
+                    />
+                  </Flex>
+                  <Flex>
+                    <Button
+                      size='1'
+                      color='red'
+                      variant='surface'
+                      className={styles.mobileDeleteUserButton}
+                      onClick={onOpenDeleteModal}
+                      disabled={!userQuota?.email}
+                    >
+                      <ExclamationTriangleIcon />
+                      {t('admin.users.details.delete.button')}
+                    </Button>
+                  </Flex>
                 </Flex>
                 <Button
                   size='2'
@@ -363,8 +378,8 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                 size='2'
                 color='red'
                 variant='surface'
-                style={{ cursor: 'pointer' }}
                 onClick={onOpenDeleteModal}
+                className={styles.deleteUserButton}
                 disabled={!userQuota?.email}
               >
                 <ExclamationTriangleIcon />

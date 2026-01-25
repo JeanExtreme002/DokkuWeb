@@ -77,7 +77,7 @@
   "admin.security.shutdown.modal.description": "This action will shut down the API and stop the website's functionality.\nTo confirm, type {{keyword}} below.",
   "admin.security.shutdown.modal.cancel": "Cancel",
   "admin.security.shutdown.modal.confirm_loading": "Processing...",
-  "admin.security.shutdown.modal.confirm": "Confirm Shutdown",
+  "admin.security.shutdown.modal.confirm": "Shutdown API",
 
   "admin.security.danger_zone.title": "Danger Zone",
   "admin.security.danger_zone.header": "Shut down Dokku-API service",
@@ -95,12 +95,14 @@
   "admin.users.takeover.modal.cancel": "Cancel",
   "admin.users.takeover.modal.confirm_loading": "Processing...",
   "admin.users.takeover.modal.confirm": "Confirm Takeover",
+  "admin.users.takeover.modal.confirmInstruction": "To confirm, type: <strong>\"takeover\"</strong>",
+  "admin.users.takeover.modal.confirmInputPlaceholder": "takeover",
 
   "admin.users.delete.modal.title": "Confirm User Deletion",
   "admin.users.delete.modal.description": "This action will <strong>remove the user and all resources created by them</strong> from the system. This operation is <strong>irreversible</strong> and may take some time to complete.",
   "admin.users.delete.modal.cancel": "Cancel",
   "admin.users.delete.modal.confirm_loading": "Deleting...",
-  "admin.users.delete.modal.confirm": "Confirm Deletion",
+  "admin.users.delete.modal.confirm": "Delete",
   "admin.users.delete.modal.confirmInstruction": "To confirm, type the user's email: <strong>{{email}}</strong>",
   "admin.users.delete.modal.confirmInputPlaceholder": "{{email}}",
 

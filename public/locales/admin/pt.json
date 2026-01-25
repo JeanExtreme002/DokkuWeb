@@ -77,7 +77,7 @@
   "admin.security.shutdown.modal.description": "Esta ação irá desligar a API e interromper as funcionalidades do website.\nPara confirmar, digite {{keyword}} abaixo.",
   "admin.security.shutdown.modal.cancel": "Cancelar",
   "admin.security.shutdown.modal.confirm_loading": "Processando...",
-  "admin.security.shutdown.modal.confirm": "Confirmar Desligamento",
+  "admin.security.shutdown.modal.confirm": "Desligar API",
 
   "admin.security.danger_zone.title": "Zona de Perigo",
   "admin.security.danger_zone.header": "Encerrar serviço Dokku-API",
@@ -95,12 +95,14 @@
   "admin.users.takeover.modal.cancel": "Cancelar",
   "admin.users.takeover.modal.confirm_loading": "Processando...",
   "admin.users.takeover.modal.confirm": "Confirmar Takeover",
+  "admin.users.takeover.modal.confirmInstruction": "Para confirmar, digite: <strong>\"takeover\"</strong>",
+  "admin.users.takeover.modal.confirmInputPlaceholder": "takeover",
 
   "admin.users.delete.modal.title": "Confirmar Exclusão de Usuário",
   "admin.users.delete.modal.description": "Esta ação <strong>removerá o usuário e todos os recursos criados por ele</strong> do sistema. Esta operação é <strong>irreversível</strong> e pode levar algum tempo para ser concluída.",
   "admin.users.delete.modal.cancel": "Cancelar",
   "admin.users.delete.modal.confirm_loading": "Excluindo...",
-  "admin.users.delete.modal.confirm": "Confirmar Exclusão",
+  "admin.users.delete.modal.confirm": "Excluir",
   "admin.users.delete.modal.confirmInstruction": "Para confirmar, digite o email do usuário: <strong>{{email}}</strong>",
   "admin.users.delete.modal.confirmInputPlaceholder": "{{email}}",
 

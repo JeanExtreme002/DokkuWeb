@@ -272,6 +272,20 @@
   gap: 15px;
 }
 
+.criticalUserControls {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.mobileDeleteUserButton {
+  cursor: pointer;
+  display: none;
+}
+
+.deleteUserButton {
+  cursor: pointer;
+}
+
 .adminSwitchRow {
   display: flex;
   align-items: center;
@@ -312,7 +326,14 @@
     font-size: 12px;
   }
   .resourcesButtons {
-    flex-direction: column-reverse;
+    justify-content: end;
+  }
+  .mobileDeleteUserButton {
+    display: flex;
+  }
+
+  .deleteUserButton {
+    display: none;
   }
 }
 
@@ -409,5 +430,9 @@
   }
   .userAvatar {
     display: none;
+  }
+  .criticalUserControls {
+    flex-direction: column;
+    gap: 10px;
   }
 }
