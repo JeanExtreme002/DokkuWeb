@@ -176,6 +176,12 @@
   animation: pluginsSpin 0.8s linear infinite;
 }
 
+.resourcesButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 @keyframes pluginsSpin {
   from {
     transform: rotate(0deg);
@@ -305,6 +311,9 @@
   .userEmailText {
     font-size: 12px;
   }
+  .resourcesButtons {
+    flex-direction: column-reverse;
+  }
 }
 
 /* Admin users list responsive adjustments */
@@ -397,5 +406,8 @@
 @media (max-width: 360px) {
   .sshKeyBadges {
     flex-direction: column;
+  }
+  .userAvatar {
+    display: none;
   }
 }

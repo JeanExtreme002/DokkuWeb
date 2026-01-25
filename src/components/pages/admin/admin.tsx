@@ -13,6 +13,7 @@ import {
   AdminPrivilegeConfirmModal,
   AdminUsersCard,
   DangerZoneCard,
+  DeleteUserModal,
   DokkuCommandCard,
   PluginsCard,
   ResourcesCard,
@@ -490,6 +491,37 @@ export function AdminPage(props: AdminPageProps) {
     }
   }, [activeTab, fetchSecurityConfig, fetchSshKeyInfo, securityConfig, securityConfigLoading]);
 
+  // Delete user modal state
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleteUserLoading, setDeleteUserLoading] = useState(false);
+
+  const performDeleteUser = async () => {
+    const email = userQuota?.email || selectedUserEmail;
+    if (!email || !email.trim()) return;
+
+    try {
+      setDeleteUserLoading(true);
+      setUserQuotaError(null);
+
+      await api.delete(`/api/admin/users/${email}`);
+
+      setShowDeleteUserModal(false);
+      setDeleteConfirmText('');
+
+      setSelectedUserEmail('');
+      setUserQuota(null);
+      setSelectedUserIsAdmin(null);
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setUserQuotaError(t('admin.errors.user.delete_failed'));
+    } finally {
+      setDeleteUserLoading(false);
+    }
+  };
+
   if (!adminChecked || !adminAllowed) {
     return null;
   }
@@ -596,6 +628,10 @@ export function AdminPage(props: AdminPageProps) {
                     setConfirmAdminModalOpen(true);
                   }}
                   onOpenTakeoverModal={() => setShowTakeoverModal(true)}
+                  onOpenDeleteModal={() => {
+                    setDeleteConfirmText('');
+                    setShowDeleteUserModal(true);
+                  }}
                 />
               </Card>
 
@@ -699,6 +735,20 @@ export function AdminPage(props: AdminPageProps) {
           await fetchAdminUsers();
         }}
         loading={toggleAdminLoading}
+      />
+
+      {/* Delete user confirmation modal */}
+      <DeleteUserModal
+        open={showDeleteUserModal}
+        onOpenChange={(open) => {
+          setShowDeleteUserModal(open);
+          if (!open) setDeleteConfirmText('');
+        }}
+        email={userQuota?.email || selectedUserEmail}
+        confirmText={deleteConfirmText}
+        onConfirmTextChange={setDeleteConfirmText}
+        onConfirm={performDeleteUser}
+        loading={deleteUserLoading}
       />
 
       {/* API shutdown confirmation modal */}

@@ -1,4 +1,5 @@
-import { Box, Button, Dialog, Flex, TextField } from '@radix-ui/themes';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { Box, Button, Dialog, Flex, Spinner, TextField } from '@radix-ui/themes';
 
 import { usePageTranslation } from '@/i18n/utils';
 
@@ -67,19 +68,23 @@ export function ShutdownConfirmModal({
             </Button>
           </Dialog.Close>
           <Button
+            color='red'
             onClick={onConfirm}
             disabled={loading || confirmText.trim() !== keyword}
             style={{
-              backgroundColor: 'var(--red-9)',
-              color: 'white',
-              border: 'none',
               cursor: 'pointer',
             }}
           >
             {loading ? (
-              <>{t('admin.security.shutdown.modal.confirm_loading')}</>
+              <>
+                <Spinner />
+                {t('admin.security.shutdown.modal.confirm_loading')}
+              </>
             ) : (
-              t('admin.security.shutdown.modal.confirm')
+              <>
+                <ExclamationTriangleIcon />
+                {t('admin.security.shutdown.modal.confirm')}
+              </>
             )}
           </Button>
         </Flex>

@@ -1,4 +1,4 @@
-import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { ExclamationTriangleIcon, InfoCircledIcon } from '@radix-ui/react-icons';
 import {
   Avatar,
   Badge,
@@ -50,6 +50,7 @@ interface UserSelectionCardProps {
   toggleAdminLoading: boolean;
   onRequestAdminChange: (newVal: boolean) => void;
   onOpenTakeoverModal: () => void;
+  onOpenDeleteModal: () => void;
 }
 
 export function UserSelectionCard(props: UserSelectionCardProps) {
@@ -73,6 +74,7 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
     toggleAdminLoading,
     onRequestAdminChange,
     onOpenTakeoverModal,
+    onOpenDeleteModal,
   } = props;
   const { t } = usePageTranslation();
 
@@ -356,41 +358,54 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
               </Flex>
             </Flex>
 
-            <Flex justify='end' gap='2'>
-              {!editMode ? (
-                <Button
-                  variant='outline'
-                  color='orange'
-                  size='2'
-                  style={{ cursor: 'pointer' }}
-                  onClick={onStartEdit}
-                >
-                  {t('admin.users.details.edit.button_edit')}
-                </Button>
-              ) : (
-                <>
+            <Flex className={styles.resourcesButtons}>
+              <Button
+                size='2'
+                color='red'
+                variant='surface'
+                style={{ cursor: 'pointer' }}
+                onClick={onOpenDeleteModal}
+                disabled={!userQuota?.email}
+              >
+                <ExclamationTriangleIcon />
+                {t('admin.users.details.delete.button')}
+              </Button>
+              <Flex gap='2'>
+                {!editMode ? (
                   <Button
-                    color='gray'
-                    size='2'
-                    variant='soft'
-                    style={{ cursor: 'pointer' }}
-                    onClick={onCancelEdit}
-                  >
-                    {t('admin.users.details.edit.button_cancel')}
-                  </Button>
-                  <Button
+                    variant='outline'
                     color='orange'
                     size='2'
                     style={{ cursor: 'pointer' }}
-                    onClick={onSaveEdit}
-                    disabled={updateLoading}
+                    onClick={onStartEdit}
                   >
-                    {updateLoading
-                      ? t('admin.users.details.edit.button_save_saving')
-                      : t('admin.users.details.edit.button_save')}
+                    {t('admin.users.details.edit.button_edit')}
                   </Button>
-                </>
-              )}
+                ) : (
+                  <>
+                    <Button
+                      color='gray'
+                      size='2'
+                      variant='soft'
+                      style={{ cursor: 'pointer' }}
+                      onClick={onCancelEdit}
+                    >
+                      {t('admin.users.details.edit.button_cancel')}
+                    </Button>
+                    <Button
+                      color='orange'
+                      size='2'
+                      style={{ cursor: 'pointer' }}
+                      onClick={onSaveEdit}
+                      disabled={updateLoading}
+                    >
+                      {updateLoading
+                        ? t('admin.users.details.edit.button_save_saving')
+                        : t('admin.users.details.edit.button_save')}
+                    </Button>
+                  </>
+                )}
+              </Flex>
             </Flex>
           </Flex>
         </Box>

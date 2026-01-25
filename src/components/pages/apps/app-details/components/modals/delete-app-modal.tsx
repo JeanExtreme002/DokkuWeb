@@ -76,12 +76,10 @@ export default function DeleteAppModal(props: DeleteAppModalProps) {
             </Button>
           </Dialog.Close>
           <Button
+            color='red'
             onClick={deleteApp}
             disabled={deleteAppLoading || deleteConfirmText.trim() !== confirmText}
             style={{
-              backgroundColor: 'var(--red-9)',
-              color: 'white',
-              border: 'none',
               cursor: 'pointer',
             }}
           >

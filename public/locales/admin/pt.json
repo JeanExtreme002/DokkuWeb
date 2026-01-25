@@ -10,6 +10,7 @@
   "admin.errors.security.ssh_history_load_failed": "Erro ao carregar histórico SSH",
   "admin.errors.users.admin_list_load_failed": "Erro ao carregar usuários administradores",
   "admin.errors.security.shutdown_failed": "Erro ao desligar a API",
+  "admin.errors.user.delete_failed": "Erro ao deletar usuário",
 
   "admin.users.selection.title": "Seleção de Usuário",
   "admin.users.selection.tooltip": "Selecione o usuário para gerenciar",
@@ -27,6 +28,7 @@
   "admin.users.details.edit.button_cancel": "Cancelar",
   "admin.users.details.edit.button_save_saving": "Salvando...",
   "admin.users.details.edit.button_save": "Salvar",
+  "admin.users.details.delete.button": "Deletar Usuário",
 
   "admin.users.admin_list.title": "Usuários Administradores",
   "admin.users.admin_list.tooltip": "Lista de usuários com privilégio de administrador",
@@ -93,6 +95,14 @@
   "admin.users.takeover.modal.cancel": "Cancelar",
   "admin.users.takeover.modal.confirm_loading": "Processando...",
   "admin.users.takeover.modal.confirm": "Confirmar Takeover",
+
+  "admin.users.delete.modal.title": "Confirmar Exclusão de Usuário",
+  "admin.users.delete.modal.description": "Esta ação <strong>removerá o usuário e todos os recursos criados por ele</strong> do sistema. Esta operação é <strong>irreversível</strong> e pode levar algum tempo para ser concluída.",
+  "admin.users.delete.modal.cancel": "Cancelar",
+  "admin.users.delete.modal.confirm_loading": "Excluindo...",
+  "admin.users.delete.modal.confirm": "Confirmar Exclusão",
+  "admin.users.delete.modal.confirmInstruction": "Para confirmar, digite o email do usuário: <strong>{{email}}</strong>",
+  "admin.users.delete.modal.confirmInputPlaceholder": "{{email}}",
 
   "admin.dokku.command.title": "Rodar comando no Dokku",
   "admin.dokku.command.tooltip": "Execute qualquer comando Dokku disponível",

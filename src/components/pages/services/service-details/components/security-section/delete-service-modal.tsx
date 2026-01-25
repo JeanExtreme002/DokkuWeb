@@ -70,12 +70,10 @@ export function DeleteServiceModal({
             </Button>
           </Dialog.Close>
           <Button
+            color='red'
             onClick={onConfirm}
             disabled={deleteLoading || deleteConfirmText.trim() !== token}
             style={{
-              backgroundColor: 'var(--red-9)',
-              color: 'white',
-              border: 'none',
               cursor: 'pointer',
             }}
           >
