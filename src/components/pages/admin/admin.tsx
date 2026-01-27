@@ -2,7 +2,7 @@ import { Box, Card, Flex, Heading, Tabs } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { NavBar } from '@/components';
 import { usePageTranslation } from '@/i18n/utils';
@@ -73,6 +73,7 @@ export function AdminPage(props: AdminPageProps) {
   // Admin gate states
   const [adminChecked, setAdminChecked] = useState(false);
   const [adminAllowed, setAdminAllowed] = useState(false);
+  const isRedirectingRef = useRef(false);
 
   // Dokku tab states
   const [commandInput, setCommandInput] = useState('');
@@ -193,10 +194,14 @@ export function AdminPage(props: AdminPageProps) {
   }, [fetchResources, resourcesTab, resourcesOffset, resourcesLimit, resourcesAscCreatedAt]);
 
   useEffect(() => {
+    if (isRedirectingRef.current) return;
     const checkAdminStatus = async (email: string): Promise<boolean> => {
       try {
         const response = await api.post<{ result: boolean }>(`/api/admin/users/${email}/admin/`);
         const allowed = response.data.result;
+        if (isRedirectingRef.current) {
+          return allowed;
+        }
         setAdminAllowed(allowed);
         setAdminChecked(true);
         if (!allowed) {
@@ -205,6 +210,9 @@ export function AdminPage(props: AdminPageProps) {
         return allowed;
       } catch (error) {
         console.error('Error checking admin status:', error);
+        if (isRedirectingRef.current) {
+          return false;
+        }
         setAdminAllowed(false);
         setAdminChecked(true);
         router.replace('/404');
@@ -313,6 +321,7 @@ export function AdminPage(props: AdminPageProps) {
 
     try {
       setTakeoverLoading(true);
+      isRedirectingRef.current = true;
       const response = await api.post<{ access_token: string }>(
         `/api/admin/users/${userQuota.email}/take-over/`
       );
@@ -326,12 +335,13 @@ export function AdminPage(props: AdminPageProps) {
       });
 
       setShowTakeoverModal(false);
-      window.location.reload();
+      setTakeoverLoading(false);
+      router.push('/');
     } catch (error) {
       console.error('Error performing takeover:', error);
       setUserQuotaError(t('admin.errors.user.takeover_failed'));
-    } finally {
       setTakeoverLoading(false);
+      isRedirectingRef.current = false;
     }
   };
 
