@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import LanguageTagUpdater from '@/i18n/LanguageTagUpdater';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       refetchWhenOffline={false}
     >
       <ThemeProvider>
+        <LanguageTagUpdater />
         <Component {...pageProps} />
       </ThemeProvider>
     </SessionProvider>
