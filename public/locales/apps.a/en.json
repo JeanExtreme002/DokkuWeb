@@ -184,6 +184,7 @@
   "envSection.cancel": "Cancel",
   "envSection.save": "Save",
   "servicesSection.title": "Connected Services",
+  "servicesSection.addService": "Create service",
   "servicesSection.loading": "Loading services...",
   "servicesSection.empty": "No services connected to this app.",
   "servicesSection.linked": "Linked",

@@ -184,6 +184,7 @@
   "envSection.cancel": "Cancelar",
   "envSection.save": "Salvar",
   "servicesSection.title": "Serviços Conectados",
+  "servicesSection.addService": "Criar serviço",
   "servicesSection.loading": "Carregando serviços...",
   "servicesSection.empty": "Nenhum serviço conectado a este aplicativo.",
   "servicesSection.linked": "Vinculado",

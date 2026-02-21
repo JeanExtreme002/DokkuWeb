@@ -626,9 +626,21 @@
   }
 }
 
+.servicesHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
 @media (max-width: 470px) {
   .appTitle {
     flex-direction: column;
+  }
+  .servicesHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 }
 

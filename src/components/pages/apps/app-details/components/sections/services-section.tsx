@@ -1,4 +1,5 @@
-import { Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
 
@@ -12,17 +13,32 @@ interface ServicesSectionProps {
   errorServices: string | null | undefined;
   databases: Record<string, string[]>;
   onOpenService: (dbType: string, displayName: string) => void;
+  onCreateService: () => void;
 }
 
 export default function ServicesSection(props: ServicesSectionProps) {
-  const { servicesLoading, errorServices, databases, onOpenService } = props;
+  const { servicesLoading, errorServices, databases, onOpenService, onCreateService } = props;
   const { t } = usePageTranslation();
 
   return (
     <Flex direction='column' gap='4'>
-      <Heading size='5' style={{ color: 'var(--gray-12)' }}>
-        {t('servicesSection.title')}
-      </Heading>
+      <Flex className={styles.servicesHeader}>
+        <Heading size='5' style={{ color: 'var(--gray-12)' }}>
+          {t('servicesSection.title')}
+        </Heading>
+        <Button
+          onClick={onCreateService}
+          style={{
+            background: 'linear-gradient(135deg, var(--green-9) 0%, var(--green-10) 100%)',
+            border: 'none',
+            color: 'white',
+            cursor: 'pointer',
+          }}
+        >
+          <PlusIcon />
+          {t('servicesSection.addService')}
+        </Button>
+      </Flex>
 
       {servicesLoading ? (
         <Box className={styles.loadingSpinner}>
