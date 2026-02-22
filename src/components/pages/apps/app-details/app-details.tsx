@@ -837,7 +837,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await api.post(
         `/api/apps/${props.appName}/rename/${encodeURIComponent(trimmedName)}`,
         {},
-        { params: withSharedBy() }
+        { params: withSharedBy({ unique_app: 'true' }) }
       );
       await new Promise((resolve) => setTimeout(resolve, 100000));
       handleRenameModalOpenChange(false);
