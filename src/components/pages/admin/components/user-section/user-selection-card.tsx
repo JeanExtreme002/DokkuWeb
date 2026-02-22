@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon, InfoCircledIcon } from '@radix-ui/react-icons';
+import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import {
   Avatar,
   Badge,
@@ -13,6 +13,7 @@ import {
   TextField,
   Tooltip,
 } from '@radix-ui/themes';
+import { useState } from 'react';
 
 import { AppIcon, NetworkIcon, ServiceIcon } from '@/components';
 import { TakeoverIcon } from '@/components/shared/icons';
@@ -51,6 +52,9 @@ interface UserSelectionCardProps {
   onRequestAdminChange: (newVal: boolean) => void;
   onOpenTakeoverModal: () => void;
   onOpenDeleteModal: () => void;
+  onOwnershipAction: (action: 'link' | 'unlink', appName: string) => Promise<void>;
+  ownershipError: string | null;
+  onClearOwnershipError: () => void;
 }
 
 export function UserSelectionCard(props: UserSelectionCardProps) {
@@ -75,8 +79,27 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
     onRequestAdminChange,
     onOpenTakeoverModal,
     onOpenDeleteModal,
+    onOwnershipAction,
+    ownershipError,
+    onClearOwnershipError,
   } = props;
   const { t } = usePageTranslation();
+  const [ownershipAppName, setOwnershipAppName] = useState('');
+  const [ownershipAction, setOwnershipAction] = useState<'link' | 'unlink' | null>(null);
+
+  const handleOwnershipAction = async (action: 'link' | 'unlink') => {
+    const appName = ownershipAppName.trim();
+    if (!userQuota?.email || !appName || ownershipAction) return;
+
+    setOwnershipAction(action);
+    try {
+      await onOwnershipAction(action, appName);
+    } catch (error) {
+      console.error('Error updating app ownership:', error);
+    } finally {
+      setOwnershipAction(null);
+    }
+  };
 
   return (
     <Flex direction='column' gap='4' style={{ padding: '12px' }}>
@@ -372,7 +395,65 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
                 )}
               </Flex>
             </Flex>
-
+            <Flex direction='column' gap='3' style={{ marginBlock: '8px' }}>
+              <Flex align='center' gap='2'>
+                <Heading size='2' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                  {t('admin.users.details.set_app_ownership.title')}
+                </Heading>
+                <Tooltip content={t('admin.users.details.set_app_ownership.description')}>
+                  <InfoCircledIcon style={{ color: 'var(--gray-9)' }} />
+                </Tooltip>
+              </Flex>
+              <Flex className={styles.ownershipInput} align='center' gap='2'>
+                <Flex direction='column' style={{ flex: 1, minWidth: '190px' }}>
+                  <TextField.Root
+                    value={ownershipAppName}
+                    onChange={(e) => {
+                      if (ownershipError) onClearOwnershipError();
+                      setOwnershipAppName(e.target.value);
+                    }}
+                    placeholder={t('admin.users.details.set_app_ownership.input_placeholder')}
+                    disabled={!userQuota?.email}
+                  />
+                </Flex>
+                <Flex gap='2' align='center'>
+                  <Button
+                    size='2'
+                    variant='surface'
+                    onClick={() => handleOwnershipAction('link')}
+                    disabled={
+                      !userQuota?.email || !ownershipAppName.trim() || ownershipAction !== null
+                    }
+                  >
+                    {ownershipAction === 'link' && <ReloadIcon className={styles.buttonSpinner} />}
+                    {ownershipAction === 'link'
+                      ? t('admin.users.details.set_app_ownership.linking')
+                      : t('admin.users.details.set_app_ownership.link')}
+                  </Button>
+                  <Button
+                    size='2'
+                    variant='surface'
+                    color='red'
+                    onClick={() => handleOwnershipAction('unlink')}
+                    disabled={
+                      !userQuota?.email || !ownershipAppName.trim() || ownershipAction !== null
+                    }
+                  >
+                    {ownershipAction === 'unlink' && (
+                      <ReloadIcon className={styles.buttonSpinner} />
+                    )}
+                    {ownershipAction === 'unlink'
+                      ? t('admin.users.details.set_app_ownership.unlinking')
+                      : t('admin.users.details.set_app_ownership.unlink')}
+                  </Button>
+                </Flex>
+              </Flex>
+              {ownershipError && (
+                <Text size='2' style={{ color: 'var(--red-11)' }}>
+                  {ownershipError}
+                </Text>
+              )}
+            </Flex>
             <Flex className={styles.resourcesButtons}>
               <Button
                 size='2'

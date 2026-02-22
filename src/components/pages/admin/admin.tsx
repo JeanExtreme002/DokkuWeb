@@ -59,6 +59,7 @@ export function AdminPage(props: AdminPageProps) {
     services_quota: 0,
   });
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [ownershipError, setOwnershipError] = useState<string | null>(null);
 
   // Admin toggle for selected user
   const [selectedUserIsAdmin, setSelectedUserIsAdmin] = useState<boolean | null>(null);
@@ -313,6 +314,32 @@ export function AdminPage(props: AdminPageProps) {
       console.error('Error toggling user admin:', error);
     } finally {
       setToggleAdminLoading(false);
+    }
+  };
+
+  const handleOwnershipAction = async (action: 'link' | 'unlink', appName: string) => {
+    const email = userQuota?.email;
+    const trimmedName = appName.trim();
+    if (!email || !trimmedName) return;
+
+    const endpoint = `/api/admin/apps/${email}/set-owner/${encodeURIComponent(trimmedName)}`;
+
+    try {
+      setOwnershipError(null);
+      if (action === 'link') {
+        await api.post(endpoint);
+      } else {
+        await api.delete(endpoint);
+      }
+      window.location.reload();
+    } catch (error) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 404) {
+        setOwnershipError(t('admin.users.details.set_app_ownership.not_found'));
+      } else {
+        setOwnershipError(null);
+      }
+      console.error('Error updating app ownership:', error);
     }
   };
 
@@ -642,6 +669,9 @@ export function AdminPage(props: AdminPageProps) {
                     setDeleteConfirmText('');
                     setShowDeleteUserModal(true);
                   }}
+                  onOwnershipAction={handleOwnershipAction}
+                  ownershipError={ownershipError}
+                  onClearOwnershipError={() => setOwnershipError(null)}
                 />
               </Card>
 

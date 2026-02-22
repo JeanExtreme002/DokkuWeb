@@ -182,6 +182,14 @@
   gap: 10px;
 }
 
+.ownershipInput {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 @keyframes pluginsSpin {
   from {
     transform: rotate(0deg);
