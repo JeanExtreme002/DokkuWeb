@@ -1003,7 +1003,7 @@ button.envExportButtonOrange {
   --danger-row: 1; /* avoid empty ruleset */
 }
 
-@media (max-width: 550px) {
+@media (max-width: 730px) {
   .dangerRow {
     flex-direction: column !important;
     align-items: flex-start !important;

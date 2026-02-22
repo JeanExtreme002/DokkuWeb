@@ -7,6 +7,7 @@ import { NavBar } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 import { api } from '@/lib';
 
+import { useAppNameValidation } from './../utils';
 import styles from './app-creation.module.css';
 import {
   ActionButtons,
@@ -17,7 +18,7 @@ import {
   HeaderSection,
   NetworkSelection,
 } from './components';
-import { useAppNameValidation, useIsMobile } from './utils';
+import { useIsMobile } from './utils';
 
 interface AppCreationPageProps {
   session: Session;

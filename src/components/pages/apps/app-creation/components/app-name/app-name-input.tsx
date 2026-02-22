@@ -2,7 +2,7 @@ import { Flex, Text, TextField } from '@radix-ui/themes';
 
 import { usePageTranslation } from '@/i18n/utils';
 
-import { useAppNameValidation } from '../../utils';
+import { useAppNameValidation } from '../../../utils';
 
 interface AppNameInputProps {
   value: string;

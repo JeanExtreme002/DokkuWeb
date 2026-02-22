@@ -4,6 +4,7 @@ export { default as DeleteEnvModal } from './delete-env-modal';
 export { default as DeletePortModal } from './delete-port-modal';
 export { default as DeployRepoModal } from './deploy-repo-modal';
 export { default as RebuildAppConfirmModal } from './rebuild-app-confirm-modal';
+export { default as RenameAppModal } from './rename-app-modal';
 export { default as RestartAppConfirmModal } from './restart-app-confirm-modal';
 export { default as ShareConfirmModal } from './share-confirm-modal';
 export { default as StopAppConfirmModal } from './stop-app-confirm-modal';

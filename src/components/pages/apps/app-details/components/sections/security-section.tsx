@@ -1,4 +1,4 @@
-import { InfoCircledIcon, Share1Icon, TrashIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon, Pencil1Icon, Share1Icon, TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, TextField, Tooltip } from '@radix-ui/themes';
 import React from 'react';
 
@@ -13,6 +13,7 @@ interface SecuritySectionProps {
   onToggleShowToken: () => void;
   onCopyToken: () => void;
   onOpenDeleteModal: () => void;
+  onOpenRenameModal: () => void;
   shareEmail: string;
   onSetShareEmail: (val: string) => void;
   onRequestShare: (email: string) => void;
@@ -31,6 +32,7 @@ export default function SecuritySection(props: SecuritySectionProps) {
     onToggleShowToken,
     onCopyToken,
     onOpenDeleteModal,
+    onOpenRenameModal,
     shareEmail,
     onSetShareEmail,
     onRequestShare,
@@ -249,44 +251,79 @@ export default function SecuritySection(props: SecuritySectionProps) {
         </Card>
       </Box>
 
-      {/* Delete Application Section */}
+      {/* Danger Zone Section */}
       <Box style={{ marginTop: '45px' }}>
         <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
           {t('security.danger.title')}
         </Heading>
-        <Card
-          style={{
-            border: '1px solid var(--red-6)',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-            padding: '16px',
-            background: 'var(--red-2)',
-          }}
-        >
-          <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
-            <Flex direction='column' gap='1'>
-              <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
-                {t('security.danger.deleteTitle')}
-              </Text>
-              <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
-                {t('security.danger.deleteDescription')}
-              </Text>
+        <Flex direction='column' gap='2'>
+          <Card
+            style={{
+              border: '1px solid var(--red-6)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+              padding: '16px',
+              background: 'var(--red-2)',
+            }}
+          >
+            <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
+              <Flex direction='column' gap='1'>
+                <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
+                  {t('security.danger.renameTitle')}
+                </Text>
+                <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                  {t('security.danger.renameDescription')}
+                </Text>
+              </Flex>
+              <Button
+                className={styles.dangerRowButton}
+                size='2'
+                onClick={onOpenRenameModal}
+                style={{
+                  background: 'var(--gray-4)',
+                  color: 'var(--red-9)',
+                  border: '1px solid var(--gray-7)',
+                  cursor: 'pointer',
+                }}
+              >
+                <Pencil1Icon />
+                {t('security.danger.renameButton')}
+              </Button>
             </Flex>
-            <Button
-              className={styles.dangerRowButton}
-              size='2'
-              onClick={onOpenDeleteModal}
-              style={{
-                background: 'var(--gray-4)',
-                color: 'var(--red-9)',
-                border: '1px solid var(--gray-7)',
-                cursor: 'pointer',
-              }}
-            >
-              <TrashIcon />
-              {t('security.danger.deleteButton')}
-            </Button>
-          </Flex>
-        </Card>
+          </Card>
+          <Card
+            style={{
+              border: '1px solid var(--red-6)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+              padding: '16px',
+              background: 'var(--red-2)',
+            }}
+          >
+            <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
+              <Flex direction='column' gap='1'>
+                <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
+                  {t('security.danger.deleteTitle')}
+                </Text>
+                <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                  {t('security.danger.deleteDescription')}
+                </Text>
+              </Flex>
+              <Button
+                className={styles.dangerRowButton}
+                size='2'
+                onClick={onOpenDeleteModal}
+                style={{
+                  background: 'var(--gray-4)',
+                  color: 'var(--red-9)',
+                  border: '1px solid var(--gray-7)',
+                  cursor: 'pointer',
+                }}
+              >
+                <TrashIcon />
+                {t('security.danger.deleteButton')}
+              </Button>
+            </Flex>
+          </Card>
+        </Flex>
       </Box>
     </>
   );

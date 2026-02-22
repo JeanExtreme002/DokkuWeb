@@ -24,6 +24,7 @@ import {
   NetworkSection,
   OverviewSection,
   RebuildAppConfirmModal,
+  RenameAppModal,
   RestartAppConfirmModal,
   SecuritySection,
   ServicesSection,
@@ -252,6 +253,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [showDeleteAppModal, setShowDeleteAppModal] = useState(false);
   const [deleteAppLoading, setDeleteAppLoading] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  // Rename app modal state
+  const [showRenameAppModal, setShowRenameAppModal] = useState(false);
+  const [renameAppLoading, setRenameAppLoading] = useState(false);
+  const [renameAppName, setRenameAppName] = useState('');
+  const [renameConfirmText, setRenameConfirmText] = useState('');
+  const [renameError, setRenameError] = useState<string | null>(null);
 
   // Error states
   const [errors, setErrors] = useState({
@@ -807,6 +815,37 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } finally {
       setDeleteAppLoading(false);
       setShowDeleteAppModal(false);
+    }
+  };
+
+  const handleRenameModalOpenChange = (open: boolean) => {
+    setShowRenameAppModal(open);
+    if (!open) {
+      setRenameAppName('');
+      setRenameConfirmText('');
+      setRenameError(null);
+    }
+  };
+
+  const renameApp = async () => {
+    const trimmedName = renameAppName.trim();
+    if (!trimmedName) return;
+
+    setRenameAppLoading(true);
+    setRenameError(null);
+    try {
+      await api.post(
+        `/api/apps/${props.appName}/rename/${encodeURIComponent(trimmedName)}`,
+        {},
+        { params: withSharedBy() }
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100000));
+      handleRenameModalOpenChange(false);
+      router.push(`/apps/a/${encodeURIComponent(trimmedName)}`);
+    } catch (error: any) {
+      setRenameError(error.response?.data?.message || t('errors.rename'));
+    } finally {
+      setRenameAppLoading(false);
     }
   };
 
@@ -1642,6 +1681,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     onToggleShowToken={() => setShowDeploymentToken(!showDeploymentToken)}
                     onCopyToken={copyDeploymentToken}
                     onOpenDeleteModal={() => setShowDeleteAppModal(true)}
+                    onOpenRenameModal={() => {
+                      setRenameError(null);
+                      setShowRenameAppModal(true);
+                    }}
                     shareEmail={shareEmail}
                     onSetShareEmail={(val: string) => setShareEmail(val)}
                     onRequestShare={onRequestShare}
@@ -1680,6 +1723,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         onSetDeleteConfirmText={(val: string) => setDeleteConfirmText(val)}
         deleteAppLoading={deleteAppLoading}
         deleteApp={deleteApp}
+      />
+
+      {/* Rename App Modal */}
+      <RenameAppModal
+        open={showRenameAppModal}
+        onOpenChange={handleRenameModalOpenChange}
+        currentName={props.appName}
+        newName={renameAppName}
+        onSetNewName={(val: string) => setRenameAppName(val)}
+        confirmText={renameConfirmText}
+        onSetConfirmText={(val: string) => setRenameConfirmText(val)}
+        renameLoading={renameAppLoading}
+        renameError={renameError}
+        onConfirm={renameApp}
       />
 
       {/* Zip Info Modal */}
