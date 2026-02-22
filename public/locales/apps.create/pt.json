@@ -20,7 +20,7 @@
   "env.inputs.keyLabel": "Chave",
   "env.inputs.keyPlaceholder": "NOME_VARIAVEL",
   "env.inputs.valueLabel": "Valor",
-  "env.inputs.valuePlaceholder": "valor_da_variavel",
+  "env.inputs.valuePlaceholder": "Valor da variável",
   "env.inputs.addVariable": "Adicionar Variável",
   "env.list.title": "Variáveis Configuradas:",
 

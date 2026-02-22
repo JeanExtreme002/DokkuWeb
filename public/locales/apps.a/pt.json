@@ -194,7 +194,7 @@
   "envSection.keyLabel": "Chave",
   "envSection.keyPlaceholder": "NOME_VARIAVEL",
   "envSection.valueLabel": "Valor",
-  "envSection.valuePlaceholder": "valor_da_variavel",
+  "envSection.valuePlaceholder": "Valor da variável",
   "envSection.adding": "Adicionando...",
   "envSection.add": "Adicionar",
   "envSection.empty": "Nenhuma variável de ambiente configurada.",

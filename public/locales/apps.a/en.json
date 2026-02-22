@@ -194,7 +194,7 @@
   "envSection.keyLabel": "Key",
   "envSection.keyPlaceholder": "VARIABLE_NAME",
   "envSection.valueLabel": "Value",
-  "envSection.valuePlaceholder": "variable_value",
+  "envSection.valuePlaceholder": "Variable value",
   "envSection.adding": "Adding...",
   "envSection.add": "Add",
   "envSection.empty": "No environment variables configured.",
