@@ -839,7 +839,23 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         {},
         { params: withSharedBy({ unique_app: 'true' }) }
       );
-      await new Promise((resolve) => setTimeout(resolve, 100000));
+
+      let renameReady = false;
+      while (!renameReady) {
+        try {
+          const response = await api.post(`/api/apps/${encodeURIComponent(trimmedName)}/exists/`);
+          if (response?.status === 200) {
+            renameReady = true;
+            break;
+          }
+        } catch (err: any) {
+          if (err?.response?.status !== 404) {
+            throw err;
+          }
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
       handleRenameModalOpenChange(false);
       router.push(`/apps/a/${encodeURIComponent(trimmedName)}`);
     } catch (error: any) {
