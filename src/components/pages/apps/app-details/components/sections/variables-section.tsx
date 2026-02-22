@@ -37,6 +37,7 @@ interface VariablesSectionProps {
   onOpenImport: () => void;
   setNewEnvKey: (val: string) => void;
   setNewEnvValue: (val: string) => void;
+  setEditingEnvValue: (val: string) => void;
 }
 
 export function VariablesSection(props: VariablesSectionProps) {
@@ -184,7 +185,7 @@ export function VariablesSection(props: VariablesSectionProps) {
                           </Text>
                           <TextField.Root
                             value={props.editingEnvValue}
-                            onChange={(e) => props.setNewEnvValue(e.target.value)}
+                            onChange={(e) => props.setEditingEnvValue(e.target.value)}
                             style={{ flex: 1 }}
                             disabled={props.savingEnv}
                           />

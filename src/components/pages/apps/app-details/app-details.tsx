@@ -1685,6 +1685,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   onOpenImport={() => document.getElementById('env-file-upload')?.click()}
                   setNewEnvKey={(val) => setNewEnvKey(val)}
                   setNewEnvValue={(val) => setNewEnvValue(val)}
+                  setEditingEnvValue={(val) => setEditingEnvValue(val)}
                 />
               </Tabs.Content>
 
