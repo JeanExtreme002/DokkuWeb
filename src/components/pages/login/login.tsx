@@ -52,6 +52,7 @@ const titleTypographySx = {
   fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.9rem' },
   textAlign: 'center',
   mt: 1,
+  color: 'DimGray',
 } as const;
 
 const loginTypographySx = {
@@ -149,7 +150,7 @@ export function LoginPage() {
           height='20%'
         >
           <WebsiteLogo size='large' color={'black'} disableLink={true} breakLogo={true} />
-          <Heading size='6' weight='medium' style={{ color: 'var(--gray-12)', marginTop: '20px' }}>
+          <Heading size='6' weight='light' style={{ color: '#292929', marginTop: '20px' }}>
             {t('title', { companyName: config.website.companyName })}
           </Heading>
           <Typography variant='body2' sx={titleTypographySx}>
