@@ -149,7 +149,7 @@ export function LoginPage() {
           height='20%'
         >
           <WebsiteLogo size='large' color={'black'} disableLink={true} breakLogo={true} />
-          <Heading size='6' weight='light' style={{ color: 'var(--gray-12)', marginTop: '20px' }}>
+          <Heading size='6' weight='medium' style={{ color: 'var(--gray-12)', marginTop: '20px' }}>
             {t('title', { companyName: config.website.companyName })}
           </Heading>
           <Typography variant='body2' sx={titleTypographySx}>
