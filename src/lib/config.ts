@@ -7,6 +7,7 @@ export const config = {
   website: {
     title: process.env.WEBSITE_TITLE || 'DokkuWeb',
     subtitle: process.env.WEBSITE_SUBTITLE || 'Application hosting on Dokku',
+    companyName: process.env.COMPANY_NAME || '<Company Name>',
     emailDomains,
   },
   support: {

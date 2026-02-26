@@ -8,6 +8,7 @@ const nextConfig = {
   env: {
     WEBSITE_TITLE: process.env.WEBSITE_TITLE,
     WEBSITE_SUBTITLE: process.env.WEBSITE_SUBTITLE,
+    COMPANY_NAME: process.env.COMPANY_NAME,
     SUPPORT_NAME: process.env.SUPPORT_NAME,
     SUPPORT_URL: process.env.SUPPORT_URL,
     SERVER_DOMAIN: process.env.SERVER_DOMAIN,

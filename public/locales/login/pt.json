@@ -1,4 +1,6 @@
 {
+  "title": "DokkuWeb",
+  "subtitle": "Hospedagem de aplicações | {{companyName}}",
   "loginWith": "Entrar com:",
   "google.label.single.small": "Entrar com @{{domain}}",
   "google.label.single.large": "Entre com seu email @{{domain}}",
