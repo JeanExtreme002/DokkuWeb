@@ -47,23 +47,34 @@ export async function getServerSideProps(context: any) {
     create_if_not_exists: 'true',
   });
 
-  try {
-    const response = await fetch(
-      `${backendUrl}/api/admin/users/${userEmail}/access-token?${params.toString()}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: 'application/json',
-          'MASTER-KEY': process.env.BACKEND_MASTER_KEY || '',
-        },
-      }
-    );
+  const requestUrl = `${backendUrl}/api/admin/users/${userEmail}/access-token?${params.toString()}`;
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      accept: 'application/json',
+      'MASTER-KEY': process.env.BACKEND_MASTER_KEY || '',
+    },
+  };
 
-    if (response.status !== 200) {
-      throw Error(`Failed to register user access token: ${response.statusText}`);
+  const maxAttempts = 2;
+  let lastError = undefined;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    lastError = undefined;
+
+    try {
+      const response = await fetch(requestUrl, requestOptions);
+      if (response.status !== 200) {
+        throw Error(`Failed to register user access token: ${response.statusText}`);
+      }
+      break;
+    } catch (error) {
+      lastError = error;
     }
-  } catch (error) {
-    console.error('Error registering user access token:', error);
+  }
+
+  if (lastError) {
+    console.error('Error registering user access token:', lastError);
 
     return {
       redirect: {
