@@ -1,5 +1,6 @@
 {
-  "welcome.title": "Welcome back, {{name}}!",
+  "welcome.title": "Welcome, {{name}}!",
+  "welcomeback.title": "Welcome back, {{name}}!",
   "welcome.subtitle": "Here's a summary of your Dokku resources",
   "welcome.actions.newApp": "New App",
   "welcome.actions.newService": "New Service",

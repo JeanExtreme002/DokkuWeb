@@ -17,6 +17,17 @@ export function WelcomeSection(props: WelcomeSectionProps) {
   const { userName, userImage, onCreateApp, onCreateService, onCreateNetwork } = props;
   const { t } = usePageTranslation();
 
+  const firstAccessAt = localStorage.getItem('firstAccessAt');
+  if (!firstAccessAt) {
+    localStorage.setItem('firstAccessAt', Date.now().toString());
+  }
+
+  let welcomeTitle = 'welcome.title';
+
+  if (firstAccessAt && Date.now() - parseInt(firstAccessAt) > 1 * 60 * 60 * 1000) {
+    welcomeTitle = 'welcomeback.title';
+  }
+
   return (
     <Box className={styles.welcomeSection}>
       <Flex align='center' justify='between' className={styles.welcomeHeader}>
@@ -30,7 +41,7 @@ export function WelcomeSection(props: WelcomeSectionProps) {
           />
           <Box>
             <Heading size='8' weight='bold' className={styles.welcomeTitle}>
-              {t('welcome.title', { name: userName.split(' ')[0] })}
+              {t(welcomeTitle, { name: userName.split(' ')[0] })}
             </Heading>
             <Text size='4' className={styles.welcomeSubtitle}>
               {t('welcome.subtitle')}
