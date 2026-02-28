@@ -1,4 +1,10 @@
-import { CopyIcon, EyeClosedIcon, EyeOpenIcon, TrashIcon } from '@radix-ui/react-icons';
+import {
+  CopyIcon,
+  DownloadIcon,
+  EyeClosedIcon,
+  EyeOpenIcon,
+  TrashIcon,
+} from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, TextArea } from '@radix-ui/themes';
 
 import { DotIcon } from '@/components/shared/icons';
@@ -15,6 +21,7 @@ interface SecuritySectionProps {
   isXsScreen: boolean;
   isSmScreen: boolean;
   openDeleteModal: () => void;
+  openExportModal: () => void;
 }
 
 export function SecuritySection({
@@ -26,6 +33,7 @@ export function SecuritySection({
   isXsScreen,
   isSmScreen,
   openDeleteModal,
+  openExportModal,
 }: SecuritySectionProps) {
   const { t } = usePageTranslation();
   return (
@@ -113,10 +121,42 @@ export function SecuritySection({
       )}
 
       {/* Danger Zone */}
-      <Box style={{ marginTop: '45px' }}>
+      <Flex style={{ marginTop: '45px' }} gap='2' direction='column'>
         <Heading size='5' style={{ marginBottom: '12px', color: 'var(--red-11)' }}>
           {t('services.s.security.danger.title')}
         </Heading>
+        <Card
+          style={{
+            border: '1px solid var(--red-6)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            padding: '16px',
+            background: 'var(--red-2)',
+          }}
+        >
+          <Flex align='center' justify='between' gap='4' className={styles.dangerZoneHeader}>
+            <Flex direction='column' gap='1'>
+              <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
+                {t('services.s.security.danger.exportTitle')}
+              </Text>
+              <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                {t('services.s.security.danger.exportDescription')}
+              </Text>
+            </Flex>
+            <Button
+              size='2'
+              onClick={openExportModal}
+              style={{
+                background: 'var(--gray-4)',
+                color: 'var(--red-9)',
+                border: '1px solid var(--gray-7)',
+              }}
+              className={styles.dangerZoneButton}
+            >
+              <DownloadIcon />
+              {t('services.s.security.danger.exportButton')}
+            </Button>
+          </Flex>
+        </Card>
         <Card
           style={{
             border: '1px solid var(--red-6)',
@@ -149,7 +189,7 @@ export function SecuritySection({
             </Button>
           </Flex>
         </Card>
-      </Box>
+      </Flex>
     </Flex>
   );
 }

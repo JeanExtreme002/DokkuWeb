@@ -58,6 +58,9 @@
   "services.s.security.danger.deleteTitle": "Delete this service",
   "services.s.security.danger.deleteDescription": "Once you delete a service, there is no going back. Please be certain.",
   "services.s.security.danger.deleteButton": "Delete Service",
+  "services.s.security.danger.exportTitle": "Export database",
+  "services.s.security.danger.exportDescription": "Generate a SQL dump for this database. The file may contain sensitive data.",
+  "services.s.security.danger.exportButton": "Export SQL dump",
 
   "services.s.unlinkModal.title": "Confirm Unlink",
   "services.s.unlinkModal.description.prefix": "Are you sure you want to unlink the application",
@@ -98,6 +101,15 @@
   "services.s.deleteModal.cancel": "Cancel",
   "services.s.deleteModal.confirming": "Deleting...",
   "services.s.deleteModal.confirm": "Confirm Deletion",
+
+  "services.s.exportModal.title": "Confirm Export",
+  "services.s.exportModal.description": "Do you really want to export the database?",
+  "services.s.exportModal.token": "export",
+  "services.s.exportModal.prompt.prefix": "To confirm, type",
+  "services.s.exportModal.prompt.suffix": "below:",
+  "services.s.exportModal.cancel": "Cancel",
+  "services.s.exportModal.confirming": "Exporting...",
+  "services.s.exportModal.confirm": "Export SQL dump",
 
   "services.s.controls.start": "Start",
   "services.s.controls.stop": "Stop",

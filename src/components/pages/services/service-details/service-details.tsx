@@ -20,6 +20,7 @@ import {
 import {
   ConnectedAppsSection,
   DeleteServiceModal,
+  ExportDatabaseModal,
   HeaderSection,
   LinkAppModal,
   LogsSection,
@@ -109,6 +110,11 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [showDeleteServiceModal, setShowDeleteServiceModal] = useState(false);
   const [deleteServiceLoading, setDeleteServiceLoading] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  // Export database modal states
+  const [showExportDatabaseModal, setShowExportDatabaseModal] = useState(false);
+  const [exportDatabaseLoading, setExportDatabaseLoading] = useState(false);
+  const [exportConfirmText, setExportConfirmText] = useState('');
 
   const statusInfo = useStatusInfo(serviceData);
   const displayName = formatServiceName(props.serviceName);
@@ -313,6 +319,24 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
 
   const downloadLogs = () => {
     downloadTextFile(logs, `${props.serviceName}-logs.txt`);
+  };
+
+  const exportDatabase = async () => {
+    setExportDatabaseLoading(true);
+    try {
+      const response = await api.post(
+        `/api/databases/${props.pluginType}/${props.serviceName}/export/`
+      );
+      if (response.data?.success && response.data.result) {
+        downloadTextFile(response.data.result, `${props.pluginType}-${props.serviceName}.sql`);
+        setShowExportDatabaseModal(false);
+        setExportConfirmText('');
+      }
+    } catch (error) {
+      console.error('Error exporting database:', error);
+    } finally {
+      setExportDatabaseLoading(false);
+    }
   };
 
   // Service control functions
@@ -622,6 +646,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
                   isXsScreen={isXsScreen}
                   isSmScreen={isSmScreen}
                   openDeleteModal={() => setShowDeleteServiceModal(true)}
+                  openExportModal={() => setShowExportDatabaseModal(true)}
                 />
               </Tabs.Content>
             </Tabs.Root>
@@ -681,6 +706,25 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
         deleteLoading={deleteServiceLoading}
         onCancel={() => setShowDeleteServiceModal(false)}
         onConfirm={deleteService}
+      />
+
+      {/* Export Database Confirmation Modal */}
+      <ExportDatabaseModal
+        open={showExportDatabaseModal}
+        onOpenChange={(open) => {
+          setShowExportDatabaseModal(open);
+          if (!open) {
+            setExportConfirmText('');
+          }
+        }}
+        exportConfirmText={exportConfirmText}
+        onExportConfirmTextChange={setExportConfirmText}
+        exportLoading={exportDatabaseLoading}
+        onCancel={() => {
+          setShowExportDatabaseModal(false);
+          setExportConfirmText('');
+        }}
+        onConfirm={exportDatabase}
       />
     </>
   );

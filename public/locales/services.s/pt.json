@@ -58,6 +58,9 @@
   "services.s.security.danger.deleteTitle": "Deletar esse serviço",
   "services.s.security.danger.deleteDescription": "Uma vez que você exclui um serviço, não há como voltar atrás.",
   "services.s.security.danger.deleteButton": "Deletar Serviço",
+  "services.s.security.danger.exportTitle": "Exportar banco de dados",
+  "services.s.security.danger.exportDescription": "Gere um SQL dump deste banco. O arquivo pode conter dados sensíveis.",
+  "services.s.security.danger.exportButton": "Exportar SQL dump",
 
   "services.s.unlinkModal.title": "Confirmar Desvinculação",
   "services.s.unlinkModal.description.prefix": "Tem certeza que deseja desvincular a aplicação",
@@ -98,6 +101,15 @@
   "services.s.deleteModal.cancel": "Cancelar",
   "services.s.deleteModal.confirming": "Deletando...",
   "services.s.deleteModal.confirm": "Confirmar Exclusão",
+
+  "services.s.exportModal.title": "Confirmar Exportação",
+  "services.s.exportModal.description": "Deseja realmente exportar o banco de dados?",
+  "services.s.exportModal.token": "exportar",
+  "services.s.exportModal.prompt.prefix": "Para confirmar, digite",
+  "services.s.exportModal.prompt.suffix": "abaixo:",
+  "services.s.exportModal.cancel": "Cancelar",
+  "services.s.exportModal.confirming": "Exportando...",
+  "services.s.exportModal.confirm": "Exportar SQL dump",
 
   "services.s.controls.start": "Iniciar",
   "services.s.controls.stop": "Parar",
