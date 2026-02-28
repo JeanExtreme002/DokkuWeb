@@ -18,7 +18,7 @@ export function AppNameInput({ value, onChange, disabled }: AppNameInputProps) {
   };
 
   return (
-    <Flex direction='column' gap='2'>
+    <Flex direction='column' gap='2' style={{ width: '100%', flex: 1 }}>
       <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
         {t('name.label')}
       </Text>

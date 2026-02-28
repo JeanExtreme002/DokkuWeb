@@ -109,7 +109,7 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
     if (letterCount < 3) {
       return { isValid: false, message: t('services.create.validation.minLetters') };
     }
-    if (trimmedName.length > 50) {
+    if (trimmedName.length > 30) {
       return { isValid: false, message: t('services.create.validation.maxChars') };
     }
 

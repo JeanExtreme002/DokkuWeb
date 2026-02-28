@@ -12,6 +12,7 @@ import styles from './app-creation.module.css';
 import {
   ActionButtons,
   AppNameInput,
+  CloneSelection,
   EnvInputs,
   EnvList,
   ErrorMessage,
@@ -34,6 +35,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
   const router = useRouter();
   const { t } = usePageTranslation();
   const [appName, setAppName] = useState('');
+  const [cloneFromApp, setCloneFromApp] = useState('none');
   const [selectedNetwork, setSelectedNetwork] = useState('none');
   const [environmentVariables, setEnvironmentVariables] = useState<EnvironmentVariable[]>([]);
   const [creating, setCreating] = useState(false);
@@ -64,8 +66,15 @@ export function AppCreationPage(props: AppCreationPageProps) {
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     try {
+      const trimmedAppName = appName.trim();
+      const trimmedCloneFromApp = cloneFromApp.trim();
+      const createAppEndpoint =
+        trimmedCloneFromApp && trimmedCloneFromApp !== 'none'
+          ? `/api/apps/${trimmedAppName}/clone/${trimmedCloneFromApp}`
+          : `/api/apps/${trimmedAppName}`;
+
       const createAppResponse = await api.post(
-        `/api/apps/${appName.trim()}`,
+        createAppEndpoint,
         {},
         { params: { unique_app: 'true' } }
       );
@@ -138,7 +147,14 @@ export function AppCreationPage(props: AppCreationPageProps) {
             }}
           >
             <Flex direction='column' gap='5'>
-              <AppNameInput value={appName} onChange={setAppName} disabled={creating} />
+              <div className={styles.nameCloneRow}>
+                <AppNameInput value={appName} onChange={setAppName} disabled={creating} />
+                <CloneSelection
+                  value={cloneFromApp}
+                  onChange={setCloneFromApp}
+                  disabled={creating}
+                />
+              </div>
 
               <Flex direction='column' gap='2'>
                 <NetworkSelection

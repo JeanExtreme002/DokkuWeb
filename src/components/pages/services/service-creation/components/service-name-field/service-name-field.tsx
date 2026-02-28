@@ -42,7 +42,7 @@ export function ServiceNameField(props: ServiceNameFieldProps) {
         size='2'
         color={!validateServiceName(serviceName).isValid && serviceName.length > 0 ? 'red' : 'gray'}
       >
-        {serviceName.length}/50 {t('services.create.serviceName.charactersSuffix')}{' '}
+        {serviceName.length}/30 {t('services.create.serviceName.charactersSuffix')}{' '}
         {validateServiceName(serviceName).message}
       </Text>
     </Flex>

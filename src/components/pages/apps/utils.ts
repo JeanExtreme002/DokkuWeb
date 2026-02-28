@@ -21,7 +21,7 @@ export const useAppNameValidation = (name: string) => {
   if (letterCount < 3) {
     return { isValid: false, message: t('name.validation.minLetters') };
   }
-  if (trimmedName.length > 50) {
+  if (trimmedName.length > 30) {
     return { isValid: false, message: t('name.validation.maxLength') };
   }
 

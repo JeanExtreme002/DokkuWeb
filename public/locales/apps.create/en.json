@@ -4,17 +4,22 @@
 
   "name.label": "Application Name",
   "name.placeholder": "Enter the application name",
-  "name.counter": "{{count}}/50 characters",
+  "name.counter": "{{count}}/30 characters",
   "name.validation.minLength": "(minimum 3 characters)",
   "name.validation.startsWithLetter": "(must start with a letter)",
   "name.validation.endsWithAlnum": "(must end with a letter or number)",
   "name.validation.minLetters": "(minimum 3 letters)",
-  "name.validation.maxLength": "(maximum 50 characters)",
+  "name.validation.maxLength": "(maximum 30 characters)",
 
   "network.label": "Network (Optional)",
   "network.loading": "Loading networks...",
   "network.placeholder": "Select a network (optional)",
   "network.none": "None",
+
+  "clone.label": "Clone from application:",
+  "clone.loading": "Loading applications...",
+  "clone.placeholder": "Select an application",
+  "clone.none": "None",
 
   "env.title": "Environment Variables",
   "env.inputs.keyLabel": "Key",

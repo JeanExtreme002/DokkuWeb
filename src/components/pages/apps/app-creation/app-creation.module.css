@@ -35,6 +35,18 @@
   margin-top: 20px;
 }
 
+.nameCloneRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+.cloneSelection {
+  display: flex;
+  width: 30%;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .mainContainer {
@@ -73,5 +85,16 @@
   .errorMessage {
     font-size: 13px !important;
     line-height: 1.4 !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+  .cloneSelection {
+    width: 100%;
+  }
+  .nameCloneRow {
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 }

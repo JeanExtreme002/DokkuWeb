@@ -10,7 +10,7 @@
   "services.create.validation.startsWithLetter": "(deve começar com uma letra)",
   "services.create.validation.endsWithLetterOrNumber": "(deve terminar com letra ou número)",
   "services.create.validation.minLetters": "(mínimo 3 letras)",
-  "services.create.validation.maxChars": "(máximo 50 caracteres)",
+  "services.create.validation.maxChars": "(máximo 30 caracteres)",
 
   "services.create.serviceType.label": "Tipo de Serviço",
   "services.create.serviceType.loading": "Carregando serviços...",

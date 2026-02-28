@@ -4,17 +4,22 @@
 
   "name.label": "Nome do Aplicativo",
   "name.placeholder": "Digite o nome do aplicativo",
-  "name.counter": "{{count}}/50 caracteres",
+  "name.counter": "{{count}}/30 caracteres",
   "name.validation.minLength": "(mínimo 3 caracteres)",
   "name.validation.startsWithLetter": "(deve começar com uma letra)",
   "name.validation.endsWithAlnum": "(deve terminar com letra ou número)",
   "name.validation.minLetters": "(mínimo 3 letras)",
-  "name.validation.maxLength": "(máximo 50 caracteres)",
+  "name.validation.maxLength": "(máximo 30 caracteres)",
 
   "network.label": "Rede (Opcional)",
   "network.loading": "Carregando redes...",
   "network.placeholder": "Selecione uma rede (opcional)",
   "network.none": "Nenhum",
+
+  "clone.label": "Clonar de aplicativo:",
+  "clone.loading": "Carregando aplicativos...",
+  "clone.placeholder": "Selecione um aplicativo",
+  "clone.none": "Nenhum",
 
   "env.title": "Variáveis de Ambiente",
   "env.inputs.keyLabel": "Chave",
