@@ -73,11 +73,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
           ? `/api/apps/${trimmedAppName}/clone/${trimmedCloneFromApp}`
           : `/api/apps/${trimmedAppName}`;
 
-      const createAppResponse = await api.post(
-        createAppEndpoint,
-        {},
-        { params: { unique_app: 'true' } }
-      );
+      const createAppResponse = await api.post(createAppEndpoint);
 
       if (createAppResponse.status !== 200 && createAppResponse.status !== 201) {
         throw new Error(`Failed to create app: ${createAppResponse.status}`);
