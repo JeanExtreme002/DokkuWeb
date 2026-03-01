@@ -9,6 +9,7 @@ import { api } from '@/lib';
 
 import {
   ActionButtons,
+  CloneSelection,
   DatabaseSelection,
   DatabaseType,
   ErrorMessage,
@@ -31,6 +32,7 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [cloneFromService, setCloneFromService] = useState('none');
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -128,10 +130,16 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
+    const trimmedCloneFromService = cloneFromService.trim();
+    const trimmedServiceName = serviceName.trim();
+
+    const createServiceEndpoint =
+      trimmedCloneFromService && trimmedCloneFromService !== 'none'
+        ? `/api/databases/${selectedDatabase}/${trimmedServiceName}/clone/${trimmedCloneFromService}`
+        : `/api/databases/${selectedDatabase}/${trimmedServiceName}/`;
+
     try {
-      const createServiceResponse = await api.post(
-        `/api/databases/${selectedDatabase}/${serviceName.trim()}/`
-      );
+      const createServiceResponse = await api.post(createServiceEndpoint);
 
       if (createServiceResponse.status !== 200 && createServiceResponse.status !== 201) {
         throw new Error(`Failed to create service: ${createServiceResponse.status}`);
@@ -184,6 +192,12 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
                 onChange={setServiceName}
                 creating={creating}
                 validateServiceName={validateServiceName}
+              />
+              <CloneSelection
+                selectedDatabaseType={selectedDatabase}
+                value={cloneFromService}
+                onChange={setCloneFromService}
+                disabled={creating}
               />
 
               <Flex direction='column' gap='2'>

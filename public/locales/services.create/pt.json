@@ -6,6 +6,12 @@
   "services.create.serviceName.placeholder": "Digite o nome do serviço",
   "services.create.serviceName.charactersSuffix": "caracteres",
 
+  "clone.label": "Clonar de serviço:",
+  "clone.loading": "Carregando serviços...",
+  "clone.placeholder": "Selecione um serviço",
+  "clone.none": "Nenhum",
+  "clone.noServiceType": "Nenhum tipo de serviço selecionado",
+
   "services.create.validation.minChars": "(mínimo 3 caracteres)",
   "services.create.validation.startsWithLetter": "(deve começar com uma letra)",
   "services.create.validation.endsWithLetterOrNumber": "(deve terminar com letra ou número)",
