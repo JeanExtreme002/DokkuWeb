@@ -1,5 +1,5 @@
 # DokkuWeb
-This project is a web application that acts as a dashboard interface for the [Dokku](https://dokku.com). Its goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive, interactive, and fully responsive visual interface, suitable for both mobile devices and desktops.
+This project is a web application that acts as a dashboard interface for [Dokku](https://dokku.com). Its goal is to simplify and enhance the user experience when managing applications through Dokku by providing an intuitive, interactive, and fully responsive visual interface, suitable for both mobile devices and desktops.
 
 DokkuWeb is a frontend server only, that uses the [Dokku-API](https://github.com/JeanExtreme002/Dokku-API) as backend.
 
