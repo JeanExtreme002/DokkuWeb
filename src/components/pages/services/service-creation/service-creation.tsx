@@ -132,6 +132,7 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
 
     const trimmedCloneFromService = cloneFromService.trim();
     const trimmedServiceName = serviceName.trim();
+    const appToLink = router.query.app as string | undefined;
 
     const createServiceEndpoint =
       trimmedCloneFromService && trimmedCloneFromService !== 'none'
@@ -146,6 +147,18 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
+
+      if (appToLink) {
+        try {
+          await api.post(
+            `/api/databases/${selectedDatabase}/${trimmedServiceName}/link/${appToLink}/`
+          );
+          router.push(`/apps/a/${appToLink}/`);
+          return;
+        } catch (error: any) {
+          console.error('Error linking app:', error);
+        }
+      }
 
       router.push('/services');
     } catch (error: any) {

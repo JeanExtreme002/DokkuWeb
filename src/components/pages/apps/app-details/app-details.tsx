@@ -1605,7 +1605,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   onOpenService={(dbType: string, displayName: string) =>
                     router.push(`/services/s/${dbType}/${displayName}`)
                   }
-                  onCreateService={() => router.push('/services/create/')}
+                  onCreateService={() => router.push(`/services/create/?app=${props.appName}`)}
                 />
               </Tabs.Content>
 
