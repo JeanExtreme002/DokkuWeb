@@ -15,15 +15,34 @@ interface OverviewSectionProps {
   appInfo: AppInfo | null;
   deployInfo: DeployInfoData | null;
   builderInfo: BuilderData | null;
+  httpsEnabled: boolean | null;
+  httpsLoading: boolean;
 }
 
 export default function OverviewSection({
   appInfo,
   deployInfo,
   builderInfo,
+  httpsEnabled,
+  httpsLoading,
 }: OverviewSectionProps) {
   const { t } = usePageTranslation();
   if (!appInfo) return null;
+
+  const httpsValue = httpsLoading
+    ? t('security.https.loading')
+    : httpsEnabled === null
+      ? 'N/A'
+      : httpsEnabled
+        ? t('security.https.enabled')
+        : t('security.https.disabled');
+
+  const httpsColor =
+    httpsLoading || httpsEnabled === null
+      ? 'var(--gray-11)'
+      : httpsEnabled
+        ? 'var(--green-11)'
+        : 'var(--gray-10)';
 
   const renderRow = (label: string, value: React.ReactNode) => (
     <Box style={{ borderBottom: '1px solid var(--gray-6)', paddingBottom: '8px' }}>
@@ -97,6 +116,11 @@ export default function OverviewSection({
                       )}
                   </>
                 )}
+
+                {renderRow(
+                  t('overview.labels.https'),
+                  <span style={{ color: httpsColor }}>{httpsValue}</span>
+                )}
               </Flex>
             );
           })()
@@ -121,6 +145,10 @@ export default function OverviewSection({
                     : t('overview.values.no')
                 )}
                 {renderRow(t('overview.labels.procfilePath'), report.ps_procfile_path || 'N/A')}
+                {renderRow(
+                  t('overview.labels.https'),
+                  <span style={{ color: httpsColor }}>{httpsValue}</span>
+                )}
               </Flex>
             );
           })()}

@@ -1,4 +1,11 @@
-import { InfoCircledIcon, Pencil1Icon, Share1Icon, TrashIcon } from '@radix-ui/react-icons';
+import {
+  InfoCircledIcon,
+  LockClosedIcon,
+  LockOpen1Icon,
+  Pencil1Icon,
+  Share1Icon,
+  TrashIcon,
+} from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text, TextField, Tooltip } from '@radix-ui/themes';
 import React from 'react';
 
@@ -22,6 +29,9 @@ interface SecuritySectionProps {
   sharingError: string | null;
   sharingListLoaded: boolean;
   onOpenUnshareConfirm: (email: string) => void;
+  httpsEnabled: boolean | null;
+  httpsLoading: boolean;
+  onOpenHttpsConfirm: () => void;
 }
 
 export default function SecuritySection(props: SecuritySectionProps) {
@@ -41,6 +51,9 @@ export default function SecuritySection(props: SecuritySectionProps) {
     sharingError,
     sharingListLoaded,
     onOpenUnshareConfirm,
+    httpsEnabled,
+    httpsLoading,
+    onOpenHttpsConfirm,
   } = props;
 
   return (
@@ -133,6 +146,84 @@ export default function SecuritySection(props: SecuritySectionProps) {
           </Flex>
         </Flex>
       </Card>
+
+      {/* HTTPS Section */}
+      <Box style={{ marginTop: '24px' }}>
+        <Card
+          style={{
+            border: '1px solid var(--gray-6)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            padding: '16px',
+          }}
+        >
+          <Flex align='center' justify='between' gap='4' className={styles.dangerRow}>
+            <Flex direction='column' gap='1'>
+              <Text size='3' weight='bold' style={{ color: 'var(--gray-12)', display: 'block' }}>
+                {t('security.https.title')}
+              </Text>
+              <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+                {t('security.https.description')}
+              </Text>
+              {httpsLoading && (
+                <Text
+                  size='2'
+                  style={{
+                    color: httpsEnabled ? 'var(--green-11)' : 'var(--gray-10)',
+                    display: 'block',
+                    marginTop: '2px',
+                  }}
+                >
+                  {t('security.https.loading')}
+                </Text>
+              )}
+              {httpsEnabled !== null && !httpsLoading && (
+                <Text
+                  size='2'
+                  style={{
+                    color: httpsEnabled ? 'var(--green-11)' : 'var(--gray-10)',
+                    display: 'block',
+                    marginTop: '2px',
+                  }}
+                >
+                  {httpsEnabled ? t('security.https.enabled') : t('security.https.disabled')}
+                </Text>
+              )}
+            </Flex>
+            <Button
+              className={styles.dangerRowButton}
+              size='2'
+              onClick={onOpenHttpsConfirm}
+              disabled={httpsLoading || httpsEnabled === null}
+              style={{
+                background: httpsLoading
+                  ? 'var(--gray-4)'
+                  : httpsEnabled
+                    ? 'var(--red-3)'
+                    : 'var(--green-3)',
+                color: httpsLoading
+                  ? 'var(--gray-10)'
+                  : httpsEnabled
+                    ? 'var(--red-11)'
+                    : 'var(--green-11)',
+                border: httpsLoading
+                  ? ' 1px solid var(--gray-7)'
+                  : httpsEnabled
+                    ? '1px solid var(--red-6)'
+                    : '1px solid var(--green-6)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {!httpsLoading && (httpsEnabled ? <LockOpen1Icon /> : <LockClosedIcon />)}
+              {httpsLoading
+                ? t('security.https.loading')
+                : httpsEnabled
+                  ? t('security.https.disable')
+                  : t('security.https.enable')}
+            </Button>
+          </Flex>
+        </Card>
+      </Box>
 
       {/* Sharing Section */}
       <Box style={{ marginTop: '24px' }}>

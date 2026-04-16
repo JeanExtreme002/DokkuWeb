@@ -20,6 +20,7 @@ import {
   DeploySection,
   FilesSection,
   HeaderSection,
+  HttpsConfirmModal,
   LogsSection,
   NetworkSection,
   OverviewSection,
@@ -143,6 +144,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [pendingShareEmail, setPendingShareEmail] = useState<string | null>(null);
   const [confirmUnshareOpen, setConfirmUnshareOpen] = useState(false);
   const [pendingUnshareEmail, setPendingUnshareEmail] = useState<string | null>(null);
+
+  // HTTPS states (Security tab)
+  const [httpsEnabled, setHttpsEnabled] = useState<boolean | null>(null);
+  const [httpsLoading, setHttpsLoading] = useState(false);
+  const [confirmHttpsOpen, setConfirmHttpsOpen] = useState(false);
 
   // Form states
   const [originPort, setOriginPort] = useState('');
@@ -457,6 +463,37 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [props.appName, withSharedBy]);
 
+  const fetchHttpsStatus = useCallback(async () => {
+    setHttpsLoading(true);
+    try {
+      const response = await api.post(`/api/letsencrypt/${props.appName}/active`);
+      if (response.data && response.data.success) {
+        setHttpsEnabled(response.data.result);
+      }
+    } catch {
+      setHttpsEnabled(null);
+    } finally {
+      setHttpsLoading(false);
+    }
+  }, [props.appName]);
+
+  const toggleHttps = async () => {
+    setHttpsLoading(true);
+    try {
+      if (httpsEnabled) {
+        await api.delete(`/api/letsencrypt/${props.appName}`);
+      } else {
+        await api.post(`/api/letsencrypt/${props.appName}`);
+      }
+      await fetchHttpsStatus();
+    } catch (error) {
+      console.error('Error toggling HTTPS:', error);
+    } finally {
+      setHttpsLoading(false);
+      setConfirmHttpsOpen(false);
+    }
+  };
+
   // Silent refresh for overview data only - updates app info and URL every 10 seconds
   // This keeps the overview tab current without affecting loading states or other tabs
   const silentRefreshOverview = useCallback(async () => {
@@ -577,6 +614,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           fetchWithRetry(fetchConfig, setConfigLoading, (error) =>
             setErrors((prev) => ({ ...prev, config: error }))
           ),
+          fetchHttpsStatus(),
         ]);
 
         // Initial sharing list (skip when accessed via shared_by)
@@ -1156,10 +1194,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
   }, [currentTab]);
 
-  // Refresh sharing list when switching to Security tab
+  // Refresh sharing list and HTTPS status when switching to Security tab
   useEffect(() => {
     if (currentTab === 'security' && dataLoaded && !sharedBy) {
       fetchSharingList();
+      fetchHttpsStatus();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab, sharedBy]);
@@ -1569,6 +1608,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   appInfo={appInfo}
                   deployInfo={deployInfo}
                   builderInfo={builderInfo}
+                  httpsEnabled={httpsEnabled}
+                  httpsLoading={httpsLoading}
                 />
               </Tabs.Content>
 
@@ -1710,6 +1751,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                     sharingError={sharingError}
                     sharingListLoaded={sharingListLoaded}
                     onOpenUnshareConfirm={onOpenUnshareConfirm}
+                    httpsEnabled={httpsEnabled}
+                    httpsLoading={httpsLoading}
+                    onOpenHttpsConfirm={() => setConfirmHttpsOpen(true)}
                   />
                 </Tabs.Content>
               )}
@@ -1810,6 +1854,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         pendingShareEmail={pendingShareEmail}
         sharingLoading={sharingLoading}
         onConfirm={onConfirmShare}
+      />
+
+      {/* HTTPS Confirmation Modal */}
+      <HttpsConfirmModal
+        open={confirmHttpsOpen}
+        onOpenChange={(open) => {
+          if (!httpsLoading) setConfirmHttpsOpen(open);
+        }}
+        httpsEnabled={!!httpsEnabled}
+        httpsLoading={httpsLoading}
+        onConfirm={toggleHttps}
       />
 
       {/* Unshare Confirmation Modal */}
