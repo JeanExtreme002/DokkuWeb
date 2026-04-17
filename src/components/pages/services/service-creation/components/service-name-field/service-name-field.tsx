@@ -28,8 +28,8 @@ export function ServiceNameField(props: ServiceNameFieldProps) {
         placeholder={t('services.create.serviceName.placeholder')}
         value={serviceName}
         onChange={(e) => {
-          // Allow letters (uppercase and lowercase), numbers, and "_"
-          const value = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
+          // Allow letters (uppercase and lowercase), numbers, and "-"
+          const value = e.target.value.replace(/[^a-zA-Z0-9-]/g, '');
           onChange(value);
         }}
         disabled={creating}

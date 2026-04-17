@@ -122,7 +122,7 @@ export function HomePage(props: HomePageProps) {
         servicesData = Object.entries(servicesResult).flatMap(
           ([pluginType, services]: [string, any]) =>
             Object.keys(services).map((serviceName) => ({
-              name: serviceName.replace(/^\d+_/, ''),
+              name: serviceName.replace(/^\d+-/, ''),
               type: pluginType,
             }))
         );
