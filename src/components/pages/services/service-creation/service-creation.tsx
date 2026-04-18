@@ -35,6 +35,11 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
   const [cloneFromService, setCloneFromService] = useState('none');
 
   useEffect(() => {
+    const appToLink = router.query.app as string | undefined;
+    if (appToLink) setServiceName(`${appToLink}-db`);
+  }, [router.query.app]);
+
+  useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 480);
     };
