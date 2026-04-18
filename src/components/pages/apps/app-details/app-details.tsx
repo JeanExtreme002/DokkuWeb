@@ -175,8 +175,41 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [showDeletePortModal, setShowDeletePortModal] = useState(false);
   const [portToDelete, setPortToDelete] = useState<PortMapping | null>(null);
 
-  // Current tab
-  const [currentTab, setCurrentTab] = useState('overview');
+  // Current tab - synced with URL hash
+  const validTabs = [
+    'overview',
+    'services',
+    'network',
+    'logs',
+    'shell',
+    'variables',
+    'files',
+    'security',
+  ];
+  const [currentTab, setCurrentTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.slice(1);
+      if (validTabs.includes(hash)) return hash;
+    }
+    return 'overview';
+  });
+
+  const handleTabChange = useCallback((tab: string) => {
+    setCurrentTab(tab);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `#${tab}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      if (validTabs.includes(hash)) setCurrentTab(hash);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Deploy states
   const [deployModalOpen, setDeployModalOpen] = useState(false);
@@ -1572,7 +1605,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             />
 
             {/* Tabs */}
-            <Tabs.Root value={currentTab} onValueChange={setCurrentTab} className={styles.tabsRoot}>
+            <Tabs.Root
+              value={currentTab}
+              onValueChange={handleTabChange}
+              className={styles.tabsRoot}
+            >
               <Tabs.List className={styles.tabsList}>
                 <Tabs.Trigger value='overview' className={styles.tabsTrigger}>
                   {t('tabs.overview')}

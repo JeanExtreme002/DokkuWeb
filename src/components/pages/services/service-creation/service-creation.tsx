@@ -153,7 +153,7 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
           await api.post(
             `/api/databases/${selectedDatabase}/${trimmedServiceName}/link/${appToLink}/`
           );
-          router.push(`/apps/a/${appToLink}/`);
+          router.push(`/apps/a/${appToLink}/#services`);
           return;
         } catch (error: any) {
           console.error('Error linking app:', error);
