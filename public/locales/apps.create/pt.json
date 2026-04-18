@@ -3,6 +3,7 @@
   "header.subtitle": "Configure seu novo aplicativo Dokku",
 
   "name.label": "Nome do Aplicativo",
+  "name.tooltip": "Apenas letras, números e hífens são permitidos",
   "name.placeholder": "Digite o nome do aplicativo",
   "name.counter": "{{count}}/30 caracteres",
   "name.validation.minLength": "(mínimo 3 caracteres)",
@@ -16,7 +17,8 @@
   "network.placeholder": "Selecione uma rede (opcional)",
   "network.none": "Nenhum",
 
-  "clone.label": "Clonar de aplicativo:",
+  "clone.label": "Clonar de aplicativo",
+  "clone.tooltip": "Cria uma réplica do aplicativo selecionado",
   "clone.loading": "Carregando aplicativos...",
   "clone.placeholder": "Selecione um aplicativo",
   "clone.none": "Nenhum",

@@ -1,4 +1,5 @@
-import { Flex, Text, TextField } from '@radix-ui/themes';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { Flex, Text, TextField, Tooltip } from '@radix-ui/themes';
 import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
@@ -21,9 +22,24 @@ export function ServiceNameField(props: ServiceNameFieldProps) {
 
   return (
     <Flex direction='column' gap='2'>
-      <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        {t('services.create.serviceName.label')}
-      </Text>
+      <Flex align='center' gap='2'>
+        <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+          {t('services.create.serviceName.label')}{' '}
+          <Text as='span' color='red'>
+            *
+          </Text>
+        </Text>
+        <Tooltip content={t('services.create.serviceName.tooltip')}>
+          <InfoCircledIcon
+            style={{
+              color: 'var(--gray-9)',
+              cursor: 'help',
+              width: '14px',
+              height: '14px',
+            }}
+          />
+        </Tooltip>
+      </Flex>
       <TextField.Root
         placeholder={t('services.create.serviceName.placeholder')}
         value={serviceName}

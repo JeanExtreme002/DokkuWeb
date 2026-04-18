@@ -3,10 +3,12 @@
   "services.create.header.subtitle": "Set up your new service on Dokku",
 
   "services.create.serviceName.label": "Service Name",
+  "services.create.serviceName.tooltip": "Only letters, numbers and hyphens are allowed",
   "services.create.serviceName.placeholder": "Enter the service name",
   "services.create.serviceName.charactersSuffix": "characters",
 
-  "clone.label": "Clone from service:",
+  "clone.label": "Clone from service",
+  "clone.tooltip": "Creates a replica of the selected service",
   "clone.loading": "Loading services...",
   "clone.placeholder": "Select an service",
   "clone.none": "None",

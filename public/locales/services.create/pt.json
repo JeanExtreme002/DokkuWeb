@@ -3,10 +3,12 @@
   "services.create.header.subtitle": "Configure seu novo serviço no Dokku",
 
   "services.create.serviceName.label": "Nome do Serviço",
+  "services.create.serviceName.tooltip": "Apenas letras, números e hífens são permitidos",
   "services.create.serviceName.placeholder": "Digite o nome do serviço",
   "services.create.serviceName.charactersSuffix": "caracteres",
 
-  "clone.label": "Clonar de serviço:",
+  "clone.label": "Clonar de serviço",
+  "clone.tooltip": "Cria uma réplica do serviço selecionado",
   "clone.loading": "Carregando serviços...",
   "clone.placeholder": "Selecione um serviço",
   "clone.none": "Nenhum",

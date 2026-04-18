@@ -1,4 +1,5 @@
-import { Flex, Select, Text } from '@radix-ui/themes';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { Flex, Select, Text, Tooltip } from '@radix-ui/themes';
 import { useEffect, useState } from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
@@ -51,9 +52,21 @@ export function CloneSelection({
 
   return (
     <Flex direction='column' gap='2'>
-      <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        {t('clone.label')}
-      </Text>
+      <Flex align='center' gap='2'>
+        <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+          {t('clone.label')}
+        </Text>
+        <Tooltip content={t('clone.tooltip')}>
+          <InfoCircledIcon
+            style={{
+              color: 'var(--gray-9)',
+              cursor: 'help',
+              width: '14px',
+              height: '14px',
+            }}
+          />
+        </Tooltip>
+      </Flex>
       <Select.Root
         value={value}
         onValueChange={onChange}

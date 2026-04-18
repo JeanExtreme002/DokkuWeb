@@ -3,6 +3,7 @@
   "header.subtitle": "Set up your new Dokku application",
 
   "name.label": "Application Name",
+  "name.tooltip": "Only letters, numbers and hyphens are allowed",
   "name.placeholder": "Enter the application name",
   "name.counter": "{{count}}/30 characters",
   "name.validation.minLength": "(minimum 3 characters)",
@@ -16,7 +17,8 @@
   "network.placeholder": "Select a network (optional)",
   "network.none": "None",
 
-  "clone.label": "Clone from application:",
+  "clone.label": "Clone from application",
+  "clone.tooltip": "Creates a replica of the selected application",
   "clone.loading": "Loading applications...",
   "clone.placeholder": "Select an application",
   "clone.none": "None",

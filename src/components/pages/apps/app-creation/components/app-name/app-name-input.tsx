@@ -1,4 +1,5 @@
-import { Flex, Text, TextField } from '@radix-ui/themes';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { Flex, Text, TextField, Tooltip } from '@radix-ui/themes';
 
 import { usePageTranslation } from '@/i18n/utils';
 
@@ -19,9 +20,24 @@ export function AppNameInput({ value, onChange, disabled }: AppNameInputProps) {
 
   return (
     <Flex direction='column' gap='2' style={{ width: '100%', flex: 1 }}>
-      <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
-        {t('name.label')}
-      </Text>
+      <Flex align='center' gap='2'>
+        <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+          {t('name.label')}{' '}
+          <Text as='span' color='red'>
+            *
+          </Text>
+        </Text>
+        <Tooltip content={t('name.tooltip')}>
+          <InfoCircledIcon
+            style={{
+              color: 'var(--gray-9)',
+              cursor: 'help',
+              width: '14px',
+              height: '14px',
+            }}
+          />
+        </Tooltip>
+      </Flex>
       <TextField.Root
         placeholder={t('name.placeholder')}
         value={value}
