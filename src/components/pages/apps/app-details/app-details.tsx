@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Image as CustomImage } from '@/components';
-import { LoadingSpinner, NavBar } from '@/components/shared';
+import { LoadingSpinner, NavBar, Toast } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 import { api, config as websiteConfig, downloadFile, formatAppName, processAnsiCodes } from '@/lib';
 
@@ -170,6 +170,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   // Environment variable delete modal states
   const [showDeleteEnvModal, setShowDeleteEnvModal] = useState(false);
   const [envToDelete, setEnvToDelete] = useState<string | null>(null);
+
+  const [envChangeToast, setEnvChangeToast] = useState(false);
 
   // Port mapping delete modal states
   const [showDeletePortModal, setShowDeletePortModal] = useState(false);
@@ -1366,6 +1368,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await fetchConfig();
       setNewEnvKey('');
       setNewEnvValue('');
+      setEnvChangeToast(true);
     } catch (error) {
       console.error('Error adding environment variable:', error);
     } finally {
@@ -1387,6 +1390,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     try {
       await api.delete(`/api/config/${props.appName}/${envToDelete}/`, withSharedBy());
       await fetchConfig();
+      setEnvChangeToast(true);
     } catch (error) {
       console.error('Error removing environment variable:', error);
     } finally {
@@ -1454,6 +1458,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     }
     await fetchConfig();
     setEnvImportLoading(false);
+    setEnvChangeToast(true);
   };
 
   const handleEnvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1495,6 +1500,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       await fetchConfig();
       setEditingEnvKey(null);
       setEditingEnvValue('');
+      setEnvChangeToast(true);
     } catch (error) {
       console.error('Error updating environment variable:', error);
     } finally {
@@ -1524,6 +1530,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         onChange={handleEnvImport}
       />
       <NavBar session={stableSession} />
+      <Toast
+        message={t('envSection.restartToast')}
+        visible={envChangeToast}
+        onHide={() => setEnvChangeToast(false)}
+      />
 
       <main className={styles.root}>
         {mainLoading || appUrlLoading || builderLoading || deployInfoLoading ? (

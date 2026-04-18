@@ -9,4 +9,5 @@ export * from './search';
 export * from './server-update-indicator';
 export * from './sidebar';
 export * from './theme-toggle';
+export * from './toast';
 export * from './website-logo';

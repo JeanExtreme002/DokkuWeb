@@ -1,0 +1,72 @@
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  max-width: 380px;
+  background: var(--amber-3);
+  border: 1px solid var(--amber-7);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.2s ease;
+  overflow: hidden;
+}
+
+@media (max-width: 576px) {
+  .toast {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    max-width: 100%;
+    border: none;
+    border-radius: 0px;
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  animation: progress var(--toast-duration) linear forwards;
+}
+
+@keyframes progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--amber-11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}

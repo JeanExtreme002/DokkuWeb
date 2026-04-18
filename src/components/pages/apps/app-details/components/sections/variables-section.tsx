@@ -61,7 +61,7 @@ export function VariablesSection(props: VariablesSectionProps) {
             title={t('envSection.importTooltip')}
           >
             <UploadIcon />
-            {t('envSection.import')}
+            {props.envImportLoading ? t('envSection.importing') : t('envSection.import')}
           </Button>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger className={styles.envExportTrigger}>
