@@ -130,6 +130,7 @@
   "errorView.reloadPage": "Reload Page",
   "deploySection.title": "Deploy Commands",
   "deploySection.subtitle": "Configure an SSH key to enable Git-based deployments",
+  "deploySection.subtitleLink": "Settings",
   "controls.start": "Start",
   "controls.stop": "Stop",
   "controls.restart": "Restart",

@@ -130,6 +130,15 @@
   color: var(--gray-11);
 }
 
+.deploySubtitleLink {
+  color: var(--accent-11);
+  text-decoration: none;
+}
+
+.deploySubtitleLink:hover {
+  text-decoration: underline;
+}
+
 .codeBlock {
   background: var(--gray-2);
   border: 1px solid var(--gray-6);

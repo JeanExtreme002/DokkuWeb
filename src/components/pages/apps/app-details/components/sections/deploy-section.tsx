@@ -1,4 +1,5 @@
 import { Box, Text } from '@radix-ui/themes';
+import Link from 'next/link';
 import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
@@ -18,7 +19,12 @@ export function DeploySection({ appInfo, deployInfo, domain }: DeploySectionProp
     <div className={styles.deploySection}>
       <Box className={styles.deployHeader}>
         <Text className={styles.deployTitle}>{t('deploySection.title')}</Text>
-        <Text className={styles.deploySubtitle}>{t('deploySection.subtitle')}</Text>
+        <Text className={styles.deploySubtitle}>
+          {t('deploySection.subtitle')} —{' '}
+          <Link href='/settings' className={styles.deploySubtitleLink}>
+            {t('deploySection.subtitleLink')}
+          </Link>
+        </Text>
       </Box>
       <Box className={styles.codeBlock}>
         <div>
