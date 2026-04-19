@@ -1870,9 +1870,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             zIndex: 9999,
           }}
         >
-          <Card style={{ padding: '24px', textAlign: 'center' }}>
-            <ReloadIcon className={styles.buttonSpinner} style={{ marginBottom: '12px' }} />
-            <Text size='3'>{t('deploy.uploadingFile')}</Text>
+          <Card style={{ padding: '24px' }}>
+            <Flex align='center' gap='2'>
+              <ReloadIcon className={styles.buttonSpinner} />
+              <Text size='3'>{t('deploy.uploadingFile')}</Text>
+            </Flex>
           </Card>
         </Box>
       )}
