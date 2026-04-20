@@ -1,4 +1,10 @@
-import { CheckIcon, InfoCircledIcon, ReloadIcon, UploadIcon } from '@radix-ui/react-icons';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  InfoCircledIcon,
+  ReloadIcon,
+  UploadIcon,
+} from '@radix-ui/react-icons';
 import {
   Avatar,
   Button,
@@ -200,6 +206,57 @@ export function ProfileCard({
             {sshErrorMessage && <Text className={styles.sshErrorMessage}>{sshErrorMessage}</Text>}
           </Flex>
         </Flex>
+
+        <details className={styles.sshTutorial}>
+          <summary className={styles.sshTutorialSummary}>
+            <Flex align='center' gap='2'>
+              <InfoCircledIcon style={{ color: 'var(--orange-9)', flexShrink: 0 }} />
+              <Text
+                size='2'
+                weight='medium'
+                className={styles.sshTutorialText}
+                style={{ color: 'var(--gray-11)' }}
+              >
+                {t('profile.ssh.tutorial.summary')}
+              </Text>
+              <ChevronDownIcon className={styles.sshTutorialChevron} />
+            </Flex>
+          </summary>
+          <Flex direction='column' gap='3' style={{ marginTop: '12px', paddingLeft: '4px' }}>
+            <Flex direction='column' gap='1'>
+              <Text
+                size='2'
+                weight='medium'
+                className={styles.sshTutorialText}
+                style={{ color: 'var(--gray-12)' }}
+              >
+                {t('profile.ssh.tutorial.step1.title')}
+              </Text>
+              <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
+                {t('profile.ssh.tutorial.step1.description')}
+              </Text>
+              <pre className={styles.sshTutorialCode}>
+                <code>{`ssh-keygen -t ed25519 -C "your_email@example.com"`}</code>
+              </pre>
+            </Flex>
+            <Flex direction='column' gap='1'>
+              <Text
+                size='2'
+                weight='medium'
+                className={styles.sshTutorialText}
+                style={{ color: 'var(--gray-12)' }}
+              >
+                {t('profile.ssh.tutorial.step2.title')}
+              </Text>
+              <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
+                {t('profile.ssh.tutorial.step2.description')}
+              </Text>
+              <pre className={styles.sshTutorialCode}>
+                <code>cat ~/.ssh/id_ed25519.pub</code>
+              </pre>
+            </Flex>
+          </Flex>
+        </details>
 
         <Flex direction='column' gap='2'>
           <Flex align='center' gap='2'>

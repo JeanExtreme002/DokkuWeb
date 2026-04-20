@@ -24,6 +24,12 @@
   "profile.ssh.registerFailed": "Ocorreu um erro inesperado ao salvar a chave SSH",
   "profile.ssh.registerNotAllowed": "Você não tem permissão para registrar chaves SSH",
 
+  "profile.ssh.tutorial.summary": "Como criar uma chave SSH?",
+  "profile.ssh.tutorial.step1.title": "1. Gerar um par de chaves SSH",
+  "profile.ssh.tutorial.step1.description": "Execute o comando abaixo no seu terminal. Pressione Enter para aceitar o caminho padrão e, opcionalmente, defina uma senha.",
+  "profile.ssh.tutorial.step2.title": "2. Visualizar a chave pública",
+  "profile.ssh.tutorial.step2.description": "Execute o comando abaixo para exibir sua chave pública.",
+
   "profile.token.label": "Token de Acesso",
   "profile.token.tooltip": "Token de autenticação para requisições via API",
   "profile.token.placeholder": "Token não disponível",

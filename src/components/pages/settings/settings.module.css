@@ -42,7 +42,6 @@
 .userSettingsContainer {
   display: flex;
   flex-direction: row;
-  margin-bottom: 15px;
   gap: 80px;
   width: 100%;
 }
@@ -71,5 +70,57 @@
 @media (max-width: 350px) {
   .sshButton {
     font-size: 11px;
+  }
+}
+
+.sshTutorial {
+  border: 1px solid var(--gray-5);
+  border-radius: var(--radius-3);
+  padding: 10px 14px;
+  background: var(--gray-2);
+  margin-bottom: 15px;
+}
+
+.sshTutorialSummary {
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.sshTutorialSummary::-webkit-details-marker {
+  display: none;
+}
+
+.sshTutorialChevron {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  color: var(--gray-9);
+  flex-shrink: 0;
+}
+
+details[open] .sshTutorialChevron {
+  transform: rotate(180deg);
+}
+
+.sshTutorialCode {
+  background: var(--gray-3);
+  border: 1px solid var(--gray-5);
+  border-radius: var(--radius-2);
+  padding: 8px 12px;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--gray-12);
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre;
+}
+
+@media (max-width: 575px) {
+  .sshTutorialCode {
+    font-size: 11px;
+  }
+
+  .sshTutorialText {
+    font-size: 11px !important;
   }
 }
