@@ -6,4 +6,6 @@ export { default as OverviewSection } from './overview-section';
 export { default as SecuritySection } from './security-section';
 export { default as ServicesSection } from './services-section';
 export { default as ShellSection } from './shell-section';
+export type { CronTask } from './tasks-section';
+export { default as TasksSection } from './tasks-section';
 export { default as VariablesSection } from './variables-section';

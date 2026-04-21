@@ -10,6 +10,7 @@ import { usePageTranslation } from '@/i18n/utils';
 import { api, config as websiteConfig, downloadFile, formatAppName, processAnsiCodes } from '@/lib';
 
 import styles from './app-details.module.css';
+import type { CronTask } from './components';
 import {
   AppControlButtons,
   BuilderConfigModal,
@@ -32,6 +33,7 @@ import {
   ShareConfirmModal,
   ShellSection,
   StopAppConfirmModal,
+  TasksSection,
   UnshareConfirmModal,
   VariablesSection,
   ZipInfoModal,
@@ -117,6 +119,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [networkData, setNetworkData] = useState<NetworkData>({ network: null });
   const [portMappings, setPortMappings] = useState<PortMapping[]>([]);
   const [logs, setLogs] = useState<string>('');
+  const [tasks, setTasks] = useState<CronTask[]>([]);
   const [config, setConfig] = useState<ConfigData>({});
   const [appUrl, setAppUrl] = useState<string | null>(null);
   const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
@@ -130,6 +133,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [networkLoading, setNetworkLoading] = useState(true);
   const [portMappingsLoading, setPortMappingsLoading] = useState(true);
   const [logsLoading, setLogsLoading] = useState(true);
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [runTaskId, setRunTaskId] = useState('');
+  const [runTaskLoading, setRunTaskLoading] = useState(false);
+  const [runTaskOutput, setRunTaskOutput] = useState<string | null>(null);
+  const [runTaskSuccess, setRunTaskSuccess] = useState<boolean | null>(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [builderLoading, setBuilderLoading] = useState(true);
   const [deployInfoLoading, setDeployInfoLoading] = useState(true);
@@ -184,6 +192,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     'services',
     'network',
     'logs',
+    'tasks',
     'shell',
     'variables',
     'files',
@@ -310,6 +319,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     network: null as string | null,
     portMappings: null as string | null,
     logs: null as string | null,
+    tasks: null as string | null,
     config: null as string | null,
     deploy: null as string | null,
     builder: null as string | null,
@@ -419,6 +429,42 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       setLogs(response.data.result);
     }
   }, [props.appName, logLinesLimit, withSharedBy]);
+
+  const fetchTasks = useCallback(async () => {
+    const response = await api.post(
+      `/api/cron/${props.appName}/list/`,
+      {},
+      { params: withSharedBy() }
+    );
+    if (response.data.success) {
+      setTasks(response.data.result);
+    }
+  }, [props.appName, withSharedBy]);
+
+  const runTask = useCallback(async () => {
+    if (!runTaskId.trim()) return;
+    setRunTaskLoading(true);
+    setRunTaskOutput(null);
+    setRunTaskSuccess(null);
+    try {
+      const response = await api.post(
+        `/api/cron/${props.appName}/run/`,
+        {},
+        { params: { cron_id: runTaskId.trim() } }
+      );
+      setRunTaskSuccess(response.data.success);
+      if (response.data.result) {
+        setRunTaskOutput(response.data.result);
+      } else if (!response.data.success) {
+        setRunTaskOutput(t('tasks.run.unexpectedError'));
+      }
+    } catch {
+      setRunTaskSuccess(false);
+      setRunTaskOutput(t('tasks.run.unexpectedError'));
+    } finally {
+      setRunTaskLoading(false);
+    }
+  }, [props.appName, runTaskId, t]);
 
   const fetchConfig = useCallback(async () => {
     const response = await api.post(
@@ -596,6 +642,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     );
   }, [fetchLogs, fetchWithRetry]);
 
+  const refreshTasks = useCallback(async () => {
+    await fetchWithRetry(fetchTasks, setTasksLoading, (error) =>
+      setErrors((prev) => ({ ...prev, tasks: error }))
+    );
+  }, [fetchTasks, fetchWithRetry]);
+
   // Initialize all data fetching
   useEffect(() => {
     if (!stableSession || !props.appName || dataLoaded) return;
@@ -647,6 +699,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           fetchWithRetry(fetchLogs, setLogsLoading, (error) =>
             setErrors((prev) => ({ ...prev, logs: error }))
           ),
+          fetchWithRetry(fetchTasks, setTasksLoading, (error) =>
+            setErrors((prev) => ({ ...prev, tasks: error }))
+          ),
           fetchWithRetry(fetchConfig, setConfigLoading, (error) =>
             setErrors((prev) => ({ ...prev, config: error }))
           ),
@@ -677,6 +732,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     fetchNetwork,
     fetchPortMappings,
     fetchLogs,
+    fetchTasks,
     fetchConfig,
     fetchAppUrl,
     fetchDeploymentToken,
@@ -1648,6 +1704,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 <Tabs.Trigger value='logs' className={styles.tabsTrigger}>
                   {t('tabs.logs')}
                 </Tabs.Trigger>
+                <Tabs.Trigger value='tasks' className={styles.tabsTrigger}>
+                  {t('tabs.tasks')}
+                </Tabs.Trigger>
                 <Tabs.Trigger value='shell' className={styles.tabsTrigger}>
                   {t('tabs.shell')}
                 </Tabs.Trigger>
@@ -1745,6 +1804,22 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   onRefresh={refreshLogs}
                   onDownload={downloadLogs}
                   processAnsiCodes={processAnsiCodes}
+                />
+              </Tabs.Content>
+
+              {/* Tasks Tab */}
+              <Tabs.Content value='tasks' className={styles.tabsContent}>
+                <TasksSection
+                  tasks={tasks}
+                  tasksLoading={tasksLoading}
+                  error={errors.tasks}
+                  runId={runTaskId}
+                  runLoading={runTaskLoading}
+                  runOutput={runTaskOutput}
+                  runSuccess={runTaskSuccess}
+                  onSetRunId={setRunTaskId}
+                  onRunTask={runTask}
+                  onRefresh={refreshTasks}
                 />
               </Tabs.Content>
 

@@ -530,7 +530,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .tabsTrigger {
     padding: 12px 16px;
     font-size: 13px;
@@ -980,6 +980,221 @@ button.envExportButtonOrange {
   }
   .dangerRowButton {
     width: 100% !important;
+  }
+}
+
+/* Tasks header responsive layout */
+.tasksHeader {
+  display: flex !important;
+}
+
+.mobileTasksHeader {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .tasksHeader {
+    display: none !important;
+  }
+
+  .mobileTasksHeader {
+    display: block !important;
+  }
+}
+
+/* Tasks table */
+.tasksTableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  background: var(--color-panel-solid);
+}
+
+.tasksTable {
+  width: 100%;
+  min-width: 520px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tasksColCommand {
+  width: 44%;
+}
+
+.tasksColSchedule {
+  width: 20%;
+}
+
+.tasksColId {
+  width: 18%;
+}
+
+.tasksColMaintenance {
+  width: 18%;
+}
+
+.tasksHeaderRow {
+  background: var(--gray-2);
+}
+
+.tasksHeaderCell {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-11);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.tasksRow {
+  border-bottom: 1px solid var(--gray-5);
+  transition: background 0.15s ease;
+}
+
+.tasksRow:last-child {
+  border-bottom: none;
+}
+
+.tasksRow:hover {
+  background: var(--gray-2);
+}
+
+.tasksCell {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--gray-12);
+  vertical-align: middle;
+}
+
+.tasksCellMonospace {
+  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 13px;
+}
+
+.tasksCellScroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+.tasksCellScroll::-webkit-scrollbar {
+  height: 3px;
+}
+
+.tasksCellScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tasksCellScroll::-webkit-scrollbar-thumb {
+  background: var(--gray-7);
+  border-radius: 2px;
+}
+
+.tasksCopyButton:hover,
+.tasksCopyButton:focus {
+  background: transparent !important;
+}
+
+.tasksOutputContainer {
+  height: 250px !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 850px) {
+  .tasksColCommand {
+    width: 39%;
+  }
+
+  .tasksColMaintenance {
+    width: 23%;
+  }
+
+  .tasksHeaderCell {
+    font-size: 10px;
+  }
+
+  .tasksCell {
+    font-size: 12px;
+  }
+
+  .tasksCellMonospace {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 690px) {
+  .tasksTable {
+    min-width: unset;
+    table-layout: auto;
+  }
+
+  .tasksHeaderRow {
+    display: none;
+  }
+
+  .tasksTable,
+  .tasksTable tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .tasksRow {
+    display: block;
+    border: 1px solid var(--gray-6);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 4px 0;
+  }
+
+  .tasksRow:last-child {
+    margin-bottom: 0;
+  }
+
+  .tasksCell {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border-bottom: 1px solid var(--gray-5);
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .tasksCell:last-child {
+    border-bottom: none;
+  }
+
+  .tasksCell::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-11);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .tasksCellMonospace {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 450px) {
+  .tasksCell {
+    font-size: 11px;
+  }
+
+  .tasksCell::before {
+    font-size: 10px;
+    min-width: 95px;
+  }
+
+  .tasksCellMonospace {
+    font-size: 10px;
   }
 }
 
