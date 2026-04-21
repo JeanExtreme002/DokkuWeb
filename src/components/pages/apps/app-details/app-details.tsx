@@ -1,4 +1,4 @@
-import { ReloadIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Separator, Tabs, Text } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -172,6 +172,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [envToDelete, setEnvToDelete] = useState<string | null>(null);
 
   const [envChangeToast, setEnvChangeToast] = useState(false);
+  const [downloadToast, setDownloadToast] = useState<string | null>(null);
 
   // Port mapping delete modal states
   const [showDeletePortModal, setShowDeletePortModal] = useState(false);
@@ -837,6 +838,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   // Download a file from the container given its full path
   const downloadAppFile = async (fullPath: string, filename?: string) => {
+    setDownloadToast(filename || fullPath.split('/').pop() || fullPath);
     try {
       const response = await api.post(
         `/api/apps/${props.appName}/download/`,
@@ -856,8 +858,10 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      setDownloadToast(null);
     } catch (error) {
       console.error('Error downloading file:', error);
+      setDownloadToast(null);
       setDirError(t('files.errors.downloadFailed'));
       setTimeout(() => setDirError(null), 3000);
     }
@@ -1531,9 +1535,19 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       />
       <NavBar session={stableSession} />
       <Toast
+        icon={<InfoCircledIcon width={18} height={18} />}
+        progressAnimation={true}
         message={t('envSection.restartToast')}
         visible={envChangeToast}
         onHide={() => setEnvChangeToast(false)}
+      />
+      <Toast
+        icon={<ReloadIcon width={18} height={18} className={styles.buttonSpinner} />}
+        message={t('filesSection.downloadToast', { filename: downloadToast })}
+        visible={!!downloadToast}
+        onHide={() => setDownloadToast(null)}
+        color='green'
+        duration={60 * 60 * 1000}
       />
 
       <main className={styles.root}>

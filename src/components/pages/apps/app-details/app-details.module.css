@@ -597,6 +597,7 @@
 
   .urlButton {
     width: 100%;
+    margin-bottom: 10px;
   }
 
   .networkName {
@@ -694,48 +695,6 @@
   .editText {
     display: none;
   }
-}
-
-/* Purple outline button override - force all states */
-.purpleOutlineButton,
-.purpleOutlineButton[data-state],
-.purpleOutlineButton[data-accent-color] {
-  background: transparent !important;
-  border: 1px solid var(--purple-9) !important;
-  border-color: var(--purple-9) !important;
-  color: var(--purple-9) !important;
-  box-shadow: none !important;
-}
-
-.purpleOutlineButton:hover,
-.purpleOutlineButton:focus,
-.purpleOutlineButton[data-state]:hover,
-.purpleOutlineButton[data-accent-color]:hover {
-  background: var(--purple-2) !important;
-  border: 1px solid var(--purple-9) !important;
-  border-color: var(--purple-9) !important;
-  color: var(--purple-9) !important;
-  box-shadow: none !important;
-}
-
-.purpleOutlineButton:active,
-.purpleOutlineButton[data-state]:active,
-.purpleOutlineButton[data-accent-color]:active {
-  background: var(--purple-3) !important;
-  border: 1px solid var(--purple-9) !important;
-  border-color: var(--purple-9) !important;
-  color: var(--purple-9) !important;
-  box-shadow: none !important;
-}
-
-/* Additional overrides for Radix UI internal classes */
-.purpleOutlineButton[data-accent-color='green'],
-.purpleOutlineButton[data-accent-color],
-button.purpleOutlineButton {
-  --accent-9: var(--purple-9) !important;
-  --accent-2: var(--purple-2) !important;
-  --accent-3: var(--purple-3) !important;
-  border-color: var(--purple-9) !important;
 }
 
 /* Orange outline button for Export */

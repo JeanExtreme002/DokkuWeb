@@ -148,18 +148,16 @@ export function HeaderSection(props: HeaderSectionProps) {
         {/* App URL Button */}
         {props.appUrl && (
           <Button
-            className={`${styles.urlButton} ${styles.purpleOutlineButton}`}
+            className={styles.urlButton}
             onClick={props.onVisitWebsite}
-            variant='outline'
-            color={undefined}
-            style={
-              {
-                marginBottom: '16px',
-                '--accent-9': 'var(--purple-9)',
-                '--accent-2': 'var(--purple-2)',
-                '--accent-3': 'var(--purple-3)',
-              } as React.CSSProperties
-            }
+            variant='surface'
+            size='2'
+            color='purple'
+            style={{
+              cursor: 'pointer',
+              backgroundColor: 'var(--purple-3)',
+              marginRight: '12px',
+            }}
           >
             <LinkIcon />
             {t('header.visitWebsite')}

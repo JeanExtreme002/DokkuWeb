@@ -201,6 +201,7 @@
   "filesSection.loading": "Loading directory information...",
   "filesSection.empty": "Empty directory.",
   "filesSection.confirmDownload": "Do you really want to download the file \"{{file}} [{{size}}]\"?",
+  "filesSection.downloadToast": "Downloading \"{{filename}}\"...",
   "envSection.title": "Environment Variables",
   "envSection.importTooltip": "Import variables from a file (.env, .json, .yml)",
   "envSection.import": "Import",
