@@ -1,3 +1,4 @@
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Box, Button, Dialog, Flex, Text } from '@radix-ui/themes';
 import React from 'react';
 import { Trans } from 'react-i18next';
@@ -39,12 +40,16 @@ export default function ZipInfoModal(props: ZipInfoModalProps) {
               <div>{t('modals.zipInfo.structure.root')}</div>
               <div>{t('modals.zipInfo.structure.deploymentToken')}</div>
               <div>{t('modals.zipInfo.structure.appPy')}</div>
-              <div>{t('modals.zipInfo.structure.requirements')}</div>
               <div>{t('modals.zipInfo.structure.other')}</div>
             </Box>
           </Flex>
         </Box>
-
+        <Flex gap='2' style={{ marginBottom: '8px' }} align={'center'}>
+          <InfoCircledIcon width={16} height={16} />
+          <Text size='2' style={{ color: 'var(--gray-11)', display: 'block' }}>
+            {t('modals.zipInfo.tokenHint', { tab: t('tabs.security') })}
+          </Text>
+        </Flex>
         <Box
           style={{
             padding: '12px',
