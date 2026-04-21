@@ -2,7 +2,9 @@ import {
   CheckIcon,
   ChevronDownIcon,
   InfoCircledIcon,
+  MoonIcon,
   ReloadIcon,
+  SunIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
 import {
@@ -11,6 +13,7 @@ import {
   Card,
   Flex,
   Heading,
+  IconButton,
   Select,
   Separator,
   Text,
@@ -21,6 +24,7 @@ import { Session } from 'next-auth';
 import * as React from 'react';
 
 import { PadLockIcon } from '@/components/shared';
+import { useTheme } from '@/contexts';
 import i18n from '@/i18n';
 import { usePageTranslation } from '@/i18n/utils';
 import { LANGUAGE_NAMES } from '@/lib/utils';
@@ -55,6 +59,7 @@ export function ProfileCard({
   sshErrorMessage,
 }: ProfileCardProps) {
   const { t } = usePageTranslation();
+  const { mode, toggleTheme } = useTheme();
   const userName = session?.user?.name || t('user.fallbackName');
   const userImage = !userName.toLowerCase().startsWith('takeover')
     ? session?.user?.image
@@ -81,9 +86,26 @@ export function ProfileCard({
     >
       <Flex direction='column' gap='3' style={{ padding: '4px' }}>
         <Flex justify='between' align='center'>
-          <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
-            {t('profile.title')}
-          </Heading>
+          <Flex align='center' gap='2'>
+            <Heading size='5' weight='medium' style={{ color: 'var(--gray-12)' }}>
+              {t('profile.title')}
+            </Heading>
+            <Tooltip
+              content={t(mode === 'light' ? 'profile.theme.toDark' : 'profile.theme.toLight')}
+            >
+              <IconButton
+                size='1'
+                variant='ghost'
+                color='gray'
+                onClick={toggleTheme}
+                aria-label={t(mode === 'light' ? 'profile.theme.toDark' : 'profile.theme.toLight')}
+                className={styles.themeToggleButton}
+                style={{ cursor: 'pointer' }}
+              >
+                {mode === 'light' ? <MoonIcon /> : <SunIcon />}
+              </IconButton>
+            </Tooltip>
+          </Flex>
           {!adminLoading && isAdmin && (
             <Tooltip content={t('profile.admin.tooltip')}>
               <Button
@@ -113,11 +135,17 @@ export function ProfileCard({
           />
 
           <Flex direction='column' gap='1' style={{ flex: 1 }}>
-            <Text size='3' weight='medium' style={{ color: 'var(--gray-12)' }}>
+            <Text
+              size='3'
+              weight='medium'
+              className={styles.userNameText}
+              style={{ color: 'var(--gray-12)' }}
+            >
               {userName}
             </Text>
             <Text
               size='2'
+              className={styles.userEmailText}
               style={{
                 color: 'var(--gray-10)',
                 fontFamily: 'monospace',
@@ -152,7 +180,7 @@ export function ProfileCard({
             >
               <Select.Trigger
                 placeholder={t('profile.language.placeholder')}
-                style={{ maxWidth: '200px' }}
+                className={styles.languageSelectTrigger}
               />
               <Select.Content>
                 {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
@@ -254,6 +282,19 @@ export function ProfileCard({
               <pre className={styles.sshTutorialCode}>
                 <code>cat ~/.ssh/id_ed25519.pub</code>
               </pre>
+            </Flex>
+            <Flex direction='column' gap='1'>
+              <Text
+                size='2'
+                weight='medium'
+                className={styles.sshTutorialText}
+                style={{ color: 'var(--gray-12)' }}
+              >
+                {t('profile.ssh.tutorial.step3.title')}
+              </Text>
+              <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
+                {t('profile.ssh.tutorial.step3.description', { button: t('profile.ssh.button') })}
+              </Text>
             </Flex>
           </Flex>
         </details>

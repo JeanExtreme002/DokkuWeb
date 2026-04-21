@@ -28,6 +28,29 @@
   }
 }
 
+@keyframes iconShine {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px transparent);
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 7px rgba(251, 191, 36, 1))
+      drop-shadow(0 0 14px rgba(251, 191, 36, 0.45));
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.themeToggleButton {
+  animation: iconShine 2.5s ease-in-out infinite;
+}
+
+.themeToggleButton:hover {
+  background: transparent !important;
+}
+
 .adminButton {
   display: flex;
   align-items: center;
@@ -46,6 +69,10 @@
   width: 100%;
 }
 
+.languageSelectTrigger {
+  max-width: 200px;
+}
+
 .sshButton {
   max-width: 400px;
 }
@@ -54,16 +81,37 @@
   color: red;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 550px) {
   .userSettingsContainer {
     flex-direction: column;
     gap: 20px;
+  }
+  .sshButton {
+    max-width: 500px;
+  }
+  .userNameText {
+    font-size: 15px;
+  }
+  .userEmailText {
+    font-size: 12px;
   }
 }
 
 @media (max-width: 419px) {
   .adminButtonLabel {
     display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .languageSelectTrigger {
+    max-width: 500px;
+  }
+  .userNameText {
+    font-size: 13px;
+  }
+  .userEmailText {
+    font-size: 10px;
   }
 }
 

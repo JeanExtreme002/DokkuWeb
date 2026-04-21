@@ -7,6 +7,9 @@
   "user.fallbackName": "Usuário",
 
   "profile.title": "Perfil do Usuário",
+  "profile.theme.toLight": "Mudar para modo claro",
+  "profile.theme.toDark": "Mudar para modo escuro",
+
   "profile.admin.tooltip": "Acessar o painel de administrador",
   "profile.admin.ariaLabel": "Acessar o painel de administrador",
   "profile.admin.titleAttr": "Acessar o painel de administrador",
@@ -24,11 +27,13 @@
   "profile.ssh.registerFailed": "Ocorreu um erro inesperado ao salvar a chave SSH",
   "profile.ssh.registerNotAllowed": "Você não tem permissão para registrar chaves SSH",
 
-  "profile.ssh.tutorial.summary": "Como criar uma chave SSH?",
+  "profile.ssh.tutorial.summary": "Como criar e registrar uma chave SSH?",
   "profile.ssh.tutorial.step1.title": "1. Gerar um par de chaves SSH",
   "profile.ssh.tutorial.step1.description": "Execute o comando abaixo no seu terminal. Pressione Enter para aceitar o caminho padrão e, opcionalmente, defina uma senha.",
   "profile.ssh.tutorial.step2.title": "2. Visualizar a chave pública",
   "profile.ssh.tutorial.step2.description": "Execute o comando abaixo para exibir sua chave pública.",
+  "profile.ssh.tutorial.step3.title": "3. Registrar chave",
+  "profile.ssh.tutorial.step3.description": "Clique no botão \"{{button}}\" e selecione o arquivo id_ed25519.pub.",
 
   "profile.token.label": "Token de Acesso",
   "profile.token.tooltip": "Token de autenticação para requisições via API",

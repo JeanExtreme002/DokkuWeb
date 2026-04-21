@@ -7,6 +7,9 @@
   "user.fallbackName": "User",
 
   "profile.title": "User Profile",
+  "profile.theme.toLight": "Switch to light mode",
+  "profile.theme.toDark": "Switch to dark mode",
+
   "profile.admin.tooltip": "Open the admin dashboard",
   "profile.admin.ariaLabel": "Open the admin dashboard",
   "profile.admin.titleAttr": "Open the admin dashboard",
@@ -24,11 +27,13 @@
   "profile.ssh.registerFailed": "An unexpected error occurred while saving the SSH key",
   "profile.ssh.registerNotAllowed": "You do not have permission to register SSH keys",
 
-  "profile.ssh.tutorial.summary": "How to create an SSH key?",
+  "profile.ssh.tutorial.summary": "How to create and register an SSH key?",
   "profile.ssh.tutorial.step1.title": "1. Generate an SSH key pair",
   "profile.ssh.tutorial.step1.description": "Run the following command in your terminal. Press Enter to accept the default file path and optionally set a passphrase.",
   "profile.ssh.tutorial.step2.title": "2. View your public key",
   "profile.ssh.tutorial.step2.description": "Run the command below to display your public key.",
+  "profile.ssh.tutorial.step3.title": "3. Register key",
+  "profile.ssh.tutorial.step3.description": "Click the \"{{button}}\" button and select the id_ed25519.pub file.",
 
   "profile.token.label": "Access Token",
   "profile.token.tooltip": "Authentication token for API requests",
