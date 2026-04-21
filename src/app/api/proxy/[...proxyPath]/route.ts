@@ -20,8 +20,10 @@ const CACHEABLE_ENDPOINTS: Array<{ method: string; endpoint: string }> = [
   { method: 'POST', endpoint: '/api/databases/list/' },
   { method: 'POST', endpoint: '/api/databases/:plugin/:service_name/info/' },
   { method: 'POST', endpoint: '/api/deploy/:app_name/info/' },
+  { method: 'POST', endpoint: '/api/letsencrypt/:app_name/active' },
   { method: 'POST', endpoint: '/api/networks/list/' },
   { method: 'POST', endpoint: '/api/networks/:network_name/linked-apps/' },
+  { method: 'POST', endpoint: '/api/ssh/port/' },
 ];
 
 interface CacheEntry {

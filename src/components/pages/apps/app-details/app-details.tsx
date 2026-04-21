@@ -325,6 +325,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     deploy: null as string | null,
     builder: null as string | null,
     deployInfo: null as string | null,
+    sshPort: null as string | null,
   });
 
   const statusInfo = useStatusInfo(appInfo);
@@ -556,7 +557,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const fetchHttpsStatus = useCallback(async () => {
     setHttpsLoading(true);
     try {
-      const response = await api.post(`/api/letsencrypt/${props.appName}/active`);
+      const response = await api.post(`/api/letsencrypt/${props.appName}/active/`);
       if (response.data && response.data.success) {
         setHttpsEnabled(response.data.result);
       }
@@ -638,6 +639,16 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       if (appDeployInfoResponse.data.success) {
         setDeployInfo(appDeployInfoResponse.data.result);
       }
+
+      // Fetch fresh HTTPS status without cache
+      const httpsStatusResponse = await api.post(
+        `/api/letsencrypt/${props.appName}/active/`,
+        {},
+        { headers: { 'x-cache': 'false' } }
+      );
+      if (httpsStatusResponse.data && httpsStatusResponse.data.success) {
+        setHttpsEnabled(httpsStatusResponse.data.result);
+      }
     } catch (error) {
       console.warn('Silent overview refresh error (ignored):', error);
     }
@@ -678,6 +689,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             setAppUrlLoading,
             () => {} // No separate error state needed
           ),
+          fetchWithRetry(
+            fetchSshPort,
+            () => {}, // No separate loading state needed
+            (error) => setErrors((prev) => ({ ...prev, sshPort: error }))
+          ),
+          fetchHttpsStatus(),
         ];
 
         // Do not fetch deployment token when page is accessed via shared_by
@@ -713,8 +730,6 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           fetchWithRetry(fetchConfig, setConfigLoading, (error) =>
             setErrors((prev) => ({ ...prev, config: error }))
           ),
-          fetchHttpsStatus(),
-          fetchSshPort(),
         ]);
 
         // Initial sharing list (skip when accessed via shared_by)
