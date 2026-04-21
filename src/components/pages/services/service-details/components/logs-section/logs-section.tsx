@@ -48,20 +48,26 @@ export function LogsSection({
             >
               <Select.Trigger style={{ minWidth: '70px', cursor: 'pointer' }} />
               <Select.Content>
-                <Select.Item style={{ cursor: 'pointer' }} value='500'>
-                  500
-                </Select.Item>
                 <Select.Item style={{ cursor: 'pointer' }} value='1000'>
                   1000
                 </Select.Item>
-                <Select.Item style={{ cursor: 'pointer' }} value='2000'>
-                  2000
+                <Select.Item style={{ cursor: 'pointer' }} value='3000'>
+                  3000
                 </Select.Item>
                 <Select.Item style={{ cursor: 'pointer' }} value='5000'>
                   5000
                 </Select.Item>
                 <Select.Item style={{ cursor: 'pointer' }} value='7000'>
                   7000
+                </Select.Item>
+                <Select.Item style={{ cursor: 'pointer' }} value='15000'>
+                  15000
+                </Select.Item>
+                <Select.Item style={{ cursor: 'pointer' }} value='30000'>
+                  30000
+                </Select.Item>
+                <Select.Item style={{ cursor: 'pointer' }} value='50000'>
+                  50000
                 </Select.Item>
               </Select.Content>
             </Select.Root>
@@ -111,11 +117,13 @@ export function LogsSection({
             >
               <Select.Trigger style={{ minWidth: '70px' }} />
               <Select.Content>
-                <Select.Item value='500'>500</Select.Item>
                 <Select.Item value='1000'>1000</Select.Item>
-                <Select.Item value='2000'>2000</Select.Item>
+                <Select.Item value='3000'>3000</Select.Item>
                 <Select.Item value='5000'>5000</Select.Item>
                 <Select.Item value='7000'>7000</Select.Item>
+                <Select.Item value='15000'>15000</Select.Item>
+                <Select.Item value='30000'>30000</Select.Item>
+                <Select.Item value='50000'>50000</Select.Item>
               </Select.Content>
             </Select.Root>
           </Flex>
