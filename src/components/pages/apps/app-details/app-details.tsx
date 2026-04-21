@@ -125,6 +125,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
   const [logLinesLimit, setLogLinesLimit] = useState<number>(1000);
   const [deployInfo, setDeployInfo] = useState<DeployInfoData | null>(null);
+  const [sshPort, setSshPort] = useState<number | null>(null);
 
   // Loading states
   const [mainLoading, setMainLoading] = useState(true);
@@ -523,6 +524,13 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.appName]);
 
+  const fetchSshPort = useCallback(async () => {
+    const response = await api.post('/api/ssh/port/');
+    if (response.data.success) {
+      setSshPort(response.data.message.port);
+    }
+  }, []);
+
   const fetchSharingList = useCallback(async () => {
     setSharingLoading(true);
     setSharingError(null);
@@ -706,6 +714,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
             setErrors((prev) => ({ ...prev, config: error }))
           ),
           fetchHttpsStatus(),
+          fetchSshPort(),
         ]);
 
         // Initial sharing list (skip when accessed via shared_by)
@@ -738,6 +747,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     fetchDeploymentToken,
     fetchBuilderInfo,
     fetchDeployInfo,
+    fetchSshPort,
     sharedBy,
   ]);
 
@@ -1663,6 +1673,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               appInfo={appInfo}
               deployInfo={deployInfo}
               domain={websiteConfig.server.domain}
+              sshPort={sshPort}
             />
 
             <Separator size='4' />

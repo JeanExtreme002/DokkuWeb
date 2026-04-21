@@ -11,9 +11,10 @@ interface DeploySectionProps {
   appInfo: AppInfo | null;
   deployInfo: DeployInfoData | null;
   domain: string;
+  sshPort?: number | null;
 }
 
-export function DeploySection({ appInfo, deployInfo, domain }: DeploySectionProps) {
+export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySectionProps) {
   const { t } = usePageTranslation();
   return (
     <div className={styles.deploySection}>
@@ -28,14 +29,18 @@ export function DeploySection({ appInfo, deployInfo, domain }: DeploySectionProp
       </Box>
       <Box className={styles.codeBlock}>
         <div>
-          <span className={styles.command}>$ git remote add dokku</span> dokku@
+          <span className={styles.command}>$ git remote add</span> dokku dokku@
           {domain}:{appInfo?.raw_name}
         </div>
+        {sshPort != null && sshPort !== 22 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <span className={styles.command}>$ git config --local&nbsp;</span>
+            <span>core.sshCommand &quot;ssh -p {sshPort}&quot;</span>
+          </div>
+        )}
         <div>
-          <span className={styles.command}>
-            $ git push dokku{' '}
-            {deployInfo ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>'}
-          </span>
+          <span className={styles.command}>$ git push</span> dokku{' '}
+          {deployInfo ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>'}
         </div>
       </Box>
     </div>
