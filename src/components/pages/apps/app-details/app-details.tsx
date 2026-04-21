@@ -1,4 +1,4 @@
-import { InfoCircledIcon, ReloadIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon, ReloadIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Separator, Tabs, Text } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -182,6 +182,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
 
   const [envChangeToast, setEnvChangeToast] = useState(false);
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
+  const [deployRepoToast, setDeployRepoToast] = useState(false);
 
   // Port mapping delete modal states
   const [showDeletePortModal, setShowDeletePortModal] = useState(false);
@@ -231,6 +232,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [branch, setBranch] = useState('main');
   const [deployLoading, setDeployLoading] = useState(false);
   const [fileDeployLoading, setFileDeployLoading] = useState(false);
+  const [fileDeployError, setFileDeployError] = useState<string | null>(null);
 
   // Deployment token states
   const [deploymentToken, setDeploymentToken] = useState<string | null>(null);
@@ -1361,7 +1363,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setErrors((prev) => ({ ...prev, deploy: null }));
 
     try {
-      await api.put(
+      const response = await api.put(
         `/api/deploy/${props.appName}/`,
         {},
         {
@@ -1372,10 +1374,19 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         }
       );
 
+      if (response.data?.success === false) {
+        setErrors((prev) => ({
+          ...prev,
+          deploy: response.data.result || t('deploy.errors.repo'),
+        }));
+        return;
+      }
+
       // Reset form and close modal
       setRepoUrl('');
       setBranch('main');
       setDeployModalOpen(false);
+      setDeployRepoToast(true);
 
       // Show success message or refresh app info
       setDataLoaded(false); // Force refresh after deploy
@@ -1399,7 +1410,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       const formData = new FormData();
       formData.append('file', file);
 
-      await api.put(`/api/deploy/`, formData, {
+      const response = await api.put(`/api/deploy/`, formData, {
         params: withSharedBy({
           wait: false,
         }),
@@ -1408,15 +1419,23 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         },
       });
 
+      if (response.data?.detail) {
+        setFileDeployError(response.data.detail);
+        setZipInfoModalOpen(true);
+        return;
+      }
+
+      setDeployRepoToast(true);
+
       // Refresh app info after deployment
       setDataLoaded(false); // Force refresh after deploy
       await fetchAppInfo();
     } catch (error: any) {
       console.error('Error deploying from file:', error);
-      setErrors((prev) => ({
-        ...prev,
-        deploy: error.response?.data?.message || t('deploy.errors.file'),
-      }));
+      setFileDeployError(
+        error.response?.data?.detail || error.response?.data?.message || t('deploy.errors.file')
+      );
+      setZipInfoModalOpen(true);
     } finally {
       setFileDeployLoading(false);
     }
@@ -1629,6 +1648,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         onHide={() => setDownloadToast(null)}
         color='green'
         duration={60 * 60 * 1000}
+      />
+      <Toast
+        icon={<RocketIcon width={18} height={18} />}
+        message={t('deploy.repoSuccessToast')}
+        visible={deployRepoToast}
+        onHide={() => setDeployRepoToast(false)}
+        duration={10000}
+        progressAnimation={true}
+        color='green'
       />
 
       <main className={styles.root}>
@@ -1966,8 +1994,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       {/* Zip Info Modal */}
       <ZipInfoModal
         open={zipInfoModalOpen}
-        onOpenChange={setZipInfoModalOpen}
+        onOpenChange={(open) => {
+          setZipInfoModalOpen(open);
+          if (!open) setFileDeployError(null);
+        }}
         handleZipFileSelection={handleZipFileSelection}
+        errorDeploy={fileDeployError}
       />
       {/* Loading overlay for file upload */}
       {fileDeployLoading && (

@@ -105,6 +105,7 @@
   "files.errors.loadDirInfo": "Error loading directory information",
   "files.errors.downloadFailed": "Failed to download file.",
   "files.errors.workingDirUnavailable": "WorkingDir unavailable for this app.",
+  "deploy.repoSuccessToast": "Deploy started in the background. Your app will be live in a few minutes.",
   "deploy.errors.repo": "Error deploying from repository",
   "deploy.errors.file": "Error deploying from file",
   "deploy.errors.invalidZip": "Please select a valid .zip file",

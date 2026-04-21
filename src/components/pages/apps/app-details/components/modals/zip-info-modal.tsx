@@ -9,10 +9,11 @@ interface ZipInfoModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   handleZipFileSelection: () => void;
+  errorDeploy?: string | null;
 }
 
 export default function ZipInfoModal(props: ZipInfoModalProps) {
-  const { open, onOpenChange, handleZipFileSelection } = props;
+  const { open, onOpenChange, handleZipFileSelection, errorDeploy } = props;
   const { t } = usePageTranslation();
 
   return (
@@ -75,6 +76,33 @@ export default function ZipInfoModal(props: ZipInfoModalProps) {
             </Box>
           </Flex>
         </Box>
+
+        {errorDeploy && (
+          <>
+            <Text size='2' weight='medium' style={{ display: 'block', marginBottom: '6px' }}>
+              {t('deploy.errors.file')}
+            </Text>
+            <Box
+              style={{
+                padding: '12px',
+                background: 'var(--red-2)',
+                border: '1px solid var(--red-6)',
+                borderRadius: '6px',
+                marginBottom: '16px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+              }}
+            >
+              <Text
+                size='1'
+                color='red'
+                style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', display: 'block' }}
+              >
+                {errorDeploy}
+              </Text>
+            </Box>
+          </>
+        )}
 
         <Flex gap='3' mt='4' justify='end'>
           <Dialog.Close>

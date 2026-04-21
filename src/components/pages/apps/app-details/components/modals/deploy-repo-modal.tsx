@@ -36,7 +36,7 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: '500px' }}>
         <Dialog.Title>{t('modals.deployRepo.title')}</Dialog.Title>
-        <Dialog.Description>{t('modals.deployRepo.description')}</Dialog.Description>
+        <Dialog.Description size='2'>{t('modals.deployRepo.description')}</Dialog.Description>
 
         {errorDeploy && (
           <Box
@@ -45,10 +45,16 @@ export default function DeployRepoModal(props: DeployRepoModalProps) {
               background: 'var(--red-2)',
               border: '1px solid var(--red-6)',
               borderRadius: '6px',
-              marginBottom: '16px',
+              marginBlock: '16px',
+              maxHeight: '200px',
+              overflowY: 'auto',
             }}
           >
-            <Text size='2' color='red'>
+            <Text
+              size='1'
+              color='red'
+              style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', display: 'block' }}
+            >
               {errorDeploy}
             </Text>
           </Box>
