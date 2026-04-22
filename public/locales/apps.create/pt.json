@@ -36,6 +36,9 @@
   "actions.createApp": "Criar novo aplicativo",
 
   "errors.quotaExceeded": "Você já utilizou toda sua cota disponível de aplicativos!",
+  "errors.quotaExceeded.hint.before": "Veja seus limites na",
+  "errors.quotaExceeded.hint.link": "página de configurações",
+  "errors.quotaExceeded.hint.after": ".",
   "errors.appExists": "O aplicativo \"{{name}}\" já existe.",
   "errors.appNameInUse": "O nome de aplicativo \"{{name}}\" já está em uso.",
   "errors.accessDenied": "Acesso negado. Verifique suas permissões.",

@@ -1,4 +1,5 @@
 import { Card, Flex, Separator, Text } from '@radix-ui/themes';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import React, { useState } from 'react';
@@ -40,6 +41,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
   const [environmentVariables, setEnvironmentVariables] = useState<EnvironmentVariable[]>([]);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
   const isMobile = useIsMobile();
   const { isValid } = useAppNameValidation(appName);
   const canSubmit = isValid && !creating;
@@ -62,6 +64,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
 
     setCreating(true);
     setError(null);
+    setIsQuotaExceeded(false);
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -110,6 +113,7 @@ export function AppCreationPage(props: AppCreationPageProps) {
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
           setError(t('errors.quotaExceeded'));
+          setIsQuotaExceeded(true);
         } else if (error.response?.data?.detail === 'App already exists') {
           setError(t('errors.appExists', { name: appName.trim() }));
         } else if (error.response?.data?.detail == 'App name already in use') {
@@ -172,7 +176,23 @@ export function AppCreationPage(props: AppCreationPageProps) {
                 />
               </Flex>
 
-              <ErrorMessage error={error} />
+              <ErrorMessage
+                error={error}
+                hint={
+                  isQuotaExceeded ? (
+                    <>
+                      {t('errors.quotaExceeded.hint.before')}{' '}
+                      <Link
+                        href='/settings/'
+                        style={{ color: 'var(--gray-11)', textDecoration: 'underline' }}
+                      >
+                        {t('errors.quotaExceeded.hint.link')}
+                      </Link>
+                      {t('errors.quotaExceeded.hint.after')}
+                    </>
+                  ) : undefined
+                }
+              />
 
               <ActionButtons
                 creating={creating}

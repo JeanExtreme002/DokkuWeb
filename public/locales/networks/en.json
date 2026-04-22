@@ -15,6 +15,9 @@
 
   "errors.listFetch": "Error loading networks",
   "errors.quotaExceeded": "You have used your available network quota!",
+  "errors.quotaExceeded.hint.before": "Check your limits on the",
+  "errors.quotaExceeded.hint.link": "settings page",
+  "errors.quotaExceeded.hint.after": ".",
   "errors.networkExists": "The network \"{{name}}\" already exists.",
   "errors.accessDenied": "Access denied. Check your permissions.",
   "errors.createFailed": "An error occurred while creating the network. Please try again.",

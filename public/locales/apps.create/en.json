@@ -36,6 +36,9 @@
   "actions.createApp": "Create new application",
 
   "errors.quotaExceeded": "You have used your available application quota!",
+  "errors.quotaExceeded.hint.before": "Check your limits on the",
+  "errors.quotaExceeded.hint.link": "settings page",
+  "errors.quotaExceeded.hint.after": ".",
   "errors.appExists": "The application \"{{name}}\" already exists.",
   "errors.appNameInUse": "The application name \"{{name}}\" is already in use.",
   "errors.accessDenied": "Access denied. Check your permissions.",

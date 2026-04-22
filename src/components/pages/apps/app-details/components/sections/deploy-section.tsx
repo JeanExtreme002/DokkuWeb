@@ -33,9 +33,9 @@ export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySe
           {domain}:{appInfo?.raw_name}
         </div>
         {sshPort != null && sshPort !== 22 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            <span className={styles.command}>$ git config --local&nbsp;</span>
-            <span>core.sshCommand &quot;ssh -p {sshPort}&quot;</span>
+          <div>
+            <span className={styles.command}>$ git config --local </span>
+            core.sshCommand &quot;ssh -p {sshPort}&quot;
           </div>
         )}
         <div>

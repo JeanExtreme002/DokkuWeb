@@ -1,7 +1,8 @@
 import { Card, Flex, Separator, Text } from '@radix-ui/themes';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { LoadingSpinner, NavBar } from '@/components';
 import { usePageTranslation } from '@/i18n/utils';
@@ -53,6 +54,7 @@ export function NetworksPage(props: NetworksPageProps) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newNetworkName, setNewNetworkName] = useState('');
   const [createNetworkError, setCreateNetworkError] = useState<string | null>(null);
+  const [isNetworkQuotaExceeded, setIsNetworkQuotaExceeded] = useState(false);
   const [creatingNetwork, setCreatingNetwork] = useState(false);
   const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
@@ -203,6 +205,7 @@ export function NetworksPage(props: NetworksPageProps) {
     if (!newNetworkName.trim()) return;
 
     setCreateNetworkError(null);
+    setIsNetworkQuotaExceeded(false);
     setCreatingNetwork(true);
 
     try {
@@ -235,6 +238,7 @@ export function NetworksPage(props: NetworksPageProps) {
       if (error.response?.status === 403) {
         if (error.response?.data?.detail === 'Quota exceeded') {
           setCreateNetworkError(t('errors.quotaExceeded'));
+          setIsNetworkQuotaExceeded(true);
         } else if (error.response?.data?.detail === 'Network already exists') {
           setCreateNetworkError(t('errors.networkExists', { name: newNetworkName.trim() }));
         } else {
@@ -363,6 +367,7 @@ export function NetworksPage(props: NetworksPageProps) {
               setCreateModalOpen(open);
               if (!open) {
                 setCreateNetworkError(null);
+                setIsNetworkQuotaExceeded(false);
                 setNewNetworkName('');
                 setCreatingNetwork(false);
               }
@@ -371,6 +376,20 @@ export function NetworksPage(props: NetworksPageProps) {
             setNewNetworkName={(val) => setNewNetworkName(val)}
             creatingNetwork={creatingNetwork}
             createNetworkError={createNetworkError}
+            createNetworkErrorHint={
+              isNetworkQuotaExceeded ? (
+                <>
+                  {t('errors.quotaExceeded.hint.before')}{' '}
+                  <Link
+                    href='/settings/'
+                    style={{ color: 'var(--gray-11)', textDecoration: 'underline' }}
+                  >
+                    {t('errors.quotaExceeded.hint.link')}
+                  </Link>
+                  {t('errors.quotaExceeded.hint.after')}
+                </>
+              ) : undefined
+            }
             onSubmit={handleCreateNetwork}
           />
         </Flex>

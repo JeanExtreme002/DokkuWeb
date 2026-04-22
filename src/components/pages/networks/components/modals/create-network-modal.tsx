@@ -1,4 +1,5 @@
 import { AlertDialog, Box, Button, Flex, Spinner, Text } from '@radix-ui/themes';
+import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
 
@@ -9,6 +10,7 @@ interface CreateNetworkModalProps {
   setNewNetworkName: (value: string) => void;
   creatingNetwork: boolean;
   createNetworkError: string | null;
+  createNetworkErrorHint?: React.ReactNode;
   onSubmit: () => void;
 }
 
@@ -19,6 +21,7 @@ export function CreateNetworkModal({
   setNewNetworkName,
   creatingNetwork,
   createNetworkError,
+  createNetworkErrorHint,
   onSubmit,
 }: CreateNetworkModalProps) {
   const { t } = usePageTranslation();
@@ -55,9 +58,16 @@ export function CreateNetworkModal({
           />
 
           {createNetworkError && (
-            <Text size='2' color='red' style={{ marginTop: '8px', display: 'block' }}>
-              {createNetworkError}
-            </Text>
+            <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
+              <Text size='2' color='red'>
+                {createNetworkError}
+              </Text>
+              {createNetworkErrorHint && (
+                <Text size='1' style={{ color: 'var(--gray-11)' }}>
+                  {createNetworkErrorHint}
+                </Text>
+              )}
+            </Flex>
           )}
         </Box>
 

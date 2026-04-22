@@ -15,6 +15,9 @@
 
   "errors.listFetch": "Erro ao carregar redes",
   "errors.quotaExceeded": "Você já utilizou toda sua cota disponível de redes!",
+  "errors.quotaExceeded.hint.before": "Veja seus limites na",
+  "errors.quotaExceeded.hint.link": "página de configurações",
+  "errors.quotaExceeded.hint.after": ".",
   "errors.networkExists": "A rede \"{{name}}\" já existe.",
   "errors.accessDenied": "Acesso negado. Verifique suas permissões.",
   "errors.createFailed": "Ocorreu um erro ao criar a rede. Tente novamente.",

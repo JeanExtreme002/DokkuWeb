@@ -30,6 +30,9 @@
 
   "services.create.errors.loadServiceTypes": "Error loading service types",
   "services.create.errors.quotaExceeded": "You have used all your available service quota!",
+  "services.create.errors.quotaExceeded.hint.before": "Check your limits on the",
+  "services.create.errors.quotaExceeded.hint.link": "settings page",
+  "services.create.errors.quotaExceeded.hint.after": ".",
   "services.create.errors.serviceExists": "The service \"{{name}}\" already exists.",
   "services.create.errors.serviceNameInUse": "The service name \"{{name}}\" is already in use.",
   "services.create.errors.forbidden": "Access denied. Check your permissions.",

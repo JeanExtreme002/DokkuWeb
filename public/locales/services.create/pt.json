@@ -30,6 +30,9 @@
 
   "services.create.errors.loadServiceTypes": "Erro ao carregar tipos de serviços",
   "services.create.errors.quotaExceeded": "Você já utilizou toda sua cota disponível de serviços!",
+  "services.create.errors.quotaExceeded.hint.before": "Veja seus limites na",
+  "services.create.errors.quotaExceeded.hint.link": "página de configurações",
+  "services.create.errors.quotaExceeded.hint.after": ".",
   "services.create.errors.serviceExists": "O serviço \"{{name}}\" já existe.",
   "services.create.errors.serviceNameInUse": "O nome de serviço \"{{name}}\" já está em uso.",
   "services.create.errors.forbidden": "Acesso negado. Verifique suas permissões.",

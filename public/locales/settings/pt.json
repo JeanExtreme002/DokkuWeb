@@ -33,7 +33,7 @@
   "profile.ssh.tutorial.step2.title": "2. Visualizar a chave pública",
   "profile.ssh.tutorial.step2.description": "Execute o comando abaixo para exibir sua chave pública.",
   "profile.ssh.tutorial.step3.title": "3. Registrar chave",
-  "profile.ssh.tutorial.step3.description": "Clique no botão \"{{button}}\" e selecione o arquivo id_ed25519.pub.",
+  "profile.ssh.tutorial.step3.description": "Clique no botão \"{{button}}\" e selecione o arquivo <filename>id_ed25519.pub</filename>.",
 
   "profile.token.label": "Token de Acesso",
   "profile.token.tooltip": "Token de autenticação para requisições via API",

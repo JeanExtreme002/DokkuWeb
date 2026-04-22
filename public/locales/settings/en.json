@@ -33,7 +33,7 @@
   "profile.ssh.tutorial.step2.title": "2. View your public key",
   "profile.ssh.tutorial.step2.description": "Run the command below to display your public key.",
   "profile.ssh.tutorial.step3.title": "3. Register key",
-  "profile.ssh.tutorial.step3.description": "Click the \"{{button}}\" button and select the id_ed25519.pub file.",
+  "profile.ssh.tutorial.step3.description": "Click the \"{{button}}\" button and select the <filename>id_ed25519.pub</filename> file.",
 
   "profile.token.label": "Access Token",
   "profile.token.tooltip": "Authentication token for API requests",

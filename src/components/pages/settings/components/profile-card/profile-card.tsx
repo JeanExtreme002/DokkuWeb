@@ -22,6 +22,7 @@ import {
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
 import * as React from 'react';
+import { Trans } from 'react-i18next';
 
 import { PadLockIcon } from '@/components/shared';
 import { useTheme } from '@/contexts';
@@ -293,7 +294,12 @@ export function ProfileCard({
                 {t('profile.ssh.tutorial.step3.title')}
               </Text>
               <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
-                {t('profile.ssh.tutorial.step3.description', { button: t('profile.ssh.button') })}
+                <Trans
+                  ns='settings'
+                  i18nKey='profile.ssh.tutorial.step3.description'
+                  values={{ button: t('profile.ssh.button') }}
+                  components={{ filename: <span style={{ color: 'var(--orange-11)' }} /> }}
+                />
               </Text>
             </Flex>
           </Flex>
