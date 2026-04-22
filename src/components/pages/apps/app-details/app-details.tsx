@@ -574,9 +574,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setHttpsLoading(true);
     try {
       if (httpsEnabled) {
-        await api.delete(`/api/letsencrypt/${props.appName}`);
+        await api.delete(`/api/letsencrypt/${props.appName}/`);
       } else {
-        await api.post(`/api/letsencrypt/${props.appName}`);
+        await api.post(`/api/letsencrypt/${props.appName}/`);
       }
       await fetchHttpsStatus();
     } catch (error) {
