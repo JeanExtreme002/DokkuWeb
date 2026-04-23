@@ -19,6 +19,7 @@ import {
   DeletePortModal,
   DeployRepoModal,
   DeploySection,
+  FilePreviewModal,
   FilesSection,
   HeaderSection,
   HttpsConfirmModal,
@@ -183,6 +184,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [envChangeToast, setEnvChangeToast] = useState(false);
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
   const [deployRepoToast, setDeployRepoToast] = useState(false);
+
+  // File preview states
+  const [filePreviewOpen, setFilePreviewOpen] = useState(false);
+  const [filePreviewName, setFilePreviewName] = useState('');
+  const [filePreviewPath, setFilePreviewPath] = useState('');
+  const [filePreviewSize, setFilePreviewSize] = useState(0);
+  const [filePreviewContent, setFilePreviewContent] = useState<string | null>(null);
+  const [filePreviewLoading, setFilePreviewLoading] = useState(false);
+  const [filePreviewError, setFilePreviewError] = useState<string | null>(null);
 
   // Port mapping delete modal states
   const [showDeletePortModal, setShowDeletePortModal] = useState(false);
@@ -957,6 +967,33 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       setDownloadToast(null);
       setDirError(t('files.errors.downloadFailed'));
       setTimeout(() => setDirError(null), 3000);
+    }
+  };
+
+  const previewAppFile = async (fullPath: string, filename: string, size: number) => {
+    setFilePreviewName(filename);
+    setFilePreviewPath(fullPath);
+    setFilePreviewSize(size);
+    setFilePreviewContent(null);
+    setFilePreviewError(null);
+    setFilePreviewLoading(true);
+    setFilePreviewOpen(true);
+    try {
+      const response = await api.post(
+        `/api/apps/${props.appName}/download/`,
+        {},
+        {
+          params: withSharedBy({ filename: fullPath }),
+          responseType: 'blob',
+        }
+      );
+      const text = await (response.data as Blob).text();
+      setFilePreviewContent(text);
+    } catch (error) {
+      console.error('Error fetching file preview:', error);
+      setFilePreviewError(t('files.errors.previewFailed'));
+    } finally {
+      setFilePreviewLoading(false);
     }
   };
 
@@ -1825,6 +1862,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   onDownloadFile={(fullPath: string, name: string) =>
                     downloadAppFile(fullPath, name)
                   }
+                  onPreviewFile={(fullPath: string, name: string, size: number) =>
+                    previewAppFile(fullPath, name, size)
+                  }
                 />
               </Tabs.Content>
 
@@ -2120,6 +2160,18 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
           setShowRebuildConfirmModal(false);
           rebuildApp();
         }}
+      />
+
+      {/* File Preview Modal */}
+      <FilePreviewModal
+        open={filePreviewOpen}
+        onOpenChange={setFilePreviewOpen}
+        filename={filePreviewName}
+        fileSize={filePreviewSize}
+        content={filePreviewContent}
+        loading={filePreviewLoading}
+        error={filePreviewError}
+        onDownload={() => downloadAppFile(filePreviewPath, filePreviewName)}
       />
 
       {/* Builder Configuration Modal */}

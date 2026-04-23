@@ -3,6 +3,7 @@ export { default as DeleteAppModal } from './delete-app-modal';
 export { default as DeleteEnvModal } from './delete-env-modal';
 export { default as DeletePortModal } from './delete-port-modal';
 export { default as DeployRepoModal } from './deploy-repo-modal';
+export { default as FilePreviewModal } from './file-preview-modal';
 export { default as HttpsConfirmModal } from './https-confirm-modal';
 export { default as RebuildAppConfirmModal } from './rebuild-app-confirm-modal';
 export { default as RenameAppModal } from './rename-app-modal';

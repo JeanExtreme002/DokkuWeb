@@ -226,6 +226,10 @@
   animation: spin 1s linear infinite;
 }
 
+.loadingDirInfo {
+  margin-left: 12px;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -462,6 +466,9 @@
   .fileSize {
     font-size: 12px !important;
     line-height: 1.2 !important;
+  }
+  .loadingDirInfo {
+    font-size: 14px;
   }
 }
 
@@ -1246,5 +1253,25 @@ button.envExportButtonOrange {
     width: auto !important;
     flex: 1 1 0 !important;
     min-width: 0 !important;
+  }
+}
+
+/* File preview modal responsive */
+.filePreviewTitle {
+  word-break: break-all;
+}
+
+.filePreviewContent {
+  font-family: monospace;
+  font-size: var(--font-size-1);
+}
+
+@media (max-width: 576px) {
+  .filePreviewTitle {
+    font-size: var(--font-size-3) !important;
+  }
+
+  .filePreviewContent {
+    font-size: 10px;
   }
 }

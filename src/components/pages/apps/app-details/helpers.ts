@@ -3,6 +3,92 @@ import { processAnsiCodes } from '@/lib';
 
 import type { AppContainer, AppInfo } from './types';
 
+const TEXT_EXTENSIONS = new Set([
+  'txt',
+  'md',
+  'markdown',
+  'yml',
+  'yaml',
+  'json',
+  'env',
+  'py',
+  'tsx',
+  'ts',
+  'js',
+  'jsx',
+  'java',
+  'go',
+  'rb',
+  'rs',
+  'c',
+  'cpp',
+  'h',
+  'hpp',
+  'sh',
+  'bash',
+  'zsh',
+  'fish',
+  'css',
+  'scss',
+  'sass',
+  'less',
+  'html',
+  'htm',
+  'xml',
+  'svg',
+  'toml',
+  'ini',
+  'cfg',
+  'conf',
+  'properties',
+  'lock',
+  'log',
+  'sql',
+  'tf',
+  'tfvars',
+  'hcl',
+  'vue',
+  'svelte',
+  'r',
+  'php',
+  'kt',
+  'swift',
+  'dart',
+  'lua',
+  'pl',
+  'pm',
+  'csv',
+  'tsv',
+]);
+
+const TEXT_FILENAMES = new Set([
+  'dockerfile',
+  'makefile',
+  'procfile',
+  'gemfile',
+  'rakefile',
+  'vagrantfile',
+  '.gitignore',
+  '.gitattributes',
+  '.env',
+  '.envrc',
+  '.npmrc',
+  '.yarnrc',
+  '.editorconfig',
+  '.prettierrc',
+  '.eslintrc',
+  '.babelrc',
+  '.htaccess',
+]);
+
+export const isTextFile = (name: string): boolean => {
+  const lower = name.toLowerCase();
+  if (TEXT_FILENAMES.has(lower)) return true;
+  const dotIdx = lower.lastIndexOf('.');
+  if (dotIdx === -1) return false;
+  return TEXT_EXTENSIONS.has(lower.slice(dotIdx + 1));
+};
+
 // Directory listing parsing
 export type DirEntry = {
   name: string;

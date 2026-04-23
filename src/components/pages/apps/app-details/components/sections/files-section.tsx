@@ -13,6 +13,7 @@ import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 import type { DirEntry } from '../../helpers';
+import { isTextFile } from '../../helpers';
 
 interface FilesSectionProps {
   isInspectAvailable: boolean;
@@ -31,6 +32,7 @@ interface FilesSectionProps {
   formatSize: (bytes: number) => string;
   pathJoin: (base: string, sub: string) => string;
   onDownloadFile: (fullPath: string, filename: string) => void;
+  onPreviewFile?: (fullPath: string, filename: string, size: number) => void;
 }
 
 export function FilesSection(props: FilesSectionProps) {
@@ -138,7 +140,7 @@ export function FilesSection(props: FilesSectionProps) {
           {props.dirLoading ? (
             <Box className={styles.loadingSpinner}>
               <Box className={styles.spinner}></Box>
-              <Text style={{ marginLeft: '12px' }}>{t('filesSection.loading')}</Text>
+              <Text className={styles.loadingDirInfo}>{t('filesSection.loading')}</Text>
             </Box>
           ) : (
             !props.dirError && (
@@ -187,6 +189,14 @@ export function FilesSection(props: FilesSectionProps) {
                             className={styles.fileName}
                             onClick={() => {
                               const fullPath = props.pathJoin(props.currentDir, entry.name);
+                              if (
+                                props.onPreviewFile &&
+                                isTextFile(entry.name) &&
+                                entry.size < 1024 * 1024
+                              ) {
+                                props.onPreviewFile(fullPath, entry.name, entry.size);
+                                return;
+                              }
                               const isSmall =
                                 typeof window !== 'undefined' && window.innerWidth <= 600;
                               if (isSmall) {
