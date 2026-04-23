@@ -239,7 +239,7 @@ html,
 body {
   margin: 0;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   padding: 0;
   background-color: var(--background-color);
   color: var(--text-primary);
