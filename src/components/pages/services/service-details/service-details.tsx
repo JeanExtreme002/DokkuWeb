@@ -1,10 +1,11 @@
-import { ReloadIcon } from '@radix-ui/react-icons';
+import { Link1Icon, ReloadIcon } from '@radix-ui/react-icons';
 import { Button, Flex, Separator, Tabs, Text } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Image as CustomImage, NavBar } from '@/components';
+import { Toast } from '@/components/shared';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { usePageTranslation } from '@/i18n/utils';
 import {
@@ -129,6 +130,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
   const [selectedApp, setSelectedApp] = useState<string>('');
   const [linkLoading, setLinkLoading] = useState(false);
   const [appsListLoading, setAppsListLoading] = useState(false);
+  const [linkAppToast, setLinkAppToast] = useState<string | null>(null);
 
   // Delete service modal states
   const [showDeleteServiceModal, setShowDeleteServiceModal] = useState(false);
@@ -518,6 +520,7 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
       setLinkedApps((prev) => [...prev, selectedApp]);
 
       setShowLinkModal(false);
+      setLinkAppToast(selectedApp);
       setSelectedApp('');
       setAvailableApps([]);
     } catch (error: any) {
@@ -734,6 +737,17 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
         deleteLoading={deleteServiceLoading}
         onCancel={() => setShowDeleteServiceModal(false)}
         onConfirm={deleteService}
+      />
+
+      {/* Link App Success Toast */}
+      <Toast
+        icon={<Link1Icon width={18} height={18} />}
+        color='green'
+        duration={12000}
+        message={t('services.s.linkModal.successToast', { appName: linkAppToast })}
+        visible={!!linkAppToast}
+        progressAnimation={true}
+        onHide={() => setLinkAppToast(null)}
       />
 
       {/* Export Database Confirmation Modal */}

@@ -77,6 +77,7 @@
   "services.s.linkModal.cancel": "Cancelar",
   "services.s.linkModal.confirming": "Vinculando...",
   "services.s.linkModal.confirm": "Vincular",
+  "services.s.linkModal.successToast": "Aplicação vinculada com sucesso. Uma variável de ambiente com a URI do serviço foi criada no aplicativo \"{{appName}}\".",
 
   "services.s.restartModal.title": "Confirmar Ação",
   "services.s.restartModal.description": "Tem certeza que deseja reiniciar o serviço?\n\nEsta ação pode causar indisponibilidade temporária.",

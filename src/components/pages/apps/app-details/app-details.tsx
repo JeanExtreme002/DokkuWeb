@@ -1641,6 +1641,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       <Toast
         icon={<InfoCircledIcon width={18} height={18} />}
         progressAnimation={true}
+        duration={7000}
         message={t('envSection.restartToast')}
         visible={envChangeToast}
         onHide={() => setEnvChangeToast(false)}
