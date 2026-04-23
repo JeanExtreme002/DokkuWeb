@@ -79,6 +79,7 @@
   "overview.labels.gateway": "Gateway",
   "overview.labels.macAddress": "MAC Address",
   "overview.labels.pid": "PID",
+  "overview.labels.port": "Port",
   "overview.labels.gitBranch": "Git Branch",
   "overview.labels.gitSha": "Git SHA",
   "overview.labels.builder": "Builder",

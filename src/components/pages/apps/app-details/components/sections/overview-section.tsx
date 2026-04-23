@@ -2,6 +2,7 @@ import { Box, Flex, Heading, Text } from '@radix-ui/themes';
 import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
+import { extractPortFromEnv } from '@/lib';
 
 import type {
   AppContainer,
@@ -80,6 +81,10 @@ export default function OverviewSection({
                 {renderRow(
                   t('overview.labels.ipAddress'),
                   c?.NetworkSettings?.Networks?.bridge?.IPAddress || 'N/A'
+                )}
+                {renderRow(
+                  t('overview.labels.port'),
+                  extractPortFromEnv(c?.Config?.Env || []) || 'N/A'
                 )}
                 {renderRow(
                   t('overview.labels.gateway'),
