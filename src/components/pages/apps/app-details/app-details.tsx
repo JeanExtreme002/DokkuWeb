@@ -559,7 +559,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const fetchHttpsStatus = useCallback(async () => {
     setHttpsLoading(true);
     try {
-      const response = await api.post(`/api/letsencrypt/${props.appName}/active/`);
+      const response = await api.post(
+        `/api/letsencrypt/${props.appName}/active/`,
+        {},
+        { params: withSharedBy() }
+      );
       if (response.data && response.data.success) {
         setHttpsEnabled(response.data.result);
       }
@@ -568,7 +572,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } finally {
       setHttpsLoading(false);
     }
-  }, [props.appName]);
+  }, [props.appName, withSharedBy]);
 
   const toggleHttps = async () => {
     setHttpsLoading(true);
@@ -646,7 +650,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
       const httpsStatusResponse = await api.post(
         `/api/letsencrypt/${props.appName}/active/`,
         {},
-        { headers: { 'x-cache': 'false' } }
+        { headers: { 'x-cache': 'false' }, params: withSharedBy() }
       );
       if (httpsStatusResponse.data && httpsStatusResponse.data.success) {
         setHttpsEnabled(httpsStatusResponse.data.result);
