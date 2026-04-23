@@ -97,6 +97,7 @@
   "errors.loadData": "Erro ao carregar dados. Verifique sua conexão.",
   "errors.delete": "Erro ao deletar aplicativo",
   "errors.rename": "Erro ao renomear aplicativo",
+  "errors.renameSameName": "O novo nome deve ser diferente do nome atual.",
   "errors.start": "Erro ao iniciar aplicativo",
   "errors.stop": "Erro ao parar aplicativo",
   "errors.restart": "Erro ao reiniciar aplicativo",

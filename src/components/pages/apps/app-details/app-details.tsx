@@ -995,6 +995,11 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     const trimmedName = renameAppName.trim();
     if (!trimmedName) return;
 
+    if (trimmedName.toLowerCase() === props.appName.toLowerCase()) {
+      setRenameError(t('errors.renameSameName'));
+      return;
+    }
+
     setRenameAppLoading(true);
     setRenameError(null);
     try {

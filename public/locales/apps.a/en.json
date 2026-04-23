@@ -97,6 +97,7 @@
   "errors.loadData": "Failed to load data. Check your connection.",
   "errors.delete": "Error deleting app",
   "errors.rename": "Error renaming app",
+  "errors.renameSameName": "The new name must be different from the current name.",
   "errors.start": "Error starting app",
   "errors.stop": "Error stopping app",
   "errors.restart": "Error restarting app",
