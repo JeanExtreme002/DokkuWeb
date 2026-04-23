@@ -235,6 +235,7 @@
   "networkSection.defaultNetwork": "Dokku default network",
   "networkSection.linkedNetwork": "Linked network",
   "networkSection.defaultLabel": "Default",
+  "networkSection.changeNetwork": "Change network",
   "networkSection.portMappingTitle": "Port Mapping",
   "networkSection.protocolLabel": "Protocol:",
   "networkSection.mapLabel": "Map:",

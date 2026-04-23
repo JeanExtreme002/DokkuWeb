@@ -1,5 +1,6 @@
 import { GlobeIcon, ReloadIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Select, Text, TextField } from '@radix-ui/themes';
+import Link from 'next/link';
 import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
@@ -123,20 +124,31 @@ export default function NetworkSection(props: NetworkSectionProps) {
                 >
                   {networkData.network || t('networkSection.defaultNetwork')}
                 </Text>
-                <Flex align='center' gap='2'>
-                  <Box
-                    style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      backgroundColor: networkData.network ? 'var(--green-9)' : 'var(--blue-9)',
-                    }}
-                  />
-                  <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                    {networkData.network
-                      ? t('networkSection.linkedNetwork')
-                      : t('networkSection.defaultLabel')}
-                  </Text>
+                <Flex align='center' justify='between'>
+                  <Flex align='center' gap='2'>
+                    <Box
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: networkData.network ? 'var(--green-9)' : 'var(--blue-9)',
+                      }}
+                    />
+                    <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
+                      {networkData.network
+                        ? t('networkSection.linkedNetwork')
+                        : t('networkSection.defaultLabel')}
+                    </Text>
+                  </Flex>
+                  <Button
+                    asChild
+                    size='1'
+                    color='crimson'
+                    variant='outline'
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Link href='/networks/'>{t('networkSection.changeNetwork')}</Link>
+                  </Button>
                 </Flex>
               </Flex>
             </Flex>
