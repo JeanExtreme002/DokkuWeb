@@ -1759,20 +1759,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                 <Tabs.Trigger value='network' className={styles.tabsTrigger}>
                   {t('tabs.network')}
                 </Tabs.Trigger>
+                <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
+                  {t('tabs.variables')}
+                </Tabs.Trigger>
                 <Tabs.Trigger value='logs' className={styles.tabsTrigger}>
                   {t('tabs.logs')}
                 </Tabs.Trigger>
                 <Tabs.Trigger value='tasks' className={styles.tabsTrigger}>
                   {t('tabs.tasks')}
                 </Tabs.Trigger>
-                <Tabs.Trigger value='shell' className={styles.tabsTrigger}>
-                  {t('tabs.shell')}
-                </Tabs.Trigger>
-                <Tabs.Trigger value='variables' className={styles.tabsTrigger}>
-                  {t('tabs.variables')}
-                </Tabs.Trigger>
                 <Tabs.Trigger value='files' className={styles.tabsTrigger}>
                   {t('tabs.files')}
+                </Tabs.Trigger>
+                <Tabs.Trigger value='shell' className={styles.tabsTrigger}>
+                  {t('tabs.shell')}
                 </Tabs.Trigger>
                 {!sharedBy && (
                   <Tabs.Trigger value='security' className={styles.tabsTrigger}>
