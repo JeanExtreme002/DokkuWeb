@@ -143,9 +143,9 @@
   background: var(--gray-2);
   border: 1px solid var(--gray-6);
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--gray-11);
   overflow-x: auto;
@@ -511,25 +511,6 @@
   }
 }
 
-@media (max-width: 600px) {
-  .appTitleText {
-    font-size: 1.5rem; /* Extra small screens */
-  }
-
-  .portMappingForm {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .portInput {
-    max-width: 100%;
-  }
-
-  .codeBlock {
-    font-size: 10px;
-    padding: 8px;
-  }
-}
-
 @media (max-width: 1100px) {
   .tabsTrigger {
     padding: 12px 16px;
@@ -565,10 +546,33 @@
   .envVarValue {
     font-size: 13px;
   }
+}
+
+@media (max-width: 600px) {
+  .appTitleText {
+    font-size: 1.5rem; /* Extra small screens */
+  }
+
+  .portMappingForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .portInput {
+    max-width: 100%;
+  }
 
   .codeBlock {
-    font-size: 12px;
-    padding: 12px;
+    font-size: 10px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 450px) {
+  .codeBlock {
+    font-size: 9px;
+  }
+  .deploySubtitle {
+    font-size: 10px;
   }
 }
 

@@ -121,7 +121,10 @@ export function HeaderSection(props: HeaderSectionProps) {
           {/* Deploy Button */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <Button variant='solid' style={{ cursor: 'pointer' }}>
+              <Button
+                variant='solid'
+                style={{ cursor: 'pointer', backgroundColor: 'var(--green-8)' }}
+              >
                 <CodeIcon />
                 {t('header.deploy')}
                 <ChevronDownIcon />

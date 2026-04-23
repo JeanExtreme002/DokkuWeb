@@ -20,12 +20,7 @@ export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySe
     <div className={styles.deploySection}>
       <Box className={styles.deployHeader}>
         <Text className={styles.deployTitle}>{t('deploySection.title')}</Text>
-        <Text className={styles.deploySubtitle}>
-          {t('deploySection.subtitle')} —{' '}
-          <Link href='/settings' className={styles.deploySubtitleLink}>
-            {t('deploySection.subtitleLink')}
-          </Link>
-        </Text>
+        <Text className={styles.deploySubtitle}>{t('deploySection.subtitle')}</Text>
       </Box>
       <Box className={styles.codeBlock}>
         <div>
@@ -38,6 +33,16 @@ export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySe
             -p {sshPort}&quot;
           </div>
         )}
+      </Box>
+      <Box className={styles.deployHeader}>
+        <Text className={styles.deploySubtitle}>
+          {t('deploySection.sshKey')} —{' '}
+          <Link href='/settings' className={styles.deploySubtitleLink}>
+            {t('deploySection.sshKeyLink')}
+          </Link>
+        </Text>
+      </Box>
+      <Box className={styles.codeBlock}>
         <div>
           <span className={styles.command}>$ git push</span> dokku{' '}
           {deployInfo ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>'}
