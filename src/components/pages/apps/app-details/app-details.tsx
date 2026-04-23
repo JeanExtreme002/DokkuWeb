@@ -777,6 +777,12 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     setDataLoaded(false);
   }, [props.appName]);
 
+  useEffect(() => {
+    if (!dataLoaded) return;
+    refreshLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logLinesLimit]);
+
   // Auto-refresh overview data every 10 seconds without showing loading spinners
   useEffect(() => {
     if (!stableSession || !props.appName || !dataLoaded) return;

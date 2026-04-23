@@ -311,6 +311,12 @@ export function ServiceDetailsPage(props: ServiceDetailsPageProps) {
     setDataLoaded(false);
   }, [props.pluginType, props.serviceName]);
 
+  useEffect(() => {
+    if (!dataLoaded) return;
+    refreshLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logLinesLimit]);
+
   // Screen size detection for responsive dots
   useEffect(() => {
     const checkScreenSize = () => {
