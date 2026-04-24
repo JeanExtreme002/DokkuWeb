@@ -137,9 +137,9 @@ export function ConnectedAppsSection({
                         <TrashIcon />
                         {/* Show text only on screens larger than MD (>768px) */}
                         {!isMdScreen && (
-                          <Text size='1' style={{ marginLeft: '4px' }}>
+                          <span style={{ marginLeft: '4px' }}>
                             {t('services.s.connectedApps.unlink')}
-                          </Text>
+                          </span>
                         )}
                       </Button>
 
@@ -180,12 +180,12 @@ export function ConnectedAppsSection({
                       e.stopPropagation();
                       onUnlinkApp(appName);
                     }}
-                    style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}
+                    style={{ width: '100%', marginTop: '25px', justifyContent: 'center' }}
                   >
                     <TrashIcon />
-                    <Text size='2' style={{ marginLeft: '6px' }}>
+                    <span style={{ marginLeft: '6px' }}>
                       {t('services.s.connectedApps.unlink')}
-                    </Text>
+                    </span>
                   </Button>
                 )}
               </Flex>
