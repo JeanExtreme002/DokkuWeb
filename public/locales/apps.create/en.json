@@ -12,12 +12,12 @@
   "name.validation.minLetters": "(minimum 3 letters)",
   "name.validation.maxLength": "(maximum 30 characters)",
 
-  "network.label": "Network (Optional)",
+  "network.label": "Network",
   "network.loading": "Loading networks...",
   "network.placeholder": "Select a network (optional)",
-  "network.none": "None",
+  "network.none": "Default",
 
-  "clone.label": "Clone from application",
+  "clone.label": "Replica of application",
   "clone.tooltip": "Creates a replica of the selected application",
   "clone.loading": "Loading applications...",
   "clone.placeholder": "Select an application",

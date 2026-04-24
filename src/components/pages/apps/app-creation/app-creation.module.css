@@ -89,7 +89,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 650px) {
+@media (max-width: 680px) {
   .cloneSelection {
     width: 100%;
   }

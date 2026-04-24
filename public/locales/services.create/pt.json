@@ -7,7 +7,7 @@
   "services.create.serviceName.placeholder": "Digite o nome do serviço",
   "services.create.serviceName.charactersSuffix": "caracteres",
 
-  "clone.label": "Clonar de serviço",
+  "clone.label": "Réplica de serviço",
   "clone.tooltip": "Cria uma réplica do serviço selecionado",
   "clone.loading": "Carregando serviços...",
   "clone.placeholder": "Selecione um serviço",
