@@ -9,6 +9,8 @@
   "profile.title": "User Profile",
   "profile.theme.toLight": "Switch to light mode",
   "profile.theme.toDark": "Switch to dark mode",
+  "profile.theme.light": "light",
+  "profile.theme.dark": "dark",
 
   "profile.admin.tooltip": "Open the admin dashboard",
   "profile.admin.ariaLabel": "Open the admin dashboard",

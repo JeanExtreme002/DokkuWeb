@@ -9,6 +9,8 @@
   "profile.title": "Perfil do Usuário",
   "profile.theme.toLight": "Mudar para modo claro",
   "profile.theme.toDark": "Mudar para modo escuro",
+  "profile.theme.light": "claro",
+  "profile.theme.dark": "escuro",
 
   "profile.admin.tooltip": "Acessar o painel de administrador",
   "profile.admin.ariaLabel": "Acessar o painel de administrador",

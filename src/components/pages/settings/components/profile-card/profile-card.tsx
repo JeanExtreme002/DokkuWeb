@@ -103,9 +103,16 @@ export function ProfileCard({
                 className={styles.themeToggleButton}
                 style={{ cursor: 'pointer' }}
               >
-                {mode === 'light' ? <MoonIcon /> : <SunIcon />}
+                {mode === 'light' ? <SunIcon /> : <MoonIcon />}
               </IconButton>
             </Tooltip>
+            <Text
+              size='1'
+              style={{ color: 'var(--gray-9)', cursor: 'pointer', userSelect: 'none' }}
+              onClick={toggleTheme}
+            >
+              {t(mode === 'light' ? 'profile.theme.light' : 'profile.theme.dark')}
+            </Text>
           </Flex>
           {!adminLoading && isAdmin && (
             <Tooltip content={t('profile.admin.tooltip')}>
