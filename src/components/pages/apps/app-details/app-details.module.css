@@ -654,6 +654,67 @@
   margin-bottom: 8px;
 }
 
+.serviceLinkedCard {
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.serviceLinkedCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--blue-7) !important;
+}
+
+.serviceLinkedCard:hover svg {
+  color: var(--blue-9) !important;
+}
+
+.serviceCardChevron {
+  flex-shrink: 0;
+}
+
+.serviceUnlinkButton {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.serviceUnlinkButton:hover {
+  opacity: 1;
+}
+
+.serviceLinkedCard .serviceUnlinkButton {
+  color: var(--red-11) !important;
+  background-color: var(--red-3) !important;
+  transform: none !important;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease !important;
+}
+
+.serviceLinkedCard .serviceUnlinkButton:hover {
+  color: var(--red-11) !important;
+  background-color: var(--red-4) !important;
+  transform: none !important;
+}
+
+.serviceLinkedCard .serviceUnlinkButton svg {
+  color: inherit !important;
+}
+
+.serviceUnlinkButtonMobile {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+}
+
 @media (max-width: 470px) {
   .appTitle {
     flex-direction: column;

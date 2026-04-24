@@ -10,5 +10,6 @@ export { default as RenameAppModal } from './rename-app-modal';
 export { default as RestartAppConfirmModal } from './restart-app-confirm-modal';
 export { default as ShareConfirmModal } from './share-confirm-modal';
 export { default as StopAppConfirmModal } from './stop-app-confirm-modal';
+export { default as UnlinkServiceModal } from './unlink-service-modal';
 export { default as UnshareConfirmModal } from './unshare-confirm-modal';
 export { default as ZipInfoModal } from './zip-info-modal';

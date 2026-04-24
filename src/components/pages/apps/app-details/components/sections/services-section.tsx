@@ -1,4 +1,4 @@
-import { PlusIcon } from '@radix-ui/react-icons';
+import { ChevronRightIcon, PlusIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import React from 'react';
@@ -12,12 +12,26 @@ interface ServicesSectionProps {
   servicesLoading: boolean;
   errorServices: string | null | undefined;
   databases: Record<string, string[]>;
+  isXsScreen: boolean;
+  isSmScreen: boolean;
+  isMdScreen: boolean;
   onOpenService: (dbType: string, displayName: string) => void;
   onCreateService: () => void;
+  onUnlinkService: (dbType: string, dbName: string) => void;
 }
 
 export default function ServicesSection(props: ServicesSectionProps) {
-  const { servicesLoading, errorServices, databases, onOpenService, onCreateService } = props;
+  const {
+    servicesLoading,
+    errorServices,
+    databases,
+    isXsScreen,
+    isSmScreen,
+    isMdScreen,
+    onOpenService,
+    onCreateService,
+    onUnlinkService,
+  } = props;
   const { t } = usePageTranslation();
 
   return (
@@ -80,73 +94,125 @@ export default function ServicesSection(props: ServicesSectionProps) {
                   return (
                     <Card
                       key={dbName}
+                      className={styles.serviceLinkedCard}
                       style={{
                         border: '1px solid var(--gray-6)',
-                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
                         transition: 'all 0.2s ease',
-                        cursor: 'pointer',
-                        padding: '20px',
-                      }}
-                      onClick={() => onOpenService(dbType, displayName)}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+                        width: '100%',
                       }}
                     >
-                      <Flex align='center' gap='4' style={{ width: '100%' }}>
-                        {/* Service Icon */}
-                        <Box style={{ flexShrink: 0 }}>
-                          <Image
-                            src={getServiceImage(dbType)}
-                            alt={`${serviceType} logo`}
-                            width={48}
-                            height={48}
-                            style={{ borderRadius: '8px' }}
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src =
-                                '/images/database-logos/generic.svg';
-                            }}
-                          />
-                        </Box>
+                      <Flex direction='column' style={{ padding: '16px 20px', width: '100%' }}>
+                        {/* Main content row */}
+                        <Flex
+                          align='center'
+                          justify='between'
+                          style={{ width: '100%', cursor: 'pointer' }}
+                          onClick={() => onOpenService(dbType, displayName)}
+                        >
+                          <Flex align='center' gap='4'>
+                            <Box style={{ flexShrink: 0 }}>
+                              <Image
+                                src={getServiceImage(dbType)}
+                                alt={`${serviceType} logo`}
+                                width={65}
+                                height={65}
+                                style={{ borderRadius: '8px' }}
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLImageElement).src =
+                                    '/images/database-logos/generic.svg';
+                                }}
+                              />
+                            </Box>
 
-                        {/* Service Info */}
-                        <Flex direction='column' gap='1' style={{ flex: 1 }}>
-                          <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
-                            {displayName}
-                          </Heading>
-                          <Text size='2' style={{ color: 'var(--gray-9)' }}>
-                            {serviceType}
-                          </Text>
-                          <Flex align='center' gap='2' style={{ marginTop: '4px' }}>
-                            <Box
+                            <Flex direction='column' gap='1'>
+                              <Heading size='4' weight='medium' style={{ color: 'var(--gray-12)' }}>
+                                {displayName}
+                              </Heading>
+                              <Text size='2' style={{ color: 'var(--gray-9)' }}>
+                                {serviceType}
+                              </Text>
+                              <Flex align='center' gap='2' style={{ marginTop: '4px' }}>
+                                <Box
+                                  style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    backgroundColor: 'var(--green-9)',
+                                  }}
+                                />
+                                <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
+                                  {t('servicesSection.linked')}
+                                </Text>
+                              </Flex>
+                            </Flex>
+                          </Flex>
+
+                          {/* Desktop: Show buttons on the right */}
+                          {!isXsScreen && !isSmScreen && (
+                            <Flex align='center' gap='2'>
+                              <Button
+                                size='1'
+                                variant='surface'
+                                color='red'
+                                className={styles.serviceUnlinkButton}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onUnlinkService(dbType, dbName);
+                                }}
+                                style={{ position: 'relative', zIndex: 2 }}
+                              >
+                                <TrashIcon />
+                                {!isMdScreen && (
+                                  <span style={{ marginLeft: '4px' }}>
+                                    {t('servicesSection.unlink')}
+                                  </span>
+                                )}
+                              </Button>
+
+                              <ChevronRightIcon
+                                className={styles.serviceCardChevron}
+                                style={{
+                                  color: 'var(--gray-9)',
+                                  width: '20px',
+                                  height: '20px',
+                                  transition: 'all 0.2s ease',
+                                }}
+                              />
+                            </Flex>
+                          )}
+
+                          {/* Mobile: Show only chevron */}
+                          {(isXsScreen || isSmScreen) && (
+                            <ChevronRightIcon
+                              className={styles.serviceCardChevron}
                               style={{
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                backgroundColor: 'var(--green-9)',
+                                color: 'var(--gray-9)',
+                                width: '20px',
+                                height: '20px',
+                                transition: 'all 0.2s ease',
                               }}
                             />
-                            <Text size='2' weight='medium' style={{ color: 'var(--gray-11)' }}>
-                              {t('servicesSection.linked')}
-                            </Text>
-                          </Flex>
+                          )}
                         </Flex>
 
-                        {/* Arrow Icon */}
-                        <Box
-                          style={{
-                            flexShrink: 0,
-                            color: 'var(--gray-9)',
-                            fontSize: '20px',
-                            fontWeight: 'bold',
-                          }}
-                        >
-                          →
-                        </Box>
+                        {/* Mobile: Show unlink button below */}
+                        {(isXsScreen || isSmScreen) && (
+                          <Button
+                            size='2'
+                            variant='surface'
+                            color='red'
+                            className={`${styles.serviceUnlinkButton} ${styles.serviceUnlinkButtonMobile}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onUnlinkService(dbType, dbName);
+                            }}
+                            style={{ width: '100%', marginTop: '25px', justifyContent: 'center' }}
+                          >
+                            <TrashIcon />
+                            <span style={{ marginLeft: '6px' }}>{t('servicesSection.unlink')}</span>
+                          </Button>
+                        )}
                       </Flex>
                     </Card>
                   );

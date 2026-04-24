@@ -7,7 +7,14 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Image as CustomImage } from '@/components';
 import { LoadingSpinner, NavBar, Toast } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
-import { api, config as websiteConfig, downloadFile, formatAppName, processAnsiCodes } from '@/lib';
+import {
+  api,
+  config as websiteConfig,
+  downloadFile,
+  formatAppName,
+  formatServiceName,
+  processAnsiCodes,
+} from '@/lib';
 
 import styles from './app-details.module.css';
 import type { CronTask } from './components';
@@ -35,6 +42,7 @@ import {
   ShellSection,
   StopAppConfirmModal,
   TasksSection,
+  UnlinkServiceModal,
   UnshareConfirmModal,
   VariablesSection,
   ZipInfoModal,
@@ -275,6 +283,29 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [dirEntries, setDirEntries] = useState<DirEntry[]>([]);
   const [dirLoading, setDirLoading] = useState<boolean>(false);
   const [dirError, setDirError] = useState<string | null>(null);
+
+  // Screen size detection for responsive service cards
+  const [isXsScreen, setIsXsScreen] = useState(false);
+  const [isSmScreen, setIsSmScreen] = useState(false);
+  const [isMdScreen, setIsMdScreen] = useState(false);
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsXsScreen(width <= 360);
+      setIsSmScreen(width <= 480 && width > 360);
+      setIsMdScreen(width <= 768 && width > 480);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Unlink service modal states
+  const [showUnlinkServiceModal, setShowUnlinkServiceModal] = useState(false);
+  const [serviceToUnlink, setServiceToUnlink] = useState<{ dbType: string; dbName: string } | null>(
+    null
+  );
+  const [unlinkServiceLoading, setUnlinkServiceLoading] = useState(false);
 
   // Tiny screen detection (≤400px) for truncating names
   const [isTinyScreen, setIsTinyScreen] = useState(false);
@@ -1022,6 +1053,27 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     } finally {
       setDeleteAppLoading(false);
       setShowDeleteAppModal(false);
+    }
+  };
+
+  const handleUnlinkService = async () => {
+    if (!serviceToUnlink) return;
+    setUnlinkServiceLoading(true);
+    try {
+      await api.delete(
+        `/api/databases/${serviceToUnlink.dbType}/${serviceToUnlink.dbName}/link/${props.appName}/`
+      );
+      await fetchDatabases();
+    } catch (error: any) {
+      console.error('Error unlinking service:', error);
+      setErrors((prev) => ({
+        ...prev,
+        services: error.response?.data?.message || t('errors.delete'),
+      }));
+    } finally {
+      setUnlinkServiceLoading(false);
+      setShowUnlinkServiceModal(false);
+      setServiceToUnlink(null);
     }
   };
 
@@ -1874,10 +1926,17 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   servicesLoading={servicesLoading}
                   errorServices={errors.services}
                   databases={databases}
+                  isXsScreen={isXsScreen}
+                  isSmScreen={isSmScreen}
+                  isMdScreen={isMdScreen}
                   onOpenService={(dbType: string, displayName: string) =>
                     router.push(`/services/s/${dbType}/${displayName}`)
                   }
                   onCreateService={() => router.push(`/services/create/?app=${props.appName}`)}
+                  onUnlinkService={(dbType, dbName) => {
+                    setServiceToUnlink({ dbType, dbName });
+                    setShowUnlinkServiceModal(true);
+                  }}
                 />
               </Tabs.Content>
 
@@ -2020,6 +2079,19 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         onSetBranch={(val: string) => setBranch(val)}
         deployLoading={deployLoading}
         deployFromRepo={deployFromRepo}
+      />
+
+      {/* Unlink Service Confirmation Modal */}
+      <UnlinkServiceModal
+        open={showUnlinkServiceModal}
+        onOpenChange={setShowUnlinkServiceModal}
+        serviceName={serviceToUnlink ? formatServiceName(serviceToUnlink.dbName) : null}
+        unlinkLoading={unlinkServiceLoading}
+        onCancel={() => {
+          setShowUnlinkServiceModal(false);
+          setServiceToUnlink(null);
+        }}
+        onConfirm={handleUnlinkService}
       />
 
       {/* Delete App Confirmation Modal */}
