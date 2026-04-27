@@ -53,3 +53,19 @@ export async function deleteNetwork(name: string): Promise<boolean> {
   const response = await api.delete(`/api/networks/${name}`);
   return response.status === 200;
 }
+
+export async function listApps(): Promise<string[]> {
+  const response = await api.post(
+    '/api/apps/list/',
+    {},
+    {
+      headers: { 'x-cache': 'false' },
+      params: { return_info: false },
+    }
+  );
+
+  if (response.status === 200 && response.data?.success) {
+    return Object.keys(response.data.result);
+  }
+  return [];
+}

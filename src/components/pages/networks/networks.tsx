@@ -22,6 +22,7 @@ import {
   deleteNetwork as svcDeleteNetwork,
   getLinkedApps as svcGetLinkedApps,
   linkApp as svcLinkApp,
+  listApps as svcListApps,
   listNetworks as svcListNetworks,
   unlinkApp as svcUnlinkApp,
 } from './requests';
@@ -42,7 +43,9 @@ export function NetworksPage(props: NetworksPageProps) {
   const [expandedNetwork, setExpandedNetwork] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [newAppName, setNewAppName] = useState<Record<string, string>>({});
+  const [selectedApp, setSelectedApp] = useState<Record<string, string>>({});
+  const [allApps, setAllApps] = useState<string[]>([]);
+  const [appsLoading, setAppsLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
   const [deleteModalOpen, setDeleteModalOpen] = useState<string | null>(null);
   const [unlinkModalOpen, setUnlinkModalOpen] = useState<{
@@ -58,13 +61,49 @@ export function NetworksPage(props: NetworksPageProps) {
   const [creatingNetwork, setCreatingNetwork] = useState(false);
   const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
 
+  const fetchFreshLinkedApps = async (networkNames: string[]) => {
+    try {
+      setIsUpdatingFromServer(true);
+
+      const linkedAppsPromises = networkNames.map(async (networkName) => {
+        try {
+          const { apps } = await svcGetLinkedApps(networkName, true);
+          return { networkName, apps };
+        } catch (error) {
+          console.error(`Error fetching fresh linked apps for ${networkName}:`, error);
+          return { networkName, apps: [] };
+        }
+      });
+
+      const linkedAppsResults = await Promise.all(linkedAppsPromises);
+
+      linkedAppsResults.forEach(({ networkName, apps }) => {
+        setLinkedApps((prev) => ({
+          ...prev,
+          [networkName]: apps,
+        }));
+      });
+    } catch (error) {
+      console.warn('Failed to fetch fresh linked apps data:', error);
+    } finally {
+      setIsUpdatingFromServer(false);
+    }
+  };
+
   useEffect(() => {
     const fetchNetworksAndApps = async () => {
       try {
         setLoading(true);
+        setAppsLoading(true);
 
-        // First fetch the networks (fresh, no cache)
-        const networksData = await svcListNetworks(true);
+        // Fetch apps and networks in parallel
+        const [networksData] = await Promise.all([
+          svcListNetworks(true),
+          svcListApps().then((apps) => {
+            setAllApps(apps);
+            setAppsLoading(false);
+          }),
+        ]);
 
         setNetworks(networksData);
 
@@ -102,40 +141,9 @@ export function NetworksPage(props: NetworksPageProps) {
       } catch (error) {
         console.error('Error fetching networks and apps:', error);
         setError(t('errors.listFetch'));
+        setAppsLoading(false);
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchFreshLinkedApps = async (networkNames: string[]) => {
-      try {
-        setIsUpdatingFromServer(true);
-
-        // Fetch linked apps for specified networks without cache
-        const linkedAppsPromises = networkNames.map(async (networkName) => {
-          try {
-            const { apps } = await svcGetLinkedApps(networkName, true);
-            return { networkName, apps };
-          } catch (error) {
-            console.error(`Error fetching fresh linked apps for ${networkName}:`, error);
-            return { networkName, apps: [] };
-          }
-        });
-
-        const linkedAppsResults = await Promise.all(linkedAppsPromises);
-
-        // Update only the linked apps of the specified networks
-        linkedAppsResults.forEach(({ networkName, apps }) => {
-          setLinkedApps((prev) => ({
-            ...prev,
-            [networkName]: apps,
-          }));
-        });
-      } catch (error) {
-        // Ignore errors during background refresh
-        console.warn('Failed to fetch fresh linked apps data:', error);
-      } finally {
-        setIsUpdatingFromServer(false);
       }
     };
 
@@ -157,7 +165,7 @@ export function NetworksPage(props: NetworksPageProps) {
   };
 
   const handleLinkApp = async (networkName: string) => {
-    const appName = newAppName[networkName]?.trim();
+    const appName = selectedApp[networkName];
     if (!appName) return;
 
     setActionLoading((prev) => ({ ...prev, [networkName]: true }));
@@ -166,7 +174,8 @@ export function NetworksPage(props: NetworksPageProps) {
       const ok = await svcLinkApp(networkName, appName);
       if (ok) {
         await fetchLinkedApps(networkName);
-        setNewAppName((prev) => ({ ...prev, [networkName]: '' }));
+        setSelectedApp((prev) => ({ ...prev, [networkName]: '' }));
+        fetchFreshLinkedApps(Object.keys(networks));
       }
     } catch (error) {
       console.error('Error linking app:', error);
@@ -330,8 +339,10 @@ export function NetworksPage(props: NetworksPageProps) {
                   linkedApps={linkedApps}
                   expandedNetwork={expandedNetwork}
                   onExpandedChange={(val) => setExpandedNetwork(val)}
-                  newAppName={newAppName}
-                  setNewAppName={setNewAppName}
+                  selectedApp={selectedApp}
+                  setSelectedApp={setSelectedApp}
+                  allApps={allApps}
+                  appsLoading={appsLoading}
                   actionLoading={actionLoading}
                   onLinkApp={handleLinkApp}
                   onViewApp={handleViewApp}

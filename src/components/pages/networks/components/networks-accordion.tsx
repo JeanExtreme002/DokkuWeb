@@ -1,5 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion';
-import { Box, Heading, Spinner, Text } from '@radix-ui/themes';
+import { Box, Heading, Select, Spinner, Text } from '@radix-ui/themes';
 
 import {
   AppIcon,
@@ -18,8 +18,10 @@ interface NetworksAccordionProps {
   linkedApps: Record<string, string[]>;
   expandedNetwork: string | null;
   onExpandedChange: (value: string | null) => void;
-  newAppName: Record<string, string>;
-  setNewAppName: (updater: (prev: Record<string, string>) => Record<string, string>) => void;
+  selectedApp: Record<string, string>;
+  setSelectedApp: (updater: (prev: Record<string, string>) => Record<string, string>) => void;
+  allApps: string[];
+  appsLoading: boolean;
   actionLoading: Record<string, boolean>;
   onLinkApp: (networkName: string) => void;
   onViewApp: (appName: string) => void;
@@ -32,8 +34,10 @@ export function NetworksAccordion({
   linkedApps,
   expandedNetwork,
   onExpandedChange,
-  newAppName,
-  setNewAppName,
+  selectedApp,
+  setSelectedApp,
+  allApps,
+  appsLoading,
   actionLoading,
   onLinkApp,
   onViewApp,
@@ -51,6 +55,7 @@ export function NetworksAccordion({
     >
       {networksList.map((networkName) => {
         const apps = linkedApps[networkName] || [];
+        const availableApps = allApps.filter((app) => !apps.includes(app));
 
         return (
           <Accordion.Item key={networkName} value={networkName} className={styles.networkItem}>
@@ -97,27 +102,40 @@ export function NetworksAccordion({
                   {t('accordion.link.description')}
                 </Text>
                 <div className={styles.linkAppForm}>
-                  <input
-                    type='text'
-                    placeholder={t('accordion.link.inputPlaceholder')}
-                    value={newAppName[networkName] || ''}
-                    onChange={(e) =>
-                      setNewAppName((prev) => ({
-                        ...prev,
-                        [networkName]: e.target.value,
-                      }))
-                    }
-                    className={styles.linkAppInput}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        onLinkApp(networkName);
+                  {appsLoading ? (
+                    <Text size='2' color='gray' style={{ flex: 1, fontStyle: 'italic' }}>
+                      {t('accordion.link.appsLoading')}
+                    </Text>
+                  ) : (
+                    <Select.Root
+                      value={selectedApp[networkName] || ''}
+                      onValueChange={(value) =>
+                        setSelectedApp((prev) => ({ ...prev, [networkName]: value }))
                       }
-                    }}
-                  />
+                      disabled={actionLoading[networkName] || availableApps.length === 0}
+                    >
+                      <Select.Trigger
+                        placeholder={
+                          availableApps.length === 0
+                            ? t('accordion.link.noApps')
+                            : t('accordion.link.selectPlaceholder')
+                        }
+                        className={styles.selectTrigger}
+                        style={{ cursor: availableApps.length === 0 ? 'default' : 'pointer' }}
+                      />
+                      <Select.Content>
+                        {availableApps.map((appName) => (
+                          <Select.Item key={appName} value={appName} style={{ cursor: 'pointer' }}>
+                            {appName}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select.Root>
+                  )}
                   <button
                     className={styles.linkButton}
                     onClick={() => onLinkApp(networkName)}
-                    disabled={actionLoading[networkName]}
+                    disabled={actionLoading[networkName] || !selectedApp[networkName]}
                   >
                     {actionLoading[networkName] ? (
                       <>

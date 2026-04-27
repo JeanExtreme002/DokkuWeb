@@ -173,6 +173,10 @@
   align-items: center;
 }
 
+.selectTrigger {
+  flex: 1;
+}
+
 .linkAppInput {
   flex: 1;
   padding: 10px 12px;
@@ -398,6 +402,11 @@
   .createButton {
     width: 100%;
     min-width: unset;
+  }
+
+  .selectTrigger {
+    padding-block: 10px;
+    margin-block: 10px;
   }
 
   .networkTrigger {
