@@ -1,7 +1,10 @@
-import { AlertDialog, Box, Button, Flex, Spinner, Text } from '@radix-ui/themes';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { AlertDialog, Box, Button, Flex, Spinner, Text, Tooltip } from '@radix-ui/themes';
 import React from 'react';
 
 import { usePageTranslation } from '@/i18n/utils';
+
+import { useNetworkNameValidation } from '../../utils';
 
 interface CreateNetworkModalProps {
   open: boolean;
@@ -25,18 +28,28 @@ export function CreateNetworkModal({
   onSubmit,
 }: CreateNetworkModalProps) {
   const { t } = usePageTranslation();
+  const validation = useNetworkNameValidation(newNetworkName);
   return (
     <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Content style={{ maxWidth: '450px' }}>
         <AlertDialog.Title>{t('modals.create.title')}</AlertDialog.Title>
-        <AlertDialog.Description size='2'>{t('modals.create.description')}</AlertDialog.Description>
+        <Flex align='center' gap='2'>
+          <AlertDialog.Description size='2'>
+            {t('modals.create.description')}
+          </AlertDialog.Description>
+          <Tooltip content={t('modals.create.tooltip')}>
+            <InfoCircledIcon
+              style={{ color: 'var(--gray-9)', cursor: 'help', width: '14px', height: '14px' }}
+            />
+          </Tooltip>
+        </Flex>
 
         <Box mt='4'>
           <input
             type='text'
             placeholder={t('modals.create.placeholder')}
             value={newNetworkName}
-            onChange={(e) => setNewNetworkName(e.target.value)}
+            onChange={(e) => setNewNetworkName(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''))}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && newNetworkName.trim() && !creatingNetwork) {
                 onSubmit();
@@ -56,6 +69,14 @@ export function CreateNetworkModal({
               cursor: creatingNetwork ? 'not-allowed' : 'text',
             }}
           />
+
+          <Text
+            size='2'
+            color={!validation.isValid && newNetworkName.length > 0 ? 'red' : 'gray'}
+            style={{ marginTop: '6px', display: 'block' }}
+          >
+            {t('modals.create.counter', { count: newNetworkName.length })} {validation.message}
+          </Text>
 
           {createNetworkError && (
             <Flex direction='column' gap='1' style={{ marginTop: '8px' }}>
@@ -82,7 +103,7 @@ export function CreateNetworkModal({
             color='green'
             style={{ cursor: 'pointer' }}
             onClick={onSubmit}
-            disabled={!newNetworkName.trim() || creatingNetwork}
+            disabled={!validation.isValid || creatingNetwork}
           >
             {creatingNetwork ? <Spinner size='2' /> : t('modals.create.confirm')}
           </Button>

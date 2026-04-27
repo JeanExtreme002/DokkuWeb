@@ -50,5 +50,11 @@
   "modals.create.title": "Create New Network",
   "modals.create.description": "Enter a name for the new network to be created.",
   "modals.create.placeholder": "Network name",
-  "modals.create.confirm": "Create Network"
+  "modals.create.confirm": "Create Network",
+  "modals.create.tooltip": "Only letters, numbers and hyphens are allowed.",
+  "modals.create.counter": "{{count}}/30 characters",
+  "modals.create.validation.minLength": "(minimum 3 characters)",
+  "modals.create.validation.startsWithLetter": "(must start with a letter)",
+  "modals.create.validation.maxLength": "(maximum 30 characters)",
+  "modals.create.validation.endsWithHyphen": "(cannot end with '-')"
 }

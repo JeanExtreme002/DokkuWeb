@@ -50,5 +50,11 @@
   "modals.create.title": "Criar Nova Rede",
   "modals.create.description": "Digite um nome para a nova rede que será criada.",
   "modals.create.placeholder": "Nome da rede",
-  "modals.create.confirm": "Criar Rede"
+  "modals.create.confirm": "Criar Rede",
+  "modals.create.tooltip": "Apenas letras, números e hífens são permitidos.",
+  "modals.create.counter": "{{count}}/30 caracteres",
+  "modals.create.validation.minLength": "(mínimo 3 caracteres)",
+  "modals.create.validation.startsWithLetter": "(deve começar com uma letra)",
+  "modals.create.validation.maxLength": "(máximo 30 caracteres)",
+  "modals.create.validation.endsWithHyphen": "(não pode terminar com '-')"
 }
