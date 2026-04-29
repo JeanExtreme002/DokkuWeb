@@ -30,11 +30,11 @@
   "profile.ssh.registerNotAllowed": "Você não tem permissão para registrar chaves SSH",
 
   "profile.ssh.tutorial.summary": "Como criar e registrar uma chave SSH?",
-  "profile.ssh.tutorial.step1.title": "1. Gerar um par de chaves SSH",
-  "profile.ssh.tutorial.step1.description": "Execute o comando abaixo no seu terminal. Pressione Enter para aceitar o caminho padrão e, opcionalmente, defina uma senha.",
-  "profile.ssh.tutorial.step2.title": "2. Visualizar a chave pública",
+  "profile.ssh.tutorial.step1.title": "1. Gere um par de chaves SSH",
+  "profile.ssh.tutorial.step1.description": "Execute o comando abaixo no seu terminal. Pressione Enter em todas as perguntas para usar as configurações padrão.",
+  "profile.ssh.tutorial.step2.title": "2. Confirme a criação da chave",
   "profile.ssh.tutorial.step2.description": "Execute o comando abaixo para exibir sua chave pública.",
-  "profile.ssh.tutorial.step3.title": "3. Registrar chave",
+  "profile.ssh.tutorial.step3.title": "3. Registre a chave",
   "profile.ssh.tutorial.step3.description": "Clique no botão \"{{button}}\" e selecione o arquivo <filename>id_ed25519.pub</filename>.",
 
   "profile.token.label": "Token de Acesso",

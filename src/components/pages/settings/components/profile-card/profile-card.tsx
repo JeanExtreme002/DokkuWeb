@@ -1,6 +1,7 @@
 import {
   CheckIcon,
   ChevronDownIcon,
+  CopyIcon,
   InfoCircledIcon,
   MoonIcon,
   ReloadIcon,
@@ -22,6 +23,7 @@ import {
 } from '@radix-ui/themes';
 import { Session } from 'next-auth';
 import * as React from 'react';
+import { useState } from 'react';
 import { Trans } from 'react-i18next';
 
 import { PadLockIcon } from '@/components/shared';
@@ -61,6 +63,13 @@ export function ProfileCard({
 }: ProfileCardProps) {
   const { t } = usePageTranslation();
   const { mode, toggleTheme } = useTheme();
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copy = (id: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 1500);
+  };
   const userName = session?.user?.name || t('user.fallbackName');
   const userImage = !userName.toLowerCase().startsWith('takeover')
     ? session?.user?.image
@@ -271,9 +280,20 @@ export function ProfileCard({
               <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
                 {t('profile.ssh.tutorial.step1.description')}
               </Text>
-              <pre className={styles.sshTutorialCode}>
-                <code>{`ssh-keygen -t ed25519 -C "your_email@example.com"`}</code>
-              </pre>
+              <div className={styles.sshTutorialCodeWrapper}>
+                <pre className={styles.sshTutorialCode}>
+                  <code>{`ssh-keygen -t ed25519 -C "your_email@example.com"`}</code>
+                </pre>
+                <IconButton
+                  size='1'
+                  variant='ghost'
+                  className={styles.sshTutorialCopyButton}
+                  onClick={() => copy('step1', `ssh-keygen -t ed25519 -C "your_email@example.com"`)}
+                  aria-label='Copy'
+                >
+                  {copied === 'step1' ? <CheckIcon /> : <CopyIcon />}
+                </IconButton>
+              </div>
             </Flex>
             <Flex direction='column' gap='1'>
               <Text
@@ -287,9 +307,20 @@ export function ProfileCard({
               <Text size='2' className={styles.sshTutorialText} style={{ color: 'var(--gray-10)' }}>
                 {t('profile.ssh.tutorial.step2.description')}
               </Text>
-              <pre className={styles.sshTutorialCode}>
-                <code>cat ~/.ssh/id_ed25519.pub</code>
-              </pre>
+              <div className={styles.sshTutorialCodeWrapper}>
+                <pre className={styles.sshTutorialCode}>
+                  <code>cat ~/.ssh/id_ed25519.pub</code>
+                </pre>
+                <IconButton
+                  size='1'
+                  variant='ghost'
+                  className={styles.sshTutorialCopyButton}
+                  onClick={() => copy('step2', 'cat ~/.ssh/id_ed25519.pub')}
+                  aria-label='Copy'
+                >
+                  {copied === 'step2' ? <CheckIcon /> : <CopyIcon />}
+                </IconButton>
+              </div>
             </Flex>
             <Flex direction='column' gap='1'>
               <Text
