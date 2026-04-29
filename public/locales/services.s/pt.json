@@ -115,5 +115,9 @@
   "services.s.controls.start": "Iniciar",
   "services.s.controls.stop": "Parar",
   "services.s.controls.restart": "Reiniciar",
-  "services.s.controls.linkApp": "Vincular Aplicativo"
+  "services.s.controls.linkApp": "Vincular Aplicativo",
+
+  "services.s.controls.linkTutorial.title": "O que é Vincular Aplicativo?",
+  "services.s.controls.linkTutorial.body": "Use este botão para conectar este serviço a um ou mais aplicativos.\n\nAo vincular, uma variável de ambiente com a URI do serviço é criada automaticamente no aplicativo — pronta para ser usada para abrir uma conexão.",
+  "services.s.controls.linkTutorial.dismiss": "Entendi"
 }

@@ -1,10 +1,12 @@
 import { Link1Icon, PlayIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Button, Flex } from '@radix-ui/themes';
+import React, { useRef } from 'react';
 
 import { StopIcon } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../service-details.module.css';
+import { LinkAppTutorial } from './link-app-tutorial';
 
 interface ServiceControlsSectionProps {
   startService: () => Promise<void> | void;
@@ -28,6 +30,7 @@ export function ServiceControlsSection({
   serviceStatus,
 }: ServiceControlsSectionProps) {
   const { t } = usePageTranslation();
+  const linkAppButtonRef = useRef<HTMLDivElement>(null);
   const startDisabled =
     startLoading || stopLoading || restartLoading || serviceStatus === 'running';
   const stopDisabled =
@@ -39,6 +42,7 @@ export function ServiceControlsSection({
 
   return (
     <Flex direction='column' gap='3'>
+      <LinkAppTutorial targetRef={linkAppButtonRef} />
       <Flex
         direction='column'
         gap='3'
@@ -88,17 +92,19 @@ export function ServiceControlsSection({
           </Flex>
 
           {/* Link App Button - aligned to the right (desktop) */}
-          <Button
-            size='3'
-            variant='outline'
-            color='blue'
-            style={{ cursor: 'pointer' }}
-            onClick={onLinkAppClick}
-            disabled={restartDisabled}
-          >
-            <Link1Icon />
-            {t('services.s.controls.linkApp')}
-          </Button>
+          <div ref={linkAppButtonRef}>
+            <Button
+              size='3'
+              variant='outline'
+              color='blue'
+              style={{ cursor: 'pointer' }}
+              onClick={onLinkAppClick}
+              disabled={restartDisabled}
+            >
+              <Link1Icon />
+              {t('services.s.controls.linkApp')}
+            </Button>
+          </div>
         </Flex>
 
         {/* Mobile/Tablet Layout - Stacked */}

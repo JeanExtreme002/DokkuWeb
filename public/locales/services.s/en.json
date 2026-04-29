@@ -115,5 +115,9 @@
   "services.s.controls.start": "Start",
   "services.s.controls.stop": "Stop",
   "services.s.controls.restart": "Restart",
-  "services.s.controls.linkApp": "Link Application"
+  "services.s.controls.linkApp": "Link Application",
+
+  "services.s.controls.linkTutorial.title": "What is Link Application?",
+  "services.s.controls.linkTutorial.body": "Use this button to connect this service to one or more applications.\n\nWhen linked, an environment variable containing the service URI is automatically created in the application — ready to be used to open a connection.",
+  "services.s.controls.linkTutorial.dismiss": "Got it"
 }
