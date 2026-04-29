@@ -112,6 +112,84 @@
   gap: 8px;
 }
 
+.deployTutorialOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 1000;
+}
+
+.deploySectionHighlighted {
+  position: relative;
+  z-index: 1001;
+  border-radius: 10px;
+  background: var(--color-panel-solid);
+  padding: 12px;
+  box-shadow: 0 0 0 3px var(--gray-8);
+}
+
+.deployTutorialBox {
+  position: fixed;
+  z-index: 1002;
+  width: 340px;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--accent-6);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.28),
+    0 0 0 1px var(--accent-6);
+}
+
+.deployTutorialTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-12);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deployTutorialIcon {
+  color: var(--accent-9);
+  flex-shrink: 0;
+}
+
+.deployTutorialBody {
+  font-size: 13px;
+  color: var(--gray-11);
+  line-height: 1.6;
+  white-space: pre-line;
+  margin-bottom: 14px;
+}
+
+.deployTutorialButton {
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--accent-9);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.deployTutorialButton:hover {
+  background: var(--accent-10);
+}
+
+.deployTutorialButton:active {
+  background: var(--accent-11);
+}
+
+.deployTutorialButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .deployHeader {
   display: flex;
   flex-direction: column;
