@@ -1,4 +1,4 @@
-import { InfoCircledIcon, ReloadIcon, RocketIcon } from '@radix-ui/react-icons';
+import { DownloadIcon, InfoCircledIcon, ReloadIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Box, Button, Card, Flex, Separator, Tabs, Text } from '@radix-ui/themes';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -192,6 +192,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [envChangeToast, setEnvChangeToast] = useState(false);
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
   const [deployRepoToast, setDeployRepoToast] = useState(false);
+  const [zipDownloadToast, setZipDownloadToast] = useState(false);
 
   // File preview states
   const [filePreviewOpen, setFilePreviewOpen] = useState(false);
@@ -971,6 +972,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   };
 
   const downloadAppZip = async () => {
+    setZipDownloadToast(true);
     const response = await api.post(
       `/api/apps/${props.appName}/zip/`,
       {},
@@ -1778,6 +1780,15 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
         visible={deployRepoToast}
         onHide={() => setDeployRepoToast(false)}
         duration={10000}
+        progressAnimation={true}
+        color='green'
+      />
+      <Toast
+        icon={<DownloadIcon width={18} height={18} />}
+        message={t('header.zipDownloadToast')}
+        visible={zipDownloadToast}
+        onHide={() => setZipDownloadToast(false)}
+        duration={5000}
         progressAnimation={true}
         color='green'
       />
