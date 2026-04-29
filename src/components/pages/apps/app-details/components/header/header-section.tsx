@@ -1,9 +1,25 @@
-import { ChevronDownIcon, CodeIcon, GitHubLogoIcon, UploadIcon } from '@radix-ui/react-icons';
-import { Avatar, Box, Button, DropdownMenu, Flex, Heading, Text } from '@radix-ui/themes';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  CodeIcon,
+  CopyIcon,
+  GitHubLogoIcon,
+  UploadIcon,
+} from '@radix-ui/react-icons';
+import {
+  Avatar,
+  Box,
+  Button,
+  DropdownMenu,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+} from '@radix-ui/themes';
 import type { Session } from 'next-auth';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { LinkIcon } from '@/components/shared';
+import { ConsoleIcon, LinkIcon } from '@/components/shared';
 import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
@@ -21,6 +37,8 @@ interface HeaderSectionProps {
   appUrl: string | null;
   statusInfo: StatusInfo;
   displayName: string;
+  domain: string;
+  sshPort?: number | null;
   onOpenDeployModal: () => void;
   onOpenZipInfoModal: () => void;
   onVisitWebsite: () => void;
@@ -29,6 +47,19 @@ interface HeaderSectionProps {
 
 export function HeaderSection(props: HeaderSectionProps) {
   const { t } = usePageTranslation();
+  const [copied, setCopied] = useState(false);
+
+  const cloneCommand = props.sshPort
+    ? `GIT_SSH_COMMAND="ssh -p ${props.sshPort}" git clone dokku@${props.domain}:${props.appInfo?.raw_name}`
+    : `git clone dokku@${props.domain}:${props.appInfo?.raw_name}`;
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(cloneCommand);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   const processType = useMemo(() => {
     if (props.appInfo?.info_origin === 'inspect') {
       const containers = props.appInfo.data as AppContainer[];
@@ -126,13 +157,58 @@ export function HeaderSection(props: HeaderSectionProps) {
                 style={{ cursor: 'pointer', backgroundColor: 'var(--green-8)' }}
               >
                 <CodeIcon />
-                {t('header.deploy')}
+                {t('header.code')}
                 <ChevronDownIcon />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
-              <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
+              <DropdownMenu.Label>
+                <Flex align='center' gap='1'>
+                  <ConsoleIcon />
+                  {t('header.clone')}
+                </Flex>
+              </DropdownMenu.Label>
+              <Flex align='center' gap='2' style={{ padding: '4px 8px 8px' }}>
+                <Box
+                  style={{
+                    backgroundColor: 'var(--gray-3)',
+                    border: '1px solid var(--gray-6)',
+                    borderRadius: '6px',
+                    padding: '6px 0 6px 8px',
+                    maxWidth: '300px',
+                    overflowX: 'auto',
+                  }}
+                >
+                  <code
+                    style={{
+                      fontSize: '11px',
+                      whiteSpace: 'nowrap',
+                      color: 'var(--gray-12)',
+                      display: 'block',
+                    }}
+                  >
+                    {cloneCommand}
+                    <span style={{ display: 'inline-block', width: '8px' }} />
+                  </code>
+                </Box>
+                <IconButton
+                  size='1'
+                  variant='ghost'
+                  color='gray'
+                  onClick={handleCopy}
+                  aria-label='Copy'
+                >
+                  {copied ? <CheckIcon /> : <CopyIcon />}
+                </IconButton>
+              </Flex>
+              <Text
+                size='1'
+                style={{ padding: '0 8px 8px', color: 'var(--gray-11)', display: 'block' }}
+              >
+                {t('header.cloneHint')}
+              </Text>
               <DropdownMenu.Separator />
+              <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenZipInfoModal}>
                 <UploadIcon />
                 {t('header.zipFile')}
@@ -172,13 +248,52 @@ export function HeaderSection(props: HeaderSectionProps) {
           <DropdownMenu.Trigger>
             <Button variant='solid' className={styles.urlButton}>
               <CodeIcon />
-              {t('header.deploy')}
+              {t('header.code')}
               <ChevronDownIcon />
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
-            <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
+            <DropdownMenu.Label>
+              <Flex align='center' gap='1'>
+                <ConsoleIcon />
+                {t('header.clone')}
+              </Flex>
+            </DropdownMenu.Label>
+            <Flex align='center' gap='2' style={{ padding: '4px 8px 8px' }}>
+              <Box
+                style={{
+                  backgroundColor: 'var(--gray-3)',
+                  border: '1px solid var(--gray-6)',
+                  borderRadius: '6px',
+                  padding: '6px 0 6px 8px',
+                  maxWidth: '260px',
+                  overflowX: 'auto',
+                }}
+              >
+                <code
+                  style={{
+                    fontSize: '11px',
+                    whiteSpace: 'nowrap',
+                    color: 'var(--gray-12)',
+                    display: 'block',
+                  }}
+                >
+                  {cloneCommand}
+                  <span style={{ display: 'inline-block', width: '8px' }} />
+                </code>
+              </Box>
+              <IconButton
+                size='1'
+                variant='ghost'
+                color='gray'
+                onClick={handleCopy}
+                aria-label='Copy'
+              >
+                {copied ? <CheckIcon /> : <CopyIcon />}
+              </IconButton>
+            </Flex>
             <DropdownMenu.Separator />
+            <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
             <DropdownMenu.Item onClick={props.onOpenDeployModal}>
               <GitHubLogoIcon />
               {t('header.publicRepo')}

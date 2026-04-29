@@ -1810,6 +1810,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               appUrl={appUrl}
               statusInfo={statusInfo}
               displayName={displayName}
+              domain={websiteConfig.server.domain}
+              sshPort={sshPort}
               onVisitWebsite={() => appUrl && window.open(appUrl, '_blank')}
               onOpenDeployModal={() => setDeployModalOpen(true)}
               onOpenZipInfoModal={() => setZipInfoModalOpen(true)}
