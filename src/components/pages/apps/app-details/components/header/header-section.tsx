@@ -133,13 +133,13 @@ export function HeaderSection(props: HeaderSectionProps) {
             <DropdownMenu.Content>
               <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenDeployModal}>
-                <GitHubLogoIcon />
-                {t('header.publicRepo')}
-              </DropdownMenu.Item>
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenZipInfoModal}>
                 <UploadIcon />
                 {t('header.zipFile')}
+              </DropdownMenu.Item>
+              <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenDeployModal}>
+                <GitHubLogoIcon />
+                {t('header.publicRepo')}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
