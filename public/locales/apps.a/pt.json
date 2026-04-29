@@ -124,6 +124,7 @@
   "header.clone": "Clone",
   "header.cloneHint": "Clone o app usando o comando acima.",
   "header.downloadZip": "Baixar ZIP",
+  "header.downloadingZip": "Baixando ZIP",
   "header.deployVia": "Deploy via:",
   "header.publicRepo": "URL pública",
   "header.zipFile": "Arquivo .zip",

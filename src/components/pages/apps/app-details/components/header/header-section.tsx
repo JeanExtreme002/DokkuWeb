@@ -228,7 +228,7 @@ export function HeaderSection(props: HeaderSectionProps) {
                 disabled={downloadingZip}
               >
                 {downloadingZip ? <Spinner /> : <DownloadIcon />}
-                {t('header.downloadZip')}
+                {downloadingZip ? t('header.downloadingZip') : t('header.downloadZip')}
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
               <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
