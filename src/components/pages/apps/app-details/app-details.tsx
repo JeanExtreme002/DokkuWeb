@@ -970,6 +970,24 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     URL.revokeObjectURL(url);
   };
 
+  const downloadAppZip = async () => {
+    const response = await api.post(
+      `/api/apps/${props.appName}/zip/`,
+      {},
+      { params: withSharedBy({ as_octet_stream: true }), responseType: 'blob' }
+    );
+
+    const blob = response.data as Blob;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${props.appName}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   // Download a file from the container given its full path
   const downloadAppFile = async (fullPath: string, filename?: string) => {
     setDownloadToast(filename || fullPath.split('/').pop() || fullPath);
@@ -1815,6 +1833,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
               onVisitWebsite={() => appUrl && window.open(appUrl, '_blank')}
               onOpenDeployModal={() => setDeployModalOpen(true)}
               onOpenZipInfoModal={() => setZipInfoModalOpen(true)}
+              onDownloadZip={downloadAppZip}
               sharedBy={sharedBy || null}
             />
 

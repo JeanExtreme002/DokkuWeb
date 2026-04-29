@@ -123,6 +123,7 @@
   "header.code": "Code",
   "header.clone": "Clone",
   "header.cloneHint": "Clone the app using the command above.",
+  "header.downloadZip": "Download ZIP",
   "header.deployVia": "Deploy via:",
   "header.publicRepo": "Public URL",
   "header.zipFile": ".zip file",

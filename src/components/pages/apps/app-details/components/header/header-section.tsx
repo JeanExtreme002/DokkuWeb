@@ -3,6 +3,7 @@ import {
   ChevronDownIcon,
   CodeIcon,
   CopyIcon,
+  DownloadIcon,
   GitHubLogoIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
@@ -14,6 +15,7 @@ import {
   Flex,
   Heading,
   IconButton,
+  Spinner,
   Text,
 } from '@radix-ui/themes';
 import type { Session } from 'next-auth';
@@ -41,6 +43,7 @@ interface HeaderSectionProps {
   sshPort?: number | null;
   onOpenDeployModal: () => void;
   onOpenZipInfoModal: () => void;
+  onDownloadZip: () => Promise<void>;
   onVisitWebsite: () => void;
   sharedBy?: string | null;
 }
@@ -48,10 +51,21 @@ interface HeaderSectionProps {
 export function HeaderSection(props: HeaderSectionProps) {
   const { t } = usePageTranslation();
   const [copied, setCopied] = useState(false);
+  const [downloadingZip, setDownloadingZip] = useState(false);
 
   const cloneCommand = props.sshPort
     ? `GIT_SSH_COMMAND="ssh -p ${props.sshPort}" git clone dokku@${props.domain}:${props.appInfo?.raw_name}`
     : `git clone dokku@${props.domain}:${props.appInfo?.raw_name}`;
+
+  const handleDownloadZip = async () => {
+    if (downloadingZip) return;
+    setDownloadingZip(true);
+    try {
+      await props.onDownloadZip();
+    } finally {
+      setDownloadingZip(false);
+    }
+  };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -208,6 +222,15 @@ export function HeaderSection(props: HeaderSectionProps) {
                 {t('header.cloneHint')}
               </Text>
               <DropdownMenu.Separator />
+              <DropdownMenu.Item
+                style={{ cursor: 'pointer' }}
+                onClick={handleDownloadZip}
+                disabled={downloadingZip}
+              >
+                {downloadingZip ? <Spinner /> : <DownloadIcon />}
+                {t('header.downloadZip')}
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator />
               <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
               <DropdownMenu.Item style={{ cursor: 'pointer' }} onClick={props.onOpenZipInfoModal}>
                 <UploadIcon />
@@ -292,6 +315,15 @@ export function HeaderSection(props: HeaderSectionProps) {
                 {copied ? <CheckIcon /> : <CopyIcon />}
               </IconButton>
             </Flex>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item
+              style={{ cursor: 'pointer' }}
+              onClick={handleDownloadZip}
+              disabled={downloadingZip}
+            >
+              {downloadingZip ? <Spinner /> : <DownloadIcon />}
+              {t('header.downloadZip')}
+            </DropdownMenu.Item>
             <DropdownMenu.Separator />
             <DropdownMenu.Label>{t('header.deployVia')}</DropdownMenu.Label>
             <DropdownMenu.Item onClick={props.onOpenDeployModal}>
