@@ -104,6 +104,15 @@ export default function OverviewSection({
                       deployInfo['Git deploy branch'] || 'N/A'
                     )}
                     {renderRow(t('overview.labels.gitSha'), deployInfo['Git sha'] || 'N/A')}
+                    {renderRow(
+                      t('overview.labels.gitLastUpdatedAt'),
+                      deployInfo['Git last updated at']
+                        ? new Date(Number(deployInfo['Git last updated at']) * 1000)
+                            .toISOString()
+                            .replace('T', ' ')
+                            .substring(0, 19)
+                        : 'N/A'
+                    )}
                   </>
                 )}
 

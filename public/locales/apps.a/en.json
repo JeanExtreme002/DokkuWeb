@@ -82,6 +82,7 @@
   "overview.labels.port": "Port",
   "overview.labels.gitBranch": "Git Branch",
   "overview.labels.gitSha": "Git SHA",
+  "overview.labels.gitLastUpdatedAt": "Git Last Updated At",
   "overview.labels.builder": "Builder",
   "overview.labels.buildDirectory": "Build Directory",
   "overview.labels.deployed": "Deployed",
