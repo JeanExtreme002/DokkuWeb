@@ -148,11 +148,31 @@
   font-size: 12px;
   line-height: 1.5;
   color: var(--gray-11);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.codeBlockContent {
+  flex: 1;
   overflow-x: auto;
+  min-width: 0;
 }
 
 .codeBlock .command {
   color: var(--purple-11);
+}
+
+.codeBlockCopyButton {
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--gray-9) !important;
+}
+
+.codeBlockCopyButton:hover,
+.codeBlockCopyButton:focus {
+  background: transparent !important;
+  color: var(--gray-11) !important;
 }
 
 .tabsRoot {
