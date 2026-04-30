@@ -211,6 +211,7 @@ export function HeaderSection(props: HeaderSectionProps) {
                   color='gray'
                   onClick={handleCopy}
                   aria-label='Copy'
+                  style={{ cursor: 'pointer', background: 'none' }}
                 >
                   {copied ? <CheckIcon /> : <CopyIcon />}
                 </IconButton>
@@ -311,6 +312,7 @@ export function HeaderSection(props: HeaderSectionProps) {
                 color='gray'
                 onClick={handleCopy}
                 aria-label='Copy'
+                style={{ cursor: 'pointer', background: 'none' }}
               >
                 {copied ? <CheckIcon /> : <CopyIcon />}
               </IconButton>
