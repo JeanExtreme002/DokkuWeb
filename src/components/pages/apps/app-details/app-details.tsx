@@ -133,6 +133,9 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   const [appUrl, setAppUrl] = useState<string | null>(null);
   const [builderInfo, setBuilderInfo] = useState<BuilderData | null>(null);
   const [logLinesLimit, setLogLinesLimit] = useState<number>(1000);
+  const [logSource, setLogSource] = useState<'container' | 'nginx-access' | 'nginx-error'>(
+    'container'
+  );
   const [deployInfo, setDeployInfo] = useState<DeployInfoData | null>(null);
   const [sshPort, setSshPort] = useState<number | null>(null);
 
@@ -466,15 +469,20 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
   }, [props.appName, withSharedBy]);
 
   const fetchLogs = useCallback(async () => {
-    const response = await api.post(
-      `/api/apps/${props.appName}/logs/`,
-      {},
-      { params: withSharedBy({ n_lines: logLinesLimit }) }
-    );
+    const isNginx = logSource !== 'container';
+
+    const url = `/api/${isNginx ? 'nginx' : 'apps'}/${props.appName}/logs/`;
+
+    const params: any = { n_lines: logLinesLimit };
+    if (isNginx) {
+      params.type = logSource === 'nginx-access' ? 'access' : 'error';
+    }
+
+    const response = await api.post(url, {}, { params: withSharedBy(params) });
     if (response.data.success) {
       setLogs(response.data.result);
     }
-  }, [props.appName, logLinesLimit, withSharedBy]);
+  }, [props.appName, logLinesLimit, logSource, withSharedBy]);
 
   const fetchTasks = useCallback(async () => {
     const response = await api.post(
@@ -823,7 +831,7 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
     if (!dataLoaded) return;
     refreshLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logLinesLimit]);
+  }, [logLinesLimit, logSource]);
 
   // Auto-refresh overview data every 10 seconds without showing loading spinners
   useEffect(() => {
@@ -2002,6 +2010,8 @@ export function AppDetailsPage(props: AppDetailsPageProps) {
                   error={errors.logs}
                   logLinesLimit={logLinesLimit}
                   onSetLinesLimit={(n) => setLogLinesLimit(n)}
+                  logSource={logSource}
+                  onSetLogSource={(source) => setLogSource(source)}
                   onRefresh={refreshLogs}
                   onDownload={downloadLogs}
                   processAnsiCodes={processAnsiCodes}

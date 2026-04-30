@@ -6,12 +6,16 @@ import { usePageTranslation } from '@/i18n/utils';
 
 import styles from '../../app-details.module.css';
 
+type LogSource = 'container' | 'nginx-access' | 'nginx-error';
+
 interface LogsSectionProps {
   logs: string;
   logsLoading: boolean;
   error: string | null;
   logLinesLimit: number;
   onSetLinesLimit: (value: number) => void;
+  logSource: LogSource;
+  onSetLogSource: (source: LogSource) => void;
   onRefresh: () => void;
   onDownload: () => void;
   processAnsiCodes: (text: string) => string;
@@ -64,6 +68,28 @@ export function LogsSection(props: LogsSectionProps) {
               </Select.Content>
             </Select.Root>
           </Flex>
+          <Flex align='center' gap='2'>
+            <Text size='2' style={{ color: 'var(--gray-11)' }}>
+              {t('logs.sourceLabel')}
+            </Text>
+            <Select.Root
+              value={props.logSource}
+              onValueChange={(value) => props.onSetLogSource(value as LogSource)}
+            >
+              <Select.Trigger style={{ cursor: 'pointer' }} />
+              <Select.Content>
+                <Select.Item style={{ cursor: 'pointer' }} value='container'>
+                  {t('logs.source.container')}
+                </Select.Item>
+                <Select.Item style={{ cursor: 'pointer' }} value='nginx-access'>
+                  {t('logs.source.nginxAccess')}
+                </Select.Item>
+                <Select.Item style={{ cursor: 'pointer' }} value='nginx-error'>
+                  {t('logs.source.nginxError')}
+                </Select.Item>
+              </Select.Content>
+            </Select.Root>
+          </Flex>
         </Flex>
         <Flex gap='2' align='center' className={styles.logsButtons}>
           <Button
@@ -98,25 +124,43 @@ export function LogsSection(props: LogsSectionProps) {
           {t('logs.title')}
         </Heading>
         <Flex direction='column' gap='3'>
-          <Flex align='center' gap='2'>
-            <Text size='2' style={{ color: 'var(--gray-11)' }}>
-              {t('logs.linesLabel')}
-            </Text>
-            <Select.Root
-              value={props.logLinesLimit.toString()}
-              onValueChange={(value) => props.onSetLinesLimit(Number(value))}
-            >
-              <Select.Trigger style={{ minWidth: '70px' }} />
-              <Select.Content>
-                <Select.Item value='1000'>1000</Select.Item>
-                <Select.Item value='3000'>3000</Select.Item>
-                <Select.Item value='5000'>5000</Select.Item>
-                <Select.Item value='7000'>7000</Select.Item>
-                <Select.Item value='15000'>15000</Select.Item>
-                <Select.Item value='30000'>30000</Select.Item>
-                <Select.Item value='50000'>50000</Select.Item>
-              </Select.Content>
-            </Select.Root>
+          <Flex align='center' gap='3' wrap='wrap'>
+            <Flex align='center' gap='2'>
+              <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                {t('logs.linesLabel')}
+              </Text>
+              <Select.Root
+                value={props.logLinesLimit.toString()}
+                onValueChange={(value) => props.onSetLinesLimit(Number(value))}
+              >
+                <Select.Trigger style={{ minWidth: '70px' }} />
+                <Select.Content>
+                  <Select.Item value='1000'>1000</Select.Item>
+                  <Select.Item value='3000'>3000</Select.Item>
+                  <Select.Item value='5000'>5000</Select.Item>
+                  <Select.Item value='7000'>7000</Select.Item>
+                  <Select.Item value='15000'>15000</Select.Item>
+                  <Select.Item value='30000'>30000</Select.Item>
+                  <Select.Item value='50000'>50000</Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </Flex>
+            <Flex align='center' gap='2'>
+              <Text size='2' style={{ color: 'var(--gray-11)' }}>
+                {t('logs.sourceLabel')}
+              </Text>
+              <Select.Root
+                value={props.logSource}
+                onValueChange={(value) => props.onSetLogSource(value as LogSource)}
+              >
+                <Select.Trigger />
+                <Select.Content>
+                  <Select.Item value='container'>{t('logs.source.container')}</Select.Item>
+                  <Select.Item value='nginx-access'>{t('logs.source.nginxAccess')}</Select.Item>
+                  <Select.Item value='nginx-error'>{t('logs.source.nginxError')}</Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </Flex>
           </Flex>
           <Flex gap='2' align='center' direction='column' style={{ width: '100%' }}>
             <Button

@@ -1090,7 +1090,7 @@ button.envExportButtonOrange {
   display: none !important;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 800px) {
   .logsHeader {
     display: none !important;
   }
