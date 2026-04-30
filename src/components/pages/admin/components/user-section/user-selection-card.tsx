@@ -128,11 +128,13 @@ export function UserSelectionCard(props: UserSelectionCardProps) {
           />
           <Select.Content>
             <Select.Group>
-              {usersList.map((email) => (
-                <Select.Item style={{ cursor: 'pointer' }} key={email} value={email}>
-                  <span className={styles.selectItemEmail}>{email}</span>
-                </Select.Item>
-              ))}
+              {[...usersList]
+                .sort((a, b) => a.localeCompare(b))
+                .map((email) => (
+                  <Select.Item style={{ cursor: 'pointer' }} key={email} value={email}>
+                    <span className={styles.selectItemEmail}>{email}</span>
+                  </Select.Item>
+                ))}
             </Select.Group>
           </Select.Content>
         </Select.Root>
