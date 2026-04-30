@@ -242,7 +242,7 @@ export function ServiceCreationPage(props: ServiceCreationPageProps) {
                     <>
                       {t('services.create.errors.quotaExceeded.hint.before')}{' '}
                       <Link
-                        href='/settings/'
+                        href='/settings/#limits'
                         style={{ color: 'var(--gray-11)', textDecoration: 'underline' }}
                       >
                         {t('services.create.errors.quotaExceeded.hint.link')}

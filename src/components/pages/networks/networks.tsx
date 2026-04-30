@@ -392,7 +392,7 @@ export function NetworksPage(props: NetworksPageProps) {
                 <>
                   {t('errors.quotaExceeded.hint.before')}{' '}
                   <Link
-                    href='/settings/'
+                    href='/settings/#limits'
                     style={{ color: 'var(--gray-11)', textDecoration: 'underline' }}
                   >
                     {t('errors.quotaExceeded.hint.link')}

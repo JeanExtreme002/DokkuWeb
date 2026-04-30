@@ -1,5 +1,6 @@
 import { Link } from '@mui/material';
 import { Badge, Box, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
+import { useEffect, useRef } from 'react';
 
 import { AppIcon, DotIcon, NetworkIcon, ServiceIcon } from '@/components';
 import { usePageTranslation } from '@/i18n/utils';
@@ -15,6 +16,13 @@ interface ResourcesCardProps {
 
 export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
   const { t } = usePageTranslation();
+  const limitsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.location.hash === '#limits') {
+      limitsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [quota, loading, error]);
   return (
     <Card
       style={{
@@ -74,7 +82,7 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
         )}
 
         {quota && !loading && !error && (
-          <Flex direction='column' gap='4'>
+          <Flex direction='column' gap='4' ref={limitsRef}>
             <Box
               style={{
                 padding: '16px',
