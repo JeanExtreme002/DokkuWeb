@@ -1,6 +1,7 @@
+import { EnterIcon, Share2Icon } from '@radix-ui/react-icons';
 import { Card, Flex, Separator, Text } from '@radix-ui/themes';
 import { Session } from 'next-auth';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { NavBar } from '@/components';
 import { ErrorCard, ListHeader, ServerUpdateIndicator } from '@/components/shared';
@@ -26,6 +27,10 @@ export function AppListPage(props: AppListPageProps) {
   const [isUpdatingFromServer, setIsUpdatingFromServer] = useState(false);
   const [hasInitialList, setHasInitialList] = useState(false);
 
+  const [sharingAppsList, setSharingAppsList] = useState<AppListItem[]>([]);
+  const [sharingError, setSharingError] = useState<string | null>(null);
+  const [hasSharingInitialList, setHasSharingInitialList] = useState(false);
+
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -37,6 +42,96 @@ export function AppListPage(props: AppListPageProps) {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
   useEffect(() => {
+    const fetchAppsInfo = async (
+      appNames: string[],
+      setList: React.Dispatch<React.SetStateAction<AppListItem[]>>,
+      useSharedByPrefix = true
+    ) => {
+      const cachedApps: string[] = [];
+
+      const promises = appNames.map(async (appName) => {
+        const { sharedBy, pureName: parsedAppName } = useSharedByPrefix
+          ? parseSharedName(appName)
+          : { sharedBy: undefined, pureName: appName };
+        try {
+          const response = await api.post(
+            `/api/apps/${parsedAppName}/info/`,
+            {},
+            { params: withSharedByParams(sharedBy) }
+          );
+
+          if (response.status === 200 && response.data.success) {
+            const cacheStatus = response.headers['x-cache'];
+            if (cacheStatus === 'HIT') {
+              cachedApps.push(appName);
+            }
+
+            setList((prevList) =>
+              prevList.map((app) =>
+                app.name === appName ? { ...app, info: response.data.result, loading: false } : app
+              )
+            );
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        } catch (error) {
+          console.error(`Error fetching info for app ${appName}:`, error);
+          setList((prevList) =>
+            prevList.map((app) =>
+              app.name === appName ? { ...app, loading: false, error: t('errors.infoFetch') } : app
+            )
+          );
+        }
+      });
+
+      await Promise.allSettled(promises);
+      return cachedApps;
+    };
+
+    const fetchFreshAppsInfo = async (
+      appNames: string[],
+      setList: React.Dispatch<React.SetStateAction<AppListItem[]>>,
+      useSharedByPrefix = true
+    ) => {
+      try {
+        setIsUpdatingFromServer(true);
+
+        const promises = appNames.map(async (appName) => {
+          const { sharedBy, pureName: parsedAppName } = useSharedByPrefix
+            ? parseSharedName(appName)
+            : { sharedBy: undefined, pureName: appName };
+          try {
+            const response = await api.post(
+              `/api/apps/${parsedAppName}/info/`,
+              {},
+              {
+                headers: { 'x-cache': 'false' },
+                params: withSharedByParams(sharedBy),
+              }
+            );
+
+            if (response.status === 200 && response.data.success) {
+              setList((prevList) =>
+                prevList.map((app) =>
+                  app.name === appName
+                    ? { ...app, info: response.data.result, loading: false }
+                    : app
+                )
+              );
+            }
+          } catch (error) {
+            console.error(`Error fetching fresh info for app ${appName}:`, error);
+          }
+        });
+
+        await Promise.allSettled(promises);
+      } catch (error) {
+        console.warn('Failed to fetch fresh apps data:', error);
+      } finally {
+        setIsUpdatingFromServer(false);
+      }
+    };
+
     const fetchAppsList = async () => {
       const startTime = Date.now();
       try {
@@ -65,7 +160,10 @@ export function AppListPage(props: AppListPageProps) {
           setAppsList(initialAppsList);
           setHasInitialList(true);
 
-          await fetchAppsInfo(appNames);
+          const cachedApps = await fetchAppsInfo(appNames, setAppsList);
+          if (cachedApps.length > 0) {
+            fetchFreshAppsInfo(cachedApps, setAppsList);
+          }
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -82,93 +180,45 @@ export function AppListPage(props: AppListPageProps) {
       }, remainingTime);
     };
 
-    const fetchAppsInfo = async (appNames: string[]) => {
-      const cachedApps: string[] = [];
-
-      // Load each app's information asynchronously
-      const promises = appNames.map(async (appName) => {
-        const { sharedBy, pureName: parsedAppName } = parseSharedName(appName);
-        try {
-          const response = await api.post(
-            `/api/apps/${parsedAppName}/info/`,
-            {},
-            { params: withSharedByParams(sharedBy) }
-          );
-
-          if (response.status === 200 && response.data.success) {
-            const cacheStatus = response.headers['x-cache'];
-            if (cacheStatus === 'HIT') {
-              cachedApps.push(appName);
-            }
-
-            setAppsList((prevList) =>
-              prevList.map((app) =>
-                app.name === appName ? { ...app, info: response.data.result, loading: false } : app
-              )
-            );
-          } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-        } catch (error) {
-          console.error(`Error fetching info for app ${appName}:`, error);
-          // Update error state for this specific app
-          setAppsList((prevList) =>
-            prevList.map((app) =>
-              app.name === appName ? { ...app, loading: false, error: t('errors.infoFetch') } : app
-            )
-          );
-        }
-      });
-
-      await Promise.allSettled(promises);
-
-      if (cachedApps.length > 0) {
-        fetchFreshAppsInfo(cachedApps);
-      }
-    };
-
-    const fetchFreshAppsInfo = async (appNames: string[]) => {
+    const fetchSharingAppsList = async () => {
       try {
-        setIsUpdatingFromServer(true);
+        const response = await api.post(
+          '/api/apps/list-apps-shared-with/',
+          {},
+          { headers: { 'x-cache': 'false' } }
+        );
 
-        // Load each app's information asynchronously without cache
-        const promises = appNames.map(async (appName) => {
-          const { sharedBy, pureName: parsedAppName } = parseSharedName(appName);
-          try {
-            const response = await api.post(
-              `/api/apps/${parsedAppName}/info/`,
-              {},
-              {
-                headers: { 'x-cache': 'false' },
-                params: withSharedByParams(sharedBy),
-              }
-            );
+        if (response.status === 200 && response.data.success) {
+          const appNames = Object.keys(response.data.result);
 
-            if (response.status === 200 && response.data.success) {
-              // Update state for this specific app
-              setAppsList((prevList) =>
-                prevList.map((app) =>
-                  app.name === appName
-                    ? { ...app, info: response.data.result, loading: false }
-                    : app
-                )
-              );
-            }
-          } catch (error) {
-            console.error(`Error fetching fresh info for app ${appName}:`, error);
+          const initialAppsList: AppListItem[] = appNames.map((name) => ({
+            name,
+            info: null,
+            loading: true,
+            error: null,
+          }));
+
+          setSharingAppsList(initialAppsList);
+          setHasSharingInitialList(true);
+
+          const cachedApps = await fetchAppsInfo(appNames, setSharingAppsList, false);
+          if (cachedApps.length > 0) {
+            fetchFreshAppsInfo(cachedApps, setSharingAppsList, false);
           }
-        });
-
-        await Promise.allSettled(promises);
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
       } catch (error) {
-        // Ignore errors during background refresh
-        console.warn('Failed to fetch fresh apps data:', error);
-      } finally {
-        setIsUpdatingFromServer(false);
+        console.error('Error fetching sharing apps list:', error);
+        setSharingError(t('errors.listFetch'));
+        setHasSharingInitialList(true);
       }
     };
 
     fetchAppsList();
+    if (isSharedView()) {
+      fetchSharingAppsList();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -206,21 +256,61 @@ export function AppListPage(props: AppListPageProps) {
 
           {error && <ErrorCard error={error} />}
 
+          {isShared && hasSharingInitialList && sharingAppsList.length > 0 && (
+            <>
+              <Flex align='center' gap='2'>
+                <Share2Icon width={20} height={20} />
+                <Text size='5' weight='bold'>
+                  {t('list.sharing.title')}
+                </Text>
+              </Flex>
+              {sharingError ? (
+                <ErrorCard error={sharingError} />
+              ) : (
+                <AppsList appsList={sharingAppsList} isMobile={isMobile} />
+              )}
+              {appsList.length > 0 && <Separator size='4' style={{ margin: '10px 0' }} />}
+            </>
+          )}
+
           {hasInitialList && !error && (
             <>
-              {appsList.length === 0 ? (
-                <Card
-                  style={{
-                    border: '1px solid var(--gray-6)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                    padding: '40px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <Text size='3' color='gray'>
-                    {t(isShared ? 'list.empty.noSharedApps' : 'list.empty.noApps')}
+              {isShared && appsList.length > 0 && (
+                <Flex align='center' gap='2'>
+                  <EnterIcon width={20} height={20} />
+                  <Text size='5' weight='bold'>
+                    {t('list.sharedWithMe.title')}
                   </Text>
-                </Card>
+                </Flex>
+              )}
+              {appsList.length === 0 ? (
+                isShared && hasSharingInitialList && sharingAppsList.length === 0 ? (
+                  <Card
+                    style={{
+                      border: '1px solid var(--gray-6)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      padding: '40px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Text size='3' color='gray'>
+                      {t('list.empty.noSharedApps')}
+                    </Text>
+                  </Card>
+                ) : !isShared ? (
+                  <Card
+                    style={{
+                      border: '1px solid var(--gray-6)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      padding: '40px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Text size='3' color='gray'>
+                      {t('list.empty.noApps')}
+                    </Text>
+                  </Card>
+                ) : null
               ) : (
                 <AppsList appsList={appsList} isMobile={isMobile} />
               )}

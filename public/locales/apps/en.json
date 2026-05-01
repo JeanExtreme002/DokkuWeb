@@ -2,7 +2,7 @@
   "list.header.title": "My Applications",
   "list.header.subtitle": "Manage your deployed Dokku applications",
   "list.header.titleShared": "Shared Applications",
-  "list.header.subtitleShared": "Applications that other users shared with you",
+  "list.header.subtitleShared": "Applications shared by you and other users",
   "list.header.createButton": "New Application",
 
   "list.loading.title": "Loading Applications",
@@ -12,6 +12,10 @@
 
   "list.empty.noApps": "No applications created yet.",
   "list.empty.noSharedApps": "No applications have been shared yet.",
+
+  "list.sharing.title": "Sharing",
+  "list.sharing.empty": "You are not sharing any applications.",
+  "list.sharedWithMe.title": "Shared with me",
 
   "errors.listFetch": "Error loading application list",
   "errors.infoFetch": "Error loading information",
