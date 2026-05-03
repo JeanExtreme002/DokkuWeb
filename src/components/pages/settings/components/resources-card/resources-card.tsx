@@ -205,6 +205,8 @@ export function ResourcesCard({ quota, loading, error }: ResourcesCardProps) {
         <Box style={{ marginTop: '8px' }}>
           <Link
             href={config.support.url}
+            target='_blank'
+            rel='noopener noreferrer'
             underline='hover'
             sx={{ fontSize: '14px', color: 'var(--gray-11)' }}
           >
