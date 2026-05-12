@@ -26,8 +26,8 @@ export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySe
     setCopied(id);
     setTimeout(() => setCopied(null), 1500);
   };
-
-  const branch = deployInfo ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>';
+  const hasBranch = deployInfo && !!deployInfo['Git last updated at'];
+  const branch = hasBranch ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>';
   const remoteAddLine = `git remote add dokku dokku@${domain}:${appInfo?.raw_name}`;
   const sshConfigLine =
     sshPort != null && sshPort !== 22
@@ -78,8 +78,7 @@ export function DeploySection({ appInfo, deployInfo, domain, sshPort }: DeploySe
         <Box className={styles.codeBlock}>
           <div className={styles.codeBlockContent}>
             <div>
-              <span className={styles.command}>$ git push</span> dokku{' '}
-              {deployInfo ? deployInfo['Git deploy branch'] || '<branch>' : '<branch>'}
+              <span className={styles.command}>$ git push</span> dokku {branch}
             </div>
           </div>
           <IconButton
