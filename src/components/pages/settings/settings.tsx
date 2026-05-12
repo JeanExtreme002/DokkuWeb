@@ -38,6 +38,7 @@ export function SettingsPage(props: SettingsPageProps) {
   // Error states
   const [errors, setErrors] = useState({
     ssh: null as string | null,
+    sshDetail: null as string | null,
   });
 
   useEffect(() => {
@@ -93,14 +94,15 @@ export function SettingsPage(props: SettingsPageProps) {
     }
   };
 
-  const registerSSHKey = async (ssh_key: string) => {
+  const registerSSHKey = async (rawSSHKey: string) => {
     setIsSSHKeySaving(true);
     setIsSSHKeyRegistered(false);
-    setErrors((prev) => ({ ...prev, ssh: null }));
+    setErrors((prev) => ({ ...prev, ssh: null, sshDetail: null }));
 
     try {
+      const encoded = btoa(rawSSHKey);
       const response = await api.post(`/api/ssh/key`, undefined, {
-        params: { public_ssh_key: ssh_key },
+        params: { public_ssh_key: encoded },
       });
       if (response.status === 200) {
         if (!response?.data?.success) {
@@ -109,10 +111,24 @@ export function SettingsPage(props: SettingsPageProps) {
         setIsSSHKeyRegistered(true);
       }
     } catch (error: any) {
+      const detail =
+        typeof error?.response?.data?.message === 'string'
+          ? error.response.data.message
+          : typeof error?.message === 'string'
+            ? error.message
+            : null;
       if (error?.response?.status === 403) {
-        setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerNotAllowed') }));
+        setErrors((prev) => ({
+          ...prev,
+          ssh: t('profile.ssh.registerNotAllowed'),
+          sshDetail: detail,
+        }));
       } else {
-        setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerFailed') }));
+        setErrors((prev) => ({
+          ...prev,
+          ssh: t('profile.ssh.registerFailed'),
+          sshDetail: detail,
+        }));
       }
       console.error('Failed to register SSH key:', error);
     } finally {
@@ -120,17 +136,20 @@ export function SettingsPage(props: SettingsPageProps) {
     }
   };
 
-  const handleRegisterSSHKey = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRegisterSSHKeyFromFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) return;
 
     try {
-      const content = btoa(await file.text());
-      await registerSSHKey(content);
+      await registerSSHKey(await file.text());
     } catch (err) {
       console.error('Error registering ssh key:', err);
-      setErrors((prev) => ({ ...prev, ssh: t('profile.ssh.registerFailed') }));
+      setErrors((prev) => ({
+        ...prev,
+        ssh: t('profile.ssh.registerFailed'),
+        sshDetail: null,
+      }));
     }
   };
 
@@ -143,7 +162,7 @@ export function SettingsPage(props: SettingsPageProps) {
         type='file'
         accept='.pub'
         style={{ display: 'none' }}
-        onChange={handleRegisterSSHKey}
+        onChange={handleRegisterSSHKeyFromFile}
       />
       <NavBar session={session} />
 
@@ -172,10 +191,12 @@ export function SettingsPage(props: SettingsPageProps) {
             showToken={showToken}
             onToggleShowToken={() => setShowToken(!showToken)}
             onCopyToken={copyToken}
-            onOpenSaveSSHKey={() => document.getElementById('ssh-file-upload')?.click()}
+            onSelectSSHKeyFile={() => document.getElementById('ssh-file-upload')?.click()}
+            onSubmitSSHKey={registerSSHKey}
             isSSHKeySaving={isSSHKeySaving}
             isSSHKeyRegistered={isSSHKeyRegistered}
             sshErrorMessage={errors.ssh}
+            sshErrorDetail={errors.sshDetail}
           />
           <ResourcesCard quota={quota} loading={loading} error={error} />
         </Flex>

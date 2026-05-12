@@ -23,11 +23,21 @@
 
   "profile.ssh.label": "Chave SSH",
   "profile.ssh.tooltip": "Registre sua chave SSH para acessar o Dokku",
-  "profile.ssh.button": "Selecionar chave pública SSH",
+  "profile.ssh.button": "Registrar chave pública SSH",
   "profile.ssh.registering": "Registrando...",
   "profile.ssh.registered": "Chave registrada com sucesso",
   "profile.ssh.registerFailed": "Ocorreu um erro inesperado ao salvar a chave SSH",
   "profile.ssh.registerNotAllowed": "Você não tem permissão para registrar chaves SSH",
+
+  "profile.ssh.modal.title": "Registrar chave SSH",
+  "profile.ssh.modal.description": "Adicione sua chave SSH pública para acessar o Dokku. Você pode colar a chave diretamente ou selecionar o arquivo .pub.",
+  "profile.ssh.modal.pasteLabel": "Cole sua chave SSH pública",
+  "profile.ssh.modal.placeholder": "ssh-ed25519 AAAA... seu_email@exemplo.com",
+  "profile.ssh.modal.save": "Registrar chave",
+  "profile.ssh.modal.saving": "Registrando...",
+  "profile.ssh.modal.or": "ou",
+  "profile.ssh.modal.selectFile": "Selecionar arquivo .pub",
+  "profile.ssh.modal.cancel": "Cancelar",
 
   "profile.ssh.tutorial.summary": "Como criar e registrar uma chave SSH?",
   "profile.ssh.tutorial.step1.title": "1. Gere um par de chaves SSH",

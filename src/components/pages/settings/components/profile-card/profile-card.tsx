@@ -33,6 +33,7 @@ import { usePageTranslation } from '@/i18n/utils';
 import { LANGUAGE_NAMES } from '@/lib/utils';
 
 import styles from '../../settings.module.css';
+import { SaveSSHKeyModal } from './save-ssh-key-modal';
 
 interface ProfileCardProps {
   session?: Session;
@@ -42,10 +43,12 @@ interface ProfileCardProps {
   showToken: boolean;
   onToggleShowToken: () => void;
   onCopyToken: () => void | Promise<void>;
-  onOpenSaveSSHKey: () => void;
+  onSelectSSHKeyFile: () => void;
+  onSubmitSSHKey: (rawKey: string) => void | Promise<void>;
   isSSHKeySaving: boolean;
   isSSHKeyRegistered: boolean;
   sshErrorMessage?: string | null;
+  sshErrorDetail?: string | null;
 }
 
 export function ProfileCard({
@@ -56,14 +59,17 @@ export function ProfileCard({
   showToken,
   onToggleShowToken,
   onCopyToken,
-  onOpenSaveSSHKey,
+  onSelectSSHKeyFile,
+  onSubmitSSHKey,
   isSSHKeySaving,
   isSSHKeyRegistered,
   sshErrorMessage,
+  sshErrorDetail,
 }: ProfileCardProps) {
   const { t } = usePageTranslation();
   const { mode, toggleTheme } = useTheme();
   const [copied, setCopied] = useState<string | null>(null);
+  const [sshModalOpen, setSSHModalOpen] = useState(false);
 
   const copy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -228,7 +234,7 @@ export function ProfileCard({
               color='orange'
               variant='outline'
               style={{ cursor: 'pointer' }}
-              onClick={onOpenSaveSSHKey}
+              onClick={() => setSSHModalOpen(true)}
               disabled={isSSHKeySaving || isSSHKeyRegistered}
             >
               {isSSHKeyRegistered ? (
@@ -248,7 +254,6 @@ export function ProfileCard({
                 </>
               )}
             </Button>
-            {sshErrorMessage && <Text className={styles.sshErrorMessage}>{sshErrorMessage}</Text>}
           </Flex>
         </Flex>
 
@@ -401,6 +406,16 @@ export function ProfileCard({
           </Flex>
         </Flex>
       </Flex>
+      <SaveSSHKeyModal
+        open={sshModalOpen}
+        onOpenChange={setSSHModalOpen}
+        onSelectFile={onSelectSSHKeyFile}
+        onSubmitText={onSubmitSSHKey}
+        isSaving={isSSHKeySaving}
+        isRegistered={isSSHKeyRegistered}
+        errorMessage={sshErrorMessage}
+        errorDetail={sshErrorDetail}
+      />
     </Card>
   );
 }

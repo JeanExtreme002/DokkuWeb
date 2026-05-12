@@ -23,11 +23,21 @@
 
   "profile.ssh.label": "SSH Key",
   "profile.ssh.tooltip": "Register your SSH key to access Dokku",
-  "profile.ssh.button": "Select a public SSH key",
+  "profile.ssh.button": "Register a public SSH key",
   "profile.ssh.registering": "Registering...",
   "profile.ssh.registered": "Key registered successfully",
   "profile.ssh.registerFailed": "An unexpected error occurred while saving the SSH key",
   "profile.ssh.registerNotAllowed": "You do not have permission to register SSH keys",
+
+  "profile.ssh.modal.title": "Register SSH Key",
+  "profile.ssh.modal.description": "Add your public SSH key to access Dokku. You can paste the key directly or select the .pub file.",
+  "profile.ssh.modal.pasteLabel": "Paste your public SSH key",
+  "profile.ssh.modal.placeholder": "ssh-ed25519 AAAA... your_email@example.com",
+  "profile.ssh.modal.save": "Register key",
+  "profile.ssh.modal.saving": "Registering...",
+  "profile.ssh.modal.or": "or",
+  "profile.ssh.modal.selectFile": "Select a .pub file",
+  "profile.ssh.modal.cancel": "Cancel",
 
   "profile.ssh.tutorial.summary": "How to create and register an SSH key?",
   "profile.ssh.tutorial.step1.title": "1. Generate an SSH key pair",

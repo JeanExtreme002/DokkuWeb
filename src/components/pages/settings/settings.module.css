@@ -77,10 +77,6 @@
   max-width: 400px;
 }
 
-.sshErrorMessage {
-  color: red;
-}
-
 @media (max-width: 550px) {
   .userSettingsContainer {
     flex-direction: column;
